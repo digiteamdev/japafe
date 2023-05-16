@@ -1,0 +1,27 @@
+import * as yup from "yup";
+
+export const worSchema = yup.object().shape({
+    job_no: yup.string().nullable(),
+	date_wor: yup.string().required("Date not empty"),
+	cuspoId: yup.string().required("Customer PO not empty"),
+	subject: yup.string().nullable(),
+	job_desk: yup.string().nullable(),
+	contract_no_spk: yup.string().nullable(),
+	employeeId: yup.string().required("Sales not empty"),
+	value_contract: yup.string().nullable(),
+	priority_status: yup.string().required("Priority Status not empty"),
+	qty: yup.string().nullable(),
+	unit: yup.string().nullable(),
+	date_of_order: yup.string().required("Date of order not empty"),
+	delivery_date: yup.string().required("Delivery date not empty"),
+	shipping_address: yup.string().nullable(),
+	estimated_man_our: yup.string().nullable(),
+	eq_model: yup.string().nullable(),
+	eq_mfg: yup.string().nullable(),
+	eq_rotation: yup.string().nullable(),
+	eq_power: yup.string().nullable(),
+	scope_of_work: yup.string().nullable(),
+	file_list: yup.string().nullable(),
+	noted: yup.string().nullable(),
+	status: yup.string().nullable(),
+});
