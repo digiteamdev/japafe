@@ -28,6 +28,7 @@ export const Po = () => {
 	useEffect(() => {
 		getPo(1, 10);
         getCustomer();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {

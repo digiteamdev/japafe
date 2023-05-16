@@ -21,7 +21,7 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 											Equipment Image
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											<img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-50 w-50" />
+											<img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-50 w-50" alt=""/>
 										</td>
 									</tr>
 									<tr>
@@ -63,10 +63,10 @@ export const ViewEquipment = ({ dataSelected }: props) => {
                                 </thead>
 									{dataSelected.eq_part.length > 0 ? (
 										dataSelected.eq_part.map((res: any, i: number) => (
-											<tbody>
-												<tr key={i}>
+											<tbody key={i}>
+												<tr>
 													<td className='w-[10%] pl-2 border border-gray-200'>
-                                                    <img src={res.part_img} className="px-2 py-2 object-cover h-24 w-24" />
+                                                    <img src={res.part_img} className="px-2 py-2 object-cover h-24 w-24" alt=""/>
 													</td>
 													<td className='w-[60%] pl-2 border border-gray-200'>
 														{res.nama_part}

@@ -27,6 +27,7 @@ export const FormCreateDepartement = ({ dataSelected, content, showModal }: prop
 		setData({
 			name: dataSelected.name
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const addDepartemen = async (data: { name: string }) => {

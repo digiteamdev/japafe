@@ -24,6 +24,7 @@ export const ModalDelete = ({
 
 	useEffect(() => {
 		setIsLoading(false)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data])
 
     const deleteData = (id: string) => {

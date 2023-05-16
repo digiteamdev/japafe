@@ -81,6 +81,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	useEffect(() => {
 		getPo();
 		getEmploye();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const handleOnChanges = (event: any) => {

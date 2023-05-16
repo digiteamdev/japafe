@@ -186,6 +186,7 @@ export const FormEditEmploye = ({
 	useEffect(() => {
 		getProvince();
 		setingData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const json: any = provinceJson;
@@ -1452,7 +1453,7 @@ export const FormEditEmploye = ({
 										name='Educational_Employee'
 										render={(arrayEdu) =>
 											values.Educational_Employee.map((res, i) => (
-												<div>
+												<div key={i}>
 													<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 														<div className='w-full'>
 															<InputSelect
@@ -1742,7 +1743,7 @@ export const FormEditEmploye = ({
 										name='Employee_Child'
 										render={(arrayChild) =>
 											values.Employee_Child.map((res, i) => (
-												<div>
+												<div key={i}>
 													<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 														<div className='w-full'>
 															<Input
@@ -1937,11 +1938,10 @@ export const FormEditEmploye = ({
 										name='Certificate_Employee'
 										render={(arrayCerti) =>
 											values.Certificate_Employee.map((res, i) => (
-												<>
+												<div key={i}>
 													<Section
 														className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
-														key={i}
-													>
+														>
 														<Input
 															id={`Certificate_Employee.${i}.certificate_name`}
 															name={`Certificate_Employee.${i}.certificate_name`}
@@ -2069,7 +2069,7 @@ export const FormEditEmploye = ({
 															Certificate
 														</a>
 													) : null}
-												</>
+												</div>
 											))
 										}
 									/>

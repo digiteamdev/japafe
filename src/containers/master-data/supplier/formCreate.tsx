@@ -87,6 +87,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 
 	useEffect(() => {
 		getProvince();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const json: any = provinceJson;
@@ -496,8 +497,8 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 							render={(arrayBank) => (
 								<>
 									{values.SupplierBank.map((res, i) => (
-										<div>
-											<Disclosure defaultOpen key={i}>
+										<div key={i}>
+											<Disclosure defaultOpen>
 												{({ open }) => (
 													<>
 														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
@@ -588,8 +589,8 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 							render={(arrayContact) => (
 								<>
 									{values.SupplierContact.map((res, i) => (
-										<div>
-											<Disclosure defaultOpen key={i}>
+										<div key={i}>
+											<Disclosure defaultOpen>
 												{({ open }) => (
 													<>
 														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>

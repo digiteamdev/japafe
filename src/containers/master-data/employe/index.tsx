@@ -47,6 +47,7 @@ export const Employe = () => {
 	useEffect(() => {
 		getDepartement();
 		getEmploye(1, 10);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {

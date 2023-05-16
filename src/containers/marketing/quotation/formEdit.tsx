@@ -108,6 +108,7 @@ export const FormEditQuotation = ({
 	useEffect(() => {
 		getEquipment();
 		settingData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const settingData = () => {
@@ -703,7 +704,7 @@ export const FormEditQuotation = ({
 									render={(arrayDetails) => (
 										<>
 											{values.Quotations_Detail.map((res, i) => (
-												<div>
+												<div key={i}>
 													<Section
 														className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 														key={i}
@@ -880,7 +881,7 @@ export const FormEditQuotation = ({
 									render={(arrayParts) => (
 										<div>
 											{values.parts.map((res, i) => (
-												<div>
+												<div key={i}>
 													<Section
 														className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 														key={i}

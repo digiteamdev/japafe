@@ -79,6 +79,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	useEffect(() => {
 		getQuatation();
 		generateIdNum();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const generateIdNum = () => {

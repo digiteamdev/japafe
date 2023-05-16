@@ -44,6 +44,7 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 	useEffect(() => {
 		getEmploye();
 		getRole();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showPassword = () => {

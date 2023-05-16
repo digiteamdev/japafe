@@ -27,6 +27,7 @@ export const Wor = () => {
 
 	useEffect(() => {
 		getWor(1, 10);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {

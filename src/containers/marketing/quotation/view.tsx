@@ -110,8 +110,8 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 								</thead>
 								{dataSelected.Quotations_Detail.length > 0 ? (
 									dataSelected.Quotations_Detail.map((res: any, i: number) => (
-										<tbody>
-											<tr key={i}>
+										<tbody key={i}>
+											<tr>
 												<td className='pl-2 border border-gray-200'>
 													{res.item_of_work}
 												</td>
@@ -158,8 +158,8 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 								</thead>
 								{dataSelected.eqandpart.length > 0 ? (
 									dataSelected.eqandpart.map((res: any, i: number) => (
-										<tbody>
-											<tr key={i}>
+										<tbody key={i}>
+											<tr>
 												<td className='pl-2 border border-gray-200'>
 													{res.eq_part.nama_part}
 												</td>

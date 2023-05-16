@@ -107,6 +107,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	useEffect(() => {
 		settingData();
 		getQuatation();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const settingData = () => {

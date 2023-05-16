@@ -159,13 +159,13 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 											? " - "
 											: `${dataSelected.spouse_birth_place} / ${moment(
 													dataSelected.spouse_birth_date
-											  ).format("DD-MMMM-YYYY")}`}
+											).format("DD-MMMM-YYYY")}`}
 									</td>
 								</tr>
 								{dataSelected.Employee_Child.length !== 0
 									? dataSelected.Employee_Child.map((res: any, i: number) => {
 											return (
-												<>
+												<div key={i}>
 													<tr>
 														<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 															Name Child
@@ -193,9 +193,9 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 															)}
 														</td>
 													</tr>
-												</>
+												</div>
 											);
-									  })
+									})
 									: null}
 							</table>
 						</div>
@@ -207,7 +207,7 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 								? dataSelected.Educational_Employee.map(
 										(res: any, i: number) => {
 											return (
-												<table className='w-full mt-2'>
+												<table className='w-full mt-2' key={i}>
 													<tr>
 														<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 															Education

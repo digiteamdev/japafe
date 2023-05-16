@@ -14,6 +14,7 @@ export default function QuotationPage() {
 		if (token === undefined) {
 			router.push('/')
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (

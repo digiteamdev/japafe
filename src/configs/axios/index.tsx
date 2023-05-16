@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from '../session'
 
 export const Axios = axios.create({
-    baseURL: '',
+    baseURL: process.env.base_url,
     headers: {
         "accepts":"application/json" 
     }

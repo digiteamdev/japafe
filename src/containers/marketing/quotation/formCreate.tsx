@@ -77,6 +77,7 @@ export const FormCreateQuotation = ({
 	useEffect(() => {
 		getEquipment();
 		generateIdNum();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const generateIdNum = () => {

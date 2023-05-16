@@ -13,6 +13,7 @@ export default function Home() {
 		if (token !== undefined) {
 			router.push('/dashboard')
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	return (

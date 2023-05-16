@@ -17,6 +17,7 @@ export const ViewPo = ({ dataSelected }: props) => {
         totalPrice(dataSelected.Deskription_CusPo)
         vat(dataSelected.Deskription_CusPo, dataSelected.tax)
         grandTotal()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
     },[total, vatTotal])
 
     const totalPrice = (data: any) => {
@@ -165,8 +166,8 @@ export const ViewPo = ({ dataSelected }: props) => {
 								</thead>
 								{dataSelected.Deskription_CusPo.length > 0 ? (
 									dataSelected.Deskription_CusPo.map((res: any, i: number) => (
-										<tbody>
-											<tr key={i}>
+										<tbody key={i}>
+											<tr>
 												<td className='pl-2 border border-gray-200'>
 													{res.description}
 												</td>
@@ -231,8 +232,8 @@ export const ViewPo = ({ dataSelected }: props) => {
 								<thead></thead>
 								{dataSelected.term_of_pay.length > 0 ? (
 									dataSelected.term_of_pay.map((res: any, i: number) => (
-										<tbody>
-											<tr key={i}>
+										<tbody key={i}>
+											<tr>
 												<td className='pl-2 w-[50%] border border-gray-200'>
 													{res.limitpay}
 												</td>

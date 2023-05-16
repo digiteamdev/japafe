@@ -46,6 +46,7 @@ export const Departement = () => {
 
 	useEffect(() => {
 		getDepartement(1, 10);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {

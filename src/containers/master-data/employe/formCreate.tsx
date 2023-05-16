@@ -170,6 +170,7 @@ export const FormCreateEmploye = ({
 
 	useEffect(() => {
 		getProvince();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const json: any = provinceJson;
@@ -990,7 +991,7 @@ export const FormCreateEmploye = ({
 										name='Employee_Child'
 										render={(arrayHelpers) =>
 											values.Employee_Child.map((res, i) => (
-												<div>
+												<div key={i}>
 													<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2 divide-y'>
 														<Input
 															id={`Employee_Child.${i}.name`}
@@ -1157,7 +1158,7 @@ export const FormCreateEmploye = ({
 										name='Educational_Employee'
 										render={(arrayHelpers) =>
 											values.Educational_Employee.map((res, i) => (
-												<>
+												<div key={i}>
 													<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 														<InputSelect
 															id={`Educational_Employee.${i}.last_edu`}
@@ -1271,7 +1272,7 @@ export const FormCreateEmploye = ({
 														</tr>
 													</table>
 													<div className='border-dashed border-b-2 my-2 border-primary-300 w-full'></div>
-												</>
+												</div>
 											))
 										}
 									/>
@@ -1344,7 +1345,7 @@ export const FormCreateEmploye = ({
 										name='Certificate_Employee'
 										render={(arrayHelpers) =>
 											values.Certificate_Employee.map((res, i) => (
-												<>
+												<div key={i}>
 													<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 														<Input
 															id={`Certificate_Employee.${i}.certificate_name`}
@@ -1428,7 +1429,7 @@ export const FormCreateEmploye = ({
 														</div>
 													</Section>
 													<div className='border-dashed border-b-2 my-2 border-primary-300 w-full'></div>
-												</>
+												</div>
 											))
 										}
 									/>

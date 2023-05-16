@@ -83,6 +83,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 		settingData();
 		getPo();
 		getEmploye();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const settingData = () => {
