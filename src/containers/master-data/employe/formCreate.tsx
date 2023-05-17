@@ -394,7 +394,7 @@ export const FormCreateEmploye = ({
 					initialValues={{ ...data }}
 					validationSchema={employeSchema}
 					onSubmit={(values) => {
-						content === "add" ? addEmploye(values) : console.log("a");
+						addEmploye(values)
 					}}
 					enableReinitialize
 				>

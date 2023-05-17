@@ -1,11 +1,11 @@
 import { Section } from "../../../components";
+import Image from "next/image";
 
 interface props {
 	dataSelected: any;
 }
 
 export const ViewEquipment = ({ dataSelected }: props) => {
-	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -21,7 +21,13 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 											Equipment Image
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											<img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-50 w-50" alt=""/>
+											{/* <img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-32 w-32" alt=""/> */}
+											<Image
+												src={dataSelected.eq_image}
+												width={30}
+												height={30}
+												alt='Picture Equipment'
+											/>
 										</td>
 									</tr>
 									<tr>
@@ -49,49 +55,53 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<thead>
-                                    <tr>
-                                        <th className='w-[10%] pl-2 border border-gray-200 text-center font-semibold'>
-                                            Image
-                                        </th>
-                                        <th className='w-[60%] pl-2 border border-gray-200 text-center font-semibold'>
-                                            Name
-                                        </th>
-                                        <th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
-                                            Description
-                                        </th>
-                                    </tr>
-                                </thead>
-									{dataSelected.eq_part.length > 0 ? (
-										dataSelected.eq_part.map((res: any, i: number) => (
-											<tbody key={i}>
-												<tr>
-													<td className='w-[10%] pl-2 border border-gray-200'>
-                                                    <img src={res.part_img} className="px-2 py-2 object-cover h-24 w-24" alt=""/>
-													</td>
-													<td className='w-[60%] pl-2 border border-gray-200'>
-														{res.nama_part}
-													</td>
-													<td className='w-[30%] pl-2 border border-gray-200'>
-														{res.keterangan_part}
-													</td>
-												</tr>
-											</tbody>
-										))
-									) : (
-										<tbody>
+									<tr>
+										<th className='w-[10%] pl-2 border border-gray-200 text-center font-semibold'>
+											Image
+										</th>
+										<th className='w-[60%] pl-2 border border-gray-200 text-center font-semibold'>
+											Name
+										</th>
+										<th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
+											Description
+										</th>
+									</tr>
+								</thead>
+								{dataSelected.eq_part.length > 0 ? (
+									dataSelected.eq_part.map((res: any, i: number) => (
+										<tbody key={i}>
 											<tr>
-												<td className='w-[50%] pl-2 border border-gray-200'>
-													-
+												<td className='w-[10%] pl-2 border border-gray-200'>
+													{/* <img
+														src={res.part_img}
+														className='px-2 py-2 object-cover h-24 w-24'
+														alt=''
+													/> */}
+													<Image
+														src={res.part_img}
+														width={20}
+														height={20}
+														alt='Picture part'
+													/>
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
-													-
+												<td className='w-[60%] pl-2 border border-gray-200'>
+													{res.nama_part}
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
-													-
+												<td className='w-[30%] pl-2 border border-gray-200'>
+													{res.keterangan_part}
 												</td>
 											</tr>
 										</tbody>
-									)}
+									))
+								) : (
+									<tbody>
+										<tr>
+											<td className='w-[50%] pl-2 border border-gray-200'>-</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>-</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>-</td>
+										</tr>
+									</tbody>
+								)}
 							</table>
 						</div>
 					</Section>
