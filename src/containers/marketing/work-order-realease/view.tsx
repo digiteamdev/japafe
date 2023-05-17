@@ -1,11 +1,45 @@
 import { Section } from "../../../components";
 import moment from "moment";
+import { ValidateWor } from "../../../services";
+import { toast } from "react-toastify";
 
 interface props {
 	dataSelected: any;
+	content: string;
+	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewWor = ({ dataSelected }: props) => {
+export const ViewWor = ({ dataSelected, content, showModal }: props) => {
+
+	const validWor = async () => {
+		try {
+			const response = await ValidateWor(dataSelected.id);
+			if (response.data) {
+				toast.success("Validate Work Order Release Success", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			}
+		} catch (error) {
+			toast.error("Validate Work Order Release Failed", {
+				position: "top-center",
+				autoClose: 1000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	}
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -18,6 +52,7 @@ export const ViewWor = ({ dataSelected }: props) => {
 						<div className="text-right mr-6">
 							<button 
 								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
+								onClick={ () => validWor()}
 							>
 								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? "Validate" : "unvalid" }
 							</button>

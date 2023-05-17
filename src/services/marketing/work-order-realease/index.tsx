@@ -6,3 +6,4 @@ export const SearchWor = (page: number, perpage: number, search: string) => Axio
 export const AddWor = (data: any) => Axios.post(process.env.BASE_URL+'/wor', data);
 export const EditWor = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/wor/${id}`, data);
 export const DeleteWor = (id: string) => Axios.delete(process.env.BASE_URL+`/wor/${id}`);
+export const ValidateWor = (id: string) => Axios.put(process.env.BASE_URL+`/worStatus/${id}`);

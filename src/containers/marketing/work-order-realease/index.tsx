@@ -1,21 +1,32 @@
 import { useEffect, useState } from "react";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete } from "../../../components";
+import {
+	SectionTitle,
+	Content,
+	Modal,
+	Table,
+	Button,
+	ModalDelete,
+	Pagination,
+} from "../../../components";
 import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateWor } from "./formCreate";
 import { ViewWor } from "./view";
 import { FormEditWor } from "./formEdit";
-import { GetWor, SearchWor, DeleteWor  } from "../../../services";
+import { GetWor, SearchWor, DeleteWor } from "../../../services";
 import moment from "moment";
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
 
 export const Wor = () => {
-
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
-    const [modalContent, setModalContent] = useState<string>("add");
+	const [modalContent, setModalContent] = useState<string>("add");
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "Job No" },
@@ -26,7 +37,7 @@ export const Wor = () => {
 	];
 
 	useEffect(() => {
-		getWor(1, 10);
+		getWor(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -36,8 +47,8 @@ export const Wor = () => {
 		// if(!val){
 		// 	setDataSelected({id: '',name: ''})
 		// }
-		if(reload){
-			getWor(1, 10);
+		if (reload) {
+			getWor(page, perPage);
 		}
 	};
 
@@ -48,6 +59,7 @@ export const Wor = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error) {
 			setData([]);
@@ -71,7 +83,7 @@ export const Wor = () => {
 	const deleteWor = async (id: string) => {
 		try {
 			const response = await DeleteWor(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Work Order Release Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -157,19 +169,15 @@ export const Wor = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.job_no}
+									<td className='whitespace-nowrap px-6 py-4'>{res.job_no}</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{moment(res.date_wor).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{moment(res.date_wor).format('DD-MMMM-YYYY')}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.customerPo.quotations.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.subject}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap px-6 py-4'>{res.subject}</td>
+									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
@@ -184,24 +192,20 @@ export const Wor = () => {
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
-													showModal(true,'edit', false);
+													showModal(true, "edit", false);
 												}}
 											>
 												<Edit color='white' />
 											</Button>
-											{
-												res.job_no === "" ? (
-													<Button
-														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true, "delete", false);
-														}}
-													>
-														<Trash2 color='white' />
-													</Button>
-												) : null
-											}
+											<Button
+												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "delete", false);
+												}}
+											>
+												<Trash2 color='white' />
+											</Button>
 										</div>
 									</td>
 								</tr>
@@ -209,6 +213,18 @@ export const Wor = () => {
 						})
 					)}
 				</Table>
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={11}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getWor(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -220,17 +236,25 @@ export const Wor = () => {
 				/>
 			) : (
 				<Modal
-				title='work Order Release'
-				isModal={isModal}
-				content={modalContent}
-				showModal={showModal}
-			>
+					title='work Order Release'
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+				>
 					{modalContent === "view" ? (
-						<ViewWor dataSelected={dataSelected} />
+						<ViewWor
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : modalContent === "add" ? (
 						<FormCreateWor content={modalContent} showModal={showModal} />
 					) : (
-						<FormEditWor content={modalContent} showModal={showModal} dataWor={dataSelected}/>
+						<FormEditWor
+							content={modalContent}
+							showModal={showModal}
+							dataWor={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}
