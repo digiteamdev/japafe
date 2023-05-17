@@ -173,7 +173,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 		}
 	};
 	
-    const addWor = async (payload: any) => {
+    const editWor = async (payload: any) => {
 		setIsLoading(true);
 		const dataBody = new FormData();
         dataBody.append("job_no", payload.job_no);
@@ -238,7 +238,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 				initialValues={data}
 				// validationSchema={worSchema}
 				onSubmit={(values) => {
-					addWor(values);
+					editWor(values);
 				}}
 				enableReinitialize
 			>
