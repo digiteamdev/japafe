@@ -10,8 +10,19 @@ export const ViewWor = ({ dataSelected }: props) => {
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
-				<>
-					<h1 className='font-bold text-xl'>Work Order Release</h1>
+				<div>
+					<div className="grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1">
+						<div>
+							<h1 className='font-bold text-xl'>Work Order Release</h1>
+						</div>
+						<div className="text-right mr-6">
+							<button 
+								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
+							>
+								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? "Validate" : "unvalid" }
+							</button>
+						</div>
+					</div>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -164,7 +175,7 @@ export const ViewWor = ({ dataSelected }: props) => {
 							</table>
 						</div>
 					</Section>
-				</>
+				</div>
 			) : null}
 		</div>
 	);

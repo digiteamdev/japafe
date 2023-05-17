@@ -38,6 +38,10 @@ export const Departement = () => {
 	const [data, setData] = useState<data[]>([]);
 	const [dataSelected, setDataSelected] = useState<dataSelected>({id: '',name: ''});
 	const [countData, setCountData] = useState<number>(0);
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "Departement Name" },
@@ -45,7 +49,7 @@ export const Departement = () => {
 	];
 
 	useEffect(() => {
-		getDepartement(1, 10);
+		getDepartement(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -56,7 +60,7 @@ export const Departement = () => {
 			setDataSelected({id: '',name: ''})
 		}
 		if(reload){
-			getDepartement(1, 10);
+			getDepartement(page, perPage);
 		}
 	};
 
@@ -72,9 +76,9 @@ export const Departement = () => {
 		try {
 			const response = await GetDepartement(page, limit);
 			if (response.data) {
-				console.log(response)
 				setData(response.data.result);
 				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil( response.data.totalData / limit))
 				setIsLoading(false);
 			}
 		} catch (error) {
@@ -235,7 +239,20 @@ export const Departement = () => {
 						})
 					)}
 				</Table>
-				<Pagination countData={countData}/>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getDepartement(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{
 				modalContent === 'delete' ? (

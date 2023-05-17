@@ -75,7 +75,7 @@ export const ModalDelete = ({
 										attachments and all data
 									</p>
 									<p className='text-sm text-gray-500 mt-8'>
-										if you don't want to delete it, you can finish or close it
+										if you dont want to delete it, you can finish or close it
 									</p>
 								</div>
 
