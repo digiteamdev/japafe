@@ -51,10 +51,10 @@ export const ViewWor = ({ dataSelected, content, showModal }: props) => {
 						</div>
 						<div className="text-right mr-6">
 							<button 
-								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
+								className={`justify-center rounded-full border border-transparent ${dataSelected.status === "" || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}
 							>
-								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? "Validate" : "unvalid" }
+								{ dataSelected.status === "" || dataSelected.status === 'unvalid' ? "Validate" : "unvalid" }
 							</button>
 						</div>
 					</div>
