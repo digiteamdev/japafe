@@ -6,6 +6,7 @@ interface props {
 }
 
 export const ViewEquipment = ({ dataSelected }: props) => {
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -20,12 +21,12 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment Image
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='w-[50%] px-2 py-2 border border-gray-200'>
 											{/* <img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-32 w-32" alt=""/> */}
 											<Image
 												src={dataSelected.eq_image}
-												width={30}
-												height={30}
+												width={100}
+												height={100}
 												alt='Picture Equipment'
 											/>
 										</td>
@@ -71,7 +72,7 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 									dataSelected.eq_part.map((res: any, i: number) => (
 										<tbody key={i}>
 											<tr>
-												<td className='w-[10%] pl-2 border border-gray-200'>
+												<td className='w-[10%] px-2 py-2 border border-gray-200'>
 													{/* <img
 														src={res.part_img}
 														className='px-2 py-2 object-cover h-24 w-24'
@@ -79,8 +80,8 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 													/> */}
 													<Image
 														src={res.part_img}
-														width={20}
-														height={20}
+														width={100}
+														height={100}
 														alt='Picture part'
 													/>
 												</td>
