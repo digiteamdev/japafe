@@ -1010,6 +1010,7 @@ export const FormEditEmploye = ({
 											Contract
 										</option>
 										<option value='Permanent'>Permanent</option>
+										<option value='OJT'>OJT</option>
 									</InputSelect>
 									{touched.employee_status && errors.employee_status && (
 										<span className='mt-2 text-xs text-red-500 font-semibold'>

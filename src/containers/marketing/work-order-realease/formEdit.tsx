@@ -41,6 +41,8 @@ interface data {
 	file_list: string;
 	noted: string;
 	status: string;
+	refivision: any;
+	refevision_desc: any;
 }
 
 export const FormEditWor = ({ content, dataWor, showModal }: props) => {
@@ -77,6 +79,8 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 		file_list: "",
 		noted: "",
 		status: "",
+		refivision: null,
+		refevision_desc: null,
 	});
 
 	useEffect(() => {
@@ -111,6 +115,8 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 			file_list: dataWor.file_list,
 			noted: dataWor.noted,
 			status: dataWor.status,
+			refivision: dataWor.refivision,
+			refevision_desc: dataWor.refevision_desc,
 		});
 		setCustomer(dataWor.customerPo.quotations.Customer.name);
 		setCustomerAddress(
@@ -120,10 +126,10 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 			`+62${dataWor.customerPo.quotations.CustomerContact.phone}`
 		);
 		setEquipment(dataWor.customerPo.quotations.eqandpart[0].equipment.nama);
-        setCustomerId(dataWor.cuspoId)
+		setCustomerId(dataWor.cuspoId);
 	};
 
-    const showUpload = (id: any) => {
+	const showUpload = (id: any) => {
 		const inputan = document.getElementById(id);
 		inputan?.click();
 	};
@@ -172,36 +178,38 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 			setFile(event.target.files[0]);
 		}
 	};
-	
-    const editWor = async (payload: any) => {
+
+	const editWor = async (payload: any) => {
 		setIsLoading(true);
 		const dataBody = new FormData();
-        dataBody.append("job_no", payload.job_no);
-        dataBody.append("date_wor", payload.date_wor);
-        dataBody.append("cuspoId", customerId);
-        dataBody.append("subject", payload.subject);
-        dataBody.append("job_desk", payload.job_desk);
-        dataBody.append("contract_no_spk", payload.contract_no_spk);
-        dataBody.append("employeeId", payload.employeeId);
-        dataBody.append("value_contract", payload.value_contract);
-        dataBody.append("priority_status", payload.priority_status);
-        dataBody.append("qty", payload.qty);
-        dataBody.append("unit", payload.unit);
-        dataBody.append("date_of_order", payload.date_of_order);
-        dataBody.append("delivery_date", payload.delivery_date);
-        dataBody.append("shipping_address", payload.shipping_address);
-        dataBody.append("estimated_man_our", payload.estimated_man_our);
-        dataBody.append("eq_model", payload.eq_model);
-        dataBody.append("eq_mfg", payload.eq_mfg);
-        dataBody.append("eq_rotation", payload.eq_rotation);
-        dataBody.append("eq_power", payload.eq_power);
-        dataBody.append("scope_of_work", payload.scope_of_work);
-        dataBody.append("noted", payload.noted);
-        if(file === ""){
-            dataBody.append("file_list", payload.file_list);
-        }else{
-            dataBody.append("file_list", file);
-        }
+		dataBody.append("refivision", payload.refivision);
+		dataBody.append("refevision_desc", payload.refevision_desc);
+		dataBody.append("job_no", payload.job_no);
+		dataBody.append("date_wor", payload.date_wor);
+		dataBody.append("cuspoId", customerId);
+		dataBody.append("subject", payload.subject);
+		dataBody.append("job_desk", payload.job_desk);
+		dataBody.append("contract_no_spk", payload.contract_no_spk);
+		dataBody.append("employeeId", payload.employeeId);
+		dataBody.append("value_contract", payload.value_contract);
+		dataBody.append("priority_status", payload.priority_status);
+		dataBody.append("qty", payload.qty);
+		dataBody.append("unit", payload.unit);
+		dataBody.append("date_of_order", payload.date_of_order);
+		dataBody.append("delivery_date", payload.delivery_date);
+		dataBody.append("shipping_address", payload.shipping_address);
+		dataBody.append("estimated_man_our", payload.estimated_man_our);
+		dataBody.append("eq_model", payload.eq_model);
+		dataBody.append("eq_mfg", payload.eq_mfg);
+		dataBody.append("eq_rotation", payload.eq_rotation);
+		dataBody.append("eq_power", payload.eq_power);
+		dataBody.append("scope_of_work", payload.scope_of_work);
+		dataBody.append("noted", payload.noted);
+		if (file === "") {
+			dataBody.append("file_list", payload.file_list);
+		} else {
+			dataBody.append("file_list", file);
+		}
 		try {
 			const response = await EditWor(dataBody, dataWor.id);
 			if (response) {
@@ -251,6 +259,52 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 					values,
 				}) => (
 					<Form onChange={handleOnChanges}>
+						{
+							values.job_no !== "" || values.job_no !== null ? (
+								<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<Input
+											id='job_no'
+											name='job_no'
+											placeholder='Job No'
+											label='Job No'
+											type='text'
+											value={values.job_no}
+											disabled={true}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='refivision'
+											name='refivision'
+											placeholder='Rev'
+											label='Rev'
+											type='text'
+											value={values.refivision}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='refevision_desc'
+											name='refevision_desc'
+											placeholder='Rev Description'
+											label='Rev Description'
+											type='text'
+											value={values.refevision_desc}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							) : null
+						}
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
@@ -690,11 +744,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 											</a>
 											<p
 												className='justify-center rounded-full border border-transparent bg-orange-500 px-4 py-1 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 cursor-pointer'
-												onClick={() =>
-													showUpload(
-														'file_list'
-													)
-												}
+												onClick={() => showUpload("file_list")}
 											>
 												Change File
 											</p>
@@ -704,12 +754,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 												placeholder='file_list'
 												type='file'
 												className='hidden'
-												onChange={() =>
-													setFieldValue(
-														'file_list',
-														`upload`
-													)
-												}
+												onChange={() => setFieldValue("file_list", `upload`)}
 											/>
 										</div>
 									</div>

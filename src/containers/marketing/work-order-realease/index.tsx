@@ -169,7 +169,7 @@ export const Wor = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>{res.job_no}</td>
+									<td className='whitespace-nowrap px-6 py-4'>{res.job_no} {res.refivision}</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{moment(res.date_wor).format("DD-MMMM-YYYY")}
 									</td>

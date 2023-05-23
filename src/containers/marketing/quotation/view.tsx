@@ -161,10 +161,10 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 										<tbody key={i}>
 											<tr>
 												<td className='pl-2 border border-gray-200'>
-													{res.eq_part.nama_part}
+													{res.equipment.nama}
 												</td>
 												<td className='pl-2 border border-gray-200'>
-													{res.equipment.nama}
+													{res.eq_part.nama_part}
 												</td>
 												<td className='pl-2 border border-gray-200 text-center'>
 													{res.qty}
