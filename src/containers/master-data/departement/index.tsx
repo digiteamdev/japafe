@@ -26,17 +26,12 @@ interface data {
 	deleted: string;
 }
 
-interface dataSelected {
-	id: string;
-	name: string;
-}
-
 export const Departement = () => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [data, setData] = useState<data[]>([]);
-	const [dataSelected, setDataSelected] = useState<dataSelected>({id: '',name: ''});
+	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
@@ -57,19 +52,12 @@ export const Departement = () => {
 		setIsModal(val);
 		setModalContent(content);
 		if(!val){
-			setDataSelected({id: '',name: ''})
+			setDataSelected(false)
 		}
 		if(reload){
 			getDepartement(page, perPage);
 		}
 	};
-
-	const selectedData = (val: data) => {
-		setDataSelected({
-			id: val.id,
-			name: val.name
-		})
-	}
 
 	const getDepartement = async (page: number, limit: number) => {
 		setIsLoading(true);
@@ -212,14 +200,14 @@ export const Departement = () => {
 										<div>
 											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
-												selectedData(res);
+												setDataSelected(res);
 												showModal(true,'view', false);
 											}}>
 												<Eye color='white' />
 											</Button>
 											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
-												selectedData(res);
+												setDataSelected(res);
 												showModal(true,'edit', false);
 											}}>
 												<Edit color='white' />
@@ -227,7 +215,7 @@ export const Departement = () => {
 											<Button 
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={ () => {
-													selectedData(res);
+													setDataSelected(res);
 													showModal(true,'delete', false);
 												}}>
 												<Trash2 color='white' />

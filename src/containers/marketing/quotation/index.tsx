@@ -201,8 +201,8 @@ export const Quotation = () => {
 											<Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
-													// setDataSelected(res);
-													// showModal(true, "delete", false);
+													setDataSelected(res);
+													showModal(true, "delete", false);
 												}}
 											>
 												<Trash2 color='white' />

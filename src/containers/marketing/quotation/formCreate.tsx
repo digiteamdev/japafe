@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputArea } from "../../../components";
+import { Section, Input, InputSelect, InputArea, MultipleSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { quotationSchema } from "../../../schema/marketing/quotation/quotationSchema";
 import { AddQuotation, GetAllEquipment } from "../../../services";
@@ -101,19 +101,31 @@ export const FormCreateQuotation = ({
 				setCityCustomer("");
 				setCustomerAddress("");
 			}
-		} else if (event.target.name === "equipment") {
-			if (event.target.value !== "Choose Equipment") {
-				let data = JSON.parse(event.target.value);
-				setEquipmentSelected(data.id);
-				setListParts(data.eq_part);
-			} else {
-				setEquipmentSelected("");
-				setListParts([]);
-			}
-		} else if (event.target.name === "quo_img") {
+		} 
+		// else if (event.target.name === "equipment") {
+		// 	if (event.target.value !== "Choose Equipment") {
+		// 		let data = JSON.parse(event.target.value);
+		// 		setEquipmentSelected(data.id);
+		// 		setListParts(data.eq_part);
+		// 	} else {
+		// 		setEquipmentSelected("");
+		// 		setListParts([]);
+		// 	}
+		// } 
+		else if (event.target.name === "quo_img") {
 			setImgQuotation(event.target.files[0]);
 		}
 	};
+
+	const selectEquipment = (data: any) => {
+		let list: any = []
+		data.map( (res:any) => {
+			res.eq_part.map( (dataPart: any) => {
+				list.push(dataPart)
+			})
+		})
+		setListParts(list)
+	}
 
 	const addQuotation = async (payload: any) => {
 		setIsLoading(true);
@@ -121,13 +133,17 @@ export const FormCreateQuotation = ({
 		const dataCustomer = JSON.parse(payload.customerId);
 		const eqandpart: any = [];
 		payload.parts.map((res: any) => {
-			const dataPart = {
-				id_equipment: equipmentSelected,
-				id_part: res.id,
-				qty: res.qty,
-				keterangan: res.keterangan
-			};
-			eqandpart.push(dataPart);
+			listParts.map( (eq: any) => {
+				if(eq.id === res.id){
+					const dataPart = {
+						id_equipment: eq.id_equipment,
+						id_part: res.id,
+						qty: res.qty,
+						keterangan: res.keterangan
+					};
+					eqandpart.push(dataPart);
+				}
+			})
 		});
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
@@ -339,7 +355,7 @@ export const FormCreateQuotation = ({
 								/>
 							</div>
 						</Section>
-						<h1 className='text-xl font-bold mt-3'>Quotation Detail</h1>
+						<h1 className='text-xl font-bold mt-3'>Scope Of work</h1>
 						<FieldArray
 							name='Quotations_Detail'
 							render={(arrayDetails) => (
@@ -427,7 +443,7 @@ export const FormCreateQuotation = ({
 						<h1 className='text-xl font-bold mt-3'>Items Of Part</h1>
 						<Section className='grid md:grid-cols-1 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
+								{/* <InputSelect
 									id='equipment'
 									name='equipment'
 									placeholder='Equipment'
@@ -451,7 +467,14 @@ export const FormCreateQuotation = ({
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelect> */}
+								<MultipleSelect 
+									className="bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600"
+									listdata={equipment}
+									placeholder="Select Equipment"
+									displayValue="nama"
+									onSelect={selectEquipment}
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-1 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>

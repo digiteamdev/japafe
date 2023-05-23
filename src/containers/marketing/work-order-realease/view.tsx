@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Section } from "../../../components";
 import moment from "moment";
 import { ValidateWor } from "../../../services";
 import { toast } from "react-toastify";
+import { PdfWor } from "./pdfWor";
+import { Printer } from "react-feather";
 
 interface props {
 	dataSelected: any;
@@ -10,6 +13,8 @@ interface props {
 }
 
 export const ViewWor = ({ dataSelected, content, showModal }: props) => {
+
+	const [isModal,setIsModal] = useState<boolean>(false)
 
 	const validWor = async () => {
 		try {
@@ -41,8 +46,13 @@ export const ViewWor = ({ dataSelected, content, showModal }: props) => {
 		}
 	}
 
+	const showModalPdf = (val: boolean) => {
+		setIsModal(val)
+	}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
+			<PdfWor isModal={isModal} data={dataSelected} showModalPdf={showModalPdf}/>
 			{dataSelected ? (
 				<div>
 					<div className="grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1">
@@ -51,10 +61,18 @@ export const ViewWor = ({ dataSelected, content, showModal }: props) => {
 						</div>
 						<div className="text-right mr-6">
 							<button 
-								className={`justify-center rounded-full border border-transparent ${dataSelected.status === "" || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
+								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+								onClick={ () => showModalPdf(true)}
+							>
+								<div className="flex px-1 py-1">
+									<Printer size={16} className="mr-1"/> Print
+								</div>
+							</button>
+							<button 
+								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}
 							>
-								{ dataSelected.status === "" || dataSelected.status === 'unvalid' ? "Validate" : "unvalid" }
+								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? (<p className="px-1 py-1">Validate</p>) : (<p className="px-1 py-1">Unvalid</p>) }
 							</button>
 						</div>
 					</div>
