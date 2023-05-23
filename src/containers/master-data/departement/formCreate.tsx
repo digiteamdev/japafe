@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Section, Input } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
@@ -13,12 +13,9 @@ interface props {
 }
 
 interface data {
-	id: string;
 	name: string;
 	sub_depart: [
 		{
-			id: string
-			id_depart: string
 			name: string
 		}
 	]
@@ -31,42 +28,15 @@ export const FormCreateDepartement = ({
 }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [data, setData] = useState<data>({ 
-		id: "",
 		name: "",
 		sub_depart: [
 			{
-				id: "",
-				id_depart: "",
 				name: ""
 			}
 		]
 	});
 
-	useEffect(() => {
-		if(dataSelected){
-			settingData()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const settingData = () => {
-		let sub_depart: any = [];
-		
-		dataSelected.sub_depart.map((res: any) => {
-			sub_depart.push({
-				id: res.id,
-				id_depart: dataSelected.id,
-				name: res.name
-			});
-		});
-		setData({
-			id: dataSelected.id,
-			name: dataSelected.name,
-			sub_depart
-		});
-	};
-
-	const addDepartemen = async (data: { name: string }) => {
+	const addDepartemen = async (data: any) => {
 		setIsLoading(true);
 		try {
 			const response = await AddDepartement(data);
@@ -102,7 +72,7 @@ export const FormCreateDepartement = ({
 	const editDepartemen = async (data: { name: string }) => {
 		setIsLoading(true);
 		try {
-			const response = await EditDepartement(data, dataSelected.id);
+			const response = await EditDepartement(data);
 			if (response) {
 				toast.success("Edit Departement Success", {
 					position: "top-center",
