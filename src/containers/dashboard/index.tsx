@@ -1,6 +1,51 @@
+import { useEffect, useState } from "react";
 import { DataOverview } from "./data";
+import { GetCustomer, GetEmploye, GetSupplier } from "../../services";
 
 export const Dashboard = () => {
+
+	const [totalCustomer, setTotalCustomer] = useState<number>(0);
+	const [totalEmploye, setTotalEmploye] = useState<number>(0);
+	const [totalSupplier, setTotalSupplier] = useState<number>(0);
+
+	useEffect( () => {
+		getCustomer();
+		getEmploye();
+		getSupplier();
+	}, [])
+
+	const getCustomer = async () => {
+		try {
+			const response = await GetCustomer(1,10);
+			if (response.data) {
+				setTotalCustomer(response.data.totalData);
+			}
+		} catch (error) {
+			setTotalCustomer(0);
+		}
+	};
+
+	const getEmploye = async () => {
+		try {
+			const response = await GetEmploye(1,10);
+			if (response.data) {
+				setTotalEmploye(response.data.totalData);
+			}
+		} catch (error) {
+			setTotalEmploye(0);
+		}
+	};
+
+	const getSupplier = async () => {
+		try {
+			const response = await GetSupplier(1,10);
+			if (response.data) {
+				setTotalSupplier(response.data.totalData);
+			}
+		} catch (error) {
+			setTotalSupplier(0);
+		}
+	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20'>
@@ -16,12 +61,12 @@ export const Dashboard = () => {
 									{value.name}
 								</h4>
 								<h2 className='mt-3 text-3xl font-semibold text-gray-600'>
-									{value.total}
+									{ value.id === 'customer' ? totalCustomer : value.id === 'employe' ? totalEmploye : totalSupplier }
 								</h2>
-								<h4 className='mt-3 text-base font-semibold text-gray-400'>
+								{/* <h4 className='mt-3 text-base font-semibold text-gray-400'>
 									<span className='text-green-400'>{value.percentage}</span>{" "}
 									Customer from last month
-								</h4>
+								</h4> */}
 							</div>
 							<div
 								className='bg-red-500 p-2 flex justify-center items-center'
