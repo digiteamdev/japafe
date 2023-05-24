@@ -16,7 +16,8 @@ import {
 	DeleteDepartement,
 } from "../../../services";
 import { toast } from "react-toastify";
-import { ViewDepartement } from './view'
+import { ViewDepartement } from './view';
+import { FormEditDepartement } from "./formEdit";
 
 interface data {
 	id: string;
@@ -260,6 +261,8 @@ export const Departement = () => {
 					>
 						{ modalContent === 'view' ? (
 							<ViewDepartement dataSelected={dataSelected} />
+						) :  modalContent === 'edit' ? (
+							<FormEditDepartement content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						) : (
 							<FormCreateDepartement content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						)}

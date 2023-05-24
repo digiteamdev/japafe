@@ -6,3 +6,6 @@ export const SearchDepartement = (page: number, perpage: number, search: string)
 export const AddDepartement = (data: {name: string}) => Axios.post(process.env.BASE_URL+'/depart', data);
 export const EditDepartement = (data: any) => Axios.put(process.env.BASE_URL+`/depart`, data);
 export const DeleteDepartement = (id: string) => Axios.delete(process.env.BASE_URL+`/depart/${id}`);
+
+//sub depart
+export const DeleteSubDepartement = (id: string) => Axios.delete(process.env.BASE_URL+`/subdepart/${id}`);
