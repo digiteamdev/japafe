@@ -135,7 +135,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		try {
 			const response = await AddWor(dataBody);
 			if (response) {
-				toast.success("Add Customer PO Success", {
+				toast.success("Add Work Order Release Success", {
 					position: "top-center",
 					autoClose: 1000,
 					hideProgressBar: true,
@@ -148,7 +148,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Customer PO Failed", {
+			toast.error("Add Work Order Release Failed", {
 				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: true,
