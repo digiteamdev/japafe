@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../configs/session";
 import { DataOverview } from "./data";
 import { GetCustomer, GetEmploye, GetSupplier } from "../../services";
 
 export const Dashboard = () => {
 
+	const router = useRouter();
 	const [totalCustomer, setTotalCustomer] = useState<number>(0);
 	const [totalEmploye, setTotalEmploye] = useState<number>(0);
 	const [totalSupplier, setTotalSupplier] = useState<number>(0);
@@ -20,8 +23,13 @@ export const Dashboard = () => {
 			if (response.data) {
 				setTotalCustomer(response.data.totalData);
 			}
-		} catch (error) {
-			setTotalCustomer(0);
+		} catch (error:any) {
+			if(error.response.data.login){
+				setTotalCustomer(0);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 	};
 
@@ -31,8 +39,13 @@ export const Dashboard = () => {
 			if (response.data) {
 				setTotalEmploye(response.data.totalData);
 			}
-		} catch (error) {
-			setTotalEmploye(0);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setTotalEmploye(0);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 	};
 
@@ -42,8 +55,13 @@ export const Dashboard = () => {
 			if (response.data) {
 				setTotalSupplier(response.data.totalData);
 			}
-		} catch (error) {
-			setTotalSupplier(0);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setTotalSupplier(0);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 	};
 

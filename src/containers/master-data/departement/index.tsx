@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -28,6 +30,7 @@ interface data {
 }
 
 export const Departement = () => {
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
@@ -67,13 +70,17 @@ export const Departement = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / limit))
-				setIsLoading(false);
+				setTotalPage(Math.ceil( response.data.totalData / limit));
 			}
-		} catch (error) {
-			setData([]);
-			setIsLoading(false);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
+		setIsLoading(false);
 	};
 
 	const searchDepartement = async (

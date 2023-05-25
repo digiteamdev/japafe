@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
 import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePo } from "./formCreate";
@@ -9,6 +11,7 @@ import { toast } from "react-toastify"
 
 export const Po = () => {
 
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
@@ -52,8 +55,13 @@ export const Po = () => {
 			if (response.data) {
 				setDataCustomer(response.data.result);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 	};
 
@@ -173,16 +181,16 @@ export const Po = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.po_num_auto}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.id_po === '' ? '-' : res.id_po}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.quotations.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.quotations.deskription}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>

@@ -10,7 +10,11 @@ import provinceJson from "../../../assets/data/kodepos.json";
 import { supplierSchema } from "../../../schema/master-data/supplier/supplierSchema";
 import { Disclosure } from "@headlessui/react";
 import { Plus, Trash2 } from "react-feather";
-import { EditSupplier, EditSupplierBank, EditSupplierContact } from "../../../services";
+import {
+	EditSupplier,
+	EditSupplierBank,
+	EditSupplierContact,
+} from "../../../services";
 import { toast } from "react-toastify";
 
 interface props {
@@ -133,25 +137,45 @@ export const FormEditSuplier = ({ content, dataSuplier, showModal }: props) => {
 		getDistrict(dataSuplier.cities);
 		getSubDistrict(dataSuplier.districts);
 
-		dataSuplier.SupplierBank.map((res: any) => {
+		if(dataSuplier.SupplierBank.length > 0){
+			dataSuplier.SupplierBank.map((res: any) => {
+				listBank.push({
+					id: res.id,
+					supplierId: dataSuplier.id,
+					account_name: res.account_name,
+					bank_name: res.bank_name,
+					rekening: res.rekening,
+				});
+			});
+		}else{
 			listBank.push({
-				id: res.id,
+				id: "",
 				supplierId: dataSuplier.id,
-				account_name: res.account_name,
-				bank_name: res.bank_name,
-				rekening: res.rekening,
+				account_name: "",
+				bank_name: "",
+				rekening: "",
 			});
-		});
+		};
 
-		dataSuplier.SupplierContact.map((res: any) => {
-			listContact.push({
-				id: res.id,
-				supplierId: dataSuplier.id,
-				contact_person: res.contact_person,
-				email_person: res.email_person,
-				phone: res.phone,
+		if(dataSuplier.SupplierContact.length > 0){
+			dataSuplier.SupplierContact.map((res: any) => {
+				listContact.push({
+					id: res.id,
+					supplierId: dataSuplier.id,
+					contact_person: res.contact_person,
+					email_person: res.email_person,
+					phone: res.phone,
+				});
 			});
-		});
+		}else{
+			listContact.push({
+				id: "",
+				supplierId: dataSuplier.id,
+				contact_person: "",
+				email_person: "",
+				phone: "",
+			});
+		};
 
 		setDataBank({
 			SupplierBank: listBank,
@@ -730,65 +754,52 @@ export const FormEditSuplier = ({ content, dataSuplier, showModal }: props) => {
 										<div>
 											{values.SupplierContact.map((res, i) => (
 												<div key={i}>
-													<Disclosure defaultOpen>
-														{({ open }) => (
-															<>
-																<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-																	<h1 className='text-xl font-bold'>
-																		Contact Person #{i + 1}
-																	</h1>
-																</Disclosure.Button>
-																<Disclosure.Panel>
-																	<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-																		<div className='w-full'>
-																			<Input
-																				id={`SupplierContact.${i}.contact_person`}
-																				name={`SupplierContact.${i}.contact_person`}
-																				placeholder='Name'
-																				label='Name'
-																				type='text'
-																				value={res.contact_person}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																		<div className='w-full'>
-																			<InputWithIcon
-																				id={`SupplierContact.${i}.phone`}
-																				name={`SupplierContact.${i}.phone`}
-																				placeholder='Phone'
-																				type='text'
-																				label='Phone'
-																				value={res.phone}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-																				icon='+62'
-																				classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
-																			/>
-																		</div>
-																		<div className='w-full'>
-																			<Input
-																				id={`SupplierContact.${i}.email_person`}
-																				name={`SupplierContact.${i}.email_person`}
-																				type='email'
-																				placeholder='Email'
-																				label='Email'
-																				value={res.email_person}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																	</Section>
-																</Disclosure.Panel>
-															</>
-														)}
-													</Disclosure>
+													<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+														<div className='w-full'>
+															<Input
+																id={`SupplierContact.${i}.contact_person`}
+																name={`SupplierContact.${i}.contact_person`}
+																placeholder='Name'
+																label='Name'
+																type='text'
+																value={res.contact_person}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+														<div className='w-full'>
+															<InputWithIcon
+																id={`SupplierContact.${i}.phone`}
+																name={`SupplierContact.${i}.phone`}
+																placeholder='Phone'
+																type='text'
+																label='Phone'
+																value={res.phone}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+																icon='+62'
+																classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
+															/>
+														</div>
+														<div className='w-full'>
+															<Input
+																id={`SupplierContact.${i}.email_person`}
+																name={`SupplierContact.${i}.email_person`}
+																type='email'
+																placeholder='Email'
+																label='Email'
+																value={res.email_person}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+													</Section>
 													{i === values.SupplierContact.length - 1 ? (
 														<a
 															className='inline-flex text-green-500 mr-6 cursor-pointer'
@@ -883,63 +894,50 @@ export const FormEditSuplier = ({ content, dataSuplier, showModal }: props) => {
 										<div>
 											{values.SupplierBank.map((res, i) => (
 												<div key={i}>
-													<Disclosure defaultOpen>
-														{({ open }) => (
-															<>
-																<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-																	<h1 className='text-xl font-bold mt-3'>
-																		Bank Account {i + 1}
-																	</h1>
-																</Disclosure.Button>
-																<Disclosure.Panel>
-																	<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-																		<div className='w-full'>
-																			<Input
-																				id={`SupplierBank.${i}.bank_name`}
-																				name={`SupplierBank.${i}.bank_name`}
-																				placeholder='Bank Name'
-																				label='Bank Name'
-																				type='text'
-																				value={res.bank_name}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																		<div className='w-full'>
-																			<Input
-																				id={`SupplierBank.${i}.rekening`}
-																				name={`SupplierBank.${i}.rekening`}
-																				placeholder='Account Number'
-																				label='Account Number'
-																				type='text'
-																				value={res.rekening}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																		<div className='w-full'>
-																			<Input
-																				id={`SupplierBank.${i}.account_name`}
-																				name={`SupplierBank.${i}.account_name`}
-																				placeholder='Account Name'
-																				label='Account Name'
-																				type='text'
-																				value={res.account_name}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																	</Section>
-																</Disclosure.Panel>
-															</>
-														)}
-													</Disclosure>
+													<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+														<div className='w-full'>
+															<Input
+																id={`SupplierBank.${i}.bank_name`}
+																name={`SupplierBank.${i}.bank_name`}
+																placeholder='Bank Name'
+																label='Bank Name'
+																type='text'
+																value={res.bank_name}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+														<div className='w-full'>
+															<Input
+																id={`SupplierBank.${i}.rekening`}
+																name={`SupplierBank.${i}.rekening`}
+																placeholder='Account Number'
+																label='Account Number'
+																type='text'
+																value={res.rekening}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+														<div className='w-full'>
+															<Input
+																id={`SupplierBank.${i}.account_name`}
+																name={`SupplierBank.${i}.account_name`}
+																placeholder='Account Name'
+																label='Account Name'
+																type='text'
+																value={res.account_name}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+													</Section>
 													{i === values.SupplierBank.length - 1 ? (
 														<a
 															className='inline-flex text-green-500 mr-6 cursor-pointer'

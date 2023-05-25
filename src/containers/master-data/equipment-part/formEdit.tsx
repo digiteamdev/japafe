@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-	Section,
-	Input,
-	InputSelect,
-	InputArea,
-} from "../../../components";
+import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { equipmentSchema } from "../../../schema/master-data/equipment/equipmentSchema";
 import { Disclosure } from "@headlessui/react";
 import { Plus, Trash2 } from "react-feather";
-import { EditEquipment, EditEquipmentPart, DeleteEquipmentPart } from "../../../services";
+import {
+	EditEquipment,
+	EditEquipmentPart,
+	DeleteEquipmentPart,
+} from "../../../services";
 import { toast } from "react-toastify";
 
 interface props {
@@ -79,7 +78,7 @@ export const FormEditEquipment = ({
 			eq_image: dataEquipment.eq_image,
 		});
 
-		if(dataEquipment.eq_part.length > 0){
+		if (dataEquipment.eq_part.length > 0) {
 			dataEquipment.eq_part.map((res: any) => {
 				listPart.push({
 					id: res.id,
@@ -90,7 +89,7 @@ export const FormEditEquipment = ({
 					action: "not upload",
 				});
 			});
-		}else{
+		} else {
 			listPart.push({
 				id: "",
 				id_equipment: dataEquipment.id,
@@ -180,7 +179,8 @@ export const FormEditEquipment = ({
 				nama_part: res.nama_part,
 				keterangan_part: res.keterangan_part,
 				part_img: res.part_img,
-				action: res.action === "not upload" ? res.action : `upload.${indexFile}`
+				action:
+					res.action === "not upload" ? res.action : `upload.${indexFile}`,
 			});
 			if (res.action !== "not upload") {
 				indexFile = indexFile + 1;
@@ -414,7 +414,14 @@ export const FormEditEquipment = ({
 						}}
 						enableReinitialize
 					>
-						{({ handleChange,setFieldValue, handleSubmit, errors, touched, values }) => (
+						{({
+							handleChange,
+							setFieldValue,
+							handleSubmit,
+							errors,
+							touched,
+							values,
+						}) => (
 							<Form onChange={handleOnChanges}>
 								<FieldArray
 									name='eq_part'
@@ -422,142 +429,127 @@ export const FormEditEquipment = ({
 										<>
 											{values.eq_part.map((res, i) => (
 												<div key={i}>
-													<Disclosure defaultOpen>
-														{({ open }) => (
-															<>
-																<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-																	<h1 className='text-xl font-bold'>
-																		Part #{i + 1}
-																	</h1>
-																</Disclosure.Button>
-																<Disclosure.Panel>
-																	<Section className='grid md:grid-cols-3 sm:grid-cols- xs:grid-cols-1 gap-2 mt-2'>
-																		<div className='w-full'>
-																			<Input
-																				id={`eq_part.${i}.nama_part`}
-																				name={`eq_part.${i}.nama_part`}
-																				placeholder='Part Name'
-																				label='Part Name'
-																				type='text'
-																				value={res.nama_part}
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</div>
-																		<div className='w-full'>
-																			<InputSelect
-																				id={`eq_part.${i}.keterangan_part`}
-																				name={`eq_part.${i}.keterangan_part`}
-																				placeholder='Description Part'
-																				label='Deskription Part'
-																				onChange={handleChange}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			>
-																				<option defaultValue=''>
-																					Choose a Description Part
-																				</option>
-																				<option
-																					value='Rotating'
-																					selected={
-																						res.keterangan_part === "Rotating"
-																							? true
-																							: false
-																					}
-																				>
-																					Rotation Part
-																				</option>
-																				<option
-																					value='Static'
-																					selected={
-																						res.keterangan_part === "Static"
-																							? true
-																							: false
-																					}
-																				>
-																					Static Part
-																				</option>
-																				<option
-																					value='Consumable'
-																					selected={
-																						res.keterangan_part === "Consumable"
-																							? true
-																							: false
-																					}
-																				>
-																					Consumable Part
-																				</option>
-																			</InputSelect>
-																		</div>
-																		<div className='w-full'>
-																			{res.part_img !== null &&
-																			res.part_img.includes(
-																				"https://res.cloudinary.com/"
-																			) ? (
-																				<div>
-																					<label className='block mb-2 text-sm font-medium text-gray-900'>
-																						Part Image
-																					</label>
-																					<div className='flex'>
-																						<a
-																							href={res.part_img}
-																							target='_blank'
-																							className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 mr-2'
-																						>
-																							Show File
-																						</a>
-																						<p
-																							className='justify-center rounded-full border border-transparent bg-orange-500 px-4 py-1 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 cursor-pointer'
-																							onClick={() =>
-																								showUpload(
-																									`eq_part.${i}.part_img`
-																								)
-																							}
-																						>
-																							Change File
-																						</p>
-																						<input
-																							id={`eq_part.${i}.part_img`}
-																							name='part_img'
-																							placeholder='Certificate Image'
-																							type='file'
-																							className='hidden'
-																							onChange={() =>
-																								setFieldValue(
-																									`eq_part.${i}.action`,
-																									`upload.${i}`
-																								)
-																							}
-																						/>
-																					</div>
-																				</div>
-																			) : (
-																				<Input
-																					id={`eq_part.${i}.part_img`}
-																					name='part_img'
-																					placeholder='Part Image'
-																					label='Part Image'
-																					type='file'
-																					required={true}
-																					withLabel={true}
-																					className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																					onChange={() =>
-																						setFieldValue(
-																							`eq_part.${i}.action`,
-																							`upload.${i}`
-																						)
-																					}
-																				/>
-																			)}
-																		</div>
-																	</Section>
-																</Disclosure.Panel>
-															</>
-														)}
-													</Disclosure>
+													<Section className='grid md:grid-cols-3 sm:grid-cols- xs:grid-cols-1 gap-2 mt-2'>
+														<div className='w-full'>
+															<Input
+																id={`eq_part.${i}.nama_part`}
+																name={`eq_part.${i}.nama_part`}
+																placeholder='Part Name'
+																label='Part Name'
+																type='text'
+																value={res.nama_part}
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</div>
+														<div className='w-full'>
+															<InputSelect
+																id={`eq_part.${i}.keterangan_part`}
+																name={`eq_part.${i}.keterangan_part`}
+																placeholder='Description Part'
+																label='Deskription Part'
+																onChange={handleChange}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															>
+																<option defaultValue=''>
+																	Choose a Description Part
+																</option>
+																<option
+																	value='Rotating'
+																	selected={
+																		res.keterangan_part === "Rotating"
+																			? true
+																			: false
+																	}
+																>
+																	Rotation Part
+																</option>
+																<option
+																	value='Static'
+																	selected={
+																		res.keterangan_part === "Static"
+																			? true
+																			: false
+																	}
+																>
+																	Static Part
+																</option>
+																<option
+																	value='Consumable'
+																	selected={
+																		res.keterangan_part === "Consumable"
+																			? true
+																			: false
+																	}
+																>
+																	Consumable Part
+																</option>
+															</InputSelect>
+														</div>
+														<div className='w-full'>
+															{res.part_img !== null &&
+															res.part_img.includes(
+																"https://res.cloudinary.com/"
+															) ? (
+																<div>
+																	<label className='block mb-2 text-sm font-medium text-gray-900'>
+																		Part Image
+																	</label>
+																	<div className='flex'>
+																		<a
+																			href={res.part_img}
+																			target='_blank'
+																			className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 mr-2'
+																		>
+																			Show File
+																		</a>
+																		<p
+																			className='justify-center rounded-full border border-transparent bg-orange-500 px-4 py-1 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 cursor-pointer'
+																			onClick={() =>
+																				showUpload(`eq_part.${i}.part_img`)
+																			}
+																		>
+																			Change File
+																		</p>
+																		<input
+																			id={`eq_part.${i}.part_img`}
+																			name='part_img'
+																			placeholder='Certificate Image'
+																			type='file'
+																			className='hidden'
+																			onChange={() =>
+																				setFieldValue(
+																					`eq_part.${i}.action`,
+																					`upload.${i}`
+																				)
+																			}
+																		/>
+																	</div>
+																</div>
+															) : (
+																<Input
+																	id={`eq_part.${i}.part_img`}
+																	name='part_img'
+																	placeholder='Part Image'
+																	label='Part Image'
+																	type='file'
+																	required={true}
+																	withLabel={true}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	onChange={() =>
+																		setFieldValue(
+																			`eq_part.${i}.action`,
+																			`upload.${i}`
+																		)
+																	}
+																/>
+															)}
+														</div>
+													</Section>
 													{i === values.eq_part.length - 1 ? (
 														<a
 															className='inline-flex text-green-500 mr-6 mt-1 cursor-pointer'
@@ -579,7 +571,7 @@ export const FormEditEquipment = ({
 														<a
 															className='inline-flex text-red-500 cursor-pointer mt-1'
 															onClick={() => {
-																res.id !== "" ? deletePart(res.id) : null
+																res.id !== "" ? deletePart(res.id) : null;
 																arrayPart.remove(i);
 															}}
 														>

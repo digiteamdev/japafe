@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -14,8 +15,11 @@ import { ViewCustomer } from "./view";
 import { FormEditCustomer } from "./fromEdit";
 import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
+import { removeToken } from "../../../configs/session";
 
 export const Customer = () => {
+
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
@@ -58,8 +62,13 @@ export const Customer = () => {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};
