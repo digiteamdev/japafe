@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SectionTitle, Content, Table, Modal, Button, ModalDelete } from "../../../components";
+import { SectionTitle, Content, Table, Modal, Button, ModalDelete, Pagination } from "../../../components";
 import { Package, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateEquipment } from "./formCreate";
 import { ViewEquipment } from "./view";
@@ -14,6 +14,10 @@ export const Equipment = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "Name" },
@@ -23,7 +27,7 @@ export const Equipment = () => {
 	];
 
 	useEffect(() => {
-		getEquipment(1, 10);
+		getEquipment(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -34,7 +38,7 @@ export const Equipment = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getEquipment(1, 10);
+			getEquipment(page, perPage);
 		}
 	};
 
@@ -203,6 +207,20 @@ export const Equipment = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getEquipment(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete

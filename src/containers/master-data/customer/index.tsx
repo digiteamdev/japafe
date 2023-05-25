@@ -5,7 +5,8 @@ import {
 	Modal,
 	Table,
 	Button,
-	ModalDelete
+	ModalDelete,
+	Pagination
 } from "../../../components";
 import { User, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateCustomer } from "./formCreate";
@@ -21,6 +22,10 @@ export const Customer = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "Customer Name" },
@@ -30,7 +35,7 @@ export const Customer = () => {
 	];
 
 	useEffect(() => {
-		getCustomer(1, 10);
+		getCustomer(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -41,7 +46,7 @@ export const Customer = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCustomer(1, 10);
+			getCustomer(page, perPage);
 		}
 	};
 
@@ -208,6 +213,20 @@ export const Customer = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getCustomer(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete

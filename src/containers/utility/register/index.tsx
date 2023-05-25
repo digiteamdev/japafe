@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SectionTitle, Content, Modal, Table, Button } from "../../../components";
+import { SectionTitle, Content, Modal, Table, Button, Pagination } from "../../../components";
 import { User, Edit, Trash2, Eye } from "react-feather";
 import { FormCreateUser } from "./formCreate";
 import { GetUser } from "../../../services";
@@ -10,6 +10,10 @@ export const Register = () => {
 	const [data, setData] = useState<any>([]);
 	const [countData, setCountData] = useState<number>(0);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "NIK" },
@@ -19,7 +23,7 @@ export const Register = () => {
 	];
 
 	useEffect(() => {
-		getUser(1, 10);
+		getUser(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -149,6 +153,20 @@ export const Register = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getUser(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			<Modal
 				title='User'

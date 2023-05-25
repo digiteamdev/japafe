@@ -6,6 +6,7 @@ import {
 	Modal,
 	Button,
 	ModalDelete,
+	Pagination
 } from "../../../components";
 import { User, Trash2, Eye, Edit } from "react-feather";
 import { FormCreateEmploye } from "./formCreate";
@@ -35,6 +36,10 @@ export const Employe = () => {
 	const [listDepartement, setListDepartement] = useState<dataDepartement[]>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "NIK" },
@@ -46,7 +51,7 @@ export const Employe = () => {
 
 	useEffect(() => {
 		getDepartement();
-		getEmploye(1, 10);
+		getEmploye(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -57,7 +62,7 @@ export const Employe = () => {
 			setDataSelected(false);
 		}
 		if (reload) {
-			getEmploye(1, 10);
+			getEmploye(page, perPage);
 		}
 	};
 
@@ -247,6 +252,20 @@ export const Employe = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getEmploye(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
