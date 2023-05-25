@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete } from "../../../components";
+import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
 import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePo } from "./formCreate";
 import { ViewPo } from "./view";
@@ -16,6 +16,10 @@ export const Po = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
     const [dataCustomer, setDataCustomer] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "ID PO" },
@@ -26,7 +30,7 @@ export const Po = () => {
 	];
 
 	useEffect(() => {
-		getPo(1, 10);
+		getPo(page, perPage);
         getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -38,7 +42,7 @@ export const Po = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if(reload){
-			getPo(1, 10);
+			getPo(page, perPage);
 		}
 	};
 
@@ -217,6 +221,20 @@ export const Po = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getPo(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete

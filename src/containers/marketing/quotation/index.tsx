@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete } from "../../../components";
+import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
 import { BookOpen, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateQuotation } from "./formCreate";
 import { ViewQuotation } from "./view";
@@ -17,6 +17,10 @@ export const Quotation = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
     const [dataCustomer, setDataCustomer] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [page, setPage] = useState<number>(1);
+	const [perPage, setperPage] = useState<number>(10);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No" },
 		{ name: "Customer" },
@@ -26,7 +30,7 @@ export const Quotation = () => {
 	];
 
 	useEffect(() => {
-		getQuatation(1, 10);
+		getQuatation(page, perPage);
         getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -38,7 +42,7 @@ export const Quotation = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if(reload){
-			getQuatation(1, 10);
+			getQuatation(page, perPage);
 		}
 	};
 
@@ -214,6 +218,20 @@ export const Quotation = () => {
 						})
 					)}
 				</Table>
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={11} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getQuatation(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
