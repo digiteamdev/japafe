@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import { SectionTitle, Content, Table, Modal, Button, ModalDelete, Pagination } from "../../../components";
 import { Package, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateEquipment } from "./formCreate";
@@ -8,6 +10,8 @@ import { DeleteEquipment, GetEquipment, SearchEquipment } from "../../../service
 import { toast } from "react-toastify";
 
 export const Equipment = () => {
+
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -50,8 +54,13 @@ export const Equipment = () => {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};

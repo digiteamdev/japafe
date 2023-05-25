@@ -6,7 +6,7 @@ import Layout from "../../src/components/layout/Layout";
 import Head from "next/head";
 
 export default function DashboardPage() {
-	const router = useRouter()
+	const router = useRouter();
 	const token = getToken();
 	
 	useEffect( () => {

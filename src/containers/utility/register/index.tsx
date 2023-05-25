@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import { SectionTitle, Content, Modal, Table, Button, Pagination } from "../../../components";
 import { User, Edit, Trash2, Eye } from "react-feather";
 import { FormCreateUser } from "./formCreate";
 import { GetUser } from "../../../services";
 
 export const Register = () => {
+
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [data, setData] = useState<any>([]);
@@ -40,8 +44,13 @@ export const Register = () => {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};

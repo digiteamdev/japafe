@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Section, Input, InputSelect, InputArea } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputArea,
+	MultipleSelect,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { quotationSchema } from "../../../schema/marketing/quotation/quotationSchema";
 import { Plus, Trash2 } from "react-feather";
@@ -186,15 +192,30 @@ export const FormEditQuotation = ({
 		try {
 			const response = await GetAllEquipment();
 			if (response.data) {
-				setEquipment(response.data.result);
+				let list: any = [];
+				let listEquipment: any = [];
 				response.data.result.map((res: any) => {
 					if (dataQuotation.eqandpart.length > 0) {
-						if (dataQuotation.eqandpart[0].id_equipment === res.id) {
-							setEquipmentSelected(res.id);
-							setListParts(res.eq_part);
-						}
+						dataQuotation.eqandpart.map((result: any) => {
+							res.eq_part.map((dataPart: any) => {
+								if (dataPart.id_equipment === result.id_equipment) {
+									list.push(dataPart);
+									listEquipment.push(res);
+									// setEquipmentSelected(res.id);
+								}
+							});
+						});
 					}
 				});
+				setListParts(list);
+				const keys = ["id"];
+				const eq = listEquipment.filter(
+					(
+						(s) => (o: any) =>
+							((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+					)(new Set())
+				);
+				setEquipment(eq);
 			}
 		} catch (error) {
 			setEquipment([]);
@@ -230,6 +251,16 @@ export const FormEditQuotation = ({
 		} else if (event.target.name === "quo_img") {
 			setImgQuotation(event.target.files[0]);
 		}
+	};
+
+	const selectEquipment = (data: any) => {
+		let list: any = [];
+		data.map((res: any) => {
+			res.eq_part.map((dataPart: any) => {
+				list.push(dataPart);
+			});
+		});
+		setListParts(list);
 	};
 
 	const editQuotation = async (payload: any) => {
@@ -352,13 +383,18 @@ export const FormEditQuotation = ({
 		setIsLoading(true);
 		let bodyForm: any = [];
 		payload.parts.map((res: any) => {
-			bodyForm.push({
-				id: res.id,
-				id_quotation: res.id_quotation,
-				id_part: res.id_part,
-				id_equipment: equipmentSelected,
-				qty: res.qty,
-				keterangan: res.keterangan,
+			listParts.map((eq: any) => {
+				if (eq.id === res.id) {
+					const dataPart = {
+						id: res.id,
+						id_quotation: res.id_quotation,
+						id_part: res.id_part,
+						id_equipment: eq.id_equipment,
+						qty: res.qty,
+						keterangan: res.keterangan
+					};
+					bodyForm.push(dataPart);
+				}
 			});
 		});
 
@@ -843,7 +879,7 @@ export const FormEditQuotation = ({
 							<Form onChange={handleOnChanges}>
 								<Section className='grid md:grid-cols-1 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
-										<InputSelect
+										{/* <InputSelect
 											id='equipment'
 											name='equipment'
 											placeholder='Equipment'
@@ -873,7 +909,16 @@ export const FormEditQuotation = ({
 													);
 												})
 											)}
-										</InputSelect>
+										</InputSelect> */}
+										<MultipleSelect
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											listdata={equipment}
+											placeholder='Select Equipment'
+											displayValue='nama'
+											selectedValue={equipment}
+											onSelect={selectEquipment}
+											onRemove={selectEquipment}
+										/>
 									</div>
 								</Section>
 								<FieldArray

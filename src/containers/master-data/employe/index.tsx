@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -29,6 +31,8 @@ interface dataDepartement {
 }
 
 export const Employe = () => {
+
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
@@ -85,8 +89,13 @@ export const Employe = () => {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};
@@ -204,16 +213,16 @@ export const Employe = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.NIK}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.employee_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.departement.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										+62{res.phone_number}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>

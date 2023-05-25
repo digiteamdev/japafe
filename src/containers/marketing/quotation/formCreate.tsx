@@ -474,6 +474,7 @@ export const FormCreateQuotation = ({
 									placeholder="Select Equipment"
 									displayValue="nama"
 									onSelect={selectEquipment}
+									onRemove={selectEquipment}
 								/>
 							</div>
 						</Section>

@@ -11,6 +11,11 @@ export const getToken = () => {
     return token
 }
 
+export const getUsername = () => {
+    let username = Cookies.get('username');
+    return username
+}
+
 export const removeToken = () => {
     Cookies.remove('token');
     Cookies.remove('role');

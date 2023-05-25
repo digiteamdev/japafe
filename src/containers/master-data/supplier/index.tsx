@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
+import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -16,6 +18,8 @@ import { GetSupplier, SearchSupplier, DeleteSupplier } from "../../../services";
 import { toast } from "react-toastify";
 
 export const Supplier = () => {
+
+	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -58,8 +62,13 @@ export const Supplier = () => {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};
@@ -170,15 +179,15 @@ export const Supplier = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.supplier_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.SupplierContact.length > 0
 											? `+62${res.SupplierContact[0].phone}`
 											: "-"}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
 										{res.office_email}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>

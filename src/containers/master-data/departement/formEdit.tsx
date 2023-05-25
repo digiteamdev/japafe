@@ -48,13 +48,22 @@ export const FormEditDepartement = ({
 
     const settingData = () => {
         let subDepart: any = []
-        dataSelected.sub_depart.map( (res:any) => {
-            subDepart.push({
-                id: res.id,
-                deptId: dataSelected.id,
-                name: res.name,
-            })
-        })
+        if(dataSelected.sub_depart.length > 0){
+			dataSelected.sub_depart.map( (res:any) => {
+				subDepart.push({
+					id: res.id,
+					deptId: dataSelected.id,
+					name: res.name,
+				})
+			})
+		}else{
+			subDepart.push({
+				id: "",
+				deptId: dataSelected.id,
+				name: "",
+			})
+		}
+
         setData({
             id: dataSelected.id,
             name: dataSelected.name,

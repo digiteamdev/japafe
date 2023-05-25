@@ -35,7 +35,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 	return (
 		<aside
 			ref={innerRef}
-			className={`z-20 bg-gray-100 lg:block md:block w-full md:w-64 lg:w-64 h-full fixed transition-all duration-500 ease-in-out ${
+			className={`z-20 bg-blue-100 lg:block md:block w-full md:w-64 lg:w-64 h-full fixed transition-all duration-500 ease-in-out ${
 				isSidebar ? "translate-x-0 block" : "translate-x-[-300px] invisible"
 			}`}
 		>
@@ -68,7 +68,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 										className={`pl-4 mx-[12px] my-2 rounded-lg cursor-pointer py-2 ${
 											page === value.id
 												? "bg-red-500 hover:bg-red-400"
-												: "hover:bg-gray-200"
+												: "hover:bg-red-300"
 										}`}
 									>
 										<p
@@ -86,7 +86,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 								<div key={index}>
 									<li
 										className={`pl-4 mx-[12px] my-2 rounded-lg cursor-pointer py-2  ${
-											page === value.id ? "bg-red-500 hover:bg-red-400" : "hover:bg-gray-200"
+											page === value.id ? "bg-red-500 hover:bg-red-400" : "hover:bg-red-300"
 										}`}
 										onClick={() => {
 											if (value.subMenu) {
@@ -104,7 +104,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 									>
 										<div
 											className={`flex items-center justify-between pr-2 w-full ${
-												page === value.id ? "" : "hover:bg-gray-200"
+												page === value.id ? "" : "hover:bg-red-300"
 											}`}
 										>
 											<span
@@ -159,7 +159,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 					})}
 				</ul>
 			</div>
-			<div className='mx-[24px]mb-6 text-center'>
+			<div className='mx-[24px] my-5 text-center'>
 				<p className='text-xs text-black'>
 					© {new Date().getFullYear()} Digi Techno Indonesia
 				</p>
