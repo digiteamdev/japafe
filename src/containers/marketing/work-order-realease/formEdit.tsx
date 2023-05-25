@@ -772,7 +772,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 								)}
 							</div>
 						</Section>
-						{dataWor.job_no === "" ? (
+						{dataWor.job_no === "" || dataWor.status === 'unvalid' ? (
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button
