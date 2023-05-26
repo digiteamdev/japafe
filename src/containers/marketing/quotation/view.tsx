@@ -91,7 +91,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							</table>
 						</div>
 					</Section>
-					<h1 className='font-bold text-xl mt-2'>Quotation Detail</h1>
+					<h1 className='font-bold text-xl mt-2'>Scope Of work</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
