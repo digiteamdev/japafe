@@ -131,7 +131,7 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 		if (event.target.name === "employeeId") {
 			if (event.target.value !== "Choose a employe") {
                 let employe = JSON.parse(event.target.value)
-				setDepartement(employe.departement.name);
+				setDepartement(employe.sub_depart.name);
                 setEmployeId(employe.id)
 			} else {
 				setDepartement("");

@@ -68,7 +68,7 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 										Departement
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.departement.name}
+									{dataSelected.sub_depart.departement.name} / {dataSelected.sub_depart.name}
 									</td>
 								</tr>
 								<tr>

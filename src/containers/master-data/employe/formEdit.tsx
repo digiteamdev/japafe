@@ -51,7 +51,7 @@ interface dataEmploye {
 	start_join: Date;
 	remaining_days_of: string;
 	marital_status: string;
-	departId: string;
+	subdepartId: string;
 	employee_status: string;
 	email: string;
 	spouse_name: any;
@@ -137,7 +137,7 @@ export const FormEditEmploye = ({
 		start_join: new Date(),
 		remaining_days_of: "",
 		marital_status: "Single",
-		departId: "",
+		subdepartId: "",
 		employee_status: "Contract",
 		email: "",
 		spouse_name: null,
@@ -284,7 +284,7 @@ export const FormEditEmploye = ({
 			start_join: new Date(dataEmploye.start_join),
 			remaining_days_of: dataEmploye.remaining_days_of,
 			marital_status: dataEmploye.marital_status,
-			departId: dataEmploye.departement.id,
+			subdepartId: dataEmploye.sub_depart.id,
 			employee_status: dataEmploye.employee_status,
 			email: dataEmploye.email,
 			spouse_name: dataEmploye.spouse_name,
@@ -834,8 +834,8 @@ export const FormEditEmploye = ({
 							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<InputSelect
-										id='departId'
-										name='departId'
+										id='subdepartId'
+										name='subdepartId'
 										placeholder='Departement'
 										label='Departement'
 										onChange={handleChange}
@@ -854,7 +854,7 @@ export const FormEditEmploye = ({
 															value={res.id}
 															key={i}
 															selected={
-																res.id === values.departId ? true : false
+																res.id === values.subdepartId ? true : false
 															}
 														>
 															{res.name}
@@ -864,9 +864,9 @@ export const FormEditEmploye = ({
 											</>
 										)}
 									</InputSelect>
-									{touched.departId && errors.departId && (
+									{touched.subdepartId && errors.subdepartId && (
 										<span className='mt-2 text-xs text-red-500 font-semibold'>
-											{errors.departId}
+											{errors.subdepartId}
 										</span>
 									)}
 								</div>
