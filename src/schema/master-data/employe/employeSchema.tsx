@@ -20,7 +20,7 @@ export const employeSchema = yup.object().shape({
     remaining_days_of:  yup.string().required("Remaining day off not empty"),
     gender: yup.string().required("Gender not empty"),
     marital_status: yup.string().required("Marital Status not empty"),
-    departId: yup.string().required("Departement not empty"),
+    subdepartId: yup.string().required("Departement not empty"),
     employee_status: yup.string().required("Employe Status not empty"),
     email: yup.string().required("Email Status not empty"),
     spouse_name: yup.string().nullable(),

@@ -220,7 +220,7 @@ export const Employe = () => {
 										{res.employee_name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.departement.name}
+										{res.sub_depart.name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										+62{res.phone_number}
