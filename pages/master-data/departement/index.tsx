@@ -20,7 +20,7 @@ export default function DepartementPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>Departement</title>
+				<title>JAPA MLS | Departement</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Departement />

@@ -957,7 +957,7 @@ export const FormEditQuotation = ({
 																					res.id_part === part.id ? true : false
 																				}
 																			>
-																				{part.nama_part}
+																				{part.nama_part} ({part.equipment.nama})
 																			</option>
 																		);
 																	})

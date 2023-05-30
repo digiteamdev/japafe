@@ -20,7 +20,7 @@ export default function EmployePage() {
 	return (
 		<Layout>
 			<Head>
-				<title>Employe</title>
+				<title>JAPA MLS | Employe</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Employe />

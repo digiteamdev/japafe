@@ -20,7 +20,7 @@ export default function EquipmentPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>Equipment & Part</title>
+				<title>JAPA MLS | Equipment & Part</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Equipment />
