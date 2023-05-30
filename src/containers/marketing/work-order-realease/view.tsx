@@ -215,13 +215,17 @@ export const ViewWor = ({ dataSelected, content, showModal }: props) => {
 											File
 										</td>
 										<td className='w-[50%] py-2 px-2 border border-gray-200'>
-											<a
-												href={dataSelected.file_list}
-												target='_blank'
-												className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
-											>
-												Show File
-											</a>
+											{
+												dataSelected.file_list === '' ? 'Tidak Ada File' : (
+													<a
+														href={dataSelected.file_list}
+														target='_blank'
+														className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
+													>
+														Show File
+													</a>
+												)
+											}
 										</td>
 									</tr>
 								</tbody>

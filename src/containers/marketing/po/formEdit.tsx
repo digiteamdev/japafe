@@ -3,13 +3,12 @@ import { Section, Input, InputSelect, InputDate } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { poSchema } from "../../../schema/marketing/po/PoSchema";
 import {
-	GetAllQuotation,
+	GetAllQuotationEdit,
 	EditPo,
 	EditPoDetail,
 	DeletePoDetail,
     EditPoPayment,
 } from "../../../services";
-import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 
 interface props {
@@ -62,7 +61,11 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	const [activeTabs, setActiveTabs] = useState<any>(dataTabs[0]);
 	const [listQuotation, setListQuotation] = useState<any>([]);
 	const [tax, setTax] = useState<number>(0);
-	const [grandTotal, setGrandTotal] = useState<any>(0);
+	const [taxPPN, setTaxPPN] = useState<number>(0);
+	const [taxPPH, setTaxPPH] = useState<number>(0);
+	const [total, setTotal] = useState<number>(0);
+	const [vat, setVat] = useState<number>(0);
+	const [grandTotal, setGrandTotal] = useState<number>(0);
 	const [customer, setCustomer] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
@@ -111,6 +114,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	}, []);
 
 	const settingData = () => {
+		console.log(dataPo)
 		let dataDetail: any = [];
         let dataTerm: any = [];
 		setData({
@@ -150,11 +154,11 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		}
 
 		if (dataPo.tax === "ppn") {
-			setTax(11);
+			setTax(dataPo.quotations.Customer.ppn);
 		} else if (dataPo.tax === "pph") {
-			setTax(2);
+			setTax(dataPo.quotations.Customer.pph);
 		} else if (dataPo.tax === "ppn_and_pph") {
-			setTax(13);
+			setTax(dataPo.quotations.Customer.ppn + dataPo.quotations.Customer.pph);
 		} else {
 			setTax(0);
 		}
@@ -192,20 +196,29 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setCustomer(dataPo.quotations.Customer.name);
 		setCountPart(dataPo.quotations.eqandpart.length);
 		setQuoId(dataPo.quotations.id);
+		setTaxPPH(dataPo.quotations.Customer.pph);
+		setTaxPPN(dataPo.quotations.Customer.ppn);
+		setTotal(dataPo.total);
+		setGrandTotal(dataPo.grand_tot);
+		setVat(dataPo.vat);
 	};
 
 	const totalPrice = (data: any) => {
-		let total: number = 0;
+		let totals: number = 0;
 		data.map((res: any, i: number) => {
 			const htmlTotal = document.getElementById(
 				`Deskription_CusPo.${i}.total`
 			) as HTMLInputElement;
 			if (htmlTotal !== null) {
 				const totalPrice: any = htmlTotal.value === "" ? 0 : htmlTotal.value;
-				total = total + parseInt(totalPrice);
+				totals = totals + parseInt(totalPrice);
 			}
 		});
-		return total.toString();
+		if(totals === 0){
+			return total.toString();
+		}else{
+			return totals.toString();
+		}
 		// return formatRupiah(total.toString())
 	};
 
@@ -222,15 +235,19 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		const htmlTotal = document.getElementById("total") as HTMLInputElement;
 		const htmlVat = document.getElementById("vat") as HTMLInputElement;
 		if (htmlTotal !== null && htmlVat !== null) {
-			const Total: any = parseInt(htmlTotal.value) + parseInt(htmlVat.value);
-			return Total.toString();
+			const Total: number = parseInt(htmlTotal.value) + parseInt(htmlVat.value);
+			if(isNaN(Total)){
+				return grandTotal.toString();
+			}else{
+				return Total.toString();
+			}
 			// return formatRupiah(Total.toString())
 		}
 	};
 
 	const getQuatation = async () => {
 		try {
-			const response = await GetAllQuotation();
+			const response = await GetAllQuotationEdit(dataPo.quo_id);
 			if (response.data) {
 				setListQuotation(response.data.result);
 			}
@@ -319,11 +336,11 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			htmlTotalTerm.value = totalTerm.toString();
 		} else if (event.target.name === "tax") {
 			if (event.target.value === "ppn") {
-				setTax(11);
+				setTax(taxPPN);
 			} else if (event.target.value === "pph") {
-				setTax(2);
+				setTax(taxPPH);
 			} else if (event.target.value === "ppn_and_pph") {
-				setTax(13);
+				setTax(taxPPN + taxPPH);
 			} else {
 				setTax(0);
 			}
@@ -570,6 +587,57 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<InputSelect
+											id='quotation'
+											name='quotation'
+											placeholder='Quotation'
+											label='Quotation'
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option defaultValue='' selected>
+												Choose Quotation
+											</option>
+											{listQuotation.length === 0 ? (
+												<option value=''>No Data Quotation</option>
+											) : (
+												listQuotation.map((res: any, i: number) => {
+													return (
+														<option
+															value={JSON.stringify(res)}
+															key={i}
+															selected={res.id === values.quo_id ? true : false}
+														>
+															{res.quo_auto} - {res.Customer.name}
+														</option>
+													);
+												})
+											)}
+										</InputSelect>
+										{errors.quo_id && touched.quo_id ? (
+											<span className='text-red-500 text-xs'>
+												{errors.quo_id}
+											</span>
+										) : null}
+									</div>
+									<div className='w-full'>
+										<Input
+											id='customer'
+											name='customer'
+											placeholder='Customer'
+											label='Customer Name'
+											type='text'
+											value={customer}
+											disabled={true}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<InputSelect
 											id='tax'
 											name='tax'
 											placeholder='tax'
@@ -624,57 +692,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 											type='text'
 											value={values.noted}
 											onChange={handleChange}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-									<div className='w-full'>
-										<InputSelect
-											id='quotation'
-											name='quotation'
-											placeholder='Quotation'
-											label='Quotation'
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose Quotation
-											</option>
-											{listQuotation.length === 0 ? (
-												<option value=''>No Data Quotation</option>
-											) : (
-												listQuotation.map((res: any, i: number) => {
-													return (
-														<option
-															value={JSON.stringify(res)}
-															key={i}
-															selected={res.id === values.quo_id ? true : false}
-														>
-															{res.quo_auto} - {res.Customer.name}
-														</option>
-													);
-												})
-											)}
-										</InputSelect>
-										{errors.quo_id && touched.quo_id ? (
-											<span className='text-red-500 text-xs'>
-												{errors.quo_id}
-											</span>
-										) : null}
-									</div>
-									<div className='w-full'>
-										<Input
-											id='customer'
-											name='customer'
-											placeholder='Customer'
-											label='Customer Name'
-											type='text'
-											value={customer}
-											disabled={true}
 											required={true}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

@@ -32,6 +32,22 @@ export const ViewCustomer = ({ dataSelected }: props) => {
 											{dataSelected.email}
 										</td>
 									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											PPN
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.ppn}%
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											PPH
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.pph}%
+										</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>

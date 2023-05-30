@@ -96,7 +96,7 @@ export const Quotation = () => {
 		try {
 			const response = await DeleteQuotation(id);
 			if(response.data){
-				toast.success("Delete Supplier Success", {
+				toast.success("Delete Quotation Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,7 +109,7 @@ export const Quotation = () => {
 				getQuatation(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Supplier Failed", {
+			toast.error("Delete Quotation Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -131,7 +131,7 @@ export const Quotation = () => {
 				icon={<BookOpen className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Quataion'
+				title='Quotation'
 				print={true}
 				showModal={showModal}
 				search={searchQuotation}
