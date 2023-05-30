@@ -78,13 +78,17 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 											Quotation File
 										</td>
 										<td className='w-[50%] px-2 py-2 border border-gray-200'>
-											<a
-												href={dataSelected.quo_img}
-												target='_blank'
-												className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
-											>
-												show file
-											</a>
+											{
+												dataSelected.quo_img === '' ? 'Tidak Ada File' : (
+													<a
+														href={dataSelected.quo_img}
+														target='_blank'
+														className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
+													>
+														show file
+													</a>
+												)
+											}
 										</td>
 									</tr>
 								</tbody>

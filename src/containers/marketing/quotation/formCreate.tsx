@@ -349,7 +349,7 @@ export const FormCreateQuotation = ({
 									label='Quotation File'
 									type='file'
 									onChange={handleChange}
-									required={true}
+									required={false}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>

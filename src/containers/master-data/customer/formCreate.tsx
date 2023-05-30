@@ -22,6 +22,8 @@ interface data {
 	id_custom: string;
 	name: string;
 	email: string;
+	ppn: string;
+	pph: string;
 	contact: [
 		{
 			contact_person: string;
@@ -54,6 +56,8 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 		id_custom: "",
 		name: "",
 		email: "",
+		ppn: "",
+		pph: "",
 		contact: [
 			{
 				contact_person: "",
@@ -234,6 +238,42 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 							</div>
 							{errors.email && touched.email ? (
 								<span className='text-red-500 text-xs'>{errors.email}</span>
+							) : null}
+						</Section>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='ppn'
+									name='ppn'
+									placeholder='PPN'
+									label='PPN'
+									type='number'
+									value={values.ppn}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+								{errors.ppn && touched.ppn ? (
+									<span className='text-red-500 text-xs'>{errors.ppn}</span>
+								) : null}
+							</div>
+							<div className='w-full'>
+								<Input
+									id='pph'
+									name='pph'
+									type='number'
+									placeholder='PPH'
+									label='PPH'
+									value={values.pph}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							{errors.pph && touched.pph ? (
+								<span className='text-red-500 text-xs'>{errors.pph}</span>
 							) : null}
 						</Section>
 						<FieldArray

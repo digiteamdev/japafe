@@ -18,6 +18,9 @@ interface data {
 	tax: string;
 	noted: string;
 	date_of_po: Date;
+	vat: string;
+	grand_tot: string;
+	total: string;
 	Deskription_CusPo: [
 		{
 			description: string;
@@ -41,7 +44,8 @@ interface data {
 export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [tax, setTax] = useState<number>(0);
-	const [total, setTotal] = useState<number>(0);
+	const [taxPPN, setTaxPPN] = useState<number>(0);
+	const [taxPPH, setTaxPPH] = useState<number>(0);
 	const [listQuotation, setListQuotation] = useState<any>([]);
 	const [customerName, setCustomerName] = useState<string>("");
 	const [deskription, setDeskription] = useState<string>("");
@@ -55,6 +59,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		quo_id: "",
 		tax: "",
 		noted: "",
+		vat: "",
+		grand_tot: "",
+		total: "",
 		date_of_po: new Date(),
 		Deskription_CusPo: [
 			{
@@ -106,6 +113,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				setEquipment(data.eqandpart[0].equipment.nama);
 				setCountPart(data.eqandpart.length);
 				setQuoId(data.id);
+				setTaxPPH(data.Customer.pph);
+				setTaxPPN(data.Customer.ppn);
 			} else {
 				setCustomerName("");
 				setDeskription("");
@@ -168,7 +177,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			const nameSplit = event.target.name.split("."),
 				index = nameSplit[1],
 				percent = event.target.value,
-				htmlTotal = document.getElementById("Grand_total") as HTMLInputElement,
+				htmlTotal = document.getElementById("grand_tot") as HTMLInputElement,
 				htmlTotalTerm = document.getElementById(
 					`term_of_pay.${index}.price`
 				) as HTMLInputElement,
@@ -177,11 +186,11 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			htmlTotalTerm.value = totalTerm.toString();
 		} else if (event.target.name === "tax") {
 			if (event.target.value === "ppn") {
-				setTax(11);
+				setTax(taxPPN);
 			} else if (event.target.value === "pph") {
-				setTax(2);
+				setTax(taxPPH);
 			} else if (event.target.value === "ppn_and_pph") {
-				setTax(13);
+				setTax(taxPPN + taxPPH);
 			} else {
 				setTax(0);
 			}
@@ -224,6 +233,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 
 	const addPo = async (payload: any) => {
 		setIsLoading(true);
+		const htmlTotals = document.getElementById("total") as HTMLInputElement;
+		const htmlVat = document.getElementById("vat") as HTMLInputElement;
+		const htmlGrandTotal = document.getElementById("grand_tot") as HTMLInputElement
 		const desc: any = [];
 		const term: any = [];
 		payload.Deskription_CusPo.map((res: any, i: number) => {
@@ -259,6 +271,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			date_of_po: payload.date_of_po,
 			Deskription_CusPo: desc,
 			term_of_pay: term,
+			vat: htmlVat.value,
+			grand_tot: htmlGrandTotal.value,
+			total: htmlTotals.value
 		};
 
 		try {
@@ -358,44 +373,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputSelect
-									id='tax'
-									name='tax'
-									placeholder='tax'
-									label='Tax'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
-										Choose tax
-									</option>
-									<option value=''>None</option>
-									<option value='ppn'>PPN</option>
-									<option value='pph'>PPH</option>
-									<option value='ppn_and_pph'>PPN And PPH</option>
-								</InputSelect>
-								{errors.tax && touched.tax ? (
-									<span className='text-red-500 text-xs'>{errors.tax}</span>
-								) : null}
-							</div>
-							<div className='w-full'>
-								<Input
-									id='noted'
-									name='noted'
-									placeholder='Noted'
-									label='Noted'
-									type='text'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelect
 									id='quotation'
 									name='quotation'
 									placeholder='Quotation'
@@ -432,6 +409,44 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									type='text'
 									value={customerName}
 									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputSelect
+									id='tax'
+									name='tax'
+									placeholder='tax'
+									label='Tax'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option defaultValue='' selected>
+										Choose tax
+									</option>
+									<option value=''>None</option>
+									<option value='ppn'>PPN</option>
+									<option value='pph'>PPH</option>
+									<option value='ppn_and_pph'>PPN And PPH</option>
+								</InputSelect>
+								{errors.tax && touched.tax ? (
+									<span className='text-red-500 text-xs'>{errors.tax}</span>
+								) : null}
+							</div>
+							<div className='w-full'>
+								<Input
+									id='noted'
+									name='noted'
+									placeholder='Noted'
+									label='Noted'
+									type='text'
+									onChange={handleChange}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -684,8 +699,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 													<td className='w-[10%]'>Grand Total</td>
 													<td className='w-[25%]'>
 														<Input
-															id='Grand_total'
-															name='Grand_total'
+															id='grand_tot'
+															name='grand_tot'
 															placeholder='Grand Total'
 															label='Grand Total'
 															type='text'

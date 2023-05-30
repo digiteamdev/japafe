@@ -51,6 +51,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	const [customerContact, setCustomerContact] = useState<string>("");
 	const [customerAddress, setCustomerAddress] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
+	const [valueContract, setValueContract] = useState<string>("");
     const [file, setFile] = useState<string>("");
 	const [data, setData] = useState<data>({
 		job_no: "",
@@ -95,6 +96,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 					data.quotations.Customer.address[0].address_workshop
 				);
 				setEquipment(data.quotations.eqandpart[0].equipment.nama);
+				setValueContract(data.total)
 			} else {
                 setCustomerId("");
 				setCustomer("");
@@ -117,7 +119,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
         dataBody.append("job_desk", payload.job_desk);
         dataBody.append("contract_no_spk", payload.contract_no_spk);
         dataBody.append("employeeId", payload.employeeId);
-        dataBody.append("value_contract", payload.value_contract);
+        dataBody.append("value_contract", valueContract);
         dataBody.append("priority_status", payload.priority_status);
         dataBody.append("qty", payload.qty);
         dataBody.append("unit", payload.unit);
@@ -209,7 +211,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								<InputDate
 									id='date'
 									label='Date'
-									value={new Date()}
+									value={values.date_wor}
 									onChange={(value: any) => setFieldValue("date_wor", value)}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
@@ -363,7 +365,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									placeholder='Value Kontrak'
 									label='Value Kontrak'
 									type='number'
+									value={valueContract}
 									onChange={handleChange}
+									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -422,7 +426,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								<InputDate
 									id='date_of_order'
 									label='Date Of Order'
-									value={new Date()}
+									value={values.date_of_order}
 									onChange={(value: any) =>
 										setFieldValue("date_of_order", value)
 									}
@@ -435,7 +439,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								<InputDate
 									id='delivery_date'
 									label='Delivery Date'
-									value={new Date()}
+									value={values.delivery_date}
 									onChange={(value: any) =>
 										setFieldValue("delivery_date", value)
 									}
