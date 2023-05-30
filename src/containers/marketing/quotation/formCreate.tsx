@@ -509,7 +509,7 @@ export const FormCreateQuotation = ({
 																listParts.map((res: any, i: number) => {
 																	return (
 																		<option value={res.id} key={i}>
-																			{res.nama_part}
+																			{res.nama_part} ({res.equipment.nama})
 																		</option>
 																	);
 																})

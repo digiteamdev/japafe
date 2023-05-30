@@ -20,7 +20,7 @@ export default function CustomerPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>Customer</title>
+				<title>JAPA MLS | Customer</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Customer />
