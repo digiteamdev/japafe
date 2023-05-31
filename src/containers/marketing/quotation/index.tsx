@@ -67,6 +67,7 @@ export const Quotation = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil( response.data.totalData / perpage));
 			}
 		} catch (error: any) {
 			if(error.response.data.login){

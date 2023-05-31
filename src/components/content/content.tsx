@@ -22,7 +22,7 @@ export const Content = ({
 				<div className='flex flex-wrap lg:flex-nowrap md:flex-nowrap w-full mr-2'>
 					<div className='lg:w-[65%] md:w-[65%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
 						<div className='relative w-full'>
-							<div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-primary-500'>
+							<div className='absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-primary-500 z-0'>
 								<Search />
 							</div>
 							<input

@@ -72,9 +72,15 @@ export const Po = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil( response.data.totalData / perpage));
 			}
-		} catch (error) {
-			setData([]);
+		} catch (error: any) {
+			if(error.response.data.login){
+				setData([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
 		}
 		setIsLoading(false);
 	};

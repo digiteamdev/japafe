@@ -270,6 +270,9 @@ export const FormCreateQuotation = ({
 										})
 									)}
 								</InputSelect>
+								{errors.customerId && touched.customerId ? (
+									<span className='text-red-500 text-xs'>{errors.customerId}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<InputSelect
@@ -297,6 +300,9 @@ export const FormCreateQuotation = ({
 										})
 									)}
 								</InputSelect>
+								{errors.customercontactId && touched.customercontactId ? (
+									<span className='text-red-500 text-xs'>{errors.customercontactId}</span>
+								) : null}
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
@@ -340,6 +346,9 @@ export const FormCreateQuotation = ({
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
+								{errors.deskription && touched.deskription ? (
+									<span className='text-red-500 text-xs'>{errors.deskription}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<Input
