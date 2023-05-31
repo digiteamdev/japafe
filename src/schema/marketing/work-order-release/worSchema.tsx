@@ -3,7 +3,7 @@ import * as yup from "yup";
 export const worSchema = yup.object().shape({
     job_no: yup.string().nullable(),
 	date_wor: yup.string().required("Date not empty"),
-	cuspoId: yup.string().required("Customer PO not empty"),
+	cuspoId: yup.string().nullable(),
 	subject: yup.string().nullable(),
 	job_desk: yup.string().nullable(),
 	contract_no_spk: yup.string().nullable(),
