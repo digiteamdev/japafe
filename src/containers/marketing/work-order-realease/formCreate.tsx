@@ -190,7 +190,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
-				// validationSchema={worSchema}
+				validationSchema={worSchema}
 				onSubmit={(values) => {
 					addWor(values);
 				}}
@@ -243,6 +243,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										})
 									)}
 								</InputSelect>
+								{errors.cuspoId && touched.cuspoId ? (
+									<span className='text-red-500 text-xs'>{errors.cuspoId}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -355,6 +358,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										})
 									)}
 								</InputSelect>
+								{errors.employeeId && touched.employeeId ? (
+									<span className='text-red-500 text-xs'>{errors.employeeId}</span>
+								) : null}
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -393,6 +399,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									<option value='XTASREQ'>XT As Req</option>
 									<option value='XXTASREQ'>XXT As Req</option>
 								</InputSelect>
+								{errors.priority_status && touched.priority_status ? (
+									<span className='text-red-500 text-xs'>{errors.priority_status}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<Input

@@ -20,7 +20,7 @@ export default function SupplierPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MLS | Supplier</title>
+				<title>JAPA MIS | Supplier</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Supplier />

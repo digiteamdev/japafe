@@ -321,7 +321,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
-				// validationSchema={poSchema}
+				validationSchema={poSchema}
 				onSubmit={(values) => {
 					addPo(values);
 				}}

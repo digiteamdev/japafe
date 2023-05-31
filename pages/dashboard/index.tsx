@@ -19,7 +19,7 @@ export default function DashboardPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MLS | Dashboard</title>
+				<title>JAPA MIS | Dashboard</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Dashboard />

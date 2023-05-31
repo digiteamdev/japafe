@@ -20,7 +20,7 @@ export default function PoPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MLS | Customer PO</title>
+				<title>JAPA MIS | Customer PO</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Po />
