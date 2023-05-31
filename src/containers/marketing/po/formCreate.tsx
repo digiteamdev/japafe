@@ -17,7 +17,7 @@ interface data {
 	quo_id: string;
 	tax: string;
 	noted: string;
-	date_of_po: Date;
+	date_of_po: Date | null;
 	vat: string;
 	grand_tot: string;
 	total: string;
@@ -36,7 +36,7 @@ interface data {
 			limitpay: string;
 			percent: string;
 			price: string;
-			date_limit: Date;
+			date_limit: Date | null;
 		}
 	];
 }
@@ -396,9 +396,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										})
 									)}
 								</InputSelect>
-								{errors.quo_id && touched.quo_id ? (
-									<span className='text-red-500 text-xs'>{errors.quo_id}</span>
-								) : null}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -506,7 +503,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 								<InputDate
 									id='date'
 									label='Date'
-									value={new Date()}
+									value={values.date_of_po === null ? new Date() : values.date_of_po}
 									onChange={(value: any) => setFieldValue("date_of_po", value)}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
@@ -790,9 +787,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																<InputDate
 																	id={`term_of_pay.${i}.date_limit`}
 																	label='date_limit'
-																	value={new Date()}
+																	value={ res.date_limit}
 																	onChange={(value: any) =>
-																		setFieldValue("date_limit", value)
+																		setFieldValue(`term_of_pay.${i}.date_limit`, value)
 																	}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600 mt-6'
@@ -811,7 +808,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																						limitpay: "",
 																						percent: "",
 																						price: "",
-																						date_limit: "",
+																						date_limit: new Date(),
 																					});
 																				}}
 																			>
