@@ -1775,7 +1775,7 @@ export const FormEditEmploye = ({
 																	defaultValue='Male'
 																	selected={
 																		res.gender_child ===
-																		values.Employee_Child[i].gender_child
+																		'Male'
 																			? true
 																			: false
 																	}
@@ -1786,7 +1786,7 @@ export const FormEditEmploye = ({
 																	value='Female'
 																	selected={
 																		res.gender_child ===
-																		values.Employee_Child[i].gender_child
+																		'Female'
 																			? true
 																			: false
 																	}

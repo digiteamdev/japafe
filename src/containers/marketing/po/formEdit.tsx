@@ -1178,7 +1178,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			label='date_limit'
 																			value={res.date_limit}
 																			onChange={(value: any) =>
-																				setFieldValue("date_limit", value)
+																				setFieldValue(`term_of_pay.${i}.date_limit`, value)
 																			}
 																			withLabel={false}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600 mt-6'

@@ -162,10 +162,11 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 											).format("DD-MMMM-YYYY")}`}
 									</td>
 								</tr>
+							</table>
 								{dataSelected.Employee_Child.length !== 0
 									? dataSelected.Employee_Child.map((res: any, i: number) => {
 											return (
-												<div key={i}>
+												<table className="w-full" key={i}>
 													<tr>
 														<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 															Name Child
@@ -193,11 +194,10 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 															)}
 														</td>
 													</tr>
-												</div>
+												</table>
 											);
 									})
 									: null}
-							</table>
 						</div>
 					</Section>
 					<h1 className='font-bold text-xl mt-2'>Education</h1>
