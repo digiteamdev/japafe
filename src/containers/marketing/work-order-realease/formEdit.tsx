@@ -79,8 +79,8 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 		file_list: "",
 		noted: "",
 		status: "",
-		refivision: null,
-		refevision_desc: null,
+		refivision: "",
+		refevision_desc: "",
 	});
 
 	useEffect(() => {
@@ -284,6 +284,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 											label='Rev'
 											type='text'
 											value={values.refivision}
+											onChange={handleChange}
 											required={true}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -297,6 +298,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 											label='Rev Description'
 											type='text'
 											value={values.refevision_desc}
+											onChange={handleChange}
 											required={true}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
