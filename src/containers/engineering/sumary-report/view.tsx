@@ -51,9 +51,8 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 						<div className='w-full'>
 							{dataSelected.srimgdetail.length > 0
 								? dataSelected.srimgdetail.map((res: any, i: number) => {
-										console.log(res);
 										return (
-											<div>
+											<div key={i}>
 												<h1 className='font-bold text-lg'>
 													{i + 1}. {res.name_part}
 												</h1>
@@ -63,6 +62,7 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 															? res.imgSummary.map((resImg: any) => {
 																	return (
 																			<Image
+																				key={i}
 																				src={resImg.img}
 																				width={70}
 																				height={70}
