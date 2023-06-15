@@ -52,6 +52,7 @@ props) => {
 				max={max}
 				onChange={onChange}
 				ref={ref}
+				multiple
 			/>
 		</div>
 	);
