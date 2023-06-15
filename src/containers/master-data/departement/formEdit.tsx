@@ -44,6 +44,7 @@ export const FormEditDepartement = ({
 
     useEffect( () => {
         settingData()
+		//useEffect
 		// eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
