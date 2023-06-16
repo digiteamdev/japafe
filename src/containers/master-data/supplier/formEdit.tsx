@@ -882,7 +882,7 @@ export const FormEditSuplier = ({ content, dataSuplier, showModal }: props) => {
 						initialValues={{ ...dataBank }}
 						// validationSchema={customerSchema}
 						onSubmit={(values) => {
-							editSupplierContact(values);
+							editSupplierBank(values);
 						}}
 						enableReinitialize
 					>

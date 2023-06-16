@@ -52,11 +52,12 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	const [dateWor, setDateWor] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
+	const [quantity, setQuantity] = useState<string>("");
 	const [equipmentModel, setEquipmentModel] = useState<string>("");
 	const [part, setPart] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		job_no: "",
-		date_of_summary: null,
+		date_of_summary: new Date(),
 		worId: "",
 		quantity: "",
 		ioem: "",
@@ -96,6 +97,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 						part.push(res.eq_part);
 					});
 				}
+				setQuantity(data.qty);
 				setPart(part);
 			} else {
 				setCustomerName("");
@@ -103,6 +105,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				setSubject("");
 				setEquipment("");
 				setEquipmentModel("");
+				setQuantity("");
 				setPart([]);
 			}
 		}
@@ -339,18 +342,13 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 													placeholder='Quantity'
 													label='Quantity'
 													type='number'
-													value={values.quantity}
+													value={quantity}
 													onChange={handleChange}
-													disabled={false}
+													disabled={true}
 													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 												/>
-												{errors.quantity && touched.quantity ? (
-													<span className='text-red-500 text-xs'>
-														{errors.quantity}
-													</span>
-												) : null}
 											</td>
 										</tr>
 									</tbody>
@@ -446,6 +444,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<h1 className='text-lg font-bold mt-3'>Part</h1>
 							<FieldArray
 								name='srimgdetail'
 								render={(arrayHelper) => (

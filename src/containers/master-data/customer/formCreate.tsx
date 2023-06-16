@@ -235,10 +235,10 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
+								{errors.email && touched.email ? (
+									<span className='text-red-500 text-xs'>{errors.email}</span>
+								) : null}
 							</div>
-							{errors.email && touched.email ? (
-								<span className='text-red-500 text-xs'>{errors.email}</span>
-							) : null}
 						</Section>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
@@ -271,10 +271,10 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
+								{errors.pph && touched.pph ? (
+									<span className='text-red-500 text-xs'>{errors.pph}</span>
+								) : null}
 							</div>
-							{errors.pph && touched.pph ? (
-								<span className='text-red-500 text-xs'>{errors.pph}</span>
-							) : null}
 						</Section>
 						<FieldArray
 							name='address'

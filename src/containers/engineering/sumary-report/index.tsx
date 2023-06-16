@@ -249,7 +249,7 @@ export const SummaryReport = () => {
 					) : modalContent === "add" ? (
 						<FormCreateSummaryReport content={modalContent} showModal={showModal}/>
 					) : (
-						<FormEditSummaryReport content={modalContent} showModal={showModal} dataPo={dataSelected}/>
+						<FormEditSummaryReport content={modalContent} showModal={showModal} dataSummary={dataSelected}/>
 					)}
 				</Modal>
 			)}
