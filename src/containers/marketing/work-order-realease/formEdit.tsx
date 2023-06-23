@@ -7,7 +7,7 @@ import {
 	InputDate,
 } from "../../../components";
 import { Formik, Form } from "formik";
-import { GetAllPo, GetAllEmployeSales, EditWor } from "../../../services";
+import { GetAllPo, GetAllEmployeDepart, EditWor } from "../../../services";
 // import { worSchema } from "../../../schema/marketing/work-order-release/worSchema";
 import { toast } from "react-toastify";
 
@@ -147,7 +147,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 
 	const getEmploye = async () => {
 		try {
-			const response = await GetAllEmployeSales();
+			const response = await GetAllEmployeDepart('SALES & MKT','Sales Marketing');
 			if (response.data) {
 				setListEmploye(response.data.result);
 			}

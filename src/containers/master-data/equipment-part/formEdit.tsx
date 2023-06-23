@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { equipmentSchema } from "../../../schema/master-data/equipment/equipmentSchema";
-import { Disclosure } from "@headlessui/react";
 import { Plus, Trash2 } from "react-feather";
 import {
 	EditEquipment,

@@ -7,6 +7,8 @@ interface props {
 	className?: string;
     classNameIcon?: string;
 	label?: string;
+	name?: string;
+	minDate?: any;
 	value?: any;
 	withLabel?: boolean;
 	onAction?: () => void;
@@ -18,6 +20,8 @@ export const InputDate = ({
 	label,
 	className,
     classNameIcon,
+	minDate,
+	name,
     value,
 	withLabel,
     onAction,
@@ -43,10 +47,12 @@ props) => {
 				</div>
                 <DatePicker
                     id={id}
+					name={name}
                     selected={new Date(value)}
                     onChange={onChange}
                     className={`${className}`}
                     dateFormat="dd-MM-yyyy"
+					minDate={new Date(minDate)}
                 />
 			</div>
 		</div>

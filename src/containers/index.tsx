@@ -6,3 +6,4 @@ export * from './marketing';
 export * from './report';
 export * from './public';
 export * from './engineering';
+export * from './production';

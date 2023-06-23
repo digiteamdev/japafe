@@ -8,7 +8,7 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { worSchema } from "../../../schema/marketing/work-order-release/worSchema";
-import { AddWor, GetAllEmployeSales, GetAllPo } from "../../../services";
+import { AddWor, GetAllEmployeDepart, GetAllPo } from "../../../services";
 import { toast } from "react-toastify";
 
 interface props {
@@ -177,7 +177,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 
 	const getEmploye = async () => {
 		try {
-			const response = await GetAllEmployeSales();
+			const response = await GetAllEmployeDepart('SALES %26 MKT','Sales Marketing');
 			if (response.data) {
 				setListEmploye(response.data.result);
 			}

@@ -23,6 +23,7 @@ interface props {
 }
 
 interface data {
+	id_summary: string;
 	job_no: string;
 	date_of_summary: any;
 	worId: string;
@@ -56,6 +57,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	const [equipmentModel, setEquipmentModel] = useState<string>("");
 	const [part, setPart] = useState<any>([]);
 	const [data, setData] = useState<data>({
+		id_summary: "",
 		job_no: "",
 		date_of_summary: new Date(),
 		worId: "",
@@ -81,6 +83,14 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		getWor();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id = "SUM"+year.toString()+month.toString()+Math.floor(Math.random() * 100) +1;
+		return id
+	};
 
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "worId") {
@@ -144,6 +154,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	const addSummary = async (payload: data) => {
 		setIsLoading(true);
 		const form = new FormData();
+		form.append("id_summary", generateIdNum());
 		form.append("worId", payload.worId);
 		form.append("inimg", payload.inimg);
 		form.append("date_of_summary", payload.date_of_summary);
@@ -527,7 +538,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 															label='Input Finding'
 															onChange={handleChange}
 															required={true}
-															withLabel={i > 0 ? false : true}
+															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>

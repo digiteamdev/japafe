@@ -1,0 +1,718 @@
+import { useState, useEffect } from "react";
+import { Section, Input, InputSelect, InputDate } from "../../../components";
+import { Formik, Form, FieldArray } from "formik";
+import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
+import {
+	GetAllSummary,
+	GetAllDepartement,
+	GetAllWorkerCenter,
+	GetAllEmployeDepart,
+	AddDispatch,
+} from "../../../services";
+import { toast } from "react-toastify";
+import { Plus, Trash2 } from "react-feather";
+import moment from "moment";
+
+interface props {
+	content: string;
+	showModal: (val: boolean, content: string, reload: boolean) => void;
+}
+
+interface data {
+	srId: string;
+	id_dispatch: string;
+	dispacth_date: any;
+	remark: string;
+	dispatchDetail: [
+		{
+			workId: string;
+			subdepId: string;
+			start: any;
+			operatorID: string;
+			part: string;
+		}
+	];
+}
+
+export const FormCreateDispatch = ({ content, showModal }: props) => {
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
+	const [listSummary, setListSummary] = useState<any>([]);
+	const [listDepart, setListDepart] = useState<any>([]);
+	const [listWorkerCenter, setListWorkerCenter] = useState<any>([]);
+	const [listEmploye, setListEmploye] = useState<any>([]);
+	const [jobNo, setJobNo] = useState<string>("");
+	const [dateWor, setDateWor] = useState<string>("");
+	const [subject, setSubject] = useState<string>("");
+	const [equipment, setEquipment] = useState<string>("");
+	const [part, setPart] = useState<any>([]);
+	const [partName, setPartName] = useState<string>("");
+	const [status, setStatus] = useState<string>("");
+	const [detail, setDetail] = useState<any>([]);
+	const [data, setData] = useState<data>({
+		srId: "",
+		id_dispatch: "",
+		dispacth_date: new Date(),
+		remark: "",
+		dispatchDetail: [
+			{
+				workId: "",
+				subdepId: "",
+				start: null,
+				operatorID: "",
+				part: "",
+			},
+		],
+	});
+
+	useEffect(() => {
+		getSummary();
+		getDepart();
+		getWorkerCenter();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id =
+			"D" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 100) +
+			1;
+		return id;
+	};
+
+	const handleOnChanges = (event: any) => {
+		if (event.target.name === "srId") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let equipment: any = [];
+				let part: any = [];
+				let lastEquipment: string = "";
+				data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+					if (lastEquipment !== res.equipment.nama) {
+						equipment.push(res.equipment.nama);
+					}
+					lastEquipment = res.equipment.nama;
+				});
+				data.srimgdetail.map((res: any) => {
+					part.push(res);
+				});
+				setJobNo(data.wor.job_no);
+				setSubject(data.wor.subject);
+				setDateWor(data.wor.date_wor);
+				setEquipment(equipment.toString());
+				setPart(part);
+			} else {
+				setJobNo("");
+				setSubject("");
+				setDateWor("");
+				setEquipment("");
+				setPart([]);
+			}
+		} else if (event.target.name === "part") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				setStatus(data.choice.replace(/_|-|\./g, " "));
+				setPartName(data.name_part);
+				setIsShowDetail(true);
+			} else {
+				setStatus("");
+				setPartName("");
+				setIsShowDetail(false);
+			}
+		} else if (event.target.name === "departemen") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				getEmploye(data.name.replace(/&|-|\./g, "%26"), data.departement.name);
+				let dataDetail = detail;
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === partName;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== partName;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							arrDetailOther.push({
+								workId: res.workId,
+								subdepId: data.id,
+								start: res.start,
+								operatorID: res.operatorID,
+								part: res.part,
+							});
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							workId: "",
+							subdepId: data.id,
+							start: new Date(),
+							operatorID: "",
+							part: partName,
+						});
+					}
+				} else {
+					dataDetail.push({
+						workId: "",
+						subdepId: data.id,
+						start: new Date(),
+						operatorID: "",
+						part: partName,
+					});
+				}
+				setDetail(dataDetail);
+			} else {
+				setListEmploye([]);
+				setDetail(detail);
+			}
+		} else if (event.target.name === "worker") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let dataDetail = detail;
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === partName;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== partName;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							arrDetailOther.push({
+								workId: data.id,
+								subdepId: res.subdepId,
+								start: res.start,
+								operatorID: res.operatorID,
+								part: res.part,
+							});
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							workId: data.id,
+							subdepId: "",
+							start: new Date(),
+							operatorID: "",
+							part: partName,
+						});
+					}
+				} else {
+					dataDetail.push({
+						workId: data.id,
+						subdepId: "",
+						start: new Date(),
+						operatorID: "",
+						part: partName,
+					});
+				}
+				setDetail(dataDetail);
+			} else {
+				setDetail(detail);
+			}
+		} else if (event.target.name === "operator") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let dataDetail = detail;
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === partName;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== partName;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							arrDetailOther.push({
+								workId: res.workId,
+								subdepId: res.subdepId,
+								start: res.start,
+								operatorID: data.id,
+								part: res.part,
+							});
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							workId: "",
+							subdepId: "",
+							start: new Date(),
+							operatorID: data.id,
+							part: partName,
+						});
+					}
+				} else {
+					dataDetail.push({
+						workId: "",
+						subdepId: "",
+						start: new Date(),
+						operatorID: data.id,
+						part: partName,
+					});
+				}
+				setDetail(dataDetail);
+			} else {
+				setDetail(detail);
+			}
+		}
+	};
+
+	const handleChangeStartDate = (data: any) => {
+		let dataDetail = detail;
+		if (dataDetail.length > 0) {
+			let arrDetail = dataDetail.filter((detail: any) => {
+				return detail.part === partName;
+			});
+			let arrDetailOther = dataDetail.filter((detail: any) => {
+				return detail.part !== partName;
+			});
+			if (arrDetail.length > 0) {
+				arrDetail.map((res: any, i: number) => {
+					arrDetailOther.push({
+						workId: res.workId,
+						subdepId: res.subdepId,
+						start: new Date(data),
+						operatorID: res.operatorID,
+						part: res.part,
+					});
+				});
+				dataDetail = arrDetailOther;
+			} else {
+				dataDetail.push({
+					workId: "",
+					subdepId: "",
+					start: new Date(data),
+					operatorID: "",
+					part: partName,
+				});
+			}
+		} else {
+			dataDetail.push({
+				workId: "",
+				subdepId: "",
+				start: new Date(data),
+				operatorID: "",
+				part: partName,
+			});
+		}
+		setDetail(dataDetail);
+	};
+
+	const getSummary = async () => {
+		try {
+			const response = await GetAllSummary();
+			if (response.data) {
+				setListSummary(response.data.result);
+			}
+		} catch (error) {
+			setListSummary([]);
+		}
+	};
+
+	const getDepart = async () => {
+		try {
+			const response = await GetAllDepartement();
+			if (response.data) {
+				setListDepart(response.data.result);
+			}
+		} catch (error) {
+			setListDepart([]);
+		}
+	};
+
+	const getWorkerCenter = async () => {
+		try {
+			const response = await GetAllWorkerCenter();
+			if (response.data) {
+				setListWorkerCenter(response.data.result);
+			}
+		} catch (error) {
+			setListWorkerCenter([]);
+		}
+	};
+
+	const getEmploye = async (sub: string, dep: string) => {
+		try {
+			const response = await GetAllEmployeDepart(sub, dep);
+			if (response.data) {
+				setListEmploye(response.data.result);
+			}
+		} catch (error) {
+			setListEmploye([]);
+		}
+	};
+
+	const addDispatch = async (payload: any) => {
+		setIsLoading(true);
+		let dataBody = {
+			srId: payload.srId,
+			id_dispatch: generateIdNum(),
+			dispacth_date: payload.dispacth_date,
+			remark: payload.remark,
+			dispatchDetail: detail,
+		};
+		try {
+			const response = await AddDispatch(dataBody);
+			if (response.data) {
+				toast.success("Add Dispatch Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			}
+		} catch (error) {
+			toast.error("Add Dispatch Failed", {
+				position: "top-center",
+				autoClose: 1000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			})
+		}
+		setIsLoading(false);
+	};
+
+	return (
+		<div className='px-5 pb-2 mt-4 overflow-auto'>
+			<Formik
+				initialValues={{ ...data }}
+				validationSchema={sumarySchema}
+				onSubmit={(values) => {
+					addDispatch(values);
+				}}
+				enableReinitialize
+			>
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
+					<Form onChange={handleOnChanges}>
+						<h1 className='text-xl font-bold mt-3'>Dispatch</h1>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputDate
+									id='dispacth_date'
+									label='Date Prepare'
+									value={
+										values.dispacth_date === null
+											? new Date()
+											: values.dispacth_date
+									}
+									onChange={(value: any) =>
+										setFieldValue("dispacth_date", value)
+									}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='srId'
+									name='srId'
+									placeholder='Summary'
+									label='Summary Report'
+									onChange={(event: any) => {
+										if (event.target.value !== "no data") {
+											let data = JSON.parse(event.target.value);
+											setFieldValue("srId", data.id);
+										}
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='no data' selected>
+										Choose Summary Report
+									</option>
+									{listSummary.length === 0 ? (
+										<option value='no data'>No Data Summary Report</option>
+									) : (
+										listSummary.map((res: any, i: number) => {
+											return (
+												<option value={JSON.stringify(res)} key={i}>
+													{res.id_summary} - {res.wor.job_no}
+												</option>
+											);
+										})
+									)}
+								</InputSelect>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='job_no'
+									name='job_no'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={jobNo}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+							<div className='w-full'>
+								<Input
+									id='subject'
+									name='subject'
+									placeholder='Subject'
+									label='Subject'
+									type='text'
+									value={subject}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputDate
+									id='date_of_summary'
+									label='Start Date'
+									value={dateWor === "" ? new Date() : dateWor}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputDate
+									id='date_of_summary'
+									label='Finish Date'
+									value={
+										values.dispacth_date === null
+											? new Date()
+											: values.dispacth_date
+									}
+									onChange={(value: any) =>
+										setFieldValue("date_of_summary", value)
+									}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+							<div className='w-full'>
+								<Input
+									id='date_wor'
+									name='date_wor'
+									placeholder='Equipment'
+									label='Equipment'
+									type='text'
+									value={equipment}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='part'
+									name='part'
+									placeholder='Part'
+									label='Part'
+									onChange={(event: any) => {
+										if (event.target.value !== "no data") {
+											let data = JSON.parse(event.target.value);
+											setFieldValue("worId", data.id);
+										}
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='no data' selected>
+										Choose Part
+									</option>
+									{part.length === 0 ? (
+										<option value='no data'>No Data Part</option>
+									) : (
+										part.map((res: any, i: number) => {
+											return (
+												<option value={JSON.stringify(res)} key={i}>
+													{res.name_part}
+												</option>
+											);
+										})
+									)}
+								</InputSelect>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='status'
+									name='status'
+									placeholder='Status'
+									label='Status'
+									type='text'
+									value={status}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<div className={`w-full mt-4 ${isShowDetail ? "" : "hidden"}`}>
+							<h4 className='text-lg font-bold mt-3'>Part : {partName}</h4>
+							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<InputSelect
+										id='worker'
+										name='worker'
+										placeholder='Worker Center'
+										label='Worker Center'
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									>
+										<option value='no data' selected>
+											Choose Worker Center
+										</option>
+										{listWorkerCenter.length === 0 ? (
+											<option value='no data'>No Data Worker Center</option>
+										) : (
+											listWorkerCenter.map((res: any, i: number) => {
+												return (
+													<option value={JSON.stringify(res)} key={i}>
+														{res.name}
+													</option>
+												);
+											})
+										)}
+									</InputSelect>
+								</div>
+								<div className='w-full'>
+									<InputDate
+										id='start_date'
+										label='Start Date'
+										value={new Date()}
+										onChange={(e: any) => {
+											handleChangeStartDate(e);
+										}}
+										minDate={dateWor}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+									/>
+								</div>
+								<div className='w-full'>
+									<InputSelect
+										id='departemen'
+										name='departemen'
+										placeholder='Departemen'
+										label='Departemen'
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									>
+										<option value='no data' selected>
+											Choose Departement
+										</option>
+										{listDepart.length === 0 ? (
+											<option value='no data'>No Data Part</option>
+										) : (
+											listDepart.map((res: any, i: number) => {
+												return (
+													<option value={JSON.stringify(res)} key={i}>
+														{res.name}
+													</option>
+												);
+											})
+										)}
+									</InputSelect>
+								</div>
+								<div className='w-full'>
+									<InputSelect
+										id='operator'
+										name='operator'
+										placeholder='Operator'
+										label='Operator'
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									>
+										<option value='no data' selected>
+											Choose Operator
+										</option>
+										{listEmploye.length === 0 ? (
+											<option value='no data'>No Operator</option>
+										) : (
+											listEmploye.map((res: any, i: number) => {
+												return (
+													<option value={JSON.stringify(res)} key={i}>
+														{res.employee_name}
+													</option>
+												);
+											})
+										)}
+									</InputSelect>
+								</div>
+							</Section>
+						</div>
+						<div className='mt-8 flex justify-end'>
+							<div className='flex gap-2 items-center'>
+								<button
+									type='button'
+									className='inline-flex justify-center rounded-full border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+									disabled={isLoading}
+									onClick={() => {
+										handleSubmit();
+									}}
+								>
+									{isLoading ? (
+										<>
+											<svg
+												role='status'
+												className='inline mr-3 w-4 h-4 text-white animate-spin'
+												viewBox='0 0 100 101'
+												fill='none'
+												xmlns='http://www.w3.org/2000/svg'
+											>
+												<path
+													d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
+													fill='#E5E7EB'
+												/>
+												<path
+													d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
+													fill='currentColor'
+												/>
+											</svg>
+											Loading
+										</>
+									) : content === "add" ? (
+										"Save"
+									) : (
+										"Edit"
+									)}
+								</button>
+							</div>
+						</div>
+					</Form>
+				)}
+			</Formik>
+		</div>
+	);
+};

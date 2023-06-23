@@ -45,6 +45,13 @@ export const ListNav = [
     
                 subMenu: null
             },
+            {
+                id: 'worker-center',
+                link: "/master-data/worker-center",
+                title: "Worker Center",
+    
+                subMenu: null
+            },
         ]
     },
     {
