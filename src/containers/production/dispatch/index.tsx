@@ -15,7 +15,7 @@ import { FormCreateDispatch } from "./formCreate";
 import {
 	GetDispatch,
 	SearchDepartement,
-	DeleteDepartement,
+	DeleteDispatch,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -113,11 +113,11 @@ export const Dispatch = () => {
 		}
 	};
 
-	const deleteDepartement = async (id: string) => {
+	const deleteDispacth = async (id: string) => {
 		try {
-			const response = await DeleteDepartement(id);
+			const response = await DeleteDispatch(id);
 			if (response.status === 201) {
-				toast.success("Delete Departement Success", {
+				toast.success("Delete Dispatch Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -129,7 +129,7 @@ export const Dispatch = () => {
 				});
 				getDispatch(1, 10);
 			} else {
-				toast.error("Delete Departement Failed", {
+				toast.error("Delete Dispatch Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -141,7 +141,7 @@ export const Dispatch = () => {
 				});
 			}
 		} catch (error) {
-			toast.error("Delete Departement Failed", {
+			toast.error("Delete Dispatch Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -278,7 +278,7 @@ export const Dispatch = () => {
 						isModal={isModal}
 						content={modalContent}
 						showModal={showModal}
-						onDelete={deleteDepartement}
+						onDelete={deleteDispacth}
 					/>
 				) : (
 					<Modal

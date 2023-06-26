@@ -116,8 +116,49 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		} else if (event.target.name === "part") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
+				let dataDetail = detail;
 				setStatus(data.choice.replace(/_|-|\./g, " "));
 				setPartName(data.name_part);
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === data.name_part;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== data.name_part;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							arrDetailOther.push({
+								index: res.index,
+								workId: res.workId,
+								subdepId: res.subdepId,
+								start: res.start,
+								operatorID: res.operatorID,
+								part: res.part,
+							});
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							index: 0,
+							workId: "",
+							subdepId: "",
+							start: new Date(),
+							operatorID: "",
+							part: data.name_part,
+						});
+					}
+				} else {
+					dataDetail.push({
+						index: 0,
+						workId: "",
+						subdepId: "",
+						start: new Date(),
+						operatorID: "",
+						part: data.name_part,
+					});
+				}
+				setDetail(dataDetail);
 				setIsShowDetail(true);
 			} else {
 				setStatus("");
@@ -127,6 +168,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		} else if (event.target.name === "departemen") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
+				let idx = event.target.id.split("_");
 				getEmploye(data.name.replace(/&|-|\./g, "%26"), data.departement.name);
 				let dataDetail = detail;
 				if (dataDetail.length > 0) {
@@ -138,17 +180,30 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					});
 					if (arrDetail.length > 0) {
 						arrDetail.map((res: any, i: number) => {
-							arrDetailOther.push({
-								workId: res.workId,
-								subdepId: data.id,
-								start: res.start,
-								operatorID: res.operatorID,
-								part: res.part,
-							});
+							if (parseInt(idx[1]) === res.index) {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: data.id,
+									start: res.start,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							} else {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							}
 						});
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							index: arrDetail.length,
 							workId: "",
 							subdepId: data.id,
 							start: new Date(),
@@ -158,6 +213,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					}
 				} else {
 					dataDetail.push({
+						index: 0,
 						workId: "",
 						subdepId: data.id,
 						start: new Date(),
@@ -173,6 +229,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		} else if (event.target.name === "worker") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
+				let idx = event.target.id.split("_");
 				let dataDetail = detail;
 				if (dataDetail.length > 0) {
 					let arrDetail = dataDetail.filter((detail: any) => {
@@ -183,17 +240,30 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					});
 					if (arrDetail.length > 0) {
 						arrDetail.map((res: any, i: number) => {
-							arrDetailOther.push({
-								workId: data.id,
-								subdepId: res.subdepId,
-								start: res.start,
-								operatorID: res.operatorID,
-								part: res.part,
-							});
+							if (parseInt(idx[1]) === res.index) {
+								arrDetailOther.push({
+									index: res.index,
+									workId: data.id,
+									subdepId: res.subdepId,
+									start: res.start,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							} else {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							}
 						});
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							index: arrDetail.length,
 							workId: data.id,
 							subdepId: "",
 							start: new Date(),
@@ -203,6 +273,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					}
 				} else {
 					dataDetail.push({
+						index: 0,
 						workId: data.id,
 						subdepId: "",
 						start: new Date(),
@@ -217,6 +288,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		} else if (event.target.name === "operator") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
+				let idx = event.target.id.split("_");
 				let dataDetail = detail;
 				if (dataDetail.length > 0) {
 					let arrDetail = dataDetail.filter((detail: any) => {
@@ -227,17 +299,30 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					});
 					if (arrDetail.length > 0) {
 						arrDetail.map((res: any, i: number) => {
-							arrDetailOther.push({
-								workId: res.workId,
-								subdepId: res.subdepId,
-								start: res.start,
-								operatorID: data.id,
-								part: res.part,
-							});
+							if (parseInt(idx[1]) === res.index) {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									operatorID: data.id,
+									part: res.part,
+								});
+							} else {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							}
 						});
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							index: arrDetail.length,
 							workId: "",
 							subdepId: "",
 							start: new Date(),
@@ -247,6 +332,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					}
 				} else {
 					dataDetail.push({
+						index: 0,
 						workId: "",
 						subdepId: "",
 						start: new Date(),
@@ -261,8 +347,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		}
 	};
 
-	const handleChangeStartDate = (data: any) => {
+	const handleChangeStartDate = (data: any, id: any) => {
 		let dataDetail = detail;
+		let idx = id.split("_");
 		if (dataDetail.length > 0) {
 			let arrDetail = dataDetail.filter((detail: any) => {
 				return detail.part === partName;
@@ -272,13 +359,25 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			});
 			if (arrDetail.length > 0) {
 				arrDetail.map((res: any, i: number) => {
-					arrDetailOther.push({
-						workId: res.workId,
-						subdepId: res.subdepId,
-						start: new Date(data),
-						operatorID: res.operatorID,
-						part: res.part,
-					});
+					if (parseInt(idx[1]) === res.index) {
+						arrDetailOther.push({
+							index: res.index,
+							workId: res.workId,
+							subdepId: res.subdepId,
+							start: new Date(data),
+							operatorID: res.operatorID,
+							part: res.part,
+						});
+					} else {
+						arrDetailOther.push({
+							index: res.index,
+							workId: res.workId,
+							subdepId: res.subdepId,
+							start: new Date(res.start),
+							operatorID: res.operatorID,
+							part: res.part,
+						});
+					}
 				});
 				dataDetail = arrDetailOther;
 			} else {
@@ -292,6 +391,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			}
 		} else {
 			dataDetail.push({
+				index: 0,
 				workId: "",
 				subdepId: "",
 				start: new Date(data),
@@ -299,6 +399,49 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				part: partName,
 			});
 		}
+		setDetail(dataDetail);
+	};
+
+	const addDetail = () => {
+		let dataDetail = detail;
+		let arrDetail = dataDetail.filter((detail: any) => {
+			return detail.part === partName;
+		});
+		if (dataDetail.length > 0) {
+			let arrDetailOther = dataDetail.filter((detail: any) => {
+				return detail.part !== partName;
+			});
+			if (arrDetail.length > 0) {
+				arrDetail.map((res: any, i: number) => {
+					arrDetailOther.push({
+						index: res.index,
+						workId: res.workId,
+						subdepId: res.subdepId,
+						start: res.start,
+						operatorID: res.operatorID,
+						part: res.part,
+					});
+				});
+				dataDetail = arrDetailOther;
+			} else {
+				dataDetail.push({
+					index: arrDetail.length,
+					workId: "",
+					subdepId: "",
+					start: new Date(),
+					operatorID: "",
+					part: partName,
+				});
+			}
+		}
+		dataDetail.push({
+			index: arrDetail.length,
+			workId: "",
+			subdepId: "",
+			start: new Date(),
+			operatorID: "",
+			part: partName,
+		});
 		setDetail(dataDetail);
 	};
 
@@ -348,12 +491,22 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 
 	const addDispatch = async (payload: any) => {
 		setIsLoading(true);
+		let dataDetail: any = [];
+		detail.map((res: any) => {
+			dataDetail.push({
+				workId: res.workId,
+				subdepId: res.subdepId,
+				start: res.start,
+				operatorID: res.operatorID,
+				part: res.part,
+			});
+		});
 		let dataBody = {
 			srId: payload.srId,
 			id_dispatch: generateIdNum(),
 			dispacth_date: payload.dispacth_date,
 			remark: payload.remark,
-			dispatchDetail: detail,
+			dispatchDetail: dataDetail,
 		};
 		try {
 			const response = await AddDispatch(dataBody);
@@ -380,7 +533,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				draggable: true,
 				progress: undefined,
 				theme: "colored",
-			})
+			});
 		}
 		setIsLoading(false);
 	};
@@ -577,100 +730,132 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						</Section>
 						<div className={`w-full mt-4 ${isShowDetail ? "" : "hidden"}`}>
 							<h4 className='text-lg font-bold mt-3'>Part : {partName}</h4>
-							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-								<div className='w-full'>
-									<InputSelect
-										id='worker'
-										name='worker'
-										placeholder='Worker Center'
-										label='Worker Center'
-										required={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option value='no data' selected>
-											Choose Worker Center
-										</option>
-										{listWorkerCenter.length === 0 ? (
-											<option value='no data'>No Data Worker Center</option>
-										) : (
-											listWorkerCenter.map((res: any, i: number) => {
-												return (
-													<option value={JSON.stringify(res)} key={i}>
-														{res.name}
+							{detail
+								.filter((tab: any) => {
+									return tab.part === partName;
+								})
+								.map((dataDetail: any, idx: number, data: any) => (
+									<div key={idx}>
+										<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+											<div className='w-full'>
+												<InputSelect
+													id={`worker_${idx}`}
+													name='worker'
+													placeholder='Worker Center'
+													label='Worker Center'
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Worker Center
 													</option>
-												);
-											})
-										)}
-									</InputSelect>
-								</div>
-								<div className='w-full'>
-									<InputDate
-										id='start_date'
-										label='Start Date'
-										value={new Date()}
-										onChange={(e: any) => {
-											handleChangeStartDate(e);
-										}}
-										minDate={dateWor}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-									/>
-								</div>
-								<div className='w-full'>
-									<InputSelect
-										id='departemen'
-										name='departemen'
-										placeholder='Departemen'
-										label='Departemen'
-										required={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option value='no data' selected>
-											Choose Departement
-										</option>
-										{listDepart.length === 0 ? (
-											<option value='no data'>No Data Part</option>
-										) : (
-											listDepart.map((res: any, i: number) => {
-												return (
-													<option value={JSON.stringify(res)} key={i}>
-														{res.name}
+													{listWorkerCenter.length === 0 ? (
+														<option value='no data'>
+															No Data Worker Center
+														</option>
+													) : (
+														listWorkerCenter.map((res: any, i: number) => {
+															return (
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={res.id === dataDetail.workId}
+																>
+																	{res.name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<InputDate
+													id={`start_${idx}`}
+													label='Start Date'
+													value={new Date(dataDetail.start)}
+													onChange={(e: any) => {
+														handleChangeStartDate(e, `start_${idx}`);
+													}}
+													minDate={dateWor}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+													classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+												/>
+											</div>
+											<div className='w-full'>
+												<InputSelect
+													id={`departemen_${idx}`}
+													name='departemen'
+													placeholder='Departemen'
+													label='Departemen'
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Departement
 													</option>
-												);
-											})
-										)}
-									</InputSelect>
-								</div>
-								<div className='w-full'>
-									<InputSelect
-										id='operator'
-										name='operator'
-										placeholder='Operator'
-										label='Operator'
-										required={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option value='no data' selected>
-											Choose Operator
-										</option>
-										{listEmploye.length === 0 ? (
-											<option value='no data'>No Operator</option>
-										) : (
-											listEmploye.map((res: any, i: number) => {
-												return (
-													<option value={JSON.stringify(res)} key={i}>
-														{res.employee_name}
+													{listDepart.length === 0 ? (
+														<option value='no data'>No Data Part</option>
+													) : (
+														listDepart.map((res: any, i: number) => {
+															return (
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={res.id === dataDetail.subdepId}
+																>
+																	{res.name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<InputSelect
+													id={`operator_${idx}`}
+													name='operator'
+													placeholder='Operator'
+													label='Operator'
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Operator
 													</option>
-												);
-											})
-										)}
-									</InputSelect>
-								</div>
-							</Section>
+													{listEmploye.length === 0 ? (
+														<option value='no data'>No Operator</option>
+													) : (
+														listEmploye.map((res: any, i: number) => {
+															return (
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={res.id === dataDetail.operatorID}
+																>
+																	{res.employee_name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+										</Section>
+										{idx === data.length - 1 ? (
+											<a
+												className='inline-flex text-green-500 mr-6 cursor-pointer'
+												onClick={() => {
+													addDetail();
+												}}
+											>
+												<Plus size={18} className='mr-1 mt-1' /> Add Detail
+											</a>
+										) : null}
+									</div>
+								))}
 						</div>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
