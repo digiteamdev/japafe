@@ -20,7 +20,7 @@ import {
 import { toast } from "react-toastify";
 import moment from "moment";
 import { ViewDispatch } from './view';
-// import { FormEditDepartement } from "./formEdit";
+import { FormEditDispatch } from "./formEdit";
 
 export const Dispatch = () => {
 	const router = useRouter();
@@ -290,8 +290,7 @@ export const Dispatch = () => {
 						{ modalContent === 'view' ? (
 							<ViewDispatch dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
-							<></>
-							// <FormEditDepartement content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+							<FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
 						) : (
 							<FormCreateDispatch content={modalContent} showModal={showModal}/>
 						)}

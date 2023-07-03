@@ -15,6 +15,7 @@ import moment from "moment";
 
 interface props {
 	content: string;
+	dataDispatch: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
@@ -34,7 +35,7 @@ interface data {
 	];
 }
 
-export const FormCreateDispatch = ({ content, showModal }: props) => {
+export const FormEditDispatch = ({ content, dataDispatch, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
 	const [listSummary, setListSummary] = useState<any>([]);
@@ -66,6 +67,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
+        settingData();
 		getSummary();
 		getDepart();
 		getWorkerCenter();
@@ -83,6 +85,16 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			Math.floor(Math.random() * 100) +
 			1;
 		return id;
+	};
+console.log(dataDispatch)
+	const settingData = () => {
+		setData({
+			srId: dataDispatch.srId,
+			id_dispatch: dataDispatch.id_dispatch,
+			dispacth_date: dataDispatch.dispacth_date,
+			remark: dataDispatch.remark,
+			dispatchDetail: dataDispatch.dispatchDetail
+		});
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -445,34 +457,13 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		setDetail(dataDetail);
 	};
 
-	const removeDetail = (i: number) => {
-		let dataDetail = detail;
-		let newDataDetail: any = []
-		let removeDetail = dataDetail.filter((detail: any) => {
-			return detail.index !== i && detail.part === partName;
-		});
-		let otherDetail = dataDetail.filter((detail: any) => {
-			return detail.part !== partName;
-		});
-		newDataDetail = otherDetail 
-		removeDetail.map( (res: any, i: number) => {
-			newDataDetail.push({
-				index: i,
-				workId: res.workId,
-				subdepId: res.subdepId,
-				start: res.start,
-				operatorID: res.operatorID,
-				part: res.part,
-			});
-		})
-		setDetail(newDataDetail);
-	};
-
 	const getSummary = async () => {
 		try {
 			const response = await GetAllSummary();
 			if (response.data) {
-				setListSummary(response.data.result);
+                let summary = response.data.result
+                summary.push(dataDispatch.srimg)
+				setListSummary(summary);
 			}
 		} catch (error) {
 			setListSummary([]);
@@ -875,15 +866,6 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 												}}
 											>
 												<Plus size={18} className='mr-1 mt-1' /> Add Detail
-											</a>
-										) : null}
-										{data.length !== 1 ? (
-											<a
-												className='inline-flex text-red-500 cursor-pointer mt-1'
-												onClick={() => { removeDetail(idx) }}
-											>
-												<Trash2 size={18} className='mr-1 mt-1' /> Remove
-												Detail
 											</a>
 										) : null}
 									</div>
