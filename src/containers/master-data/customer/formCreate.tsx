@@ -280,161 +280,192 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 							name='address'
 							render={(arrayAddress) => (
 								<div>
-									{values.address.map((res, i) => (
-										<Disclosure defaultOpen key={i}>
-											<h1 className='text-xl font-bold mt-3'>
-												Workshop Address
-											</h1>
-											<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-												<div className='w-full'>
-													<InputSelect
-														id={`address.${i}.provinces`}
-														name={`address.${i}.provinces`}
-														placeholder='Province'
-														label='Province'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='' selected>
-															Choose Province
-														</option>
-														{listProvince.length === 0 ? (
-															<option value=''>No Data Province</option>
-														) : (
-															listProvince.map((res: any, i: number) => {
-																return (
-																	<option value={res.province} key={i}>
-																		{res.province}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`address.${i}.cities`}
-														name={`address.${i}.cities`}
-														placeholder='City'
-														label='City'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='' selected>
-															Choose City
-														</option>
-														{listCity.length === 0 ? (
-															<option>No Data City</option>
-														) : (
-															listCity.map((res: any, i: number) => {
-																return (
-																	<option value={res.city} key={i}>
-																		{res.city}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-											</Section>
-											<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-												<div className='w-full'>
-													<InputSelect
-														id={`address.${i}.districts`}
-														name={`address.${i}.districts`}
-														placeholder='District'
-														label='District'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='' selected>
-															Choose District
-														</option>
-														{listDistrict.length === 0 ? (
-															<option>No Data District</option>
-														) : (
-															listDistrict.map((res: any, i: number) => {
-																return (
-																	<option value={res.district} key={i}>
-																		{res.district}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`address.${i}.sub_districts`}
-														name={`address.${i}.sub_districts`}
-														placeholder='Sub District'
-														label='Sub District'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='' selected>
-															Choose Sub District
-														</option>
-														{listSubDistrict.length === 0 ? (
-															<option>No Data Sub District</option>
-														) : (
-															listSubDistrict.map((res: any, i: number) => {
-																return (
-																	<option value={res.subdistrict} key={i}>
-																		{res.subdistrict}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
+									{values.address.map((res: any, i: number) => (
+										<div key={i}>
+											<Disclosure defaultOpen>
+												<h1 className='text-xl font-bold mt-3'>
+													Workshop Address
+												</h1>
+												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='w-full'>
+														<InputSelect
+															id={`address.${i}.provinces`}
+															name={`address.${i}.provinces`}
+															placeholder='Province'
+															label='Province'
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option defaultValue='' selected>
+																Choose Province
+															</option>
+															{listProvince.length === 0 ? (
+																<option value=''>No Data Province</option>
+															) : (
+																listProvince.map((res: any, i: number) => {
+																	return (
+																		<option value={res.province} key={i}>
+																			{res.province}
+																		</option>
+																	);
+																})
+															)}
+														</InputSelect>
+													</div>
+													<div className='w-full'>
+														<InputSelect
+															id={`address.${i}.cities`}
+															name={`address.${i}.cities`}
+															placeholder='City'
+															label='City'
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option defaultValue='' selected>
+																Choose City
+															</option>
+															{listCity.length === 0 ? (
+																<option>No Data City</option>
+															) : (
+																listCity.map((res: any, i: number) => {
+																	return (
+																		<option value={res.city} key={i}>
+																			{res.city}
+																		</option>
+																	);
+																})
+															)}
+														</InputSelect>
+													</div>
+												</Section>
+												<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='w-full'>
+														<InputSelect
+															id={`address.${i}.districts`}
+															name={`address.${i}.districts`}
+															placeholder='District'
+															label='District'
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option defaultValue='' selected>
+																Choose District
+															</option>
+															{listDistrict.length === 0 ? (
+																<option>No Data District</option>
+															) : (
+																listDistrict.map((res: any, i: number) => {
+																	return (
+																		<option value={res.district} key={i}>
+																			{res.district}
+																		</option>
+																	);
+																})
+															)}
+														</InputSelect>
+													</div>
+													<div className='w-full'>
+														<InputSelect
+															id={`address.${i}.sub_districts`}
+															name={`address.${i}.sub_districts`}
+															placeholder='Sub District'
+															label='Sub District'
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option defaultValue='' selected>
+																Choose Sub District
+															</option>
+															{listSubDistrict.length === 0 ? (
+																<option>No Data Sub District</option>
+															) : (
+																listSubDistrict.map((res: any, i: number) => {
+																	return (
+																		<option value={res.subdistrict} key={i}>
+																			{res.subdistrict}
+																		</option>
+																	);
+																})
+															)}
+														</InputSelect>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`address.${i}.ec_postalcode`}
+															name={`address.${i}.ec_postalcode`}
+															placeholder='Postal Code'
+															label='Postal Code'
+															type='number'
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 													<Input
-														id={`address.${i}.ec_postalcode`}
-														name={`address.${i}.ec_postalcode`}
-														placeholder='Postal Code'
-														label='Postal Code'
-														type='number'
+														id={`address.${i}.address_workshop`}
+														name={`address.${i}.address_workshop`}
+														placeholder='Address Workshop'
+														label='Address Workshop'
+														type='text'
 														onChange={handleChange}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
-											</Section>
-											<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-												<Input
-													id={`address.${i}.address_workshop`}
-													name={`address.${i}.address_workshop`}
-													placeholder='Address Workshop'
-													label='Address Workshop'
-													type='text'
-													onChange={handleChange}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-												<Input
-													id={`address.${i}.recipient_address`}
-													name={`address.${i}.recipient_address`}
-													placeholder='Recipient Address'
-													label='Recipient Address'
-													type='text'
-													onChange={handleChange}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</Section>
-										</Disclosure>
+													<Input
+														id={`address.${i}.recipient_address`}
+														name={`address.${i}.recipient_address`}
+														placeholder='Recipient Address'
+														label='Recipient Address'
+														type='text'
+														onChange={handleChange}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</Section>
+											</Disclosure>
+											{i === values.address.length - 1 ? (
+												<a
+													className='inline-flex text-green-500 mr-6 cursor-pointer'
+													onClick={() => {
+														arrayAddress.push({
+															address_person: "",
+															address_workshop: "",
+															recipient_address: "",
+															provinces: "",
+															cities: "",
+															districts: "",
+															sub_districts: "",
+															ec_postalcode: null,
+														});
+													}}
+												>
+													<Plus size={18} className='mr-1 mt-1' /> Add Address
+												</a>
+											) : null}
+											{values.address.length !== 1 ? (
+												<a
+													className='inline-flex text-red-500 cursor-pointer mt-1'
+													onClick={() => {
+														arrayAddress.remove(i);
+													}}
+												>
+													<Trash2  size={18} className='mr-1 mt-1' /> Remove Address
+												</a>
+											) : null}
+										</div>
 									))}
 								</div>
 							)}
