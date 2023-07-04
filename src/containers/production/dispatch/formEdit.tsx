@@ -7,11 +7,12 @@ import {
 	GetAllDepartement,
 	GetAllWorkerCenter,
 	GetAllEmployeDepart,
-	AddDispatch,
+	EditDispatch,
+	EditDispatchDetail,
+	DeleteDispatchDetail,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
-import moment from "moment";
 
 interface props {
 	content: string;
@@ -24,77 +25,99 @@ interface data {
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
-	dispatchDetail: [
-		{
-			workId: string;
-			subdepId: string;
-			start: any;
-			operatorID: string;
-			part: string;
-		}
-	];
 }
 
-export const FormEditDispatch = ({ content, dataDispatch, showModal }: props) => {
+export const FormEditDispatch = ({
+	content,
+	dataDispatch,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
+	const [isShowDetail, setIsShowDetail] = useState<boolean>(true);
 	const [listSummary, setListSummary] = useState<any>([]);
 	const [listDepart, setListDepart] = useState<any>([]);
 	const [listWorkerCenter, setListWorkerCenter] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [jobNo, setJobNo] = useState<string>("");
 	const [dateWor, setDateWor] = useState<string>("");
+	const [dateFinish, setDateFinish] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
 	const [part, setPart] = useState<any>([]);
 	const [partName, setPartName] = useState<string>("");
 	const [status, setStatus] = useState<string>("");
+	const [tabsPart, setTabsPart] = useState<any>([]);
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		srId: "",
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
-		dispatchDetail: [
-			{
-				workId: "",
-				subdepId: "",
-				start: null,
-				operatorID: "",
-				part: "",
-			},
-		],
 	});
 
 	useEffect(() => {
-        settingData();
+		settingData();
 		getSummary();
 		getDepart();
 		getWorkerCenter();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"D" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 100) +
-			1;
-		return id;
-	};
-console.log(dataDispatch)
 	const settingData = () => {
+		let equipment: any = [];
+		let part: any = [];
+		let lastEquipment: string = "";
+		let arrPart: any = [];
+		let arrDetail: any = [];
 		setData({
 			srId: dataDispatch.srId,
 			id_dispatch: dataDispatch.id_dispatch,
 			dispacth_date: dataDispatch.dispacth_date,
 			remark: dataDispatch.remark,
-			dispatchDetail: dataDispatch.dispatchDetail
 		});
+		dataDispatch.srimg.wor.customerPo.quotations.eqandpart.map((res: any) => {
+			if (lastEquipment !== res.equipment.nama) {
+				equipment.push(res.equipment.nama);
+			}
+			lastEquipment = res.equipment.nama;
+		});
+		dataDispatch.srimg.srimgdetail.map((res: any) => {
+			part.push(res);
+		});
+		dataDispatch.dispatchDetail.map((res: any) => {
+			if (arrPart.length === 0) {
+				setPartName(res.part);
+				arrPart.push(res.part);
+			} else if (!arrPart.includes(res.part)) {
+				arrPart.push(res.part);
+			}
+		});
+		arrPart.map((res: any) => {
+			dataDispatch.dispatchDetail
+				.filter((part: any) => {
+					return part.part === res;
+				})
+				.map((res: any, i: number) => {
+					arrDetail.push({
+						id: res.id,
+						dispacthID: dataDispatch.id,
+						index: i,
+						workId: res.workId,
+						subdepId: res.subdepId,
+						start: res.start,
+						operatorID: res.operatorID,
+						part: res.part,
+					});
+				});
+		});
+		setTabsPart(arrPart);
+		setDetail(arrDetail);
+		setEquipment(equipment.toString());
+		setPart(part);
+		setDateFinish(dataDispatch.srimg.wor.delivery_date);
+		setJobNo(dataDispatch.srimg.wor.job_no);
+		setSubject(dataDispatch.srimg.wor.subject);
+		setDateWor(dataDispatch.srimg.wor.date_wor);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -141,6 +164,8 @@ console.log(dataDispatch)
 					if (arrDetail.length > 0) {
 						arrDetail.map((res: any, i: number) => {
 							arrDetailOther.push({
+								id: res.id,
+								dispacthID: dataDispatch.id,
 								index: res.index,
 								workId: res.workId,
 								subdepId: res.subdepId,
@@ -152,6 +177,8 @@ console.log(dataDispatch)
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							id: "",
+							dispacthID: dataDispatch.id,
 							index: 0,
 							workId: "",
 							subdepId: "",
@@ -162,6 +189,8 @@ console.log(dataDispatch)
 					}
 				} else {
 					dataDetail.push({
+						id: "",
+						dispacthID: dataDispatch.id,
 						index: 0,
 						workId: "",
 						subdepId: "",
@@ -194,6 +223,8 @@ console.log(dataDispatch)
 						arrDetail.map((res: any, i: number) => {
 							if (parseInt(idx[1]) === res.index) {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: res.workId,
 									subdepId: data.id,
@@ -203,6 +234,8 @@ console.log(dataDispatch)
 								});
 							} else {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: res.workId,
 									subdepId: res.subdepId,
@@ -215,6 +248,8 @@ console.log(dataDispatch)
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							id: "",
+							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
 							workId: "",
 							subdepId: data.id,
@@ -225,6 +260,8 @@ console.log(dataDispatch)
 					}
 				} else {
 					dataDetail.push({
+						id: "",
+						dispacthID: dataDispatch.id,
 						index: 0,
 						workId: "",
 						subdepId: data.id,
@@ -254,6 +291,8 @@ console.log(dataDispatch)
 						arrDetail.map((res: any, i: number) => {
 							if (parseInt(idx[1]) === res.index) {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: data.id,
 									subdepId: res.subdepId,
@@ -263,6 +302,8 @@ console.log(dataDispatch)
 								});
 							} else {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: res.workId,
 									subdepId: res.subdepId,
@@ -275,6 +316,8 @@ console.log(dataDispatch)
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							id: "",
+							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
 							workId: data.id,
 							subdepId: "",
@@ -285,6 +328,8 @@ console.log(dataDispatch)
 					}
 				} else {
 					dataDetail.push({
+						id: "",
+						dispacthID: dataDispatch.id,
 						index: 0,
 						workId: data.id,
 						subdepId: "",
@@ -313,6 +358,8 @@ console.log(dataDispatch)
 						arrDetail.map((res: any, i: number) => {
 							if (parseInt(idx[1]) === res.index) {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: res.workId,
 									subdepId: res.subdepId,
@@ -322,6 +369,8 @@ console.log(dataDispatch)
 								});
 							} else {
 								arrDetailOther.push({
+									id: res.id,
+									dispacthID: dataDispatch.id,
 									index: res.index,
 									workId: res.workId,
 									subdepId: res.subdepId,
@@ -334,6 +383,8 @@ console.log(dataDispatch)
 						dataDetail = arrDetailOther;
 					} else {
 						dataDetail.push({
+							id: "",
+							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
 							workId: "",
 							subdepId: "",
@@ -344,6 +395,8 @@ console.log(dataDispatch)
 					}
 				} else {
 					dataDetail.push({
+						id: "",
+						dispacthID: dataDispatch.id,
 						index: 0,
 						workId: "",
 						subdepId: "",
@@ -373,6 +426,8 @@ console.log(dataDispatch)
 				arrDetail.map((res: any, i: number) => {
 					if (parseInt(idx[1]) === res.index) {
 						arrDetailOther.push({
+							id: res.id,
+							dispacthID: dataDispatch.id,
 							index: res.index,
 							workId: res.workId,
 							subdepId: res.subdepId,
@@ -382,6 +437,8 @@ console.log(dataDispatch)
 						});
 					} else {
 						arrDetailOther.push({
+							id: res.id,
+							dispacthID: dataDispatch.id,
 							index: res.index,
 							workId: res.workId,
 							subdepId: res.subdepId,
@@ -394,6 +451,9 @@ console.log(dataDispatch)
 				dataDetail = arrDetailOther;
 			} else {
 				dataDetail.push({
+					id: "",
+					dispacthID: dataDispatch.id,
+					index: 0,
 					workId: "",
 					subdepId: "",
 					start: new Date(data),
@@ -403,6 +463,8 @@ console.log(dataDispatch)
 			}
 		} else {
 			dataDetail.push({
+				id: "",
+				dispacthID: dataDispatch.id,
 				index: 0,
 				workId: "",
 				subdepId: "",
@@ -426,6 +488,8 @@ console.log(dataDispatch)
 			if (arrDetail.length > 0) {
 				arrDetail.map((res: any, i: number) => {
 					arrDetailOther.push({
+						id: res.id,
+						dispacthID: dataDispatch.id,
 						index: res.index,
 						workId: res.workId,
 						subdepId: res.subdepId,
@@ -437,6 +501,8 @@ console.log(dataDispatch)
 				dataDetail = arrDetailOther;
 			} else {
 				dataDetail.push({
+					id: "",
+					dispacthID: dataDispatch.id,
 					index: arrDetail.length,
 					workId: "",
 					subdepId: "",
@@ -447,6 +513,8 @@ console.log(dataDispatch)
 			}
 		}
 		dataDetail.push({
+			id: "",
+			dispacthID: dataDispatch.id,
 			index: arrDetail.length,
 			workId: "",
 			subdepId: "",
@@ -457,12 +525,84 @@ console.log(dataDispatch)
 		setDetail(dataDetail);
 	};
 
+	const removeDetail = (i: number) => {
+		let dataDetail = detail;
+		let newDataDetail: any = [];
+		let removeDetail = dataDetail.filter((detail: any) => {
+			return detail.index !== i && detail.part === partName;
+		});
+		let removeDetailTable = dataDetail.filter((detail: any) => {
+			return detail.index === i && detail.part === partName;
+		});
+		let otherDetail = dataDetail.filter((detail: any) => {
+			return detail.part !== partName;
+		});
+		newDataDetail = otherDetail;
+		removeDetail.map((res: any, i: number) => {
+			newDataDetail.push({
+				id: res.id,
+				dispacthID: dataDispatch.id,
+				index: i,
+				workId: res.workId,
+				subdepId: res.subdepId,
+				start: res.start,
+				operatorID: res.operatorID,
+				part: res.part,
+			});
+		});
+		if(removeDetailTable[0].id !== ""){
+			deleteDispacthDetail(removeDetailTable[0].id)
+		}
+		setDetail(newDataDetail);
+	};
+
+	const deleteDispacthDetail = async (id: string) => {
+		try {
+			const response = await DeleteDispatchDetail(id);
+			if (response.status === 201) {
+				showModal(true, content, true);
+				toast.success("Delete Dispatch Detail Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Delete Dispatch Detail Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Delete Dispatch Detail Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	};
+
 	const getSummary = async () => {
 		try {
 			const response = await GetAllSummary();
 			if (response.data) {
-                let summary = response.data.result
-                summary.push(dataDispatch.srimg)
+				let summary = response.data.result;
+				summary.push(dataDispatch.srimg);
 				setListSummary(summary);
 			}
 		} catch (error) {
@@ -503,11 +643,13 @@ console.log(dataDispatch)
 		}
 	};
 
-	const addDispatch = async (payload: any) => {
+	const editDispatch = async (payload: any) => {
 		setIsLoading(true);
 		let dataDetail: any = [];
 		detail.map((res: any) => {
 			dataDetail.push({
+				id: res.id,
+				dispacthID: dataDispatch.id,
 				workId: res.workId,
 				subdepId: res.subdepId,
 				start: res.start,
@@ -515,30 +657,26 @@ console.log(dataDispatch)
 				part: res.part,
 			});
 		});
-		let dataBody = {
-			srId: payload.srId,
-			id_dispatch: generateIdNum(),
-			dispacth_date: payload.dispacth_date,
-			remark: payload.remark,
-			dispatchDetail: dataDetail,
-		};
 		try {
-			const response = await AddDispatch(dataBody);
+			const response = await EditDispatch(dataDispatch.id, payload);
 			if (response.data) {
-				toast.success("Add Dispatch Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				showModal(false, content, true);
+				const res = await EditDispatchDetail(dataDetail);
+				if (res.data) {
+					toast.success("Edit Dispatch Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
 			}
 		} catch (error) {
-			toast.error("Add Dispatch Failed", {
+			toast.error("Edit Dispatch Failed", {
 				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: true,
@@ -556,9 +694,9 @@ console.log(dataDispatch)
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
-				validationSchema={sumarySchema}
+				// validationSchema={sumarySchema}
 				onSubmit={(values) => {
-					addDispatch(values);
+					editDispatch(values);
 				}}
 				enableReinitialize
 			>
@@ -614,7 +752,11 @@ console.log(dataDispatch)
 									) : (
 										listSummary.map((res: any, i: number) => {
 											return (
-												<option value={JSON.stringify(res)} key={i}>
+												<option
+													value={JSON.stringify(res)}
+													key={i}
+													selected={res.id === dataDispatch.srId}
+												>
 													{res.id_summary} - {res.wor.job_no}
 												</option>
 											);
@@ -666,11 +808,7 @@ console.log(dataDispatch)
 								<InputDate
 									id='date_of_summary'
 									label='Finish Date'
-									value={
-										values.dispacth_date === null
-											? new Date()
-											: values.dispacth_date
-									}
+									value={dateFinish === "" ? new Date() : dateFinish}
 									onChange={(value: any) =>
 										setFieldValue("date_of_summary", value)
 									}
@@ -866,6 +1004,16 @@ console.log(dataDispatch)
 												}}
 											>
 												<Plus size={18} className='mr-1 mt-1' /> Add Detail
+											</a>
+										) : null}
+										{data.length !== 1 ? (
+											<a
+												className='inline-flex text-red-500 cursor-pointer mt-1'
+												onClick={() => {
+													removeDetail(idx);
+												}}
+											>
+												<Trash2 size={18} className='mr-1 mt-1' /> Remove Detail
 											</a>
 										) : null}
 									</div>

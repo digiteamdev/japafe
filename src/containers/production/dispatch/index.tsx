@@ -288,7 +288,7 @@ export const Dispatch = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<ViewDispatch dataSelected={dataSelected} />
+							<ViewDispatch content={modalContent} showModal={showModal} dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
 							<FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
 						) : (

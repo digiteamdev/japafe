@@ -3,12 +3,21 @@ import moment from "moment";
 import { Section } from "../../../components";
 import { Printer } from "react-feather";
 import { PdfDispatch } from "./pdfDispatch";
+import {
+	DispatchDetailStart,
+	DispatchDetailFinish
+} from "../../../services";
+import { toast } from "react-toastify";
+import { getId } from '../../../configs/session';
 
 interface props {
+	content: string;
 	dataSelected: any;
+	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewDispatch = ({ dataSelected }: props) => {
+export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
+	
 	const [dataPart, setDataPart] = useState<any>([]);
 	const [activeTabs, setActiveTabs] = useState<any>("");
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -33,6 +42,95 @@ export const ViewDispatch = ({ dataSelected }: props) => {
 	const showModalPdf = (res: any, val: boolean) => {
 		setDataDetail(res);
 		setIsModal(val);
+	};
+
+	const startDetail = async (id: string) => {
+		let dataBody = {
+			actual : new Date()
+		}
+		try {
+			const response = await DispatchDetailStart(id, dataBody);
+			if (response.status === 201) {
+				showModal(false, content, true);
+				toast.success("Start Dispatch Detail Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Start Dispatch Detail Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Start Dispatch Detail Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	};
+
+	const finishDetail = async (id: string) => {
+		let dataBody = {
+			finish : new Date(),
+			approvebyID: getId(),
+		}
+		try {
+			const response = await DispatchDetailFinish(id, dataBody);
+			if (response.status === 201) {
+				showModal(false, content, true);
+				toast.success("Finish Dispatch Detail Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Finish Dispatch Detail Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Finish Dispatch Detail Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
 	};
 
 	return (
@@ -138,6 +236,7 @@ export const ViewDispatch = ({ dataSelected }: props) => {
 										<th className='border border-black border-collapse'>
 											Finish Date
 										</th>
+										<th className='border border-black border-collapse'></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -155,7 +254,7 @@ export const ViewDispatch = ({ dataSelected }: props) => {
 														{moment(res.start).format("DD-MMMM-YYYY")}
 													</td>
 													<td className='border border-black border-collapse pl-2'>
-														{res.actual}
+														{ res.actual === null ? '' : moment(res.actual).format("DD-MMMM-YYYY")}
 													</td>
 													<td className='border border-black border-collapse pl-2'>
 														{res.Employee.employee_name}
@@ -167,6 +266,16 @@ export const ViewDispatch = ({ dataSelected }: props) => {
 														{res.finish === null
 															? ""
 															: moment(res.finish).format("DD-MMMM-YYYY")}
+													</td>
+													<td className='border border-black border-collapse pl-2'>
+														{ res.approvebyID === null ? (
+															<button
+																className={`px-2 my-1.5 text-justify rounded-md border border-transparent ${res.actual === null ? 'bg-green-500 hover:bg-green-400' : 'bg-red-500 hover:bg-red-400' } text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+																onClick={() => res.actual === null ? startDetail(res.id) : finishDetail(res.id) }
+															>
+																{ res.actual === null ? "Start" : "Finish" }
+															</button>
+														) : '' }
 													</td>
 												</tr>
 											);

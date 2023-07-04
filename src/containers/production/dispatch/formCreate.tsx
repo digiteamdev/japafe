@@ -43,6 +43,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [jobNo, setJobNo] = useState<string>("");
 	const [dateWor, setDateWor] = useState<string>("");
+	const [dateFinish, setDateFinish] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
 	const [part, setPart] = useState<any>([]);
@@ -104,6 +105,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				setJobNo(data.wor.job_no);
 				setSubject(data.wor.subject);
 				setDateWor(data.wor.date_wor);
+				setDateFinish(data.wor.delivery_date);
 				setEquipment(equipment.toString());
 				setPart(part);
 			} else {
@@ -565,7 +567,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
-				validationSchema={sumarySchema}
+				// validationSchema={sumarySchema}
 				onSubmit={(values) => {
 					addDispatch(values);
 				}}
@@ -675,11 +677,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								<InputDate
 									id='date_of_summary'
 									label='Finish Date'
-									value={
-										values.dispacth_date === null
-											? new Date()
-											: values.dispacth_date
-									}
+									value={ dateFinish === "" ? new Date() : dateFinish }
 									onChange={(value: any) =>
 										setFieldValue("date_of_summary", value)
 									}
