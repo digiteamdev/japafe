@@ -93,7 +93,7 @@ export const FormCreateHoliday = ({
 								render={(arrayHelper) => (
 									<>
 										{values.data.map((res, i) => (
-											<div className="w-full">
+											<div className="w-full" key={i}>
                                                 <Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
                                                     <div className='w-full'>
                                                         <InputDate
