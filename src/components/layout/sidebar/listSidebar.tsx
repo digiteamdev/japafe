@@ -59,6 +59,13 @@ export const ListNav = [
     
                 subMenu: null
             },
+            {
+                id: 'holiday',
+                link: "/master-data/holiday",
+                title: "Holiday",
+    
+                subMenu: null
+            },
         ]
     },
     {

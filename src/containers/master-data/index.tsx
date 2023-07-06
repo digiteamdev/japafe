@@ -5,3 +5,4 @@ export * from './equipment-part';
 export * from './departement';
 export * from './worker-center';
 export * from './activity';
+export * from './holiday';
