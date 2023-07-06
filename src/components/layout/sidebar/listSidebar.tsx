@@ -52,6 +52,13 @@ export const ListNav = [
     
                 subMenu: null
             },
+            {
+                id: 'activity',
+                link: "/master-data/activity",
+                title: "Activity",
+    
+                subMenu: null
+            },
         ]
     },
     {

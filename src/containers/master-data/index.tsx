@@ -4,3 +4,4 @@ export * from './employe';
 export * from './equipment-part';
 export * from './departement';
 export * from './worker-center';
+export * from './activity';

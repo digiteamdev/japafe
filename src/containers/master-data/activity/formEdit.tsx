@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Section, Input } from "../../../components";
 import { Formik, Form } from "formik";
-import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { EditWorkerCenter } from "../../../services/master-data";
+import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
+import { EditActivity } from "../../../services/master-data";
 import { toast } from "react-toastify";
 
 interface props {
@@ -15,7 +15,7 @@ interface data {
 	name: string;
 }
 
-export const FormEditWorkerCenter = ({
+export const FormEditActivity = ({
 	dataSelected,
 	content,
 	showModal,
@@ -36,12 +36,12 @@ export const FormEditWorkerCenter = ({
         })
     }
 
-	const editWorkerCenter = async (data: { name: string }) => {
+	const editActivity = async (data: { name: string }) => {
 		setIsLoading(true);
 		try {
-			const response = await EditWorkerCenter(data, dataSelected.id);
+			const response = await EditActivity(data, dataSelected.id);
 			if (response) {
-				toast.success("Edit Worker Center Success", {
+				toast.success("Edit Activity Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -55,7 +55,7 @@ export const FormEditWorkerCenter = ({
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Edit Worker Center Failed", {
+			toast.error("Edit Activity Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -73,9 +73,9 @@ export const FormEditWorkerCenter = ({
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
-				validationSchema={departemenSchema}
+				validationSchema={activitySchema}
 				onSubmit={(values) => {
-					editWorkerCenter(values);
+					editActivity(values);
 				}}
 				enableReinitialize
 			>

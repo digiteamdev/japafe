@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Section, Input } from "../../../components";
 import { Formik, Form } from "formik";
-import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { EditWorkerCenter } from "../../../services/master-data";
+import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
+import { AddActivity } from "../../../services/master-data";
 import { toast } from "react-toastify";
 
 interface props {
-	dataSelected: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
@@ -15,8 +14,7 @@ interface data {
 	name: string;
 }
 
-export const FormEditWorkerCenter = ({
-	dataSelected,
+export const FormCreateActivity = ({
 	content,
 	showModal,
 }: props) => {
@@ -25,23 +23,12 @@ export const FormEditWorkerCenter = ({
 		name: ""
 	});
 
-	useEffect( () => {
-        settingData()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    const settingData = () => {
-        setData({
-            name: dataSelected.name
-        })
-    }
-
-	const editWorkerCenter = async (data: { name: string }) => {
+	const addActivity = async (data: any) => {
 		setIsLoading(true);
 		try {
-			const response = await EditWorkerCenter(data, dataSelected.id);
+			const response = await AddActivity(data);
 			if (response) {
-				toast.success("Edit Worker Center Success", {
+				toast.success("Add Activity Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -51,11 +38,10 @@ export const FormEditWorkerCenter = ({
 					progress: undefined,
 					theme: "colored",
 				});
-				setIsLoading(false);
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Edit Worker Center Failed", {
+			toast.error("Add Activity Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -65,17 +51,17 @@ export const FormEditWorkerCenter = ({
 				progress: undefined,
 				theme: "colored",
 			});
-			setIsLoading(false);
 		}
+		setIsLoading(false);
 	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
-				validationSchema={departemenSchema}
+				validationSchema={activitySchema}
 				onSubmit={(values) => {
-					editWorkerCenter(values);
+					addActivity(values);
 				}}
 				enableReinitialize
 			>
@@ -85,8 +71,8 @@ export const FormEditWorkerCenter = ({
 							<Input
 								id='name'
 								name='name'
-								placeholder='Worker Center Name'
-								label='Worker Center Name'
+								placeholder='Activity Name'
+								label='Activity Name'
 								type='text'
 								required={true}
 								disabled={isLoading}
