@@ -9,7 +9,9 @@ interface props {
 	label?: string;
 	name?: string;
 	minDate?: any;
+	maxDate?: any;
 	value?: any;
+	disabled?: boolean;
 	withLabel?: boolean;
 	onAction?: () => void;
 	onChange?: any;
@@ -21,9 +23,11 @@ export const InputDate = ({
 	className,
     classNameIcon,
 	minDate,
+	maxDate,
 	name,
     value,
 	withLabel,
+	disabled,
     onAction,
     onChange,
 }: 
@@ -53,6 +57,8 @@ props) => {
                     className={`${className}`}
                     dateFormat="dd-MM-yyyy"
 					minDate={new Date(minDate)}
+					maxDate={new Date(maxDate)}
+					disabled={disabled}
                 />
 			</div>
 		</div>

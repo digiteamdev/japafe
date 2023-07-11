@@ -98,7 +98,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			"/" +
 			month.toString() +
 			"/" +
-			"CO-JAPA/" +
+			"TS-JAPA/" +
 			Math.floor(Math.random() * 100) +
 			1;
 		setIdAutoNum(id);
