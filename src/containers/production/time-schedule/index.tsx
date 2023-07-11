@@ -11,9 +11,9 @@ import {
 	Pagination
 } from "../../../components";
 import { Clock, Eye, Edit, Trash2 } from "react-feather";
-// import { FormCreateDispatch } from "./formCreate";
+import { FormCreateSchedule } from "./formCreate";
 import {
-	GetDispatch,
+	GetSchedule,
 	SearchDepartement,
 	DeleteDispatch,
 } from "../../../services";
@@ -36,13 +36,14 @@ export const Schedule = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No Job" },
+		{ name: "Date Schedulle" },
 		{ name: "Customer" },
 		{ name: "Subject" },
 		{ name: "Action" }
 	];
 
 	useEffect(() => {
-		getDispatch(page, perPage);
+		getSchedule(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,30 +54,14 @@ export const Schedule = () => {
 			setDataSelected(false)
 		}
 		if(reload){
-			getDispatch(page, perPage);
+			getSchedule(page, perPage);
 		}
 	};
 
-	const showEquipment = (data: any) => {
-		let equipment: any = null
-		if(data.length > 0){
-			data.map( (res: any) => {
-				if(equipment === null){
-					equipment = res.equipment.nama + " - " + res.eq_part.nama_part
-				}else{
-					equipment = equipment + ", " + res.equipment.nama + " - " + res.eq_part.nama_part
-				}
-			})
-			return equipment
-		}else{
-			return "-"
-		}
-	}
-
-	const getDispatch = async (page: number, limit: number) => {
+	const getSchedule = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetDispatch(page, limit);
+			const response = await GetSchedule(page, limit);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -125,7 +110,7 @@ export const Schedule = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getDispatch(1, 10);
+				getSchedule(1, 10);
 			} else {
 				toast.error("Delete Dispatch Failed", {
 					position: "top-center",
@@ -209,13 +194,16 @@ export const Schedule = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.srimg.wor.job_no }
+										{ res.wor.job_no }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.id_dispatch }
+										{ moment(res.timesch).format('DD-MMMM-YYYY') }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.srimg.wor.customerPo.quotations.Customer.name }
+										{ res.wor.customerPo.quotations.Customer.name }
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{ res.wor.subject }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
 										<div>
@@ -257,13 +245,13 @@ export const Schedule = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getDispatch(value, perPage);
+								getSchedule(value, perPage);
 							}}
 						/>
 					) : null
 				}
 			</Content>
-			{/* {
+			{
 				modalContent === 'delete' ? (
 					<ModalDelete
 						data={dataSelected}
@@ -280,15 +268,17 @@ export const Schedule = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<ViewDispatch content={modalContent} showModal={showModal} dataSelected={dataSelected} />
+							<></>
+							// <ViewDispatch content={modalContent} showModal={showModal} dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
-							<FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
+							<></>
+							// <FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
 						) : (
-							<FormCreateDispatch content={modalContent} showModal={showModal}/>
+							<FormCreateSchedule content={modalContent} showModal={showModal}/>
 						)}
 					</Modal>
 				)
-			} */}
+			}
 		</div>
 	);
 };
