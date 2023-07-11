@@ -20,7 +20,7 @@ export default function ActivityPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Activity</title>
+				<title>JAPA E-WIS | Activity</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Activity />

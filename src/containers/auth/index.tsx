@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Logo from "../../assets/logo/logo-japa.png";
+import Logo from "../../assets/logo/logo.png";
 import Image from "next/image";
 import { Formik, Form } from "formik";
 import { loginSchema } from "../../schema/auth/loginSchema";

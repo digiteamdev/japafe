@@ -20,7 +20,7 @@ export default function Home() {
 	return (
 		<main className='w-full flex items-center h-screen'>
 			<Head>
-				<title>JAPA MIS | Login</title>
+				<title>JAPA E-WIS | Login</title>
 				<link rel='shortcut icon' href='/static/favicon-16x16.png' />
 			</Head>
 			<div className='w-2/4 h-screen items-center justify-center hidden md:flex lg:flex bg-blue-200 p-6'>

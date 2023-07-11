@@ -20,7 +20,7 @@ export default function MaterialNameInfoPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Material Request</title>
+				<title>JAPA E-WIS | Material Request</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Mr />

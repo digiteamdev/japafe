@@ -20,7 +20,7 @@ export default function SchedulePage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Time Schedule</title>
+				<title>JAPA E-WIS | Time Schedule</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Schedule />

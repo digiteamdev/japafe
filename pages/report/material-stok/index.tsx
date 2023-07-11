@@ -20,7 +20,7 @@ export default function MaterialStokPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Material Stock</title>
+				<title>JAPA E-WIS | Material Stock</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<MaterialStok />

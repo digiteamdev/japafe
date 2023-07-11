@@ -20,7 +20,7 @@ export default function CustomerPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Customer</title>
+				<title>JAPA E-WIS | Customer</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Customer />

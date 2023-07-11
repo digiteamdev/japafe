@@ -20,7 +20,7 @@ export default function DepartementPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Departement</title>
+				<title>JAPA E-WIS | Departement</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Departement />

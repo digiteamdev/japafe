@@ -20,7 +20,7 @@ export default function QuotationPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Quotation</title>
+				<title>JAPA E-WIS | Quotation</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Quotation />

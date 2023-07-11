@@ -20,7 +20,7 @@ export default function SummaryReportPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Summery Report</title>
+				<title>JAPA E-WIS | Summery Report</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<SummaryReport />

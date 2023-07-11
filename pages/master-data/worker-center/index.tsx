@@ -20,7 +20,7 @@ export default function WorkerCenterPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA MIS | Worker Center</title>
+				<title>JAPA E-WIS | Worker Center</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<WorkerCenter />
