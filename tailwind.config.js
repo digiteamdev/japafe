@@ -12,6 +12,7 @@ module.exports = {
       },
       gridTemplateColumns: {
         sidebar: "300px auto",
+        'gantt': '150px, 1fr',
       }, 
       gridTemplateRows: {
         header: "64px auto",
@@ -24,7 +25,7 @@ module.exports = {
       'lg': '1024px',
       'xl': '1280px',
       '2xl': '1536px'
-    },
+    }
   },
   plugins: [],
 }
