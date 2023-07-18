@@ -5,6 +5,7 @@ import {
 	GetAllWorSchedule,
 	AddSchedule,
 	GetAllActivity,
+	GetAllHoliday,
 } from "../../../services";
 import {
 	Gantt,
@@ -17,7 +18,9 @@ import {
 } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
 import { toast } from "react-toastify";
-import { locale } from "moment";
+import moment from "moment";
+import { Plus } from "react-feather";
+import { monthDiff, getMonthName, countDay } from "../../../utils/dateFunction";
 
 interface props {
 	content: string;
@@ -41,32 +44,36 @@ interface data {
 
 export const FormCreateSchedule = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isShowGantt, setIsShowGantt] = useState<boolean>(false);
 	const [listWor, setListWor] = useState<any>([]);
 	const [listActivity, setListActivity] = useState<any>([]);
 	const [customer, setCustomer] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [jobDesc, setJobDesc] = useState<string>("");
 	const [note, setNote] = useState<string>("");
+	const [row, setRow] = useState<number>(0);
 	const [activity, setActivity] = useState<string>("");
 	const [activityId, setActivityId] = useState<string>("");
 	const [activityStar, setActivityStar] = useState<any>(new Date());
 	const [activityEnd, setActivityEnd] = useState<any>(new Date());
 	const [starDate, setStartDate] = useState<any>(new Date());
 	const [endDate, setEndDate] = useState<any>(new Date());
+	const [holiday, setHoliday] = useState<string>('no');
 	const [idAutoNum, setIdAutoNum] = useState<string>("");
+	const [numMoth, setNumMonth] = useState<number>(0);
+	const [numDate, setNumDate] = useState<number>(12);
+	const [listMoth, setListMonth] = useState<any>([]);
+	const [listDate, setListDate] = useState<any>([]);
+	const [dateHoliday, setDateHoliday] = useState<any>([]);
 	const [tasks, setTask] = useState<any>([
 		{
 			start: new Date(),
 			end: new Date(),
 			name: "-",
-			id: "Task",
-			type: "project",
-			progress: 50,
-			isDisabled: false,
-			hideChildren: false,
-			styles: {
-				progressColor: "#ffbb54",
-			},
+			id: "",
+			progress: 0,
+			duration: 0,
+			holiday: 0,
 		},
 	]);
 	const [data, setData] = useState<data>({
@@ -88,6 +95,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		getWor();
 		getActivity();
 		generateIdNum();
+		getHolidays();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -117,6 +125,24 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		if (event.target.name === "worId") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
+				let listDates: any = [];
+				let countHoliday = 0;
+				let durationDay = countDay(data.date_of_order,data.delivery_date);
+				if(holiday === 'yes'){
+					for (var i = 0; i < durationDay; i++) {
+						if (i === 0) {
+							let unixTime = Math.floor(new Date(activityStar).getTime() / 1000);
+							listDates.push(new Date(unixTime * 1000));
+						} else {
+							let unixTime = Math.floor(new Date(activityStar).getTime() / 1000 + 86400 * i);
+							listDates.push(new Date(unixTime * 1000));
+						}
+					}
+					for (var i = 0; i < listDates.length; i++) {
+						let holiday = checkHoliday(listDates[i],'duration')
+						countHoliday = countHoliday + parseInt(holiday.toString())
+					}
+				}
 				setCustomer(data.customerPo.quotations.Customer.name);
 				setSubject(data.subject);
 				setJobDesc(data.job_desk);
@@ -131,15 +157,27 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: new Date(data.delivery_date),
 						name: data.job_no,
 						id: "Task",
-						type: "project",
 						progress: 0,
-						isDisabled: false,
-						hideChildren: false,
-						styles: {
-							progressColor: "#ffbb54",
-						},
+						duration: durationDay - countHoliday,
+						holiday: countHoliday,
+						color: "#facc15",
+						left: 0,
+						width: 60 * durationDay,
 					},
 				]);
+				setNumMonth(
+					monthDiff(
+						new Date(data.date_of_order),
+						new Date(data.delivery_date)
+					) + 1
+				);
+				showMonth(
+					monthDiff(
+						new Date(data.date_of_order),
+						new Date(data.delivery_date)
+					) + 1
+				);
+				showDate(data.date_of_order, data.delivery_date);
 			} else {
 				setCustomer("");
 				setSubject("");
@@ -155,15 +193,15 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: new Date(),
 						name: "-",
 						id: "Task",
-						type: "project",
 						progress: 0,
-						isDisabled: false,
-						hideChildren: false,
-						styles: {
-							progressColor: "#ffbb54",
-						},
+						duration: 0,
+						holiday: 0,
+						left: 0,
+						width: 0,
+						color: "",
 					},
 				]);
+				setIsShowGantt(false);
 			}
 		} else if (event.target.name === "activity") {
 			if (event.target.value !== "no data") {
@@ -174,38 +212,163 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				setActivity("");
 				setActivityId("");
 			}
+		} else if (event.target.name === "holiday") {
+			if (event.target.value === "yes") {
+				let newTasks: any = [];
+				tasks.map((res: any) => {
+					let listDates: any = [];
+					let countHoliday = 0;
+					let durationDay = countDay(res.start,res.end);
+					for (var i = 0; i < durationDay; i++) {
+						if (i === 0) {
+							let unixTime = Math.floor(new Date(res.start).getTime() / 1000);
+							listDates.push(new Date(unixTime * 1000));
+						} else {
+							let unixTime = Math.floor(new Date(res.start).getTime() / 1000 + 86400 * i);
+							listDates.push(new Date(unixTime * 1000));
+						}
+					}
+					for (var i = 0; i < listDates.length; i++) {
+						let holiday = checkHoliday(listDates[i],'duration')
+						countHoliday = countHoliday + parseInt(holiday.toString())
+					}
+					newTasks.push({
+						start: res.start,
+						end: res.end,
+						name: res.name,
+						id: res.id,
+						progress: res.progress,
+						duration: durationDay - countHoliday,
+						holiday: countHoliday,
+						color: res.color,
+						left: res.left,
+						width: res.width,
+					});
+				});
+				setTask(newTasks);
+			}else{
+				let newTasks: any = [];
+				tasks.map((res: any) => {
+					let listDates: any = [];
+					let durationDay = countDay(res.start,res.end);
+					for (var i = 0; i < durationDay; i++) {
+						if (i === 0) {
+							let unixTime = Math.floor(new Date(res.start).getTime() / 1000);
+							listDates.push(new Date(unixTime * 1000));
+						} else {
+							let unixTime = Math.floor(new Date(res.start).getTime() / 1000 + 86400 * i);
+							listDates.push(new Date(unixTime * 1000));
+						}
+					}
+					newTasks.push({
+						start: res.start,
+						end: res.end,
+						name: res.name,
+						id: res.id,
+						progress: res.progress,
+						duration: durationDay,
+						holiday: res.holiday,
+						color: res.color,
+						left: res.left,
+						width: res.width,
+					});
+				});
+				setTask(newTasks);
+			}
 		}
 	};
 
 	const addTask = () => {
 		let newTaks: any = [];
-		tasks.map((res: any) => {
+		let listDates: any = [];
+		let countHoliday = 0;
+		let rangeDay = countDay(starDate,activityStar);
+		let durationDay = countDay(activityStar,activityEnd);
+		if(holiday === 'yes'){
+			for (var i = 0; i < durationDay; i++) {
+				if (i === 0) {
+					let unixTime = Math.floor(new Date(activityStar).getTime() / 1000);
+					listDates.push(new Date(unixTime * 1000));
+				} else {
+					let unixTime = Math.floor(new Date(activityStar).getTime() / 1000 + 86400 * i);
+					listDates.push(new Date(unixTime * 1000));
+				}
+			}
+			for (var i = 0; i < listDates.length; i++) {
+				let holiday = checkHoliday(listDates[i],'duration')
+				countHoliday = countHoliday + parseInt(holiday.toString())
+			}
+		}
+		tasks.map((res: any, i: any) => {
+			if (i === 0) {
+				newTaks.push({
+					start: res.start,
+					end: res.end,
+					name: res.name,
+					id: res.id,
+					progress: res.progress,
+					duration: res.duration,
+					holiday: res.holiday,
+					left: res.left,
+					width: res.width,
+					color: res.color,
+				});
+			} else {
+				if (i === parseInt(row.toString())) {
+					newTaks.push({
+						start: activityStar,
+						end: activityEnd,
+						name: activity,
+						id: activityId,
+						progress: 0,
+						duration: durationDay - countHoliday,
+						holiday: countHoliday,
+						color: "#60a5fa",
+						left: 60 * rangeDay - 30,
+						width: 60 * durationDay - 60,
+					});
+					newTaks.push({
+						start: res.start,
+						end: res.end,
+						name: res.name,
+						id: res.id,
+						progress: res.progress,
+						duration: res.duration,
+						holiday: res.holiday,
+						left: res.left,
+						width: res.width,
+						color: res.color,
+					});
+				} else {
+					newTaks.push({
+						start: res.start,
+						end: res.end,
+						name: res.name,
+						id: res.id,
+						progress: res.progress,
+						duration: res.duration,
+						holiday: res.holiday,
+						left: res.left,
+						width: res.width,
+						color: res.color,
+					});
+				}
+			}
+		});
+		if (tasks.length === parseInt(row.toString())) {
 			newTaks.push({
-				start: res.start,
-				end: res.end,
-				name: res.name,
-				id: res.id,
-				type: res.type,
-				progress: res.progress,
-				isDisabled: res.isDisabled,
-				hideChildren: res.hideChildren,
-				styles: res.styles,
+				start: activityStar,
+				end: activityEnd,
+				name: activity,
+				id: activityId,
+				progress: 0,
+				duration: durationDay - countHoliday,
+				holiday: countHoliday,
+				color: "#60a5fa",
+				left: 60 * rangeDay - 30,
+				width: 60 * durationDay - 60,
 			});
-		});
-		newTaks.push({
-			start: activityStar,
-			end: activityEnd,
-			name: activity,
-			id: activityId,
-			type: "task",
-			progress: 0,
-			isDisabled: false,
-			hideChildren: false,
-			styles: {
-				backgroundColor: "#60a5fa",
-				progressColor: "#ffbb54",
-			},
-		});
+		}
 		setTask(newTaks);
 	};
 
@@ -229,14 +392,12 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let dataBody: any;
 		let aktivitas: any = [];
 		tasks.map((res: any, i: number) => {
-			if (i !== 0) {
-				var Difference_In_Time = res.end.getTime() - res.start.getTime();
-
-				var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
-
+			if( i !== 0 ){
 				aktivitas.push({
 					aktivitasId: res.id,
-					days: Math.round(Difference_In_Days),
+					days: res.duration,
+					holiday_count: res.holiday,
+					progress: res.progress,
 					startday: res.start,
 					endday: res.end,
 				});
@@ -246,7 +407,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			idTs: idAutoNum,
 			worId: payload.worId,
 			timesch: payload.timesch,
-			holiday: payload.holiday,
+			holiday: holiday === 'yes' ? true: false,
 			aktivitas: aktivitas,
 		};
 		try {
@@ -314,7 +475,66 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		return [start, end];
 	};
 
-	// console.log(task);
+	const showMonth = (countMoth: number) => {
+		let listMoths: any = [];
+		for (var i = 0; i < countMoth; i++) {
+			listMoths.push(getMonthName(new Date(starDate).getMonth() + i));
+		}
+		setListMonth(listMoths);
+	};
+
+	const showDate = (start: any, end: any) => {
+		let listDates: any = [];
+		let rangeDay = countDay(start,end);
+		let lengthDay = 11;
+		if (rangeDay > 11) {
+			lengthDay = rangeDay;
+		}
+		for (var i = 0; i < lengthDay; i++) {
+			if (i === 0) {
+				let unixTime = Math.floor(new Date(start).getTime() / 1000);
+				listDates.push(new Date(unixTime * 1000));
+			} else {
+				let unixTime = Math.floor(new Date(start).getTime() / 1000 + 86400 * i);
+				listDates.push(new Date(unixTime * 1000));
+			}
+		}
+		setNumDate(listDates.length);
+		setListDate(listDates);
+		setIsShowGantt(true);
+	};
+
+	const getHolidays = async () => {
+		try {
+			const response = await GetAllHoliday();
+			if (response.data) {
+				setDateHoliday(response.data.result);
+			}
+		} catch (error) {
+			setDateHoliday([]);
+		}
+	};
+
+	const checkHoliday = (dataDate: any, use: string) => {
+		let color = "";
+		let count = 0
+		for (var i = 0; i < dateHoliday.length; i++) {
+			if (
+				moment(dateHoliday[i].date_holiday).format("DD-MMMM-YYYY") ===
+				moment(dataDate).format("DD-MMMM-YYYY")
+			) {
+				color = "#FA8072";
+				count = count + 1
+				break;
+			}
+		}
+		if(use === 'duration'){
+			return count
+		}else{
+			return color;
+		}
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -469,133 +689,314 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 									placeholder='Holiday Exception'
 									label='Holiday Exception'
 									onChange={(event: any) => {
-										if (event.target.value !== "no data") {
-											if (event.target.value === "yes") {
-												setFieldValue("holiday", true);
-											} else {
-												setFieldValue("holiday", false);
-											}
-										} else {
-											setFieldValue("holiday", false);
-										}
+										setHoliday(event.target.value)
 									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option value='no data' selected>
-										Choose Holiday
+									<option defaultValue='no' selected>
+										Working
 									</option>
-									<option value='yes'>Yes</option>
-									<option value='no'>No</option>
+									<option value='yes'>No Working</option>
 								</InputSelect>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8'>
-							<div className='w-full'>
-								<InputSelect
-									id='activity'
-									name='activity'
-									placeholder='Activity'
-									label='Activity'
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose Activity
-									</option>
-									{listActivity.length === 0 ? (
-										<option value='no data'>No Data Activity</option>
-									) : (
-										listActivity.map((res: any, i: number) => {
-											return (
-												<option value={JSON.stringify(res)} key={i}>
-													{res.name}
-												</option>
-											);
-										})
-									)}
-								</InputSelect>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='start'
-									label='Start date'
-									value={activityStar}
-									onChange={(e: any) => setActivityStar(e)}
-									withLabel={true}
-									minDate={new Date(starDate)}
-									maxDate={new Date(endDate)}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='end'
-									label='End date'
-									value={activityEnd}
-									onChange={(e: any) => setActivityEnd(e)}
-									withLabel={true}
-									minDate={new Date(starDate)}
-									maxDate={new Date(endDate)}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-						</Section>
-						<button type='button' className="inline-flex justify-center rounded-full border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2" onClick={() => addTask()}>
-							Add
-						</button>
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8'>
-							<div className={`w-full`}>
-								<Gantt
-									tasks={tasks}
-									viewMode={ViewMode.Day}
-									locale='ID'
-									onDateChange={handleTaskChange}
-								/>
-							</div>
-						</Section>
-						<div className='mt-8 flex justify-end'>
-							<div className='flex gap-2 items-center'>
-								<button
-									type='button'
-									className='inline-flex justify-center rounded-full border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-									disabled={isLoading}
-									onClick={() => {
-										handleSubmit();
-									}}
-								>
-									{isLoading ? (
-										<>
-											<svg
-												role='status'
-												className='inline mr-3 w-4 h-4 text-white animate-spin'
-												viewBox='0 0 100 101'
-												fill='none'
-												xmlns='http://www.w3.org/2000/svg'
+						{isShowGantt ? (
+							<>
+								<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-8'>
+									<div className='w-full'>
+										<InputSelect
+											id='activity'
+											name='activity'
+											placeholder='Activity'
+											label='Activity'
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option value='no data' selected>
+												Choose Activity
+											</option>
+											{listActivity.length === 0 ? (
+												<option value='no data'>No Data Activity</option>
+											) : (
+												listActivity.map((res: any, i: number) => {
+													return (
+														<option value={JSON.stringify(res)} key={i}>
+															{res.name}
+														</option>
+													);
+												})
+											)}
+										</InputSelect>
+									</div>
+									<div className='w-full'>
+										<InputDate
+											id='start'
+											label='Start date'
+											value={activityStar}
+											onChange={(e: any) => setActivityStar(e)}
+											withLabel={true}
+											minDate={new Date(starDate)}
+											maxDate={new Date(endDate)}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+											classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+										/>
+									</div>
+									<div className='w-full'>
+										<InputDate
+											id='end'
+											label='End date'
+											value={activityEnd}
+											onChange={(e: any) => setActivityEnd(e)}
+											withLabel={true}
+											minDate={new Date(starDate)}
+											maxDate={new Date(endDate)}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+											classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+										/>
+									</div>
+									<div className='w-full grid grid-cols-2'>
+										<div className='w-full'>
+											<InputSelect
+												id='row'
+												name='row'
+												placeholder='Row'
+												label='Row'
+												onChange={(event: any) => {
+													setRow(event.target.value);
+												}}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 											>
-												<path
-													d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
-													fill='#E5E7EB'
-												/>
-												<path
-													d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
-													fill='currentColor'
-												/>
-											</svg>
-											Loading
-										</>
-									) : content === "add" ? (
-										"Save"
-									) : (
-										"Edit"
-									)}
-								</button>
-							</div>
-						</div>
+												<option value={tasks.length} selected>
+													Choose Row
+												</option>
+												)
+												{tasks.map((res: any, i: number) => {
+													return (
+														<option key={i} value={i + 1}>
+															{i + 1}
+														</option>
+													);
+												})}
+											</InputSelect>
+										</div>
+										<div className='w-full'>
+											<div
+												className='flex text-green-500 pt-11 pl-4 cursor-pointer '
+												onClick={() => addTask()}
+											>
+												<Plus />
+												Add Task
+											</div>
+											{/* <button
+													type='button'
+													className='inline-flex justify-center rounded-full border border-transparent bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+													onClick={() => addTask()}
+												>
+													Add
+												</button> */}
+										</div>
+									</div>
+								</Section>
+								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8'>
+									<div className='flex'>
+										<div className='w-[40%]'>
+											<div className='grid grid-cols-3 w-full'>
+												<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
+													Aktivitas
+												</div>
+												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+													Start Date
+												</div>
+												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+													End Date
+												</div>
+												<div className='w-full border-l border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+											</div>
+											{tasks.map((res: any, i: number) => {
+												return (
+													<div className='grid grid-cols-3 w-full' key={i}>
+														<div className='w-full border border-gray-500 text-justify p-4'>
+															<p className='text-center'>{res.name}</p>
+														</div>
+														<div className='w-full border border-gray-500 text-justify p-4'>
+															<p className='text-center'>
+																{moment(res.start).format("DD-MM-YYYY")}
+															</p>
+														</div>
+														<div className='w-full border border-gray-500 text-justify p-4'>
+															<p className='text-center'>
+																{moment(res.end).format("DD-MM-YYYY")}
+															</p>
+														</div>
+													</div>
+												);
+											})}
+										</div>
+										<div className='w-[60%]'>
+											<div className='grid grid-cols-1 w-full overflow-auto'>
+												<div
+													style={{ width: `${60 * numDate}px` }}
+													className={`border-t border-r border-gray-500 p-[2px]`}
+												>
+													<div className='text-center'>Calender</div>
+												</div>
+												<div
+													style={{
+														width: `${60 * numDate}px`,
+														gridTemplateColumns: `repeat(${numMoth}, minmax(0, 1fr))`,
+													}}
+													className={`grid border-t border-b border-r border-gray-500 p-[2px]`}
+												>
+													{listMoth.map((res: any, i: number) => {
+														return (
+															<div key={i} className='w-full text-center'>
+																{res}
+															</div>
+														);
+													})}
+												</div>
+												<div
+													style={{ width: `${60 * numDate}px` }}
+													className={`flex border-gray-500`}
+												>
+													{listDate.map((res: any, i: number) => {
+														return (
+															<div
+																key={i}
+																style={{ width: "60px" }}
+																className={`w-full text-center ${
+																	i !== listDate.length + 1 ? "border-r" : ""
+																} border-b border-gray-500`}
+															>
+																{moment(res).format("dd DD")}
+															</div>
+														);
+													})}
+												</div>
+												{tasks.map((result: any, idx: number) => {
+													return (
+														<div
+															key={idx}
+															style={{ width: `${60 * numDate}px` }}
+															className={`flex relative ${
+																idx === tasks.length - 1 ? "border-b" : ""
+															} border-gray-500`}
+														>
+															{listDate.map((res: any, i: number) => {
+																return (
+																	<div
+																		key={i}
+																		style={{
+																			width: `${60 * numDate}px`,
+																			backgroundColor: `${
+																				holiday === 'yes' ? checkHoliday(res,'chart') : ""
+																			}`,
+																		}}
+																		className={`text-center  ${
+																			i !== listDate.length + 1
+																				? "border-r border-b-gray-200"
+																				: ""
+																		} ${
+																			i === listDate.length - 1
+																				? "border-black"
+																				: "border-gray-200"
+																		} p-4`}
+																	>
+																		<p className='p-[1px]'>&nbsp;</p>
+																	</div>
+																);
+															})}
+															<div
+																style={{
+																	width: `${result.width}px`,
+																	left: `${result.left}px`,
+																	backgroundColor: `${result.color}`,
+																}}
+																className={`absolute p-2 my-2 bg-blue-400 rounded-lg cursor-move`}
+																data-te-toggle='tooltip'
+																title={`
+																Activity: ${result.name} \nDuration: ${result.duration} day \nProgress: ${result.progress}%`}
+																onDrag={ () => handleTaskChange(result)}
+															>
+																<p className="p-0 text-center font-semibold">{ result.name }</p>
+															</div>
+														</div>
+													);
+												})}
+											</div>
+										</div>
+									</div>
+									{/* <div className={`w-full`}>
+											<Gantt
+												tasks={tasks}
+												viewMode={ViewMode.Day}
+												locale='ID'
+												onDateChange={handleTaskChange}
+											/>
+										</div> */}
+								</Section>
+								<div className='mt-8 flex justify-end'>
+									<div className='flex gap-2 items-center'>
+										<button
+											type='button'
+											className='inline-flex justify-center rounded-full border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+											disabled={isLoading}
+											onClick={() => {
+												handleSubmit();
+											}}
+										>
+											{isLoading ? (
+												<>
+													<svg
+														role='status'
+														className='inline mr-3 w-4 h-4 text-white animate-spin'
+														viewBox='0 0 100 101'
+														fill='none'
+														xmlns='http://www.w3.org/2000/svg'
+													>
+														<path
+															d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
+															fill='#E5E7EB'
+														/>
+														<path
+															d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
+															fill='currentColor'
+														/>
+													</svg>
+													Loading
+												</>
+											) : content === "add" ? (
+												"Save"
+											) : (
+												"Edit"
+											)}
+										</button>
+									</div>
+								</div>
+							</>
+						) : null}
 					</Form>
 				)}
 			</Formik>

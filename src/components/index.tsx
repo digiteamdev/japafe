@@ -7,3 +7,4 @@ export * from './content';
 export * from './section';
 export * from './modal';
 export * from './pagination';
+export * from './ganttChart';

@@ -19,7 +19,7 @@ import {
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-// import { ViewDispatch } from './view';
+import { ViewSchedule } from './view';
 // import { FormEditDispatch } from "./formEdit";
 
 export const Schedule = () => {
@@ -268,8 +268,7 @@ export const Schedule = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<></>
-							// <ViewDispatch content={modalContent} showModal={showModal} dataSelected={dataSelected} />
+							<ViewSchedule content={modalContent} showModal={showModal} dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
 							<></>
 							// <FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
