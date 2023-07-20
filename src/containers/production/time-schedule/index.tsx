@@ -14,8 +14,8 @@ import { Clock, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateSchedule } from "./formCreate";
 import {
 	GetSchedule,
-	SearchDepartement,
-	DeleteDispatch,
+	SearchSchedule,
+	DeleteSchedule,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -78,14 +78,14 @@ export const Schedule = () => {
 		setIsLoading(false);
 	};
 
-	const searchDepartement = async (
+	const searchSchedule = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchDepartement(page, limit, search);
+			const response = await SearchSchedule(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -96,11 +96,11 @@ export const Schedule = () => {
 		}
 	};
 
-	const deleteDispacth = async (id: string) => {
+	const deleteSchedule = async (id: string) => {
 		try {
-			const response = await DeleteDispatch(id);
+			const response = await DeleteSchedule(id);
 			if (response.status === 201) {
-				toast.success("Delete Dispatch Success", {
+				toast.success("Delete Schedule Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -112,7 +112,7 @@ export const Schedule = () => {
 				});
 				getSchedule(1, 10);
 			} else {
-				toast.error("Delete Dispatch Failed", {
+				toast.error("Delete Schedule Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -124,7 +124,7 @@ export const Schedule = () => {
 				});
 			}
 		} catch (error) {
-			toast.error("Delete Dispatch Failed", {
+			toast.error("Delete Schedule Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -149,7 +149,7 @@ export const Schedule = () => {
 				title='Time Schedule'
 				print={true}
 				showModal={showModal}
-				search={searchDepartement}
+				search={searchSchedule}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -258,7 +258,7 @@ export const Schedule = () => {
 						isModal={isModal}
 						content={modalContent}
 						showModal={showModal}
-						onDelete={deleteDispacth}
+						onDelete={deleteSchedule}
 					/>
 				) : (
 					<Modal

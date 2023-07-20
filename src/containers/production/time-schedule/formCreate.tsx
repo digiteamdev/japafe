@@ -938,7 +938,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																data-te-toggle='tooltip'
 																title={`
 																Activity: ${result.name} \nDuration: ${result.duration} day \nProgress: ${result.progress}%`}
-																onDrag={ () => handleTaskChange(result)}
+																onClick={ () => console.log(result)}
 															>
 																<p className="p-0 text-center font-semibold">{ result.name }</p>
 															</div>
