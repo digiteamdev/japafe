@@ -7,21 +7,23 @@ import moment from "moment";
 interface props {
 	content: string;
 	dataSelected: any;
+	holiday: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
+export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: props) => {
 	const [numMoth, setNumMonth] = useState<number>(0);
 	const [numDate, setNumDate] = useState<number>(0);
 	const [numHoliday, setNumHoliday] = useState<number>(0);
 	const [listMoth, setListMonth] = useState<any>([]);
 	const [listDate, setListDate] = useState<any>([]);
+	const [listDateHoliday, setListDateHoliday] = useState<any>([]);
 	const [aktivitas, setAktivitas] = useState<any>([]);
-	const [holiday, setHoliday] = useState<any>([]);
 	// const [tableCalender, setTableCalender] = useState<any>([]);
 
 	useEffect(() => {
-		getHolidays()
+		showDate()
+		settingData()
 		setNumMonth(
 			monthDiff(
 				new Date(dataSelected.wor.date_of_order),
@@ -36,13 +38,6 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-		if(holiday.length > 0 && aktivitas.length === 0){
-			settingData()
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [holiday]);
 
 	const settingData = () => {
 		let dataAktivitas: any = [];
@@ -96,8 +91,9 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 		setListMonth(listMoths);
 	};
 
-	const showDate = (holiday: any) => {
+	const showDate = () => {
 		let listDates: any = [];
+		let listDatesHoliday: any = [];
 		let rangeDay = countDay(
 			dataSelected.wor.date_of_order,
 			dataSelected.wor.delivery_date
@@ -116,11 +112,15 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 				let unixTime = Math.floor(
 					new Date(dataSelected.wor.date_of_order).getTime() / 1000 + 86400 * i
 				);
+				if(checkHoliday(new Date(unixTime * 1000), '') !== 'none'){
+					listDatesHoliday.push(new Date(unixTime * 1000));
+				}
 				listDates.push(new Date(unixTime * 1000));
 			}
 		}
 		setNumDate(listDates.length);
 		setListDate(listDates);
+		setListDateHoliday(listDatesHoliday);
 		if (dataSelected.holiday) {
 			showHoliday(listDates, holiday);
 		}
@@ -139,18 +139,6 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 			});
 		});
 		setNumHoliday(count);
-	};
-
-	const getHolidays = async () => {
-		try {
-			const response = await GetAllHoliday();
-			if (response.data) {
-				setHoliday(response.data.result);
-				showDate(response.data.result);
-			}
-		} catch (error) {
-			setHoliday([]);
-		}
 	};
 
 	const checkHoliday = (dataDate: any, type: string) => {
@@ -172,13 +160,13 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 			return display;
 		}
 	};
-
+	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
 			{dataSelected ? (
 				<>
-					{numMoth > 0 ? (
+					{aktivitas.length > 0 ? (
 						<>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2 mb-3'>
 								<table className='w-full'>
@@ -302,8 +290,8 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 											style={{
 												width: `${
 													dataSelected.holiday
-														? 60 * (numDate - numHoliday + 1)
-														: 60 * (numDate - numHoliday)
+														? 60 * listDateHoliday.length
+														: 60 * listDate.length
 												}px`,
 											}}
 											className={`border-t border-r border-gray-500 p-[2px]`}
@@ -314,8 +302,8 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 											style={{
 												width: `${
 													dataSelected.holiday
-														? 60 * (numDate - numHoliday + 1)
-														: 60 * (numDate - numHoliday)
+														? 60 * listDateHoliday.length
+														: 60 * listDateHoliday.length
 												}px`,
 											}}
 											className={`grid grid-cols-${numMoth} border-t border-b border-r border-gray-500 p-[2px]`}
@@ -332,32 +320,57 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 											style={{
 												width: `${
 													dataSelected.holiday
-														? 60 * (numDate - numHoliday + 1)
-														: 60 * (numDate - numHoliday)
+														? 60 * listDateHoliday.length
+														: 60 * listDate.length
 												}px`,
 											}}
 											className={`flex border-gray-500`}
 										>
-											{listDate.map((res: any, i: number) => {
-												return (
-													<div
-														key={i}
-														style={{
-															width: "60px",
-															display: `${
-																dataSelected.holiday
-																	? checkHoliday(res, "date")
-																	: ""
-															}`,
-														}}
-														className={`w-full text-center ${
-															i !== listDate.length + 1 ? "border-r" : ""
-														} border-b border-gray-500`}
-													>
-														{moment(res).format("dd DD")}
-													</div>
-												);
-											})}
+											{
+												dataSelected.holiday ? (
+													listDateHoliday.map((res: any, i: number) => {
+														return (
+															<div
+																key={i}
+																style={{
+																	width: "60px",
+																	display: `${
+																		dataSelected.holiday
+																			? checkHoliday(res, "date")
+																			: ""
+																	}`,
+																}}
+																className={`w-full text-center ${
+																	i !== listDateHoliday.length + 1 ? "border-r" : ""
+																} border-b border-gray-500`}
+															>
+																{moment(res).format("dd DD")}
+															</div>
+														);
+													})
+												) : (
+													listDate.map((res: any, i: number) => {
+														return (
+															<div
+																key={i}
+																style={{
+																	width: "60px",
+																	display: `${
+																		dataSelected.holiday
+																			? checkHoliday(res, "date")
+																			: ""
+																	}`,
+																}}
+																className={`w-full text-center ${
+																	i !== listDateHoliday.length + 1 ? "border-r" : ""
+																} border-b border-gray-500`}
+															>
+																{moment(res).format("dd DD")}
+															</div>
+														);
+													})
+												)
+											}
 										</div>
 										{aktivitas.map((result: any, idx: number) => {
 											return (
@@ -366,44 +379,79 @@ export const ViewSchedule = ({ content, dataSelected, showModal }: props) => {
 													style={{
 														width: `${
 															dataSelected.holiday
-																? 60 * (numDate - numHoliday + 1)
-																: 60 * (numDate - numHoliday)
+																? 60 * listDateHoliday.length
+																: 60 * listDate.length
 														}px`,
 													}}
 													className={`flex relative ${
 														idx === aktivitas.length - 1 ? "border-b" : ""
 													} border-gray-500 h-14`}
 												>
-													{listDate.map((res: any, i: number) => {
-														return (
-															<div
-																key={i}
-																style={{
-																	width: `${
-																		dataSelected.holiday
-																			? 60 * (numDate - numHoliday + 1)
-																			: 60 * (numDate - numHoliday)
-																	}px`,
-																	display: `${
-																		dataSelected.holiday
-																			? checkHoliday(res, "date")
-																			: ""
-																	}`,
-																}}
-																className={`text-center  ${
-																	i !== listDate.length + 1
-																		? "border-r border-b-gray-200"
-																		: ""
-																} ${
-																	i === listDate.length - 1
-																		? "border-black"
-																		: "border-gray-200"
-																} p-4`}
-															>
-																<p className='p-[1px]'>&nbsp;</p>
-															</div>
-														);
-													})}
+													{
+														dataSelected.holiday ? (
+															listDateHoliday.map((res: any, i: number) => {
+																return (
+																	<div
+																		key={i}
+																		style={{
+																			width: `${
+																				dataSelected.holiday
+																					? 60 * listDateHoliday.length
+																					: 60 * listDate.length
+																			}px`,
+																			display: `${
+																				dataSelected.holiday
+																					? checkHoliday(res, "date")
+																					: ""
+																			}`,
+																		}}
+																		className={`text-center  ${
+																			i !== listDateHoliday.length + 1
+																				? "border-r border-b-gray-200"
+																				: ""
+																		} ${
+																			i === listDateHoliday.length - 1
+																				? "border-black"
+																				: "border-gray-200"
+																		} p-4`}
+																	>
+																		<p className='p-[1px]'>&nbsp;</p>
+																	</div>
+																);
+															})
+														) : (
+															listDate.map((res: any, i: number) => {
+																return (
+																	<div
+																		key={i}
+																		style={{
+																			width: `${
+																				dataSelected.holiday
+																					? 60 * listDateHoliday.length
+																					: 60 * listDate.length
+																			}px`,
+																			display: `${
+																				dataSelected.holiday
+																					? checkHoliday(res, "date")
+																					: ""
+																			}`,
+																		}}
+																		className={`text-center  ${
+																			i !== listDateHoliday.length + 1
+																				? "border-r border-b-gray-200"
+																				: ""
+																		} ${
+																			i === listDateHoliday.length - 1
+																				? "border-black"
+																				: "border-gray-200"
+																		} p-4`}
+																	>
+																		<p className='p-[1px]'>&nbsp;</p>
+																	</div>
+																);
+															})
+														)
+													}
 													<div
 														style={{
 															width: `${result.width}px`,

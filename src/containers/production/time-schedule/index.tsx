@@ -16,6 +16,7 @@ import {
 	GetSchedule,
 	SearchSchedule,
 	DeleteSchedule,
+	GetAllHoliday
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -33,6 +34,7 @@ export const Schedule = () => {
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
+	const [holiday, setHoliday] = useState<any>([]);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No Job" },
@@ -44,6 +46,7 @@ export const Schedule = () => {
 
 	useEffect(() => {
 		getSchedule(page, perPage);
+		getHolidays()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -55,6 +58,17 @@ export const Schedule = () => {
 		}
 		if(reload){
 			getSchedule(page, perPage);
+		}
+	};
+
+	const getHolidays = async () => {
+		try {
+			const response = await GetAllHoliday();
+			if (response.data) {
+				setHoliday(response.data.result);
+			}
+		} catch (error) {
+			setHoliday([]);
 		}
 	};
 
@@ -268,7 +282,7 @@ export const Schedule = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<ViewSchedule content={modalContent} showModal={showModal} dataSelected={dataSelected} />
+							<ViewSchedule content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
 						) :  modalContent === 'edit' ? (
 							<></>
 							// <FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
