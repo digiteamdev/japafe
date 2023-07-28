@@ -11,7 +11,12 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: props) => {
+export const ViewSchedule = ({
+	content,
+	dataSelected,
+	holiday,
+	showModal,
+}: props) => {
 	const [numMoth, setNumMonth] = useState<number>(0);
 	const [numDate, setNumDate] = useState<number>(0);
 	const [numHoliday, setNumHoliday] = useState<number>(0);
@@ -22,8 +27,8 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 	// const [tableCalender, setTableCalender] = useState<any>([]);
 
 	useEffect(() => {
-		showDate()
-		settingData()
+		showDate();
+		settingData();
 		setNumMonth(
 			monthDiff(
 				new Date(dataSelected.wor.date_of_order),
@@ -38,15 +43,52 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
+console.log(numMoth)
 	const settingData = () => {
 		let dataAktivitas: any = [];
-		if(dataSelected){
+		if (dataSelected) {
+			let listDates: any = [];
+			let countHoliday = 0;
+			let durationDay = countDay(
+				dataSelected.wor.date_of_order,
+				dataSelected.wor.delivery_date
+			);
+			if (dataSelected.holiday) {
+				for (var i = 0; i < durationDay; i++) {
+					if (i === 0) {
+						let unixTime = Math.floor(
+							new Date(dataSelected.wor.date_of_order).getTime() / 1000
+						);
+						listDates.push(new Date(unixTime * 1000));
+					} else {
+						let unixTime = Math.floor(
+							new Date(dataSelected.wor.date_of_order).getTime() / 1000 +
+								86400 * i
+						);
+						listDates.push(new Date(unixTime * 1000));
+					}
+				}
+				for (var i = 0; i < listDates.length; i++) {
+					let holiday = checkHoliday(listDates[i], "duration");
+					countHoliday = countHoliday + parseInt(holiday.toString());
+				}
+			}
+			dataAktivitas.push({
+				start: new Date(dataSelected.wor.date_of_order),
+				end: new Date(dataSelected.wor.delivery_date),
+				name: dataSelected.wor.job_no,
+				id: "Task",
+				progress: 0,
+				duration: durationDay - countHoliday,
+				holiday: countHoliday,
+				color: "#facc15",
+				left: 0,
+				width: 60 * (durationDay - countHoliday),
+			});
 			dataSelected.aktivitas.map((res: any) => {
 				let listDatesRange: any = [];
 				let countHolidayRange: any = 0;
 				let rangeDay = countDay(dataSelected.wor.date_of_order, res.startday);
-				let durationDay = countDay(res.startday, res.endday);
 				if (dataSelected.holiday) {
 					for (var i = 0; i < rangeDay; i++) {
 						if (i === 0) {
@@ -71,10 +113,8 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 				}
 				dataAktivitas.push({
 					...res,
-					left: 60 * rangeDay - 30,
-					leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-					width: 60 * res.days - 60,
-					widthHoliday: 60 * durationDay - 60,
+					left: 60 * rangeDay - 60,
+					width: 60 * res.days,
 				});
 			});
 		}
@@ -98,21 +138,20 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 			dataSelected.wor.date_of_order,
 			dataSelected.wor.delivery_date
 		);
-		let lengthDay = 11;
-		if (rangeDay > 11) {
-			lengthDay = rangeDay;
-		}
-		for (var i = 0; i < lengthDay; i++) {
+		for (var i = 0; i < rangeDay; i++) {
 			if (i === 0) {
 				let unixTime = Math.floor(
 					new Date(dataSelected.wor.date_of_order).getTime() / 1000
 				);
+				if (checkHoliday(new Date(unixTime * 1000), "") !== "none") {
+					listDatesHoliday.push(new Date(unixTime * 1000));
+				}
 				listDates.push(new Date(unixTime * 1000));
 			} else {
 				let unixTime = Math.floor(
 					new Date(dataSelected.wor.date_of_order).getTime() / 1000 + 86400 * i
 				);
-				if(checkHoliday(new Date(unixTime * 1000), '') !== 'none'){
+				if (checkHoliday(new Date(unixTime * 1000), "") !== "none") {
 					listDatesHoliday.push(new Date(unixTime * 1000));
 				}
 				listDates.push(new Date(unixTime * 1000));
@@ -160,7 +199,7 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 			return display;
 		}
 	};
-	
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
@@ -221,64 +260,116 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 							<h1 className='font-bold text-xl'>Aktivity</h1>
 							<div className='flex'>
 								<div className='w-[40%]'>
-									<div className='grid grid-cols-4 w-full'>
-										<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
-											&nbsp;
+									<div className='flex w-full'>
+										<div className='w-[10%]'>
+											<div className='w-full border-t border-l border-gray-500 p-[2px]'>
+												&nbsp;
+											</div>
+											<div className='w-full border-l text-center border-gray-500 p-[2px]'>
+												No
+											</div>
+											<div className='w-full border-l border-gray-500 p-[2px]'>
+												&nbsp;
+											</div>
 										</div>
-										<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
-											Aktivitas
-										</div>
-										<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-											Start Date
-										</div>
-										<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-											End Date
-										</div>
-										<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-											Duration
-										</div>
-										<div className='w-full border-l border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full border-r border-gray-500 p-[2px]'>
-											&nbsp;
-										</div>
-										<div className='w-full border-r border-gray-500 p-[2px]'>
-											&nbsp;
+										<div className='w-full'>
+											<div className='grid grid-cols-4 w-full'>
+												<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
+													Aktivitas
+												</div>
+												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+													Start Date
+												</div>
+												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+													End Date
+												</div>
+												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+													Duration
+												</div>
+												<div className='w-full border-l border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+												<div className='w-full border-r border-gray-500 p-[2px]'>
+													&nbsp;
+												</div>
+											</div>
 										</div>
 									</div>
 									{aktivitas.map((res: any, i: number) => {
 										return (
-											<div className='grid grid-cols-4 w-full' key={i}>
-												<div className='w-full border border-gray-500 text-justifym-auto h-14 p-2'>
-													<p className='text-center text-xs'>
-														{res.masterAktivitas.name}
-													</p>
+											<div className='flex w-full' key={i}>
+												<div className='w-[10%]'>
+													<div
+														className={`w-full border-l border-t border-gray-500 text-justifym-auto h-14 p-2 ${
+															i === aktivitas.length - 1 ? "border-b" : ""
+														}`}
+													>
+														<p className='text-center text-xs'>
+															{i === 0 ? '-' : i }
+														</p>
+													</div>
 												</div>
-												<div className='w-full border border-gray-500 text-justify m-auto h-14 p-2'>
-													<p className='text-center text-xs'>
-														{moment(res.startday).format("DD-MM-YYYY")}
-													</p>
-												</div>
-												<div className='w-full border border-gray-500 text-justify m-auto h-14 p-2'>
-													<p className='text-center text-xs'>
-														{moment(res.endday).format("DD-MM-YYYY")}
-													</p>
-												</div>
-												<div className='w-full border border-gray-500 text-justify m-auto h-14 p-2'>
-													<p className='text-center text-xs'>{res.days} days</p>
+												<div className='w-full'>
+													<div className='grid grid-cols-4 w-full'>
+														<div
+															className={`w-full border-l border-r border-t border-gray-500 text-justifym-auto h-14 p-2 ${
+																i === aktivitas.length - 1 ? "border-b" : ""
+															}`}
+														>
+															<p className='text-center text-xs'>
+																{i === 0 ? res.name : res.masterAktivitas.name}
+															</p>
+														</div>
+														<div
+															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																i === aktivitas.length - 1 ? "border-b" : ""
+															}`}
+														>
+															<p className='text-center text-xs'>
+																{i === 0
+																	? moment(res.start).format("DD-MM-YYYY")
+																	: moment(res.startday).format("DD-MM-YYYY")}
+															</p>
+														</div>
+														<div
+															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																i === aktivitas.length - 1 ? "border-b" : ""
+															}`}
+														>
+															<p className='text-center text-xs'>
+																{i === 0
+																	? moment(res.end).format("DD-MM-YYYY")
+																	: moment(res.endday).format("DD-MM-YYYY")}
+															</p>
+														</div>
+														<div
+															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																i === aktivitas.length - 1 ? "border-b" : ""
+															}`}
+														>
+															<p className='text-center text-xs'>
+																{i === 0 ? res.duration : res.days} days
+															</p>
+														</div>
+													</div>
 												</div>
 											</div>
 										);
@@ -303,7 +394,7 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 												width: `${
 													dataSelected.holiday
 														? 60 * listDateHoliday.length
-														: 60 * listDateHoliday.length
+														: 60 * listDate.length
 												}px`,
 											}}
 											className={`grid grid-cols-${numMoth} border-t border-b border-r border-gray-500 p-[2px]`}
@@ -326,9 +417,8 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 											}}
 											className={`flex border-gray-500`}
 										>
-											{
-												dataSelected.holiday ? (
-													listDateHoliday.map((res: any, i: number) => {
+											{dataSelected.holiday
+												? listDateHoliday.map((res: any, i: number) => {
 														return (
 															<div
 																key={i}
@@ -341,15 +431,16 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 																	}`,
 																}}
 																className={`w-full text-center ${
-																	i !== listDateHoliday.length + 1 ? "border-r" : ""
+																	i !== listDateHoliday.length + 1
+																		? "border-r"
+																		: ""
 																} border-b border-gray-500`}
 															>
 																{moment(res).format("dd DD")}
 															</div>
 														);
-													})
-												) : (
-													listDate.map((res: any, i: number) => {
+												})
+												: listDate.map((res: any, i: number) => {
 														return (
 															<div
 																key={i}
@@ -362,15 +453,15 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 																	}`,
 																}}
 																className={`w-full text-center ${
-																	i !== listDateHoliday.length + 1 ? "border-r" : ""
+																	i !== listDate.length + 1
+																		? "border-r"
+																		: ""
 																} border-b border-gray-500`}
 															>
 																{moment(res).format("dd DD")}
 															</div>
 														);
-													})
-												)
-											}
+												})}
 										</div>
 										{aktivitas.map((result: any, idx: number) => {
 											return (
@@ -387,9 +478,8 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 														idx === aktivitas.length - 1 ? "border-b" : ""
 													} border-gray-500 h-14`}
 												>
-													{
-														dataSelected.holiday ? (
-															listDateHoliday.map((res: any, i: number) => {
+													{dataSelected.holiday
+														? listDateHoliday.map((res: any, i: number) => {
 																return (
 																	<div
 																		key={i}
@@ -405,22 +495,13 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 																					: ""
 																			}`,
 																		}}
-																		className={`text-center  ${
-																			i !== listDateHoliday.length + 1
-																				? "border-r border-b-gray-200"
-																				: ""
-																		} ${
-																			i === listDateHoliday.length - 1
-																				? "border-black"
-																				: "border-gray-200"
-																		} p-4`}
+																		className={`text-center border-r border-gray-400 border-b-gray-400 p-4`}
 																	>
 																		<p className='p-[1px]'>&nbsp;</p>
 																	</div>
 																);
-															})
-														) : (
-															listDate.map((res: any, i: number) => {
+														})
+														: listDate.map((res: any, i: number) => {
 																return (
 																	<div
 																		key={i}
@@ -436,38 +517,43 @@ export const ViewSchedule = ({ content, dataSelected, holiday, showModal }: prop
 																					: ""
 																			}`,
 																		}}
-																		className={`text-center  ${
-																			i !== listDateHoliday.length + 1
-																				? "border-r border-b-gray-200"
-																				: ""
-																		} ${
-																			i === listDateHoliday.length - 1
-																				? "border-black"
-																				: "border-gray-200"
-																		} p-4`}
+																		className={`text-center border-r border-gray-400 border-b-gray-400 p-4`}
 																	>
 																		<p className='p-[1px]'>&nbsp;</p>
 																	</div>
 																);
-															})
-														)
-													}
+														})}
 													<div
 														style={{
 															width: `${result.width}px`,
-															left: `${
-																dataSelected.holiday
-																	? result.leftHoliday
-																	: result.left
-															}px`,
+															left: `${result.left}px`,
 														}}
-														className={`absolute p-2 my-2 bg-blue-400 rounded-lg`}
+														className={`absolute my-2 ${
+															idx === 0 ? "bg-orange-400" : "bg-blue-400"
+														} rounded-lg`}
 														data-te-toggle='tooltip'
-														title={`Activity: ${result.masterAktivitas.name} \nDuration: ${result.days} day \nProgress: ${result.progress}%`}
+														title={`Activity: ${
+															idx === 0
+																? result.name
+																: result.masterAktivitas.name
+														} \nDuration: ${
+															idx === 0 ? result.duration : result.days
+														} day \nProgress: ${result.progress}%`}
 													>
-														<p className='p-0 text-center font-semibold  text-xs'>
-															{result.masterAktivitas.name}
-														</p>
+														<div
+															className={`w-[${
+																result.progress === 0 ? 1 : result.progress
+															}%] ${
+																idx === 0 ? "bg-orange-600" : "bg-blue-600"
+															} p-2 rounded-lg`}
+														>
+															<p className='p-0 m-0 text-center font-semibold  text-xs'>
+																{result.progress}%
+															</p>
+														</div>
+														{/* <p className='p-0 text-center font-semibold  text-xs'>
+															{ idx === 0 ? result.duration : result.days} days
+														</p> */}
 													</div>
 												</div>
 											);

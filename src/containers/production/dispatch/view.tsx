@@ -17,7 +17,7 @@ interface props {
 }
 
 export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
-	
+	console.log(dataSelected)
 	const [dataPart, setDataPart] = useState<any>([]);
 	const [activeTabs, setActiveTabs] = useState<any>("");
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -168,8 +168,8 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.wor.job_no} - (
-										{dataSelected.srimg.wor.customerPo.quotations.Customer.name}
+										{dataSelected.timeschedule.wor.job_no} - (
+										{dataSelected.timeschedule.wor.customerPo.quotations.Customer.name}
 										)
 									</td>
 								</tr>
@@ -178,7 +178,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 										Equipment / Part
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.wor.customerPo.quotations.eqandpart.map(
+										{dataSelected.timeschedule.wor.customerPo.quotations.eqandpart.map(
 											(res: any, i: number) => {
 												return (
 													<p key={i}>

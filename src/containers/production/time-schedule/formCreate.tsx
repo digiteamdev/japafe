@@ -278,11 +278,9 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						color: res.color,
 						left: res.left,
 						leftHoliday:
-							res.id === "Task"
-								? 0
-								: 60 * (rangeDay - countHolidayRange) - 30,
+							res.id === "Task" ? 0 : 60 * (rangeDay - countHolidayRange) - 60,
 						width: res.width,
-						widthHoliday: res.id === "Task" ? 60 * (durationDay - countHoliday) : 60 * (durationDay - countHoliday) - 60,
+						widthHoliday: 60 * (durationDay - countHoliday),
 					});
 				});
 				setTask(newTasks);
@@ -389,10 +387,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						duration: durationDay - countHoliday,
 						holiday: countHoliday,
 						color: "#60a5fa",
-						left: 60 * rangeDay - 30,
-						leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-						width: 60 * durationDay - 60,
-						widthHoliday: 60 * (durationDay - countHoliday) - 60,
+						left: 60 * rangeDay - 60,
+						leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+						width: 60 * durationDay,
+						widthHoliday: 60 * (durationDay - countHoliday),
 					});
 					newTaks.push({
 						start: res.start,
@@ -436,10 +434,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				duration: durationDay - countHoliday,
 				holiday: countHoliday,
 				color: "#60a5fa",
-				left: 60 * rangeDay - 30,
-				leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-				width: 60 * durationDay - 60,
-				widthHoliday: 60 * (durationDay - countHoliday) - 60,
+				left: 60 * rangeDay - 60,
+				leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+				width: 60 * durationDay,
+				widthHoliday: 60 * (durationDay - countHoliday),
 			});
 		}
 		setTask(newTaks);
@@ -518,10 +516,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						duration: durationDay - countHoliday,
 						holiday: countHoliday,
 						color: "#60a5fa",
-						left: 60 * rangeDay - 30,
-						leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-						width: 60 * durationDay - 60,
-						widthHoliday: 60 * (durationDay - countHoliday) - 60,
+						left: 60 * rangeDay - 60,
+						leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+						width: 60 * durationDay,
+						widthHoliday: 60 * (durationDay - countHoliday),
 					});
 					newTaks.push({
 						start: res.start,
@@ -565,10 +563,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				duration: durationDay - countHoliday,
 				holiday: countHoliday,
 				color: "#60a5fa",
-				left: 60 * rangeDay - 30,
-				leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-				width: 60 * durationDay - 60,
-				widthHoliday: 60 * (durationDay - countHoliday) - 60,
+				left: 60 * rangeDay - 60,
+				leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+				width: 60 * durationDay,
+				widthHoliday: 60 * (durationDay - countHoliday),
 			});
 		}
 		setTask(newTaks);
@@ -591,7 +589,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		setActivityStar(tasks[0].start);
 		setActivityEnd(tasks[0].end);
 		setIsEdit(false);
-	}
+	};
 
 	const generateIdNum = () => {
 		var dateObj = new Date();
@@ -715,7 +713,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				listDates.push(new Date(unixTime * 1000));
 			} else {
 				let unixTime = Math.floor(new Date(start).getTime() / 1000 + 86400 * i);
-				if(checkHoliday(new Date(unixTime * 1000), '') !== 'none'){
+				if (checkHoliday(new Date(unixTime * 1000), "") !== "none") {
 					listDatesHoliday.push(new Date(unixTime * 1000));
 				}
 				listDates.push(new Date(unixTime * 1000));
@@ -1041,19 +1039,15 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 													if (isEdit) {
 														return (
 															<>
-																{
-																	i === tasks.length - 1 ? (
-																		null
-																	) : (
-																		<option
-																			key={i}
-																			value={i + 1}
-																			selected={dataRow === i + 1 ? true : false}
-																		>
-																			{i + 1}
-																		</option>
-																	)
-																}
+																{i === tasks.length - 1 ? null : (
+																	<option
+																		key={i}
+																		value={i + 1}
+																		selected={dataRow === i + 1 ? true : false}
+																	>
+																		{i + 1}
+																	</option>
+																)}
 															</>
 														);
 													} else {
@@ -1108,64 +1102,112 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8'>
 									<div className='flex'>
 										<div className='w-[40%]'>
-											<div className='grid grid-cols-4 w-full'>
-												<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
-													&nbsp;
+											<div className='flex w-full'>
+												<div className='w-[10%]'>
+													<div className='w-full border-t border-l border-gray-500 p-[2px]'>
+														&nbsp;
+													</div>
+													<div className='w-full border-l  text-center border-gray-500 p-[2px]'>
+														No
+													</div>
+													<div className='w-full border-l border-gray-500 p-[2px]'>
+														&nbsp;
+													</div>
 												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
-													Aktivitas
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													Start Date
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													End Date
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													Duration
-												</div>
-												<div className='w-full border-l border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
+												<div className='w-full'>
+													<div className='grid grid-cols-4 w-full'>
+														<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-t border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
+															Aktivitas
+														</div>
+														<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+															Start Date
+														</div>
+														<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+															End Date
+														</div>
+														<div className='w-full border-r border-gray-500 text-center p-[2px]'>
+															Duration
+														</div>
+														<div className='w-full border-l border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+														<div className='w-full border-r border-gray-500 p-[2px]'>
+															&nbsp;
+														</div>
+													</div>
 												</div>
 											</div>
 											{tasks.map((res: any, i: number) => {
 												return (
-													<div className='grid grid-cols-4 w-full' key={i}>
-														<div className='w-full border border-gray-500 text-justify m-auto h-14 p-2'>
-															<p className='text-center text-xs'>{res.name}</p>
+													<div className='flex w-full' key={i}>
+														<div className='w-[10%]'>
+															<div
+																className={`w-full border-l border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																	i === tasks.length - 1 ? "border-b" : ""
+																}`}
+															>
+																<p className='text-center text-xs'>
+																	{ i === 0 ? '-' : i}
+																</p>
+															</div>
 														</div>
-														<div className='w-full border border-gray-500 text-justify h-14 p-2'>
-															<p className='text-center text-xs'>
-																{moment(res.start).format("DD-MM-YYYY")}
-															</p>
-														</div>
-														<div className='w-full border border-gray-500 text-justify h-14 p-2'>
-															<p className='text-center text-xs'>
-																{moment(res.end).format("DD-MM-YYYY")}
-															</p>
-														</div>
-														<div className='w-full border border-gray-500 text-justify h-14 p-2'>
-															<p className='text-center text-xs'>
-																{res.duration} Days
-															</p>
+														<div className='w-full'>
+															<div className='grid grid-cols-4 w-full'>
+																<div
+																	className={`w-full border-l border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																		i === tasks.length - 1 ? "border-b" : ""
+																	}`}
+																>
+																	<p className='text-center text-xs'>
+																		{res.name}
+																	</p>
+																</div>
+																<div
+																	className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																		i === tasks.length - 1 ? "border-b" : ""
+																	}`}
+																>
+																	<p className='text-center text-xs'>
+																		{moment(res.start).format("DD-MM-YYYY")}
+																	</p>
+																</div>
+																<div
+																	className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																		i === tasks.length - 1 ? "border-b" : ""
+																	}`}
+																>
+																	<p className='text-center text-xs'>
+																		{moment(res.end).format("DD-MM-YYYY")}
+																	</p>
+																</div>
+																<div
+																	className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																		i === tasks.length - 1 ? "border-b" : ""
+																	}`}
+																>
+																	<p className='text-center text-xs'>
+																		{res.duration} Days
+																	</p>
+																</div>
+															</div>
 														</div>
 													</div>
 												);
@@ -1214,9 +1256,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 													}}
 													className={`flex border-gray-500`}
 												>
-													{
-														holiday === 'yes' ? (
-															listDateHoliday.map((res: any, i: number) => {
+													{holiday === "yes"
+														? listDateHoliday.map((res: any, i: number) => {
 																return (
 																	<div
 																		key={i}
@@ -1229,15 +1270,16 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																			}`,
 																		}}
 																		className={`w-full text-center ${
-																			i !== listDateHoliday.length + 1 ? "border-r" : ""
+																			i !== listDateHoliday.length + 1
+																				? "border-r"
+																				: ""
 																		} border-b border-gray-500`}
 																	>
 																		{moment(res).format("dd DD")}
 																	</div>
 																);
-															})
-														) : (
-															listDate.map((res: any, i: number) => {
+														  })
+														: listDate.map((res: any, i: number) => {
 																return (
 																	<div
 																		key={i}
@@ -1250,15 +1292,15 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																			}`,
 																		}}
 																		className={`w-full text-center ${
-																			i !== listDate.length + 1 ? "border-r" : ""
+																			i !== listDate.length + 1
+																				? "border-r"
+																				: ""
 																		} border-b border-gray-500`}
 																	>
 																		{moment(res).format("dd DD")}
 																	</div>
 																);
-															})
-														)
-													}
+														  })}
 												</div>
 												{tasks.map((result: any, idx: number) => {
 													return (
@@ -1275,9 +1317,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																idx === tasks.length - 1 ? "border-b" : ""
 															} border-gray-500 h-14`}
 														>
-															{
-																holiday === 'yes' ? (
-																	listDateHoliday.map((res: any, i: number) => {
+															{holiday === "yes"
+																? listDateHoliday.map((res: any, i: number) => {
 																		return (
 																			<div
 																				key={i}
@@ -1293,22 +1334,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																							: ""
 																					}`,
 																				}}
-																				className={`text-center  ${
-																					i !== listDateHoliday.length + 1
-																						? "border-r border-b-gray-200"
-																						: ""
-																				} ${
-																					i === listDateHoliday.length - 1
-																						? "border-black"
-																						: "border-gray-200"
-																				} p-4`}
+																				className={`text-center border-r border-gray-400 p-4`}
 																			>
 																				<p className='p-[1px]'>&nbsp;</p>
 																			</div>
 																		);
-																	})
-																) : (
-																	listDate.map((res: any, i: number) => {
+																  })
+																: listDate.map((res: any, i: number) => {
 																		return (
 																			<div
 																				key={i}
@@ -1324,22 +1356,12 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																							: ""
 																					}`,
 																				}}
-																				className={`text-center  ${
-																					i !== listDate.length + 1
-																						? "border-r border-b-gray-200"
-																						: ""
-																				} ${
-																					i === listDate.length - 1
-																						? "border-black"
-																						: "border-gray-200"
-																				} p-4`}
+																				className={`text-center border-r border-gray-400 p-4`}
 																			>
 																				<p className='p-[1px]'>&nbsp;</p>
 																			</div>
 																		);
-																	})
-																)
-															}
+																  })}
 															<div
 																style={{
 																	width: `${
@@ -1363,7 +1385,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 																}
 															>
 																<p className='p-0 text-center font-semibold text-xs'>
-																	{result.name}
+																	{result.duration} days
 																</p>
 															</div>
 														</div>
