@@ -211,7 +211,7 @@ export const Dispatch = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.srimg.wor.job_no }
+										{ res.timeschedule.wor.job_no }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{ res.id_dispatch }
@@ -220,10 +220,10 @@ export const Dispatch = () => {
 										{ moment(res.dispacth_date).format("DD-MMMM-YYYY") }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ showEquipment(res.srimg.wor.customerPo.quotations.eqandpart) }
+										{ showEquipment(res.timeschedule.wor.customerPo.quotations.eqandpart) }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.srimg.wor.customerPo.quotations.Customer.name }
+										{ res.timeschedule.wor.customerPo.quotations.Customer.name }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
 										<div>
@@ -290,7 +290,8 @@ export const Dispatch = () => {
 						{ modalContent === 'view' ? (
 							<ViewDispatch content={modalContent} showModal={showModal} dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
-							<FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
+							<></>
+							// <FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
 						) : (
 							<FormCreateDispatch content={modalContent} showModal={showModal}/>
 						)}

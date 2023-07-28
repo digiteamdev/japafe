@@ -21,7 +21,7 @@ import {
 import { toast } from "react-toastify";
 import moment from "moment";
 import { ViewSchedule } from './view';
-// import { FormEditDispatch } from "./formEdit";
+import { FormEditSchedule } from "./formEdit";
 
 export const Schedule = () => {
 	const router = useRouter();
@@ -284,8 +284,7 @@ export const Schedule = () => {
 						{ modalContent === 'view' ? (
 							<ViewSchedule content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
 						) :  modalContent === 'edit' ? (
-							<></>
-							// <FormEditDispatch content={modalContent} showModal={showModal} dataDispatch={dataSelected}/>
+							<FormEditSchedule content={modalContent} showModal={showModal} dataSchedulle={dataSelected} holidayDate={holiday}/>
 						) : (
 							<FormCreateSchedule content={modalContent} showModal={showModal}/>
 						)}

@@ -33,7 +33,7 @@ export const PdfDispatch = ({
 	};
 
 	const status = (choice: string) => {
-		let dataPart = dataDispatch.srimg.srimgdetail.filter( (namePart: any) => { return namePart.name_part === dataDetail })
+		let dataPart = dataDispatch.timeschedule.wor.srimg.srimgdetail.filter( (namePart: any) => { return namePart.name_part === dataDetail })
 		if(dataPart[0].choice === choice){
 			return true
 		}else{
@@ -165,14 +165,14 @@ export const PdfDispatch = ({
 														<tr>
 															<td>Job No</td>
 															<td className='px-2'>:</td>
-															<td>{dataDispatch.srimg.wor.job_no}</td>
+															<td>{dataDispatch.timeschedule.wor.job_no}</td>
 														</tr>
 														<tr>
 															<td>Customer</td>
 															<td className='px-2'>:</td>
 															<td>
 																{
-																	dataDispatch.srimg.wor.customerPo.quotations
+																	dataDispatch.timeschedule.wor.customerPo.quotations
 																		.Customer.name
 																}
 															</td>
@@ -185,7 +185,7 @@ export const PdfDispatch = ({
 														<tr>
 															<td>Total Qty</td>
 															<td className='px-2'>:</td>
-															<td>{dataDispatch.srimg.wor.qty}</td>
+															<td>{dataDispatch.timeschedule.wor.qty}</td>
 														</tr>
 														<tr>
 															<td>Remark</td>

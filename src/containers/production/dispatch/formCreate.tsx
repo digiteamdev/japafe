@@ -8,6 +8,7 @@ import {
 	GetAllWorkerCenter,
 	GetAllEmployeDepart,
 	AddDispatch,
+	GetAllSchedule,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
@@ -19,7 +20,7 @@ interface props {
 }
 
 interface data {
-	srId: string;
+	timeschId: string;
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
@@ -27,7 +28,9 @@ interface data {
 		{
 			workId: string;
 			subdepId: string;
+			aktivitasID: string;
 			start: any;
+			startActivity: any;
 			operatorID: string;
 			part: string;
 		}
@@ -37,9 +40,10 @@ interface data {
 export const FormCreateDispatch = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isShowDetail, setIsShowDetail] = useState<boolean>(false);
-	const [listSummary, setListSummary] = useState<any>([]);
+	const [listSchedule, setListSchedule] = useState<any>([]);
 	const [listDepart, setListDepart] = useState<any>([]);
 	const [listWorkerCenter, setListWorkerCenter] = useState<any>([]);
+	const [listActivity, setListActivity] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [jobNo, setJobNo] = useState<string>("");
 	const [dateWor, setDateWor] = useState<string>("");
@@ -51,15 +55,17 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	const [status, setStatus] = useState<string>("");
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		srId: "",
+		timeschId: "",
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
 		dispatchDetail: [
 			{
 				workId: "",
+				aktivitasID: "",
 				subdepId: "",
 				start: null,
+				startActivity: null,
 				operatorID: "",
 				part: "",
 			},
@@ -67,7 +73,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		getSummary();
+		getSchedule();
 		getDepart();
 		getWorkerCenter();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,7 +93,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "srId") {
+		if (event.target.name === "timeschId") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
 				let equipment: any = [];
@@ -99,7 +105,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					}
 					lastEquipment = res.equipment.nama;
 				});
-				data.srimgdetail.map((res: any) => {
+				data.wor.srimg.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
 				setJobNo(data.wor.job_no);
@@ -108,6 +114,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				setDateFinish(data.wor.delivery_date);
 				setEquipment(equipment.toString());
 				setPart(part);
+				setListActivity(data.aktivitas);
 			} else {
 				setJobNo("");
 				setSubject("");
@@ -133,8 +140,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 							arrDetailOther.push({
 								index: res.index,
 								workId: res.workId,
+								aktivitasID: res.workId,
 								subdepId: res.subdepId,
 								start: res.start,
+								startActivity: res.startActivity,
 								operatorID: res.operatorID,
 								part: res.part,
 							});
@@ -144,8 +153,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						dataDetail.push({
 							index: 0,
 							workId: "",
+							aktivitasID: "",
 							subdepId: "",
 							start: new Date(),
+							startActivity: new Date(),
 							operatorID: "",
 							part: data.name_part,
 						});
@@ -154,8 +165,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					dataDetail.push({
 						index: 0,
 						workId: "",
+						aktivitasID: "",
 						subdepId: "",
 						start: new Date(),
+						startActivity: new Date(),
 						operatorID: "",
 						part: data.name_part,
 					});
@@ -186,8 +199,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: res.workId,
+									aktivitasID: res.aktivitasID,
 									subdepId: data.id,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: res.operatorID,
 									part: res.part,
 								});
@@ -195,8 +210,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: res.workId,
+									aktivitasID: res.aktivitasID,
 									subdepId: res.subdepId,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: res.operatorID,
 									part: res.part,
 								});
@@ -207,8 +224,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						dataDetail.push({
 							index: arrDetail.length,
 							workId: "",
+							aktivitasID: "",
 							subdepId: data.id,
 							start: new Date(),
+							startActivity: new Date(),
 							operatorID: "",
 							part: partName,
 						});
@@ -217,8 +236,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					dataDetail.push({
 						index: 0,
 						workId: "",
+						aktivitasID: "",
 						subdepId: data.id,
 						start: new Date(),
+						startActivity: new Date(),
 						operatorID: "",
 						part: partName,
 					});
@@ -246,8 +267,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: data.id,
+									aktivitasID: res.aktivitasID,
 									subdepId: res.subdepId,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: res.operatorID,
 									part: res.part,
 								});
@@ -255,8 +278,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: res.workId,
+									aktivitasID: res.aktivitasID,
 									subdepId: res.subdepId,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: res.operatorID,
 									part: res.part,
 								});
@@ -267,8 +292,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						dataDetail.push({
 							index: arrDetail.length,
 							workId: data.id,
+							aktivitasID: "",
 							subdepId: "",
 							start: new Date(),
+							startActivity: new Date(),
 							operatorID: "",
 							part: partName,
 						});
@@ -277,8 +304,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					dataDetail.push({
 						index: 0,
 						workId: data.id,
+						aktivitasID: "",
 						subdepId: "",
 						start: new Date(),
+						startActivity: new Date(),
 						operatorID: "",
 						part: partName,
 					});
@@ -305,8 +334,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: res.workId,
+									aktivitasID: res.aktivitasID,
 									subdepId: res.subdepId,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: data.id,
 									part: res.part,
 								});
@@ -314,8 +345,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								arrDetailOther.push({
 									index: res.index,
 									workId: res.workId,
+									aktivitasID: res.aktivitasID,
 									subdepId: res.subdepId,
 									start: res.start,
+									startActivity: res.startActivity,
 									operatorID: res.operatorID,
 									part: res.part,
 								});
@@ -326,8 +359,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						dataDetail.push({
 							index: arrDetail.length,
 							workId: "",
+							aktivitasID: "",
 							subdepId: "",
 							start: new Date(),
+							startActivity: new Date(),
 							operatorID: data.id,
 							part: partName,
 						});
@@ -336,14 +371,84 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					dataDetail.push({
 						index: 0,
 						workId: "",
+						aktivitasID: "",
 						subdepId: "",
 						start: new Date(),
+						startActivity: new Date(),
 						operatorID: data.id,
 						part: partName,
 					});
 				}
 				setDetail(dataDetail);
 			} else {
+				setDetail(detail);
+			}
+		} else if (event.target.name === "aktivitasID") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let idx = event.target.id.split("_");
+				let dataDetail = detail;
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === partName;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== partName;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							if (parseInt(idx[1]) === res.index) {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									aktivitasID: data.id,
+									subdepId: res.subdepId,
+									start: res.start,
+									startActivity: new Date(data.startday),
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							} else {
+								arrDetailOther.push({
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									aktivitasID: res.aktivitasID,
+									startActivity: res.startActivity,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							}
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							index: arrDetail.length,
+							workId: "",
+							aktivitasID: data.id,
+							subdepId: "",
+							start: new Date(),
+							startActivity: new Date(),
+							operatorID: "",
+							part: partName,
+						});
+					}
+				} else {
+					dataDetail.push({
+						index: 0,
+						workId: "",
+						aktivitasID: data.id,
+						subdepId: "",
+						start: new Date(),
+						startActivity: new Date(),
+						operatorID: "",
+						part: partName,
+					});
+				}
+				setDetail(dataDetail);
+			} else {
+				setListEmploye([]);
 				setDetail(detail);
 			}
 		}
@@ -365,8 +470,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						arrDetailOther.push({
 							index: res.index,
 							workId: res.workId,
+							aktivitasID: res.aktivitasID,
 							subdepId: res.subdepId,
 							start: new Date(data),
+							startActivity: res.startActivity,
 							operatorID: res.operatorID,
 							part: res.part,
 						});
@@ -374,8 +481,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 						arrDetailOther.push({
 							index: res.index,
 							workId: res.workId,
+							aktivitasID: res.aktivitasID,
 							subdepId: res.subdepId,
 							start: new Date(res.start),
+							startActivity: res.startActivity,
 							operatorID: res.operatorID,
 							part: res.part,
 						});
@@ -386,7 +495,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				dataDetail.push({
 					workId: "",
 					subdepId: "",
+					aktivitasID: "",
 					start: new Date(data),
+					startActivity: new Date(),
 					operatorID: "",
 					part: partName,
 				});
@@ -395,8 +506,10 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			dataDetail.push({
 				index: 0,
 				workId: "",
+				aktivitasID: "",
 				subdepId: "",
 				start: new Date(data),
+				startActivity: new Date(),
 				operatorID: "",
 				part: partName,
 			});
@@ -418,6 +531,8 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					arrDetailOther.push({
 						index: res.index,
 						workId: res.workId,
+						aktivitasID: res.aktivitasID,
+						startActivity: res.startActivity,
 						subdepId: res.subdepId,
 						start: res.start,
 						operatorID: res.operatorID,
@@ -429,6 +544,8 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				dataDetail.push({
 					index: arrDetail.length,
 					workId: "",
+					aktivitasID: "",
+					startActivity: new Date(),
 					subdepId: "",
 					start: new Date(),
 					operatorID: "",
@@ -440,6 +557,8 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			index: arrDetail.length,
 			workId: "",
 			subdepId: "",
+			aktivitasID: "",
+			startActivity: new Date(),
 			start: new Date(),
 			operatorID: "",
 			part: partName,
@@ -449,35 +568,37 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 
 	const removeDetail = (i: number) => {
 		let dataDetail = detail;
-		let newDataDetail: any = []
+		let newDataDetail: any = [];
 		let removeDetail = dataDetail.filter((detail: any) => {
 			return detail.index !== i && detail.part === partName;
 		});
 		let otherDetail = dataDetail.filter((detail: any) => {
 			return detail.part !== partName;
 		});
-		newDataDetail = otherDetail 
-		removeDetail.map( (res: any, i: number) => {
+		newDataDetail = otherDetail;
+		removeDetail.map((res: any, i: number) => {
 			newDataDetail.push({
 				index: i,
 				workId: res.workId,
+				aktivitasID: res.aktivitasID,
+				startActivity: res.startActivity,
 				subdepId: res.subdepId,
 				start: res.start,
 				operatorID: res.operatorID,
 				part: res.part,
 			});
-		})
+		});
 		setDetail(newDataDetail);
 	};
 
-	const getSummary = async () => {
+	const getSchedule = async () => {
 		try {
-			const response = await GetAllSummary();
+			const response = await GetAllSchedule();
 			if (response.data) {
-				setListSummary(response.data.result);
+				setListSchedule(response.data.result);
 			}
 		} catch (error) {
-			setListSummary([]);
+			setListSchedule([]);
 		}
 	};
 
@@ -521,13 +642,14 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			dataDetail.push({
 				workId: res.workId,
 				subdepId: res.subdepId,
+				aktivitasID: res.aktivitasID,
 				start: res.start,
 				operatorID: res.operatorID,
 				part: res.part,
 			});
 		});
 		let dataBody = {
-			srId: payload.srId,
+			timeschId: payload.timeschId,
 			id_dispatch: generateIdNum(),
 			dispacth_date: payload.dispacth_date,
 			remark: payload.remark,
@@ -603,14 +725,14 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<InputSelect
-									id='srId'
-									name='srId'
-									placeholder='Summary'
-									label='Summary Report'
+									id='timeschId'
+									name='timeschId'
+									placeholder='Shedulle'
+									label='Id Schedulle'
 									onChange={(event: any) => {
 										if (event.target.value !== "no data") {
 											let data = JSON.parse(event.target.value);
-											setFieldValue("srId", data.id);
+											setFieldValue("timeschId", data.id);
 										}
 									}}
 									required={true}
@@ -618,15 +740,15 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
 									<option value='no data' selected>
-										Choose Summary Report
+										Choose Schedulle
 									</option>
-									{listSummary.length === 0 ? (
-										<option value='no data'>No Data Summary Report</option>
+									{listSchedule.length === 0 ? (
+										<option value='no data'>No Data Schedulle</option>
 									) : (
-										listSummary.map((res: any, i: number) => {
+										listSchedule.map((res: any, i: number) => {
 											return (
 												<option value={JSON.stringify(res)} key={i}>
-													{res.id_summary} - {res.wor.job_no}
+													{res.idTs} - {res.wor.job_no}
 												</option>
 											);
 										})
@@ -677,7 +799,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								<InputDate
 									id='date_of_summary'
 									label='Finish Date'
-									value={ dateFinish === "" ? new Date() : dateFinish }
+									value={dateFinish === "" ? new Date() : dateFinish}
 									onChange={(value: any) =>
 										setFieldValue("date_of_summary", value)
 									}
@@ -757,7 +879,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								})
 								.map((dataDetail: any, idx: number, data: any) => (
 									<div key={idx}>
-										<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+										<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 											<div className='w-full'>
 												<InputSelect
 													id={`worker_${idx}`}
@@ -791,6 +913,40 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 												</InputSelect>
 											</div>
 											<div className='w-full'>
+												<InputSelect
+													id={`aktivitasID_${idx}`}
+													name='aktivitasID'
+													placeholder='Activity'
+													label='Activity'
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Activity
+													</option>
+													{listActivity.length === 0 ? (
+														<option value='no data'>No Data Activity</option>
+													) : (
+														listActivity.map((res: any, i: number) => {
+															return (
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={
+																		res.id === dataDetail.aktivitasID
+																			? true
+																			: false
+																	}
+																>
+																	{res.masterAktivitas.name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
 												<InputDate
 													id={`start_${idx}`}
 													label='Start Date'
@@ -798,7 +954,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 													onChange={(e: any) => {
 														handleChangeStartDate(e, `start_${idx}`);
 													}}
-													minDate={dateWor}
+													minDate={dataDetail.startActivity}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 													classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
@@ -878,10 +1034,11 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										{data.length !== 1 ? (
 											<a
 												className='inline-flex text-red-500 cursor-pointer mt-1'
-												onClick={() => { removeDetail(idx) }}
+												onClick={() => {
+													removeDetail(idx);
+												}}
 											>
-												<Trash2 size={18} className='mr-1 mt-1' /> Remove
-												Detail
+												<Trash2 size={18} className='mr-1 mt-1' /> Remove Detail
 											</a>
 										) : null}
 									</div>
