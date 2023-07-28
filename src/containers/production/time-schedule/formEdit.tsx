@@ -1308,9 +1308,9 @@ export const FormEditSchedule = ({
 																? 60 * listDateHoliday.length
 																: 60 * listDate.length
 														}px`,
-														// gridTemplateColumns: `repeat(${numMoth}, minmax(0, 1fr))`,
+														gridTemplateColumns: `repeat(${listMoth.length}, minmax(0, 1fr))`,
 													}}
-													className={`grid grid-cols-${listMoth.length} border-t border-b border-r border-gray-500 p-[2px]`}
+													className={`grid border-t border-b border-r border-gray-500 p-[2px]`}
 												>
 													{listMoth.map((res: any, i: number) => {
 														return (

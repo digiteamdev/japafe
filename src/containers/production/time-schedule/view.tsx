@@ -43,7 +43,7 @@ export const ViewSchedule = ({
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-console.log(numMoth)
+
 	const settingData = () => {
 		let dataAktivitas: any = [];
 		if (dataSelected) {
@@ -113,7 +113,7 @@ console.log(numMoth)
 				}
 				dataAktivitas.push({
 					...res,
-					left: 60 * rangeDay - 60,
+					left: 60 * (rangeDay - countHolidayRange) - 60,
 					width: 60 * res.days,
 				});
 			});
@@ -199,7 +199,7 @@ console.log(numMoth)
 			return display;
 		}
 	};
-
+console.log(listMoth)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
@@ -396,8 +396,9 @@ console.log(numMoth)
 														? 60 * listDateHoliday.length
 														: 60 * listDate.length
 												}px`,
+												gridTemplateColumns: `repeat(${numMoth}, minmax(0, 1fr))`,
 											}}
-											className={`grid grid-cols-${numMoth} border-t border-b border-r border-gray-500 p-[2px]`}
+											className={`grid border-t border-b border-r border-gray-500 p-[2px]`}
 										>
 											{listMoth.map((res: any, i: number) => {
 												return (
