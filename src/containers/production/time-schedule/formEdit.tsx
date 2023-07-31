@@ -1012,13 +1012,13 @@ export const FormEditSchedule = ({
 										defaultValue='no'
 										selected={holiday === "no" ? true : false}
 									>
-										Working
+										No
 									</option>
 									<option
 										value='yes'
 										selected={holiday === "yes" ? true : false}
 									>
-										No Working
+										Yes
 									</option>
 								</InputSelect>
 							</div>

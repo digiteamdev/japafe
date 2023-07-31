@@ -260,7 +260,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 														{res.Employee.employee_name}
 													</td>
 													<td className='border border-black border-collapse pl-2'>
-														{res.approvebyID}
+														{res.approvebyID !== null ? res.approve.employee_name : '-' }
 													</td>
 													<td className='border border-black border-collapse pl-2'>
 														{res.finish === null

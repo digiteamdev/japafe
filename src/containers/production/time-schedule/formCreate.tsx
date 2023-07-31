@@ -943,9 +943,9 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
 									<option defaultValue='no' selected>
-										Working
+										No
 									</option>
-									<option value='yes'>No Working</option>
+									<option value='yes'>Yes</option>
 								</InputSelect>
 							</div>
 						</Section>
