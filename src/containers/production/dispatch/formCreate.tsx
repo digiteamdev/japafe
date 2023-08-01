@@ -140,7 +140,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 							arrDetailOther.push({
 								index: res.index,
 								workId: res.workId,
-								aktivitasID: res.workId,
+								aktivitasID: res.aktivitasID,
 								subdepId: res.subdepId,
 								start: res.start,
 								startActivity: res.startActivity,
@@ -933,10 +933,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 																<option
 																	value={JSON.stringify(res)}
 																	key={i}
-																	selected={
-																		res.id === dataDetail.aktivitasID
-																			? true
-																			: false
+																	selected={res.id === dataDetail.aktivitasID
 																	}
 																>
 																	{res.masterAktivitas.name}

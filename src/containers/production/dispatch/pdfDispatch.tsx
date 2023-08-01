@@ -19,6 +19,7 @@ export const PdfDispatch = ({
 	dataDetail,
 	showModalPdf,
 }: props) => {
+	console.log(dataDetail)
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {

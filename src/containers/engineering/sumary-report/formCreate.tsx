@@ -46,6 +46,7 @@ interface data {
 }
 
 export const FormCreateSummaryReport = ({ content, showModal }: props) => {
+	
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isLoadingUpload, setIsLoadingUpload] = useState<boolean>(false);
 	const [listWor, setListWor] = useState<any>([]);

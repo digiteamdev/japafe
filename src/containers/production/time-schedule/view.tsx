@@ -199,7 +199,7 @@ export const ViewSchedule = ({
 			return display;
 		}
 	};
-console.log(listMoth)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
@@ -542,14 +542,15 @@ console.log(listMoth)
 														} day \nProgress: ${result.progress}%`}
 													>
 														<div
-															className={`w-[${
-																result.progress === 0 ? 1 : result.progress
-															}%] ${
+															style={{
+																width: idx === 0 ? '100%' : result.progress === 0 ? '1%' : result.progress + '%'
+															}}
+															className={`${
 																idx === 0 ? "bg-orange-600" : "bg-blue-600"
 															} p-2 rounded-lg`}
 														>
 															<p className='p-0 m-0 text-center font-semibold  text-xs'>
-																{result.progress}%
+																{ idx === 0 ? result.name : result.progress + '%'}
 															</p>
 														</div>
 														{/* <p className='p-0 text-center font-semibold  text-xs'>
