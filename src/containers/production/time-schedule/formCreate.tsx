@@ -506,7 +506,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					color: res.color,
 				});
 			} else {
-				if (i === parseInt(row.toString())) {
+				if (i === parseInt(row.toString()) ) {
 					newTaks.push({
 						start: activityStar,
 						end: activityEnd,
@@ -532,8 +532,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						left: res.left,
 						leftHoliday: res.leftHoliday,
 						width: res.width,
-						widthHoliday: res.Holiday,
 						color: res.color,
+						widthHoliday: res.Holiday,
 					});
 				} else {
 					newTaks.push({
@@ -569,13 +569,14 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				widthHoliday: 60 * (durationDay - countHoliday),
 			});
 		}
+		setIsEdit(false)
 		setTask(newTaks);
 	};
 
 	const removeTask = () => {
 		let newTasks: any = [];
 		tasks.map((res: any, i: number) => {
-			if (dataRow !== i) {
+			if ( dataRow !== i) {
 				newTasks.push(res);
 			}
 		});
@@ -773,6 +774,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	const editActivity = (data: any, row: any) => {
+		setRow(row);
 		setDataRow(row);
 		setDataSelected(data);
 		setActivityId(data.id);

@@ -3,7 +3,8 @@ import { Section, Input, InputSelect, InputDate } from "../../../components";
 import { Formik, Form } from "formik";
 import {
 	GetAllWorSchedule,
-	AddSchedule,
+	EditScheduleAktivity,
+	DeleteScheduleActivity,
 	GetAllActivity,
 	EditSchedule,
 } from "../../../services";
@@ -68,6 +69,7 @@ export const FormEditSchedule = ({
 	const [numHoliday, setNumHoliday] = useState<number>(0);
 	const [listMoth, setListMonth] = useState<any>([]);
 	const [listDate, setListDate] = useState<any>([]);
+	const [ListRemoveTask, setListRemoveTask] = useState<any>([]);
 	const [listDateHoliday, setListDateHoliday] = useState<any>([]);
 	const [dateHoliday, setDateHoliday] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>([]);
@@ -463,13 +465,14 @@ export const FormEditSchedule = ({
 				countHolidayRange = countHolidayRange + parseInt(holiday.toString());
 			}
 		}
-		tasks.map((res: any, i: any) => {
+		tasks.map((res: any, i: number) => {
 			if (i === 0) {
 				newTaks.push({
 					start: res.start,
 					end: res.end,
 					name: res.name,
 					id: res.id,
+					idAktivitas: res.aktivitasId,
 					progress: res.progress,
 					duration: res.duration,
 					holiday: res.holiday,
@@ -486,6 +489,7 @@ export const FormEditSchedule = ({
 						end: activityEnd,
 						name: activity,
 						id: activityId,
+						idAktivitas: "",
 						progress: 0,
 						duration: durationDay - countHoliday,
 						holiday: countHoliday,
@@ -500,6 +504,7 @@ export const FormEditSchedule = ({
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						idAktivitas: res.idAktivitas,
 						progress: res.progress,
 						duration: res.duration,
 						holiday: res.holiday,
@@ -515,6 +520,7 @@ export const FormEditSchedule = ({
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						idAktivitas: res.idAktivitas,
 						progress: res.progress,
 						duration: res.duration,
 						holiday: res.holiday,
@@ -533,6 +539,7 @@ export const FormEditSchedule = ({
 				end: activityEnd,
 				name: activity,
 				id: activityId,
+				idAktivitas: "",
 				progress: 0,
 				duration: durationDay - countHoliday,
 				holiday: countHoliday,
@@ -588,17 +595,18 @@ export const FormEditSchedule = ({
 			}
 		}
 		tasks.map((res: any, i: number) => {
-			if (dataRow !== i) {
+			if( dataRow !== i ){
 				taskEdit.push(res);
 			}
 		});
-		taskEdit.map((res: any, i: any) => {
+		taskEdit.map((res: any, i: number) => {
 			if (i === 0) {
 				newTaks.push({
 					start: res.start,
 					end: res.end,
 					name: res.name,
 					id: res.id,
+					idAktivitas: res.idAktivitas,
 					progress: res.progress,
 					duration: res.duration,
 					holiday: res.holiday,
@@ -615,28 +623,30 @@ export const FormEditSchedule = ({
 						end: activityEnd,
 						name: activity,
 						id: activityId,
-						progress: 0,
+						idAktivitas: res.idAktivitas,
+						progress: res.progress,
 						duration: durationDay - countHoliday,
 						holiday: countHoliday,
 						color: "#60a5fa",
-						left: 60 * rangeDay - 30,
-						leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-						width: 60 * durationDay - 60,
-						widthHoliday: 60 * (durationDay - countHoliday) - 60,
+						left: 60 * rangeDay - 60,
+						leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+						width: 60 * durationDay,
+						widthHoliday: 60 * (durationDay - countHoliday),
 					});
 					newTaks.push({
 						start: res.start,
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						idAktivitas: res.idAktivitas,
 						progress: res.progress,
 						duration: res.duration,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
 						width: res.width,
-						widthHoliday: res.Holiday,
 						color: res.color,
+						widthHoliday: res.Holiday,
 					});
 				} else {
 					newTaks.push({
@@ -644,6 +654,7 @@ export const FormEditSchedule = ({
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						idAktivitas: res.idAktivitas,
 						progress: res.progress,
 						duration: res.duration,
 						holiday: res.holiday,
@@ -662,29 +673,37 @@ export const FormEditSchedule = ({
 				end: activityEnd,
 				name: activity,
 				id: activityId,
+				idAktivitas: taskEdit[parseInt(row.toString()) - 1].idAktivitas,
 				progress: 0,
 				duration: durationDay - countHoliday,
 				holiday: countHoliday,
 				color: "#60a5fa",
-				left: 60 * rangeDay - 30,
-				leftHoliday: 60 * (rangeDay - countHolidayRange) - 30,
-				width: 60 * durationDay - 60,
-				widthHoliday: 60 * (durationDay - countHoliday) - 60,
+				left: 60 * rangeDay - 60,
+				leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+				width: 60 * durationDay,
+				widthHoliday: 60 * (durationDay - countHoliday),
 			});
 		}
+		setIsEdit(false);
 		setTask(newTaks);
 	};
 
 	const removeTask = () => {
 		let newTasks: any = [];
+		let removeTask: any = ListRemoveTask;
 		tasks.map((res: any, i: number) => {
 			if (dataRow !== i) {
 				newTasks.push(res);
+			}else {
+				if(res.idAktivitas !== ""){
+					removeTask.push(res)
+				}
 			}
 		});
 		setActivityStar(tasks[0].start);
 		setActivityEnd(tasks[0].end);
 		setIsEdit(false);
+		setListRemoveTask(removeTask);
 		setTask(newTasks);
 	};
 
@@ -714,7 +733,6 @@ export const FormEditSchedule = ({
 		let dataBody: any;
 		let aktivitas: any = [];
 		tasks.map((res: any, i: number) => {
-			console.log(res)
 			if (i !== 0) {
 				aktivitas.push({
 					id: res.idAktivitas,
@@ -733,22 +751,39 @@ export const FormEditSchedule = ({
 			worId: payload.worId,
 			timesch: payload.timesch,
 			holiday: holiday === "yes" ? true : false,
-			// aktivitas: aktivitas,
 		};
+
 		try {
 			const response = await EditSchedule(dataSchedulle.id, dataBody);
 			if (response.data) {
-				toast.success("Edit Time Schedulle Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				showModal(false, content, true);
+				const editResponse = await EditScheduleAktivity({"aktivitas": aktivitas})
+				ListRemoveTask.map( (res: any) => {
+					removeScheduleAktivity(res.idAktivitas)
+				})
+				if(editResponse.data){
+					toast.success("Edit Time Schedulle Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}else{
+					toast.error("Edit Time Schedulle Failed", {
+						position: "top-center",
+						autoClose: 1000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+				}
 			}
 		} catch (error) {
 			toast.error("Edit Time Schedulle Failed", {
@@ -763,6 +798,14 @@ export const FormEditSchedule = ({
 			});
 		}
 		setIsLoading(false);
+	};
+
+	const removeScheduleAktivity = async (id: string) => {
+		try {
+			await DeleteScheduleActivity(id);
+		} catch (error) {
+			console.log(error)
+		}
 	};
 
 	const showMonth = (countMoth: number) => {
@@ -832,6 +875,7 @@ export const FormEditSchedule = ({
 	};
 
 	const editActivity = (data: any, row: any) => {
+		setRow(row);
 		setDataRow(row);
 		setDataSelected(data);
 		setActivityId(data.id);
@@ -841,7 +885,6 @@ export const FormEditSchedule = ({
 		setIsEdit(true);
 	};
 
-	console.log(numMoth);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -1117,7 +1160,7 @@ export const FormEditSchedule = ({
 																	<option
 																		key={i}
 																		value={i + 1}
-																		selected={dataRow === i + 1 ? true : false}
+																		selected={row === i + 1 ? true : false}
 																	>
 																		{i + 1}
 																	</option>

@@ -3,7 +3,7 @@ import { Section, Input, InputSelect, InputDate } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import {
-	GetAllSummary,
+	GetAllSchedule,
 	GetAllDepartement,
 	GetAllWorkerCenter,
 	GetAllEmployeDepart,
@@ -34,9 +34,10 @@ export const FormEditDispatch = ({
 }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isShowDetail, setIsShowDetail] = useState<boolean>(true);
-	const [listSummary, setListSummary] = useState<any>([]);
+	const [listSchedule, setListSchedule] = useState<any>([]);
 	const [listDepart, setListDepart] = useState<any>([]);
 	const [listWorkerCenter, setListWorkerCenter] = useState<any>([]);
+	const [listActivity, setListActivity] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [jobNo, setJobNo] = useState<string>("");
 	const [dateWor, setDateWor] = useState<string>("");
@@ -57,7 +58,7 @@ export const FormEditDispatch = ({
 
 	useEffect(() => {
 		settingData();
-		getSummary();
+		getSchedule();
 		getDepart();
 		getWorkerCenter();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -75,13 +76,13 @@ export const FormEditDispatch = ({
 			dispacth_date: dataDispatch.dispacth_date,
 			remark: dataDispatch.remark,
 		});
-		dataDispatch.srimg.wor.customerPo.quotations.eqandpart.map((res: any) => {
+		dataDispatch.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
 			if (lastEquipment !== res.equipment.nama) {
 				equipment.push(res.equipment.nama);
 			}
 			lastEquipment = res.equipment.nama;
 		});
-		dataDispatch.srimg.srimgdetail.map((res: any) => {
+		dataDispatch.timeschedule.wor.srimg.srimgdetail.map((res: any) => {
 			part.push(res);
 		});
 		dataDispatch.dispatchDetail.map((res: any) => {
@@ -114,10 +115,11 @@ export const FormEditDispatch = ({
 		setDetail(arrDetail);
 		setEquipment(equipment.toString());
 		setPart(part);
-		setDateFinish(dataDispatch.srimg.wor.delivery_date);
-		setJobNo(dataDispatch.srimg.wor.job_no);
-		setSubject(dataDispatch.srimg.wor.subject);
-		setDateWor(dataDispatch.srimg.wor.date_wor);
+		setDateFinish(dataDispatch.timeschedule.wor.delivery_date);
+		setJobNo(dataDispatch.timeschedule.wor.job_no);
+		setSubject(dataDispatch.timeschedule.wor.subject);
+		setDateWor(dataDispatch.timeschedule.wor.date_wor);
+		setListActivity(dataDispatch.timeschedule.aktivitas);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -133,13 +135,14 @@ export const FormEditDispatch = ({
 					}
 					lastEquipment = res.equipment.nama;
 				});
-				data.srimgdetail.map((res: any) => {
+				data.wor.srimg.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
 				setJobNo(data.wor.job_no);
 				setSubject(data.wor.subject);
 				setDateWor(data.wor.date_wor);
 				setEquipment(equipment.toString());
+				setListActivity(dataDispatch.aktivitas);
 				setPart(part);
 			} else {
 				setJobNo("");
@@ -147,6 +150,7 @@ export const FormEditDispatch = ({
 				setDateWor("");
 				setEquipment("");
 				setPart([]);
+				setListActivity([]);
 			}
 		} else if (event.target.name === "part") {
 			if (event.target.value !== "no data") {
@@ -597,16 +601,16 @@ export const FormEditDispatch = ({
 		}
 	};
 
-	const getSummary = async () => {
+	const getSchedule = async () => {
 		try {
-			const response = await GetAllSummary();
+			const response = await GetAllSchedule();
 			if (response.data) {
 				let summary = response.data.result;
-				summary.push(dataDispatch.srimg);
-				setListSummary(summary);
+				summary.push(dataDispatch.timeschedule);
+				setListSchedule(response.data.result);
 			}
 		} catch (error) {
-			setListSummary([]);
+			setListSchedule([]);
 		}
 	};
 
@@ -747,17 +751,17 @@ export const FormEditDispatch = ({
 									<option value='no data' selected>
 										Choose Summary Report
 									</option>
-									{listSummary.length === 0 ? (
+									{listSchedule.length === 0 ? (
 										<option value='no data'>No Data Summary Report</option>
 									) : (
-										listSummary.map((res: any, i: number) => {
+										listSchedule.map((res: any, i: number) => {
 											return (
 												<option
 													value={JSON.stringify(res)}
 													key={i}
-													selected={res.id === dataDispatch.srId}
+													selected={res.id === dataDispatch.timeschId}
 												>
-													{res.id_summary} - {res.wor.job_no}
+													{res.idTs} - {res.wor.job_no}
 												</option>
 											);
 										})
@@ -798,7 +802,7 @@ export const FormEditDispatch = ({
 								<InputDate
 									id='date_of_summary'
 									label='Start Date'
-									value={dateWor === "" ? new Date() : dateWor}
+									value={dateWor === "" ? new Date() : new Date(dateWor)}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
@@ -808,7 +812,7 @@ export const FormEditDispatch = ({
 								<InputDate
 									id='date_of_summary'
 									label='Finish Date'
-									value={dateFinish === "" ? new Date() : dateFinish}
+									value={dateFinish === "" ? new Date() : new Date(dateFinish)}
 									onChange={(value: any) =>
 										setFieldValue("date_of_summary", value)
 									}
@@ -857,7 +861,7 @@ export const FormEditDispatch = ({
 									) : (
 										part.map((res: any, i: number) => {
 											return (
-												<option value={JSON.stringify(res)} key={i}>
+												<option value={JSON.stringify(res)} key={i} selected={ res.name_part === partName }>
 													{res.name_part}
 												</option>
 											);
@@ -915,6 +919,37 @@ export const FormEditDispatch = ({
 																	selected={res.id === dataDetail.workId}
 																>
 																	{res.name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<InputSelect
+													id={`aktivitasID_${idx}`}
+													name='aktivitasID'
+													placeholder='Activity'
+													label='Activity'
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Activity
+													</option>
+													{listActivity.length === 0 ? (
+														<option value='no data'>No Data Activity</option>
+													) : (
+														listActivity.map((res: any, i: number) => {
+															return (
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={res.id === dataDetail.aktivitasID
+																	}
+																>
+																	{res.masterAktivitas.name}
 																</option>
 															);
 														})
