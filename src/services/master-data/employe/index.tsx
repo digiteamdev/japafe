@@ -2,6 +2,7 @@ import { Axios } from '../../../configs/axios/';
 
 export const GetEmploye = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/employe?page=${page}&limit=${perpage}`);
 export const GetAllEmploye = () => Axios.get(process.env.BASE_URL+`/employe`);
+export const GetAllEmployee = () => Axios.get(process.env.BASE_URL+`/employeeAll`);
 export const GetAllEmployeDepart = (sub: string, dep: string) => Axios.get(process.env.BASE_URL+`/employeDepart?sub=${sub}&dep=${dep}`);
 export const SearchEmploye = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/employe?page=${page}&limit=${perpage}&search=${search}`);
 export const AddEmploye = (data: any) => Axios.post(process.env.BASE_URL+'/employe', data);

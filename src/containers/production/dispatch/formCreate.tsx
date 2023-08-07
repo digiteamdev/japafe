@@ -644,7 +644,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				subdepId: res.subdepId,
 				aktivitasID: res.aktivitasID,
 				start: res.start,
-				operatorID: res.operatorID,
+				// operatorID: res.operatorID,
 				part: res.part,
 			});
 		});
@@ -879,7 +879,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								})
 								.map((dataDetail: any, idx: number, data: any) => (
 									<div key={idx}>
-										<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+										<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 											<div className='w-full'>
 												<InputSelect
 													id={`worker_${idx}`}
@@ -987,7 +987,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 													)}
 												</InputSelect>
 											</div>
-											<div className='w-full'>
+											{/* <div className='w-full'>
 												<InputSelect
 													id={`operator_${idx}`}
 													name='operator'
@@ -1016,7 +1016,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 														})
 													)}
 												</InputSelect>
-											</div>
+											</div> */}
 										</Section>
 										{idx === data.length - 1 ? (
 											<a

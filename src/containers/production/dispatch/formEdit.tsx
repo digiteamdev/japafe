@@ -6,13 +6,17 @@ import {
 	GetAllSchedule,
 	GetAllDepartement,
 	GetAllWorkerCenter,
+	GetAllEmployee,
 	GetAllEmployeDepart,
 	EditDispatch,
 	EditDispatchDetail,
 	DeleteDispatchDetail,
+	DispatchDetailStart,
+	DispatchDetailFinish,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
+import { getId } from "../../../configs/session";
 
 interface props {
 	content: string;
@@ -21,7 +25,7 @@ interface props {
 }
 
 interface data {
-	srId: string;
+	timeschId: string;
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
@@ -50,7 +54,7 @@ export const FormEditDispatch = ({
 	const [tabsPart, setTabsPart] = useState<any>([]);
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		srId: "",
+		timeschId: "",
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
@@ -61,6 +65,7 @@ export const FormEditDispatch = ({
 		getSchedule();
 		getDepart();
 		getWorkerCenter();
+		getEmploye();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -71,20 +76,27 @@ export const FormEditDispatch = ({
 		let arrPart: any = [];
 		let arrDetail: any = [];
 		setData({
-			srId: dataDispatch.srId,
+			timeschId: dataDispatch.timeschId,
 			id_dispatch: dataDispatch.id_dispatch,
 			dispacth_date: dataDispatch.dispacth_date,
 			remark: dataDispatch.remark,
 		});
-		dataDispatch.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
-			if (lastEquipment !== res.equipment.nama) {
-				equipment.push(res.equipment.nama);
+		dataDispatch.timeschedule.wor.customerPo.quotations.eqandpart.map(
+			(res: any) => {
+				if (lastEquipment !== res.equipment.nama) {
+					equipment.push(res.equipment.nama);
+				}
+				lastEquipment = res.equipment.nama;
 			}
-			lastEquipment = res.equipment.nama;
-		});
-		dataDispatch.timeschedule.wor.srimg.srimgdetail.map((res: any) => {
-			part.push(res);
-		});
+		);
+		dataDispatch.timeschedule.wor.srimg.srimgdetail.map(
+			(res: any, i: number) => {
+				if (i === 0) {
+					setStatus(res.choice);
+				}
+				part.push(res);
+			}
+		);
 		dataDispatch.dispatchDetail.map((res: any) => {
 			if (arrPart.length === 0) {
 				setPartName(res.part);
@@ -103,8 +115,11 @@ export const FormEditDispatch = ({
 						id: res.id,
 						dispacthID: dataDispatch.id,
 						index: i,
-						workId: res.workId,
-						subdepId: res.subdepId,
+						aktivitasID: res.aktivitas.id,
+						actual: res.actual,
+						approvebyID: res.approvebyID,
+						workId: res.workCenter.id,
+						subdepId: res.sub_depart.id,
 						start: res.start,
 						operatorID: res.operatorID,
 						part: res.part,
@@ -171,6 +186,9 @@ export const FormEditDispatch = ({
 								id: res.id,
 								dispacthID: dataDispatch.id,
 								index: res.index,
+								aktivitasID: res.aktivitasID,
+								actual: res.actual,
+								approvebyID: res.approvebyID,
 								workId: res.workId,
 								subdepId: res.subdepId,
 								start: res.start,
@@ -184,6 +202,9 @@ export const FormEditDispatch = ({
 							id: "",
 							dispacthID: dataDispatch.id,
 							index: 0,
+							actual: "",
+							approvebyID: "",
+							aktivitasID: "",
 							workId: "",
 							subdepId: "",
 							start: new Date(),
@@ -196,6 +217,9 @@ export const FormEditDispatch = ({
 						id: "",
 						dispacthID: dataDispatch.id,
 						index: 0,
+						aktivitasID: "",
+						actual: "",
+						approvebyID: "",
 						workId: "",
 						subdepId: "",
 						start: new Date(),
@@ -214,7 +238,6 @@ export const FormEditDispatch = ({
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
 				let idx = event.target.id.split("_");
-				getEmploye(data.name.replace(/&|-|\./g, "%26"), data.departement.name);
 				let dataDetail = detail;
 				if (dataDetail.length > 0) {
 					let arrDetail = dataDetail.filter((detail: any) => {
@@ -230,6 +253,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
 									workId: res.workId,
 									subdepId: data.id,
 									start: res.start,
@@ -241,6 +267,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
 									workId: res.workId,
 									subdepId: res.subdepId,
 									start: res.start,
@@ -255,6 +284,9 @@ export const FormEditDispatch = ({
 							id: "",
 							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
+							aktivitasID: "",
+							actual: "",
+							approvebyID: "",
 							workId: "",
 							subdepId: data.id,
 							start: new Date(),
@@ -267,6 +299,9 @@ export const FormEditDispatch = ({
 						id: "",
 						dispacthID: dataDispatch.id,
 						index: 0,
+						aktivitasID: "",
+						actual: "",
+						approvebyID: "",
 						workId: "",
 						subdepId: data.id,
 						start: new Date(),
@@ -298,6 +333,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
 									workId: data.id,
 									subdepId: res.subdepId,
 									start: res.start,
@@ -309,6 +347,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
 									workId: res.workId,
 									subdepId: res.subdepId,
 									start: res.start,
@@ -323,6 +364,9 @@ export const FormEditDispatch = ({
 							id: "",
 							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
+							aktivitasID: "",
+							actual: "",
+							approvebyID: "",
 							workId: data.id,
 							subdepId: "",
 							start: new Date(),
@@ -335,6 +379,9 @@ export const FormEditDispatch = ({
 						id: "",
 						dispacthID: dataDispatch.id,
 						index: 0,
+						aktivitasID: "",
+						actual: "",
+						approvebyID: "",
 						workId: data.id,
 						subdepId: "",
 						start: new Date(),
@@ -365,6 +412,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									approvebyID: res.approvebyID,
+									actual: res.actual,
 									workId: res.workId,
 									subdepId: res.subdepId,
 									start: res.start,
@@ -376,6 +426,9 @@ export const FormEditDispatch = ({
 									id: res.id,
 									dispacthID: dataDispatch.id,
 									index: res.index,
+									aktivitasID: res.aktivitasID,
+									approvebyID: res.approvebyID,
+									actual: res.actual,
 									workId: res.workId,
 									subdepId: res.subdepId,
 									start: res.start,
@@ -390,6 +443,9 @@ export const FormEditDispatch = ({
 							id: "",
 							dispacthID: dataDispatch.id,
 							index: arrDetail.length,
+							actual: null,
+							aktivitasID: "",
+							approvebyID: null,
 							workId: "",
 							subdepId: "",
 							start: new Date(),
@@ -402,6 +458,9 @@ export const FormEditDispatch = ({
 						id: "",
 						dispacthID: dataDispatch.id,
 						index: 0,
+						actual: null,
+						approvebyID: null,
+						aktivitasID: "",
 						workId: "",
 						subdepId: "",
 						start: new Date(),
@@ -411,6 +470,86 @@ export const FormEditDispatch = ({
 				}
 				setDetail(dataDetail);
 			} else {
+				setDetail(detail);
+			}
+		} else if (event.target.name === "aktivitasID") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let idx = event.target.id.split("_");
+				let dataDetail = detail;
+				if (dataDetail.length > 0) {
+					let arrDetail = dataDetail.filter((detail: any) => {
+						return detail.part === partName;
+					});
+					let arrDetailOther = dataDetail.filter((detail: any) => {
+						return detail.part !== partName;
+					});
+					if (arrDetail.length > 0) {
+						arrDetail.map((res: any, i: number) => {
+							if (parseInt(idx[1]) === res.index) {
+								arrDetailOther.push({
+									id: res.id,
+									index: res.index,
+									workId: res.workId,
+									aktivitasID: data.id,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
+									subdepId: res.subdepId,
+									start: res.start,
+									startActivity: new Date(data.startday),
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							} else {
+								arrDetailOther.push({
+									id: res.id,
+									index: res.index,
+									workId: res.workId,
+									subdepId: res.subdepId,
+									start: res.start,
+									aktivitasID: res.aktivitasID,
+									actual: res.actual,
+									approvebyID: res.approvebyID,
+									startActivity: res.startActivity,
+									operatorID: res.operatorID,
+									part: res.part,
+								});
+							}
+						});
+						dataDetail = arrDetailOther;
+					} else {
+						dataDetail.push({
+							id: "",
+							index: arrDetail.length,
+							workId: "",
+							aktivitasID: data.id,
+							actual: "",
+							approvebyID: "",
+							subdepId: "",
+							start: new Date(),
+							startActivity: new Date(),
+							operatorID: "",
+							part: partName,
+						});
+					}
+				} else {
+					dataDetail.push({
+						id: "",
+						index: 0,
+						workId: "",
+						aktivitasID: data.id,
+						actual: "",
+						approvebyID: "",
+						subdepId: "",
+						start: new Date(),
+						startActivity: new Date(),
+						operatorID: "",
+						part: partName,
+					});
+				}
+				setDetail(dataDetail);
+			} else {
+				setListEmploye([]);
 				setDetail(detail);
 			}
 		}
@@ -433,6 +572,9 @@ export const FormEditDispatch = ({
 							id: res.id,
 							dispacthID: dataDispatch.id,
 							index: res.index,
+							aktivitasID: res.aktivitasID,
+							actual: res.actual,
+							approvebyID: res.approvebyID,
 							workId: res.workId,
 							subdepId: res.subdepId,
 							start: new Date(data),
@@ -444,6 +586,9 @@ export const FormEditDispatch = ({
 							id: res.id,
 							dispacthID: dataDispatch.id,
 							index: res.index,
+							aktivitasID: res.aktivitasID,
+							actual: res.actual,
+							approvebyID: res.approvebyID,
 							workId: res.workId,
 							subdepId: res.subdepId,
 							start: new Date(res.start),
@@ -458,6 +603,9 @@ export const FormEditDispatch = ({
 					id: "",
 					dispacthID: dataDispatch.id,
 					index: 0,
+					aktivitasID: "",
+					actual: "",
+					approvebyID: "",
 					workId: "",
 					subdepId: "",
 					start: new Date(data),
@@ -470,6 +618,9 @@ export const FormEditDispatch = ({
 				id: "",
 				dispacthID: dataDispatch.id,
 				index: 0,
+				aktivitasID: "",
+				actual: "",
+				approvebyID: "",
 				workId: "",
 				subdepId: "",
 				start: new Date(data),
@@ -496,6 +647,9 @@ export const FormEditDispatch = ({
 						dispacthID: dataDispatch.id,
 						index: res.index,
 						workId: res.workId,
+						aktivitasID: res.aktivitasID,
+						actual: res.actual,
+						approvebyID: res.approvebyID,
 						subdepId: res.subdepId,
 						start: res.start,
 						operatorID: res.operatorID,
@@ -508,6 +662,9 @@ export const FormEditDispatch = ({
 					id: "",
 					dispacthID: dataDispatch.id,
 					index: arrDetail.length,
+					aktivitasID: "",
+					actual: "",
+					approvebyID: "",
 					workId: "",
 					subdepId: "",
 					start: new Date(),
@@ -520,6 +677,9 @@ export const FormEditDispatch = ({
 			id: "",
 			dispacthID: dataDispatch.id,
 			index: arrDetail.length,
+			aktivitasID: "",
+			actual: "",
+			approvebyID: "",
 			workId: "",
 			subdepId: "",
 			start: new Date(),
@@ -547,6 +707,9 @@ export const FormEditDispatch = ({
 				id: res.id,
 				dispacthID: dataDispatch.id,
 				index: i,
+				aktivitasID: res.aktivitasID,
+				actual: res.actual,
+				approvebyID: res.approvebyID,
 				workId: res.workId,
 				subdepId: res.subdepId,
 				start: res.start,
@@ -554,8 +717,8 @@ export const FormEditDispatch = ({
 				part: res.part,
 			});
 		});
-		if(removeDetailTable[0].id !== ""){
-			deleteDispacthDetail(removeDetailTable[0].id)
+		if (removeDetailTable[0].id !== "") {
+			deleteDispacthDetail(removeDetailTable[0].id);
 		}
 		setDetail(newDataDetail);
 	};
@@ -636,9 +799,9 @@ export const FormEditDispatch = ({
 		}
 	};
 
-	const getEmploye = async (sub: string, dep: string) => {
+	const getEmploye = async () => {
 		try {
-			const response = await GetAllEmployeDepart(sub, dep);
+			const response = await GetAllEmployee();
 			if (response.data) {
 				setListEmploye(response.data.result);
 			}
@@ -657,6 +820,8 @@ export const FormEditDispatch = ({
 				workId: res.workId,
 				subdepId: res.subdepId,
 				start: res.start,
+				aktivitasID: res.aktivitasID,
+				approvebyID: res.approvebyID,
 				operatorID: res.operatorID,
 				part: res.part,
 			});
@@ -692,6 +857,150 @@ export const FormEditDispatch = ({
 			});
 		}
 		setIsLoading(false);
+	};
+
+	const startDetail = async (id: string) => {
+		let dataDetail = detail;
+		let dataBody = {
+			actual: new Date(),
+		};
+		let arrDetail = dataDetail.filter((detail: any) => {
+			return detail.part === partName;
+		});
+		if (dataDetail.length > 0) {
+			let arrDetailOther = dataDetail.filter((detail: any) => {
+				return detail.part !== partName;
+			});
+			if (arrDetail.length > 0) {
+				arrDetail.map((res: any, i: number) => {
+					arrDetailOther.push({
+						id: res.id,
+						dispacthID: dataDispatch.id,
+						index: res.index,
+						aktivitasID: res.aktivitasID,
+						actual: new Date(),
+						approvebyID: res.approvebyID,
+						workId: res.workId,
+						subdepId: res.subdepId,
+						start: res.start,
+						operatorID: res.operatorID,
+						part: res.part,
+					});
+				});
+				dataDetail = arrDetailOther;
+			}
+		}
+		try {
+			const response = await DispatchDetailStart(id, dataBody);
+			if (response.status === 201) {
+				setDetail(dataDetail);
+				toast.success("Start Dispatch Detail Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Start Dispatch Detail Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Start Dispatch Detail Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	};
+
+	const finishDetail = async (id: string) => {
+		let dataBody = {
+			finish: new Date(),
+			approvebyID: getId(),
+		};
+		let dataDetail = detail;
+		let arrDetail = dataDetail.filter((detail: any) => {
+			return detail.part === partName;
+		});
+		if (dataDetail.length > 0) {
+			let arrDetailOther = dataDetail.filter((detail: any) => {
+				return detail.part !== partName;
+			});
+			if (arrDetail.length > 0) {
+				arrDetail.map((res: any, i: number) => {
+					arrDetailOther.push({
+						id: res.id,
+						dispacthID: dataDispatch.id,
+						index: res.index,
+						aktivitasID: res.aktivitasID,
+						actual: res.actual,
+						approvebyID: res.approvebyID,
+						workId: res.workId,
+						subdepId: res.subdepId,
+						start: res.start,
+						operatorID: res.operatorID,
+						part: res.part,
+					});
+				});
+				dataDetail = arrDetailOther;
+			}
+		}
+		try {
+			const response = await DispatchDetailFinish(id, dataBody);
+			if (response.status === 201) {
+				setDetail(dataDetail);
+				showModal(false, content, true);
+				toast.success("Finish Dispatch Detail Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Finish Dispatch Detail Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Finish Dispatch Detail Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
 	};
 
 	return (
@@ -734,14 +1043,14 @@ export const FormEditDispatch = ({
 							</div>
 							<div className='w-full'>
 								<InputSelect
-									id='srId'
-									name='srId'
+									id='timeschId'
+									name='timeschId'
 									placeholder='Summary'
 									label='Summary Report'
 									onChange={(event: any) => {
 										if (event.target.value !== "no data") {
 											let data = JSON.parse(event.target.value);
-											setFieldValue("srId", data.id);
+											setFieldValue("timeschId", data.id);
 										}
 									}}
 									required={true}
@@ -843,12 +1152,6 @@ export const FormEditDispatch = ({
 									name='part'
 									placeholder='Part'
 									label='Part'
-									onChange={(event: any) => {
-										if (event.target.value !== "no data") {
-											let data = JSON.parse(event.target.value);
-											setFieldValue("worId", data.id);
-										}
-									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -861,7 +1164,11 @@ export const FormEditDispatch = ({
 									) : (
 										part.map((res: any, i: number) => {
 											return (
-												<option value={JSON.stringify(res)} key={i} selected={ res.name_part === partName }>
+												<option
+													value={JSON.stringify(res)}
+													key={i}
+													selected={res.name_part === partName}
+												>
 													{res.name_part}
 												</option>
 											);
@@ -892,7 +1199,7 @@ export const FormEditDispatch = ({
 								})
 								.map((dataDetail: any, idx: number, data: any) => (
 									<div key={idx}>
-										<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 											<div className='w-full'>
 												<InputSelect
 													id={`worker_${idx}`}
@@ -946,8 +1253,7 @@ export const FormEditDispatch = ({
 																<option
 																	value={JSON.stringify(res)}
 																	key={i}
-																	selected={res.id === dataDetail.aktivitasID
-																	}
+																	selected={res.id === dataDetail.aktivitasID}
 																>
 																	{res.masterAktivitas.name}
 																</option>
@@ -1016,19 +1322,64 @@ export const FormEditDispatch = ({
 													{listEmploye.length === 0 ? (
 														<option value='no data'>No Operator</option>
 													) : (
-														listEmploye.map((res: any, i: number) => {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={res.id === dataDetail.operatorID}
-																>
-																	{res.employee_name}
-																</option>
-															);
-														})
+														listEmploye
+															.filter((employe: any) => {
+																return (
+																	employe.sub_depart.id === dataDetail.subdepId
+																);
+															})
+															.map((res: any, i: number) => {
+																return (
+																	<option
+																		value={JSON.stringify(res)}
+																		key={i}
+																		selected={res.id === dataDetail.operatorID}
+																	>
+																		{res.employee_name}
+																	</option>
+																);
+															})
 													)}
 												</InputSelect>
+											</div>
+											<div className='w-full p-5'>
+												{dataDetail.approvebyID === null ||
+												dataDetail.approvebyID === "" ? (
+													<button
+														type='button'
+														className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent ${
+															dataDetail.actual === null ||
+															dataDetail.actual === ""
+																? "bg-green-500 hover:bg-green-400"
+																: "bg-red-500 hover:bg-red-400"
+														} text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+														onClick={() =>
+															dataDetail.actual === null ||
+															dataDetail.actual === ""
+																? startDetail(dataDetail.id)
+																: finishDetail(dataDetail.id)
+														}
+													>
+														{dataDetail.actual === null ||
+														dataDetail.actual === ""
+															? "Start"
+															: "Finish"}
+													</button>
+												) : (
+													""
+													// <Input
+													// 	id='approve'
+													// 	name='approve'
+													// 	placeholder='Approve'
+													// 	label='Approve By'
+													// 	type='text'
+													// 	value={dataDetail.approve.employee_name}
+													// 	disabled={true}
+													// 	required={true}
+													// 	withLabel={true}
+													// 	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													// />
+												)}
 											</div>
 										</Section>
 										{idx === data.length - 1 ? (

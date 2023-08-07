@@ -236,7 +236,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 										<th className='border border-black border-collapse'>
 											Finish Date
 										</th>
-										<th className='border border-black border-collapse'></th>
+										{/* <th className='border border-black border-collapse'></th> */}
 									</tr>
 								</thead>
 								<tbody>
@@ -257,7 +257,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 														{ res.actual === null ? '' : moment(res.actual).format("DD-MMMM-YYYY")}
 													</td>
 													<td className='border border-black border-collapse pl-2'>
-														{res.Employee.employee_name}
+														{res.Employee === null ? '' : res.Employee.employee_name }
 													</td>
 													<td className='border border-black border-collapse pl-2'>
 														{res.approvebyID !== null ? res.approve.employee_name : '-' }
@@ -267,7 +267,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 															? ""
 															: moment(res.finish).format("DD-MMMM-YYYY")}
 													</td>
-													<td className='border border-black border-collapse pl-2'>
+													{/* <td className='border border-black border-collapse pl-2'>
 														{ res.approvebyID === null ? (
 															<button
 																className={`px-2 my-1.5 text-justify rounded-md border border-transparent ${res.actual === null ? 'bg-green-500 hover:bg-green-400' : 'bg-red-500 hover:bg-red-400' } text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
@@ -276,7 +276,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 																{ res.actual === null ? "Start" : "Finish" }
 															</button>
 														) : '' }
-													</td>
+													</td> */}
 												</tr>
 											);
 										})}
