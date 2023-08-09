@@ -1,38 +1,45 @@
 import { useEffect, useState } from "react";
 import {useRouter} from "next/router";
 import { removeToken } from "../../../configs/session";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
-import { File, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateDrawing } from "./formCreate";
-import { ViewDrawing } from "./view";
-import { FormEditDrawing } from "./formEdit";
-import { GetDrawing, SearchPo, DeleteSummary  } from "../../../services";
-import { toast } from "react-toastify"
-import moment from "moment";
+import {
+	SectionTitle,
+	Content,
+	Modal,
+	Table,
+	Button,
+	ModalDelete,
+	Pagination
+} from "../../../components";
+import { Box, Eye, Edit, Trash2 } from "react-feather";
+import { FormCreateMaterial } from "./formCreate";
+import { ViewMaterial } from "./view";
+import { FormEditMaterial } from './formEdit';
+import { GetMaterial, SearchMaterial, DeleteMaterial } from "../../../services";
+import { toast } from "react-toastify";
 
-export const Drawing = () => {
+export const Material = () => {
 
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
+	const [modalContent, setModalContent] = useState<string>("add");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
-	const [dataSelected, setDataSelected] = useState<any>(false);
-	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Job No" },
-		{ name: "Date" },
-		{ name: "Customer" },
-		{ name: "Subject" },
+		{ name: "Code" },
+		{ name: "Material Name" },
+		{ name: "Material Type" },
+		{ name: "Satuan" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getDrawing(page, perPage);
+		getMaterial(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -42,15 +49,15 @@ export const Drawing = () => {
 		// if(!val){
 		// 	setDataSelected({id: '',name: ''})
 		// }
-		if(reload){
-			getDrawing(page, perPage);
+		if (reload) {
+			getMaterial(page, perPage);
 		}
 	};
 
-	const getDrawing = async (page: number, perpage: number) => {
+	const getMaterial = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetDrawing(page, perpage);
+			const response = await GetMaterial(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -67,10 +74,14 @@ export const Drawing = () => {
 		setIsLoading(false);
 	};
 
-	const searchPo = async (page: number, limit: number, search: string) => {
+	const searchMaterial = async (
+		page: number,
+		limit: number,
+		search: string
+	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search);
+			const response = await SearchMaterial(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -80,11 +91,11 @@ export const Drawing = () => {
 		setIsLoading(false);
 	};
 
-	const deleteSummary = async (id: string) => {
+	const deleteMaterial = async (id: string) => {
 		try {
-			const response = await DeleteSummary(id);
+			const response = await DeleteMaterial(id);
 			if(response.data){
-				toast.success("Delete Summary Report Success", {
+				toast.success("Delete Material Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -94,10 +105,10 @@ export const Drawing = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getDrawing(1, 10);
+				getMaterial(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Summary Report Failed", {
+			toast.error("Delete Material Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -114,15 +125,15 @@ export const Drawing = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Drawing'
+				title='Material'
 				total={countData}
-				icon={<File className='w-[36px] h-[36px]' />}
+				icon={<Box className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Drawing'
+				title='Material'
 				print={true}
 				showModal={showModal}
-				search={searchPo}
+				search={searchMaterial}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -166,17 +177,17 @@ export const Drawing = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.timeschedule.wor.job_no}
+									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+										{ res.kd_material }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{moment(res.timeschedule.wor.date_of_order).format("DD-MM-YYYY")}
+										{ res.material_name }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.timeschedule.wor.customerPo.quotations.Customer.name}
+										{ res.grup_material.material_name }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.timeschedule.wor.subject}
+										{ res.satuan }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
@@ -223,7 +234,7 @@ export const Drawing = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getDrawing(value, perPage);
+								getMaterial(value, perPage);
 							}}
 						/>
 					) : null
@@ -235,22 +246,22 @@ export const Drawing = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteSummary}
+					onDelete={deleteMaterial}
 				/>
 			) : (
 				<Modal
-				title='Drawing'
+				title='Material'
 				isModal={isModal}
 				content={modalContent}
 				showModal={showModal}
 			>
-					{modalContent === "view" ? (
-						<ViewDrawing dataSelected={dataSelected} />
+				{modalContent === "view" ? (
+					<ViewMaterial dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
-						<FormCreateDrawing content={modalContent} showModal={showModal} />
-						) : (
-                        <FormEditDrawing content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
+                        <FormCreateMaterial content={modalContent} showModal={showModal} />
+				) : (
+					<FormEditMaterial content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+				)}
 				</Modal>
 			)}
 		</div>

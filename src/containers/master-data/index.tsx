@@ -6,3 +6,5 @@ export * from './departement';
 export * from './worker-center';
 export * from './activity';
 export * from './holiday';
+export * from './material';
+export * from './material-type';
