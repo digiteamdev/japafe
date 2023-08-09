@@ -13,7 +13,7 @@ import { Tool, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMaterialStok } from "./formCreate";
 import { ViewMaterial } from "./view";
 // import { FormEditCustomer } from "./fromEdit";
-import { GetMaterial } from "../../../services";
+import { GetMaterialStock } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 
@@ -55,7 +55,7 @@ export const MaterialStok = () => {
 	const getMaterialStok = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMaterial(page, perpage);
+			const response = await GetMaterialStock(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);

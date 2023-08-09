@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { materialSchema } from "../../../schema/report/material-stok/materialStokSchema";
-import { AddMaterial } from "../../../services";
+import { AddMaterialStock } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 
@@ -40,7 +40,7 @@ export const FormCreateMaterialStok = ({ content, showModal }: props) => {
 	const addMaterial = async (data: any) => {
 		setIsLoading(true);
 		try {
-			const response = await AddMaterial(data);
+			const response = await AddMaterialStock(data);
 			if (response) {
 				toast.success("Add Material Success", {
 					position: "top-center",

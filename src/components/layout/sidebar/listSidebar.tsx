@@ -66,6 +66,20 @@ export const ListNav = [
     
                 subMenu: null
             },
+            {
+                id: 'material-type',
+                link: "/master-data/material-type",
+                title: "Material Type",
+    
+                subMenu: null
+            },
+            {
+                id: 'material',
+                link: "/master-data/material",
+                title: "Material",
+    
+                subMenu: null
+            },
         ]
     },
     {

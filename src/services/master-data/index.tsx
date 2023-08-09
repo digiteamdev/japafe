@@ -7,3 +7,4 @@ export * from './equipment';
 export * from './worker';
 export * from './activity';
 export * from './holiday';
+export * from './material';
