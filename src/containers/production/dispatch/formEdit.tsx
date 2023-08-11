@@ -1345,26 +1345,42 @@ export const FormEditDispatch = ({
 											<div className='w-full p-5'>
 												{dataDetail.approvebyID === null ||
 												dataDetail.approvebyID === "" ? (
-													<button
-														type='button'
-														className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent ${
-															dataDetail.actual === null ||
+													<div className="flex">
+														<button
+															type='button'
+															className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent ${
+																dataDetail.actual === null ||
+																dataDetail.actual === ""
+																	? "bg-green-500 hover:bg-green-400"
+																	: "bg-red-500 hover:bg-red-400"
+															} text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+															onClick={() =>
+																dataDetail.actual === null ||
+																dataDetail.actual === ""
+																	? startDetail(dataDetail.id)
+																	: finishDetail(dataDetail.id)
+															}
+														>
+															{dataDetail.actual === null ||
 															dataDetail.actual === ""
-																? "bg-green-500 hover:bg-green-400"
-																: "bg-red-500 hover:bg-red-400"
-														} text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-														onClick={() =>
-															dataDetail.actual === null ||
-															dataDetail.actual === ""
-																? startDetail(dataDetail.id)
-																: finishDetail(dataDetail.id)
-														}
-													>
-														{dataDetail.actual === null ||
-														dataDetail.actual === ""
-															? "Start"
-															: "Finish"}
-													</button>
+																? "Start"
+																: "Finish"}
+														</button>
+														{ dataDetail.actual === null || dataDetail.actual === "" ? (
+															<button
+															type='button'
+															className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent bg-blue-500 hover:bg-blue-400 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+															onClick={() =>
+																dataDetail.actual === null ||
+																dataDetail.actual === ""
+																	? startDetail(dataDetail.id)
+																	: finishDetail(dataDetail.id)
+															}
+														>
+															SO
+														</button>
+														) : null}
+													</div>
 												) : (
 													""
 													// <Input
