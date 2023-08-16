@@ -12,7 +12,7 @@ interface props {
 	showModalPdf: (val: boolean) => void;
 }
 
-export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
+export const PdfTimeSchedule = ({ isModal, data, showModalPdf }: props) => {
     console.log(data)
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
@@ -80,7 +80,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
 												as='h4'
 												className='text-base font-bold leading-6 text-white'
 											>
-												Download Bill Of Material
+												Download Time Schedule
 											</Dialog.Title>
 										</div>
 

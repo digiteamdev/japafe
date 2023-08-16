@@ -5,7 +5,7 @@ import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } 
 import { File, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateBillOfMaterial } from "./formCreate";
 import { ViewBillOfMaterial } from "./view";
-// import { FormEditDrawing } from "./formEdit";
+import { FormEditBillOfMaterial } from "./formEdit";
 import { GetBillOfMaterial, SearchPo, DeleteSummary  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
@@ -250,8 +250,7 @@ export const BillOfMaterial = () => {
 					) : modalContent === "add" ? (
                         <FormCreateBillOfMaterial content={modalContent} showModal={showModal} />
 						) : (
-                        <></>
-                            // <FormEditDrawing content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditBillOfMaterial content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
