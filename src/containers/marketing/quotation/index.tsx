@@ -260,7 +260,7 @@ export const Quotation = () => {
 					{modalContent === "view" ? (
 						<ViewQuotation dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
-						<FormCreateQuotation content={modalContent} showModal={showModal} dataCustomer={dataCustomer} />
+						<FormCreateQuotation content={modalContent} showModal={showModal} />
 					) : (
 						<FormEditQuotation content={modalContent} showModal={showModal} dataQuotation={dataSelected} dataCustomer={dataCustomer}/>
 					)}
