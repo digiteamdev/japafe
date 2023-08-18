@@ -70,7 +70,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		}
 	};
 
-	const editDepartemen = async (data: { name: string }) => {
+	const editDepartemen = async (data: any) => {
 		setIsLoading(true);
 		try {
 			const response = await EditDepartement(data);
@@ -109,8 +109,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				initialValues={data}
 				validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					console.log(values);
-					// content === "add" ? addDepartemen(values) : editDepartemen(values);
+					content === "add" ? addDepartemen(values) : editDepartemen(values);
 				}}
 				enableReinitialize
 			>

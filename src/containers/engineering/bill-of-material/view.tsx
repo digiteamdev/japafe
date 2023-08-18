@@ -52,8 +52,8 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 										No Job
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.wor.job_no} (
-										{dataSelected.srimg.wor.customerPo.quotations.Customer.name}
+										{dataSelected.srimg.timeschedule.wor.job_no} (
+										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
 										)
 									</td>
 								</tr>
@@ -62,7 +62,7 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 										Subject
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.wor.subject}
+										{dataSelected.srimg.timeschedule.wor.subject}
 									</td>
 								</tr>
 								<tr>
@@ -70,7 +70,7 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 										Job Description
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.wor.job_desk}
+										{dataSelected.srimg.timeschedule.wor.job_desk}
 									</td>
 								</tr>
 							</table>

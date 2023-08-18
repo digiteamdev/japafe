@@ -17,7 +17,7 @@ interface props {
 }
 
 export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
-	console.log(dataSelected)
+
 	const [dataPart, setDataPart] = useState<any>([]);
 	const [activeTabs, setActiveTabs] = useState<any>("");
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -42,95 +42,6 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 	const showModalPdf = (res: any, val: boolean) => {
 		setDataDetail(res);
 		setIsModal(val);
-	};
-
-	const startDetail = async (id: string) => {
-		let dataBody = {
-			actual : new Date()
-		}
-		try {
-			const response = await DispatchDetailStart(id, dataBody);
-			if (response.status === 201) {
-				showModal(false, content, true);
-				toast.success("Start Dispatch Detail Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Start Dispatch Detail Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		} catch (error) {
-			toast.error("Start Dispatch Detail Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
-	};
-
-	const finishDetail = async (id: string) => {
-		let dataBody = {
-			finish : new Date(),
-			approvebyID: getId(),
-		}
-		try {
-			const response = await DispatchDetailFinish(id, dataBody);
-			if (response.status === 201) {
-				showModal(false, content, true);
-				toast.success("Finish Dispatch Detail Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Finish Dispatch Detail Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		} catch (error) {
-			toast.error("Finish Dispatch Detail Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
 	};
 
 	return (
@@ -168,8 +79,8 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.timeschedule.wor.job_no} - (
-										{dataSelected.timeschedule.wor.customerPo.quotations.Customer.name}
+										{dataSelected.srimg.timeschedule.wor.job_no} - (
+										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
 										)
 									</td>
 								</tr>
@@ -178,7 +89,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 										Equipment / Part
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.timeschedule.wor.customerPo.quotations.eqandpart.map(
+										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
 											(res: any, i: number) => {
 												return (
 													<p key={i}>

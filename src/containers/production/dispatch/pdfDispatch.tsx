@@ -19,7 +19,7 @@ export const PdfDispatch = ({
 	dataDetail,
 	showModalPdf,
 }: props) => {
-	console.log(dataDetail)
+
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -34,7 +34,7 @@ export const PdfDispatch = ({
 	};
 
 	const status = (choice: string) => {
-		let dataPart = dataDispatch.timeschedule.wor.srimg.srimgdetail.filter( (namePart: any) => { return namePart.name_part === dataDetail })
+		let dataPart = dataDispatch.srimg.srimgdetail.filter( (namePart: any) => { return namePart.name_part === dataDetail })
 		if(dataPart[0].choice === choice){
 			return true
 		}else{
@@ -166,14 +166,14 @@ export const PdfDispatch = ({
 														<tr>
 															<td>Job No</td>
 															<td className='px-2'>:</td>
-															<td>{dataDispatch.timeschedule.wor.job_no}</td>
+															<td>{dataDispatch.srimg.timeschedule.wor.job_no}</td>
 														</tr>
 														<tr>
 															<td>Customer</td>
 															<td className='px-2'>:</td>
 															<td>
 																{
-																	dataDispatch.timeschedule.wor.customerPo.quotations
+																	dataDispatch.srimg.timeschedule.wor.customerPo.quotations
 																		.Customer.name
 																}
 															</td>
@@ -186,7 +186,7 @@ export const PdfDispatch = ({
 														<tr>
 															<td>Total Qty</td>
 															<td className='px-2'>:</td>
-															<td>{dataDispatch.timeschedule.wor.qty}</td>
+															<td>{dataDispatch.srimg.timeschedule.wor.qty}</td>
 														</tr>
 														<tr>
 															<td>Remark</td>
@@ -230,7 +230,7 @@ export const PdfDispatch = ({
 																			{moment(res.start).format("DD-MM-YYYY")}
 																		</td>
 																		<td className='border border-collapse border-black w-[20%] text-justify text-sm pb-2'>
-																			{res.Employee.employee_name}
+																			{ res.Employee !== null ? res.Employee.employee_name : ''}
 																		</td>
 																		<td className='border border-collapse border-black w-[20%] text-justify text-sm pb-2'>
 																			{res.approvebyID === null ? "" : "Admin"}

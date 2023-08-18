@@ -13,7 +13,7 @@ interface props {
 }
 
 export const PdfTimeSchedule = ({ isModal, data, showModalPdf }: props) => {
-    console.log(data)
+    
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {

@@ -167,16 +167,16 @@ export const SummaryReport = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.wor.job_no}
+										{res.timeschedule.wor.job_no}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{moment(res.wor.date_of_order).format("DD-MM-YYYY")}
+										{moment(res.timeschedule.wor.date_of_order).format("DD-MM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.wor.customerPo.quotations.Customer.name}
+										{res.timeschedule.wor.customerPo.quotations.Customer.name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.wor.subject}
+										{res.timeschedule.wor.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

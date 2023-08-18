@@ -244,7 +244,7 @@ export const FormCreateQuotation = ({
 					}}
 					enableReinitialize
 				>
-					{({ handleChange, handleSubmit, errors, touched, values }) => (
+					{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
 						<Form onChange={handleOnChanges}>
 							<h1 className='text-xl font-bold mt-3'>Quotation</h1>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -290,8 +290,12 @@ export const FormCreateQuotation = ({
 										onChange={ (input: any) => {
 											if(input.target.value === 'create'){
 												formCreateCustomer(values, true)
-											}else{
-												handleChange
+											}else if(input.target.value === 'Choose Customer'){
+												setFieldValue('customerId', '')
+											}else if(input.target.value === 'no data'){
+												setFieldValue('customerId', '')
+											} else{
+												setFieldValue('customerId', input.target.value)
 											}
 										}}
 										required={true}
@@ -302,7 +306,7 @@ export const FormCreateQuotation = ({
 											Choose Customer
 										</option>
 										{dataCustomer.length === 0 ? (
-											<option value=''>No Data Customer</option>
+											<option value='no data'>No Data Customer</option>
 										) : (
 											dataCustomer.map((res: any, i: number) => {
 												return (

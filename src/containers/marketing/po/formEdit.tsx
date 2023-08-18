@@ -114,7 +114,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	}, []);
 
 	const settingData = () => {
-		console.log(dataPo)
 		let dataDetail: any = [];
         let dataTerm: any = [];
 		setData({

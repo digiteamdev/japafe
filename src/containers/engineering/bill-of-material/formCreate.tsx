@@ -88,10 +88,10 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 				let equipment: any = [];
 				let part: any = [];
 				let listPartDetail: any = [];
-				setCustomerName(data.wor.customerPo.quotations.Customer.name);
+				setCustomerName(data.timeschedule.wor.customerPo.quotations.Customer.name);
 				setDateSummary(moment(data.date_of_summary).format("DD-MM-YYYY"));
-				setSubject(data.wor.subject);
-				data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+				setSubject(data.timeschedule.wor.subject);
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
 					if (!equipment.includes(res.equipment.nama)) {
 						equipment.push(res.equipment.nama);
 					}
@@ -280,7 +280,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 											listSummary.map((res: any, i: number) => {
 												return (
 													<option value={JSON.stringify(res)} key={i}>
-														{res.wor.job_no}
+														{res.id_summary} - {res.timeschedule.wor.job_no}
 													</option>
 												);
 											})

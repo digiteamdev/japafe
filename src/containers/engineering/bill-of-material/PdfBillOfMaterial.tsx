@@ -13,7 +13,7 @@ interface props {
 }
 
 export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
-    console.log(data)
+    
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -23,7 +23,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
 			const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, width, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
-			pdf.save(`Bill_of_material_${data.srimg.wor.job_no}.pdf`);
+			pdf.save(`Bill_of_material_${data.srimg.timeschedule.wor.job_no}.pdf`);
 		});
 	};
 
@@ -116,7 +116,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">JOB NO</p>
                                                         </div>
                                                         <div className="w-full border-r border-black">
-                                                            <p className=" mb-2">: { data.srimg.wor.job_no } { data.srimg.wor.refivision }</p>
+                                                            <p className=" mb-2">: { data.srimg.timeschedule.wor.job_no } { data.srimg.timeschedule.wor.refivision }</p>
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-2">
@@ -124,7 +124,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">CUSTOMER</p>
                                                         </div>
                                                         <div className="w-fullborder-black">
-                                                            <p className=" mb-2">: { data.srimg.wor.customerPo.quotations.Customer.name }</p>
+                                                            <p className=" mb-2">: { data.srimg.timeschedule.wor.customerPo.quotations.Customer.name }</p>
                                                         </div>
                                                     </div>
                                                 </Section>
@@ -134,7 +134,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">EQUIPMENT</p>
                                                         </div>
                                                         <div className="w-full border-r border-black">
-                                                            <p className="mb-2">: { showEquipment(data.srimg.wor.customerPo.quotations.eqandpart) }</p>
+                                                            <p className="mb-2">: { showEquipment(data.srimg.timeschedule.wor.customerPo.quotations.eqandpart) }</p>
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-2">
@@ -152,7 +152,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">O E M</p>
                                                         </div>
                                                         <div className="w-full border-r border-black">
-                                                            <p className="mb-2">: { data.srimg.wor.ioem }</p>
+                                                            <p className="mb-2">: { data.srimg.timeschedule.wor.ioem }</p>
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-2">
@@ -160,7 +160,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">TAG NUMBER</p>
                                                         </div>
                                                         <div className="w-fullborder-black">
-                                                            <p className="mb-2">: { data.srimg.wor.itn }</p>
+                                                            <p className="mb-2">: { data.srimg.timeschedule.wor.itn }</p>
                                                         </div>
                                                     </div>
                                                 </Section>
@@ -170,7 +170,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">MODEL/TYPE</p>
                                                         </div>
                                                         <div className="w-full border-r border-black">
-                                                            <p className="mb-2">: { data.srimg.wor.eq_model }</p>
+                                                            <p className="mb-2">: { data.srimg.timeschedule.wor.eq_model }</p>
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-2">
@@ -178,7 +178,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
                                                             <p className="ml-2 mb-2">QUANTITY</p>
                                                         </div>
                                                         <div className="w-fullborder-black">
-                                                            <p className="mb-2">: { data.srimg.wor.qty }</p>
+                                                            <p className="mb-2">: { data.srimg.timeschedule.wor.qty }</p>
                                                         </div>
                                                     </div>
                                                 </Section>

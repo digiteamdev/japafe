@@ -8,3 +8,4 @@ export const EditDispatchDetail = (data: any) => Axios.put(process.env.BASE_URL+
 export const DeleteDispatchDetail = (id: string) => Axios.delete(process.env.BASE_URL+`/dispacthDetail/${id}`);
 export const DispatchDetailStart = (id: string,data: any) => Axios.put(process.env.BASE_URL+`/dispacthstart/${id}`, data);
 export const DispatchDetailFinish = (id: string,data: any) => Axios.put(process.env.BASE_URL+`/dispacthfinish/${id}`, data);
+export const GetSummaryDispatch = () => Axios.get(process.env.BASE_URL+`/sumarryDispacth`);

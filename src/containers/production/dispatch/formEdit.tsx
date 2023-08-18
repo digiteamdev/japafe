@@ -7,7 +7,7 @@ import {
 	GetAllDepartement,
 	GetAllWorkerCenter,
 	GetAllEmployee,
-	GetAllEmployeDepart,
+	GetSummaryDispatch,
 	EditDispatch,
 	EditDispatchDetail,
 	DeleteDispatchDetail,
@@ -25,7 +25,7 @@ interface props {
 }
 
 interface data {
-	timeschId: string;
+	srId: string;
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
@@ -54,7 +54,7 @@ export const FormEditDispatch = ({
 	const [tabsPart, setTabsPart] = useState<any>([]);
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		timeschId: "",
+		srId: "",
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
@@ -76,12 +76,12 @@ export const FormEditDispatch = ({
 		let arrPart: any = [];
 		let arrDetail: any = [];
 		setData({
-			timeschId: dataDispatch.timeschId,
+			srId: dataDispatch.srId,
 			id_dispatch: dataDispatch.id_dispatch,
 			dispacth_date: dataDispatch.dispacth_date,
 			remark: dataDispatch.remark,
 		});
-		dataDispatch.timeschedule.wor.customerPo.quotations.eqandpart.map(
+		dataDispatch.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
 			(res: any) => {
 				if (lastEquipment !== res.equipment.nama) {
 					equipment.push(res.equipment.nama);
@@ -89,7 +89,7 @@ export const FormEditDispatch = ({
 				lastEquipment = res.equipment.nama;
 			}
 		);
-		dataDispatch.timeschedule.wor.srimg.srimgdetail.map(
+		dataDispatch.srimg.srimgdetail.map(
 			(res: any, i: number) => {
 				if (i === 0) {
 					setStatus(res.choice);
@@ -130,11 +130,11 @@ export const FormEditDispatch = ({
 		setDetail(arrDetail);
 		setEquipment(equipment.toString());
 		setPart(part);
-		setDateFinish(dataDispatch.timeschedule.wor.delivery_date);
-		setJobNo(dataDispatch.timeschedule.wor.job_no);
-		setSubject(dataDispatch.timeschedule.wor.subject);
-		setDateWor(dataDispatch.timeschedule.wor.date_wor);
-		setListActivity(dataDispatch.timeschedule.aktivitas);
+		setDateFinish(dataDispatch.srimg.timeschedule.wor.delivery_date);
+		setJobNo(dataDispatch.srimg.timeschedule.wor.job_no);
+		setSubject(dataDispatch.srimg.timeschedule.wor.subject);
+		setDateWor(dataDispatch.srimg.timeschedule.wor.date_wor);
+		setListActivity(dataDispatch.srimg.timeschedule.aktivitas);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -144,20 +144,20 @@ export const FormEditDispatch = ({
 				let equipment: any = [];
 				let part: any = [];
 				let lastEquipment: string = "";
-				data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
 					if (lastEquipment !== res.equipment.nama) {
 						equipment.push(res.equipment.nama);
 					}
 					lastEquipment = res.equipment.nama;
 				});
-				data.wor.srimg.srimgdetail.map((res: any) => {
+				data.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
-				setJobNo(data.wor.job_no);
-				setSubject(data.wor.subject);
-				setDateWor(data.wor.date_wor);
+				setJobNo(data.timeschedule.wor.job_no);
+				setSubject(data.timeschedule.wor.subject);
+				setDateWor(data.timeschedule.wor.date_wor);
 				setEquipment(equipment.toString());
-				setListActivity(dataDispatch.aktivitas);
+				setListActivity(dataDispatch.srimg.timeschedule.aktivitas);
 				setPart(part);
 			} else {
 				setJobNo("");
@@ -766,10 +766,10 @@ export const FormEditDispatch = ({
 
 	const getSchedule = async () => {
 		try {
-			const response = await GetAllSchedule();
+			const response = await GetSummaryDispatch();
 			if (response.data) {
 				let summary = response.data.result;
-				summary.push(dataDispatch.timeschedule);
+				summary.push(dataDispatch.srimg);
 				setListSchedule(response.data.result);
 			}
 		} catch (error) {
@@ -1043,14 +1043,14 @@ export const FormEditDispatch = ({
 							</div>
 							<div className='w-full'>
 								<InputSelect
-									id='timeschId'
-									name='timeschId'
+									id='srId'
+									name='srId'
 									placeholder='Summary'
 									label='Summary Report'
 									onChange={(event: any) => {
 										if (event.target.value !== "no data") {
 											let data = JSON.parse(event.target.value);
-											setFieldValue("timeschId", data.id);
+											setFieldValue("srId", data.id);
 										}
 									}}
 									required={true}
@@ -1068,9 +1068,9 @@ export const FormEditDispatch = ({
 												<option
 													value={JSON.stringify(res)}
 													key={i}
-													selected={res.id === dataDispatch.timeschId}
+													selected={res.id === dataDispatch.srId}
 												>
-													{res.idTs} - {res.wor.job_no}
+													{res.id_summary} - {res.timeschedule.wor.job_no}
 												</option>
 											);
 										})

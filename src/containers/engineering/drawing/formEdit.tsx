@@ -33,7 +33,7 @@ export const FormEditDrawing = ({
 	showModal,
 	dataSelected,
 }: props) => {
-	console.log(dataSelected);
+
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listWor, setListWor] = useState<any>([]);
 	const [customerName, setCustomerName] = useState<string>("");

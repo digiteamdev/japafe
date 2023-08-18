@@ -9,7 +9,7 @@ import {
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import {
-	GetAllWorValid,
+	GetSummaryTimeSchedulle,
 	UploadImageSummary,
 	AddSummary,
 } from "../../../services";
@@ -26,7 +26,7 @@ interface data {
 	id_summary: string;
 	job_no: string;
 	date_of_summary: any;
-	worId: string;
+	timeschId: string;
 	quantity: string;
 	ioem: string;
 	isr: string;
@@ -61,7 +61,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		id_summary: "",
 		job_no: "",
 		date_of_summary: new Date(),
-		worId: "",
+		timeschId: "",
 		quantity: "",
 		ioem: "",
 		isr: "",
@@ -94,21 +94,21 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "worId") {
+		if (event.target.name === "timeschId") {
 			if (event.target.value !== "Choose Job Number WOR") {
 				let data = JSON.parse(event.target.value);
 				let part: any = [];
-				setCustomerName(data.customerPo.quotations.Customer.name);
-				setDateWor(moment(data.date_wor).format("DD-MM-YYYY"));
-				setSubject(data.subject);
-				setEquipment(data.customerPo.quotations.eqandpart[0].equipment.nama);
-				setEquipmentModel(data.eq_model);
-				if (data.customerPo.quotations.eqandpart.length > 0) {
-					data.customerPo.quotations.eqandpart.map((res: any) => {
+				setCustomerName(data.wor.customerPo.quotations.Customer.name);
+				setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
+				setSubject(data.wor.subject);
+				setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
+				setEquipmentModel(data.wor.eq_model);
+				if (data.wor.customerPo.quotations.eqandpart.length > 0) {
+					data.wor.customerPo.quotations.eqandpart.map((res: any) => {
 						part.push(res.eq_part);
 					});
 				}
-				setQuantity(data.qty);
+				setQuantity(data.wor.qty);
 				setPart(part);
 			} else {
 				setCustomerName("");
@@ -124,7 +124,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 
 	const getWor = async () => {
 		try {
-			const response = await GetAllWorValid();
+			const response = await GetSummaryTimeSchedulle();
 			if (response.data) {
 				setListWor(response.data.result);
 			}
@@ -156,7 +156,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		const form = new FormData();
 		form.append("id_summary", generateIdNum());
-		form.append("worId", payload.worId);
+		form.append("timeschId", payload.timeschId);
 		form.append("inimg", payload.inimg);
 		form.append("date_of_summary", payload.date_of_summary);
 		form.append("introduction", payload.introduction);
@@ -199,7 +199,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
-				validationSchema={sumarySchema}
+				// validationSchema={sumarySchema}
 				onSubmit={(values) => {
 					addSummary(values);
 				}}
@@ -235,14 +235,14 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<InputSelect
-									id='worId'
-									name='worId'
+									id='timeschId'
+									name='timeschId'
 									placeholder='Job Number'
 									label='Job Number'
 									onChange={(event: any) => {
 										if (event.target.value !== "Choose Job Number WOR") {
 											let data = JSON.parse(event.target.value);
-											setFieldValue("worId", data.id);
+											setFieldValue("timeschId", data.id);
 										}
 									}}
 									required={true}
@@ -258,13 +258,13 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 										listWor.map((res: any, i: number) => {
 											return (
 												<option value={JSON.stringify(res)} key={i}>
-													{res.job_no}
+													{res.idTs} - {res.wor.job_no}
 												</option>
 											);
 										})
 									)}
-									{errors.worId && touched.worId ? (
-										<span className='text-red-500 text-xs'>{errors.worId}</span>
+									{errors.timeschId && touched.timeschId ? (
+										<span className='text-red-500 text-xs'>{errors.timeschId}</span>
 									) : null}
 								</InputSelect>
 							</div>

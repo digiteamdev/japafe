@@ -6,3 +6,5 @@ export const GetBillOfMaterial = (page: number, perpage: number) => Axios.get(pr
 // export const DeleteSummary = (id: string) => Axios.delete(process.env.BASE_URL+`/summary/${id}`);
 // export const EditSummary = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/summary/${id}`, data);
 // export const EditSummaryDetail = (data: any) => Axios.put(process.env.BASE_URL+`/summaryDetail`, data);
+
+// export const GetSummaryDrawing = () => Axios.get(process.env.BASE_URL+`/SummaryBom`);

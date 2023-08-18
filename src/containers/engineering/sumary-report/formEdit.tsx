@@ -10,7 +10,7 @@ import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import moment from "moment";
 import {
-	GetAllWorValid,
+	GetSummaryTimeSchedulle,
 	EditSummary,
 	UploadImageSummary,
 	EditSummaryDetail,
@@ -28,7 +28,7 @@ interface props {
 interface data {
 	job_no: string;
 	date_of_summary: any;
-	worId: string;
+	timeschId: string;
 	quantity: string;
 	ioem: string;
 	isr: string;
@@ -72,7 +72,7 @@ export const FormEditSummaryReport = ({
 	const [data, setData] = useState<data>({
 		job_no: "",
 		date_of_summary: new Date(),
-		worId: "",
+		timeschId: "",
 		quantity: "",
 		ioem: "",
 		isr: "",
@@ -104,26 +104,26 @@ export const FormEditSummaryReport = ({
 		let part: any = [];
 		let detail: any = [];
 		setData({
-			job_no: dataSummary.job_no,
+			job_no: dataSummary.timeschedule.job_no,
 			date_of_summary: new Date(dataSummary.date_of_summary),
-			worId: dataSummary.worId,
-			quantity: dataSummary.wor.quantity,
+			timeschId: dataSummary.timeschId,
+			quantity: dataSummary.timeschedule.wor.quantity,
 			ioem: dataSummary.ioem,
 			isr: dataSummary.isr,
 			itn: dataSummary.itn,
 			introduction: dataSummary.introduction,
 			inimg: dataSummary.inimg,
 		});
-		setCustomerName(dataSummary.wor.customerPo.quotations.Customer.name);
-		setDateWor(moment(dataSummary.wor.date_wor).format("DD-MM-YYYY"));
-		setSubject(dataSummary.wor.subject);
+		setCustomerName(dataSummary.timeschedule.wor.customerPo.quotations.Customer.name);
+		setDateWor(moment(dataSummary.timeschedule.wor.date_wor).format("DD-MM-YYYY"));
+		setSubject(dataSummary.timeschedule.wor.subject);
 		setEquipment(
-			dataSummary.wor.customerPo.quotations.eqandpart[0].equipment.nama
+			dataSummary.timeschedule.wor.customerPo.quotations.eqandpart[0].equipment.nama
 		);
-		setEquipmentModel(dataSummary.wor.eq_model);
-		setQuantity(dataSummary.wor.qty);
-		if (dataSummary.wor.customerPo.quotations.eqandpart.length > 0) {
-			dataSummary.wor.customerPo.quotations.eqandpart.map((res: any) => {
+		setEquipmentModel(dataSummary.timeschedule.wor.eq_model);
+		setQuantity(dataSummary.timeschedule.wor.qty);
+		if (dataSummary.timeschedule.wor.customerPo.quotations.eqandpart.length > 0) {
+			dataSummary.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
 				part.push(res.eq_part);
 			});
 		}
@@ -151,9 +151,9 @@ export const FormEditSummaryReport = ({
 
 	const getWor = async () => {
 		let wor: any = [];
-		wor.push(dataSummary.wor);
+		wor.push(dataSummary.timeschedule.wor);
 		try {
-			const response = await GetAllWorValid();
+			const response = await GetSummaryTimeSchedulle();
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					wor.push(res);
@@ -166,7 +166,7 @@ export const FormEditSummaryReport = ({
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "worId") {
+		if (event.target.name === "timeschId") {
 			if (event.target.value !== "Choose Job Number WOR") {
 				let data = JSON.parse(event.target.value);
 				let part: any = [];
@@ -222,7 +222,7 @@ export const FormEditSummaryReport = ({
 
 		form.append("job_no", payload.job_no);
 		form.append("date_of_summary", payload.date_of_summary);
-		form.append("worId", payload.worId);
+		form.append("timeschId", payload.timeschId);
 		form.append("quantity", payload.quantity);
 		form.append("ioem", payload.ioem);
 		form.append("isr", payload.isr);
@@ -349,14 +349,14 @@ export const FormEditSummaryReport = ({
 									</div>
 									<div className='w-full'>
 										<InputSelect
-											id='worId'
-											name='worId'
+											id='timeschId'
+											name='timeschId'
 											placeholder='Job Number'
 											label='Job Number'
 											onChange={(event: any) => {
 												if (event.target.value !== "Choose Job Number WOR") {
 													let data = JSON.parse(event.target.value);
-													setFieldValue("worId", data.id);
+													setFieldValue("timeschId", data.id);
 												}
 											}}
 											required={true}
@@ -374,16 +374,16 @@ export const FormEditSummaryReport = ({
 														<option
 															value={JSON.stringify(res)}
 															key={i}
-															selected={res.id === values.worId}
+															selected={res.id === values.timeschId}
 														>
 															{res.job_no}
 														</option>
 													);
 												})
 											)}
-											{errors.worId && touched.worId ? (
+											{errors.timeschId && touched.timeschId ? (
 												<span className='text-red-500 text-xs'>
-													{errors.worId}
+													{errors.timeschId}
 												</span>
 											) : null}
 										</InputSelect>

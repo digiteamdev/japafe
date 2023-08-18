@@ -990,7 +990,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 											<option value='no data'>No Data Job No WOR</option>
 										) : (
 											listWor.map((res: any, i: number) => {
-												console.log(values);
 												return (
 													<option value={JSON.stringify(res)} key={i} selected={ res.id === values.worId }>
 														{res.job_no} -{" "}

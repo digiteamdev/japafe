@@ -161,23 +161,22 @@ export const BillOfMaterial = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-                            console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.srimg.wor.job_no}
+										{res.srimg.timeschedule.wor.job_no}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{moment(res.srimg.summary).format("DD-MM-YYYY")}
+										{moment(res.srimg.timeschedule.summary).format("DD-MM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.srimg.wor.customerPo.quotations.Customer.name}
+										{res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.srimg.wor.subject}
+										{res.srimg.timeschedule.wor.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>

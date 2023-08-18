@@ -23,7 +23,7 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 			const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, width, height);
 			// window.open(pdf.output("bloburl"), "_blank");
-			pdf.save(`Summary_report_${data.wor.job_no}.pdf`);
+			pdf.save(`Summary_report_${data.timeschedule.wor.job_no}.pdf`);
 		});
 	};
 
@@ -108,9 +108,9 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																		No Job
 																	</td>
 																	<td className='w-[50%] pl-2 border border-gray-200'>
-																		{data.wor.job_no} (
+																		{data.timeschedule.wor.job_no} (
 																		{
-																			data.wor.customerPo.quotations.Customer
+																			data.timeschedule.wor.customerPo.quotations.Customer
 																				.name
 																		}
 																		)
@@ -121,7 +121,7 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																		Description
 																	</td>
 																	<td className='w-[50%] pl-2 border border-gray-200'>
-																		{data.wor.subject}
+																		{data.timeschedule.wor.subject}
 																	</td>
 																</tr>
 																<tr>

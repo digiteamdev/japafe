@@ -9,7 +9,7 @@ import {
 	GetAllWorkerCenter,
 	GetAllEmployeDepart,
 	AddDispatch,
-	GetAllSchedule,
+	GetSummaryDispatch,
 	AddWorkerCenter
 } from "../../../services";
 import { toast } from "react-toastify";
@@ -22,7 +22,7 @@ interface props {
 }
 
 interface data {
-	timeschId: string;
+	summaryId: string;
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
@@ -63,7 +63,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	const [status, setStatus] = useState<string>("");
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		timeschId: "",
+		summaryId: "",
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
@@ -104,28 +104,28 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "timeschId") {
+		if (event.target.name === "summaryId") {
 			if (event.target.value !== "no data") {
 				let data = JSON.parse(event.target.value);
 				let equipment: any = [];
 				let part: any = [];
 				let lastEquipment: string = "";
-				data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
 					if (lastEquipment !== res.equipment.nama) {
 						equipment.push(res.equipment.nama);
 					}
 					lastEquipment = res.equipment.nama;
 				});
-				data.wor.srimg.srimgdetail.map((res: any) => {
+				data.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
-				setJobNo(data.wor.job_no);
-				setSubject(data.wor.subject);
-				setDateWor(data.wor.date_wor);
-				setDateFinish(data.wor.delivery_date);
+				setJobNo(data.timeschedule.wor.job_no);
+				setSubject(data.timeschedule.wor.subject);
+				setDateWor(data.timeschedule.wor.date_wor);
+				setDateFinish(data.timeschedule.wor.delivery_date);
 				setEquipment(equipment.toString());
 				setPart(part);
-				setListActivity(data.aktivitas);
+				setListActivity(data.timeschedule.aktivitas);
 			} else {
 				setJobNo("");
 				setSubject("");
@@ -604,7 +604,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 
 	const getSchedule = async () => {
 		try {
-			const response = await GetAllSchedule();
+			const response = await GetSummaryDispatch();
 			if (response.data) {
 				setListSchedule(response.data.result);
 			}
@@ -660,7 +660,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			});
 		});
 		let dataBody = {
-			timeschId: payload.timeschId,
+			srId: payload.summaryId,
 			id_dispatch: generateIdNum(),
 			dispacth_date: payload.dispacth_date,
 			remark: payload.remark,
@@ -871,14 +871,14 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 								</div>
 								<div className='w-full'>
 									<InputSelect
-										id='timeschId'
-										name='timeschId'
+										id='summaryId'
+										name='summaryId'
 										placeholder='Shedulle'
 										label='Id Schedulle'
 										onChange={(event: any) => {
 											if (event.target.value !== "no data") {
 												let data = JSON.parse(event.target.value);
-												setFieldValue("timeschId", data.id);
+												setFieldValue("summaryId", data.id);
 											}
 										}}
 										required={true}
@@ -893,8 +893,8 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										) : (
 											listSchedule.map((res: any, i: number) => {
 												return (
-													<option value={JSON.stringify(res)} key={i} selected={ res.id === values.timeschId }>
-														{res.idTs} - {res.wor.job_no}
+													<option value={JSON.stringify(res)} key={i} selected={ res.id === values.summaryId }>
+														{res.id_summary} - {res.timeschedule.wor.job_no}
 													</option>
 												);
 											})

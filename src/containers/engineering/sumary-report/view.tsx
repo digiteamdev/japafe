@@ -47,8 +47,8 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 											No Job
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.wor.job_no} (
-											{dataSelected.wor.customerPo.quotations.Customer.name})
+											{dataSelected.timeschedule.wor.job_no} (
+											{dataSelected.timeschedule.wor.customerPo.quotations.Customer.name})
 										</td>
 									</tr>
 									<tr>
@@ -56,7 +56,7 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 											Description
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.wor.subject}
+											{dataSelected.timeschedule.wor.subject}
 										</td>
 									</tr>
 									<tr>

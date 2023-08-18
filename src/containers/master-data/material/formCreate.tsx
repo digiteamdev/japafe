@@ -244,7 +244,7 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 					}}
 					enableReinitialize
 				>
-					{({ handleChange, handleSubmit, errors, touched, values }) => (
+					{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
 						<Form>
 							<h1 className='text-xl font-bold'>Material</h1>
 							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
@@ -276,8 +276,12 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 										onChange={ (input: any) => {
 											if(input.target.value === 'create'){
 												showFormMaterialType(values)
+											}else if(input.target.value === 'Choose a Material type'){
+												setFieldValue('kd_group', '')
+											}else if(input.target.value === 'no data'){
+												setFieldValue('kd_group', '')
 											}else{
-												handleChange
+												setFieldValue('kd_group', input.target.value)
 											}
 										}}
 										required={true}
