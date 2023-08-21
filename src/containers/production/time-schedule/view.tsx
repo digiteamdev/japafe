@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Section } from "../../../components";
 import { GetAllHoliday } from "../../../services";
 import { monthDiff, getMonthName, countDay } from "../../../utils/dateFunction";
+import { PdfTimeSchedule } from "./pdfTimeSchedule";
 import moment from "moment";
+import { Printer } from 'react-feather';
 
 interface props {
 	content: string;
@@ -24,8 +26,9 @@ export const ViewSchedule = ({
 	const [listDate, setListDate] = useState<any>([]);
 	const [listDateHoliday, setListDateHoliday] = useState<any>([]);
 	const [aktivitas, setAktivitas] = useState<any>([]);
+	const [isModal, setIsModal] = useState<boolean>(false);
 	// const [tableCalender, setTableCalender] = useState<any>([]);
-
+	console.log(dataSelected);
 	useEffect(() => {
 		showDate();
 		settingData();
@@ -200,11 +203,38 @@ export const ViewSchedule = ({
 		}
 	};
 
+	const showModalPdf = (val: boolean) => {
+		setIsModal(val);
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
+			<PdfTimeSchedule
+				isModal={isModal}
+				dataSelected={dataSelected}
+				showModalPdf={setIsModal}
+				aktivitas={aktivitas}
+				listDateHoliday={listDateHoliday}
+				listDate={listDate}
+				listMoth={listMoth}
+				numMoth={numMoth}
+				holiday={holiday}
+			/>
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
 			{dataSelected ? (
 				<>
+					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
+						<div className='text-right mr-6'>
+							<button
+								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+								onClick={() => showModalPdf(true)}
+							>
+								<div className='flex px-1 py-1'>
+									<Printer size={16} className='mr-1' /> Print
+								</div>
+							</button>
+						</div>
+					</div>
 					{aktivitas.length > 0 ? (
 						<>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2 mb-3'>
@@ -323,7 +353,7 @@ export const ViewSchedule = ({
 														}`}
 													>
 														<p className='text-center text-xs'>
-															{i === 0 ? '-' : i }
+															{i === 0 ? "-" : i}
 														</p>
 													</div>
 												</div>
@@ -440,7 +470,7 @@ export const ViewSchedule = ({
 																{moment(res).format("dd DD")}
 															</div>
 														);
-												})
+												  })
 												: listDate.map((res: any, i: number) => {
 														return (
 															<div
@@ -454,15 +484,13 @@ export const ViewSchedule = ({
 																	}`,
 																}}
 																className={`w-full text-center ${
-																	i !== listDate.length + 1
-																		? "border-r"
-																		: ""
+																	i !== listDate.length + 1 ? "border-r" : ""
 																} border-b border-gray-500`}
 															>
 																{moment(res).format("dd DD")}
 															</div>
 														);
-												})}
+												  })}
 										</div>
 										{aktivitas.map((result: any, idx: number) => {
 											return (
@@ -501,7 +529,7 @@ export const ViewSchedule = ({
 																		<p className='p-[1px]'>&nbsp;</p>
 																	</div>
 																);
-														})
+														  })
 														: listDate.map((res: any, i: number) => {
 																return (
 																	<div
@@ -523,7 +551,7 @@ export const ViewSchedule = ({
 																		<p className='p-[1px]'>&nbsp;</p>
 																	</div>
 																);
-														})}
+														  })}
 													<div
 														style={{
 															width: `${result.width}px`,
@@ -543,14 +571,21 @@ export const ViewSchedule = ({
 													>
 														<div
 															style={{
-																width: idx === 0 ? '100%' : result.progress === 0 ? '1%' : result.progress + '%'
+																width:
+																	idx === 0
+																		? "100%"
+																		: result.progress === 0
+																		? "1%"
+																		: result.progress + "%",
 															}}
 															className={`${
 																idx === 0 ? "bg-orange-600" : "bg-blue-600"
 															} p-2 rounded-lg`}
 														>
 															<p className='p-0 m-0 text-center font-semibold  text-xs'>
-																{ idx === 0 ? result.name : result.progress + '%'}
+																{idx === 0
+																	? result.name
+																	: result.progress + "%"}
 															</p>
 														</div>
 														{/* <p className='p-0 text-center font-semibold  text-xs'>

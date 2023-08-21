@@ -21,7 +21,7 @@ export const PdfBillOfMaterial = ({ isModal, data, showModalPdf }: props) => {
 			const pdf: any = new jsPDF("p", "mm", "a4");
 			const width = pdf.internal.pageSize.getWidth();
 			const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0, width, 0);
+			pdf.addImage(imgData, "JPEG", 0, 10, width, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Bill_of_material_${data.srimg.timeschedule.wor.job_no}.pdf`);
 		});
