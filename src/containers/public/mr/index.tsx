@@ -11,7 +11,7 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMr } from "./formCreate";
-// import { ViewCustomer } from "./view";
+import { ViewMR } from "./view";
 // import { FormEditCustomer } from "./fromEdit";
 import { GetMr, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
@@ -51,7 +51,7 @@ export const Mr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			// getCustomer(page, perPage);
+			getMr(page, perPage);
 		}
 	};
 
@@ -249,8 +249,7 @@ export const Mr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCustomer dataSelected={dataSelected} />
+						<ViewMR dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
                         <FormCreateMr content={modalContent} showModal={showModal} />
 					) : (
