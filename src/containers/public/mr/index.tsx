@@ -13,9 +13,10 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMr } from "./formCreate";
 // import { ViewCustomer } from "./view";
 // import { FormEditCustomer } from "./fromEdit";
-import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
+import { GetMr, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
+import moment from "moment";
 
 export const Mr = () => {
 
@@ -34,13 +35,12 @@ export const Mr = () => {
 		{ name: "MR No" },
         { name: "MR Date" },
 		{ name: "Departement" },
-        { name: "Unit" },
         { name: "User" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		// getCustomer(page, perPage);
+		getMr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -55,10 +55,10 @@ export const Mr = () => {
 		}
 	};
 
-	const getMaterialStok = async (page: number, perpage: number) => {
+	const getMr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCustomer(page, perpage);
+			const response = await GetMr(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -106,7 +106,7 @@ export const Mr = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMaterialStok(1, 10);
+				getMr(1, 10);
 			}
 		} catch (error) {
 			toast.error("Delete Customer Failed", {
@@ -178,11 +178,10 @@ export const Mr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'></td>
-									<td className='whitespace-nowrap px-6 py-4'></td>
-									<td className='whitespace-nowrap px-6 py-4'></td>
-                                    <td className='whitespace-nowrap px-6 py-4'></td>
-									<td className='whitespace-nowrap px-6 py-4'></td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_mr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_mr).format('DDDD-MM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.sub_depart.name }</td>
+                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -228,7 +227,7 @@ export const Mr = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getMaterialStok(value, perPage);
+								getMr(value, perPage);
 							}}
 						/>
 					) : null

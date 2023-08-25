@@ -5,6 +5,7 @@ export const token = (data: any) => {
     Cookies.set('role', JSON.stringify(data.role));
     Cookies.set('username', data.username);
     Cookies.set('id', data.employee.id);
+    Cookies.set('id_user', data.id);
 }
 
 export const getToken = () => {
@@ -22,9 +23,15 @@ export const getId = () => {
     return id
 }
 
+export const getIdUser = () => {
+    let id = Cookies.get('id_user');
+    return id
+}
+
 export const removeToken = () => {
     Cookies.remove('token');
     Cookies.remove('role');
     Cookies.remove('username');
     Cookies.remove('id');
+    Cookies.remove('id_user');
 }
