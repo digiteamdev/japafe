@@ -421,8 +421,8 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 									render={(arraySpecs) =>
 										values.spesifikasi.map((res: any, i: number) => {
 											return (
-												<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-													<div className='w-full' key={i}>
+												<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2' key={i}>
+													<div className='w-full'>
 														<Input
 															id={`spesifikasi.${i}.spesifikasi`}
 															name={`spesifikasi.${i}.spesifikasi`}
