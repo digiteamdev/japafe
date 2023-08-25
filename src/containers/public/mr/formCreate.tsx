@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { AddDepartement, EditDepartement } from "../../../services/master-data";
+import { GetEmployeById, GetBom, AddMr } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
+import moment from "moment";
+import { getIdUser } from "../../../configs/session";
 
 interface props {
 	content: string;
@@ -12,70 +14,127 @@ interface props {
 }
 
 interface data {
-	departemen: string;
-	user: string;
-	detail: [
+	userId: string;
+	date_mr: any;
+	detailMr: [
 		{
-			detail: string;
-			jumlah: string;
-			unit: string;
+			bomId: string;
+			material: string;
+			materialStockId: string;
+			qty: string;
 		}
 	];
 }
 
 export const FormCreateMr = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [user, setUser] = useState<string>("");
+	const [userId, setUserId] = useState<string>("");
+	const [departement, setDepartement] = useState<string>("");
+	const [jobNo, setJobNo] = useState<string>("");
+	const [listWor, setListWor] = useState<any>([]);
+	const [listMaterial, setListMaterial] = useState<any>([]);
+	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		departemen: "",
-		user: "",
-		detail: [
+		userId: "",
+		date_mr: "",
+		detailMr: [
 			{
-				detail: "",
-				jumlah: "",
-				unit: "",
+				bomId: "",
+				material: "",
+				materialStockId: "",
+				qty: "",
 			},
 		],
 	});
 
-	const addDepartemen = async (data: any) => {
-		setIsLoading(true);
+	useEffect(() => {
+		getEmploye();
+		getBom();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const getEmploye = async () => {
 		try {
-			const response = await AddDepartement(data);
+			const id = getIdUser();
+			const response = await GetEmployeById(id);
 			if (response) {
-				toast.success("Add Departement Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				setIsLoading(false);
-				showModal(false, content, true);
+				setUser(response.data.result.employee.employee_name);
+				setUserId(response.data.result.employee.id);
+				setDepartement(response.data.result.employee.sub_depart.name);
 			}
-		} catch (error) {
-			toast.error("Add Departement Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-			setIsLoading(false);
+		} catch (error) {}
+	};
+
+	const getBom = async () => {
+		try {
+			const response = await GetBom();
+			if (response) {
+				setListWor(response.data.result);
+			}
+		} catch (error) {}
+	};
+
+	const handleOnChanges = (event: any) => {
+		if (event.target.name === "worId") {
+			if (event.target.value !== "no data") {
+				let data = JSON.parse(event.target.value);
+				let list_material: any = [];
+				let material: any = [];
+				let list_material_stock: any = [];
+				let materialStock: any = [];
+				data.bom_detail.map((res: any) => {
+					if (!material.includes(res.materialId)) {
+						material.push(res.materialId);
+						list_material.push({
+							id: res.materialId,
+							bomId: res.id,
+							satuan: res.Material_master.satuan,
+							name: res.Material_master.material_name,
+						});
+					}
+					res.Material_master.Material_Stock.map((spec: any, i: number) => {
+						if (!materialStock.includes(spec.id)) {
+							materialStock.push(spec.id);
+							list_material_stock.push({
+								material: res.materialId,
+								id: spec.id,
+								name: spec.spesifikasi,
+							});
+						}
+					});
+				});
+				setListMaterial(list_material);
+				setListMaterialStock(list_material_stock);
+				setJobNo(data.srimg.timeschedule.wor.job_no);
+			} else {
+				setListMaterial([]);
+				setListMaterialStock([]);
+				setJobNo("");
+			}
 		}
 	};
 
-	const editDepartemen = async (data: any) => {
+	const addMr = async (payload: data) => {
 		setIsLoading(true);
+		let listDetail: any = [];
+		payload.detailMr.map((res: any) => {
+			listDetail.push({
+				bomId: res.bomId,
+				materialStockId: res.materialStockId,
+				qty: parseInt(res.qty),
+			});
+		});
+		let data = {
+			userId: getIdUser(),
+			date_mr: new Date(),
+			detailMr: listDetail,
+		};
+
 		try {
-			const response = await EditDepartement(data);
-			if (response) {
-				toast.success("Edit Departement Success", {
+			const response = await AddMr(data);
+			if (response.data) {
+				toast.success("Add Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -85,11 +144,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				setIsLoading(false);
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Edit Departement Failed", {
+			toast.error("Add Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -99,22 +157,30 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				progress: undefined,
 				theme: "colored",
 			});
-			setIsLoading(false);
 		}
+		setIsLoading(false);
 	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
-				validationSchema={departemenSchema}
+				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					content === "add" ? addDepartemen(values) : editDepartemen(values);
+					addMr(values);
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
-					<Form>
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
+					<Form onChange={handleOnChanges}>
+						<h1 className='text-xl font-bold mt-3'>Material Request</h1>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -122,8 +188,9 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 									name='departement'
 									placeholder='Unit Of Departement'
 									label='Unit Of Departement'
-                                    type="text"
-									onChange={handleChange}
+									type='text'
+									value={departement}
+									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -135,91 +202,217 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 									name='user'
 									placeholder='User'
 									label='User'
-                                    type="text"
-									onChange={handleChange}
+									type='text'
+									value={user}
+									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
 						</Section>
-						{/* <FieldArray
-							name='detail'
-							render={(arraySub) =>
-								values.detail.map((res, i) => (
-									<div key={i}>
-										<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='date'
+									name='date'
+									placeholder='Date Request Material'
+									label='Date Request Material'
+									type='text'
+									value={moment(new Date()).format("DD-MMMM-YYYY")}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='worId'
+									name='worId'
+									placeholder='Job No'
+									label='Job No'
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='no data' selected>
+										Choose Job No WOR
+									</option>
+									{listWor.length === 0 ? (
+										<option value='no data'>No Data</option>
+									) : (
+										listWor.map((res: any, i: number) => {
+											return (
+												<option value={JSON.stringify(res)} key={i}>
+													{res.srimg.timeschedule.wor.job_no}
+												</option>
+											);
+										})
+									)}
+								</InputSelect>
+							</div>
+						</Section>
+						<h5 className='text-xl font-bold mt-3'>Material</h5>
+						<FieldArray
+							name='detailMr'
+							render={(arrayMr) =>
+								values.detailMr.map((result: any, i: number) => {
+									return (
+										<Section
+											className='grid md:grid-cols-6 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
+											key={i}
+										>
 											<div className='w-full'>
 												<Input
-													id={`detail.${i}.detail`}
-													name={`detail.${i}.detail`}
-													placeholder='Detail Spesification'
-													label='Detail Spesification'
+													id='job No'
+													name='job No'
+													placeholder='Job No'
+													label='Job No'
 													type='text'
-													value={res.detail}
-													onChange={handleChange}
-													required={false}
+													value={jobNo}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<InputSelect
+													id={`detailMr.${i}.material`}
+													name={`detailMr.${i}.material`}
+													placeholder='Material Name'
+													label='Material Name'
+													onChange={(e: any) => {
+														if (e.target.value === "no data") {
+															setFieldValue(`detailMr.${i}.material`, "");
+															setFieldValue(`detailMr.${i}.bomId`, "");
+														} else {
+															let data = JSON.parse(e.target.value);
+															setFieldValue(`detailMr.${i}.material`, data.id);
+															setFieldValue(`detailMr.${i}.bomId`, data.bomId);
+															setFieldValue(
+																`detailMr.${i}.satuan`,
+																data.satuan
+															);
+														}
+													}}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Material Name
+													</option>
+													{listMaterial.length === 0 ? (
+														<option value='no data'>No data</option>
+													) : (
+														listMaterial.map((res: any, i: number) => {
+															return (
+																<option value={JSON.stringify(res)} key={i}>
+																	{res.name}
+																</option>
+															);
+														})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<InputSelect
+													id={`detailMr.${i}.materialStockId`}
+													name={`detailMr.${i}.materialStockId`}
+													placeholder='Spesifikasi'
+													label='Spesifikasi'
+													onChange={(e: any) => {
+														setFieldValue(
+															`detailMr.${i}.materialStockId`,
+															e.target.value
+														);
+													}}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='no data' selected>
+														Choose Spesifikasi
+													</option>
+													{listMaterialStock.length === 0 ? (
+														<option value='no data'>No data</option>
+													) : (
+														listMaterialStock
+															.filter((res: any) => {
+																return res.material === result.material;
+															})
+															.map((res: any, i: number) => {
+																return (
+																	<option value={res.id} key={i}>
+																		{res.name}
+																	</option>
+																);
+															})
+													)}
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<Input
+													id={`detailMr.${i}.satuan`}
+													name={`detailMr.${i}.satuan`}
+													placeholder='Satuan'
+													label='Satuan'
+													type='text'
+													value={result.satuan}
+													disabled={true}
+													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 												/>
 											</div>
 											<div className='w-full'>
 												<Input
-													id={`detail.${i}.jumlah`}
-													name={`detail.${i}.jumlah`}
+													id={`detailMr.${i}.qty`}
+													name={`detailMr.${i}.qty`}
 													placeholder='Jumlah'
 													label='Jumlah'
 													type='number'
-													value={res.jumlah}
-													onChange={handleChange}
-													required={false}
+													onChange={(e: any) =>
+														setFieldValue(`detailMr.${i}.qty`, e.target.value)
+													}
+													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 												/>
 											</div>
-											<div className='w-full'>
-												<Input
-													id={`detail.${i}.unit`}
-													name={`detail.${i}.unit`}
-													placeholder='Unit'
-													label='Unit'
-													type='text'
-													value={res.unit}
-													onChange={handleChange}
-													required={false}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
+											<div className='flex w-full'>
+												{i + 1 === values.detailMr.length ? (
+													<a
+														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+														onClick={() =>
+															arrayMr.push({
+																bomId: "",
+																materialStockId: "",
+																qty: "",
+															})
+														}
+													>
+														<Plus size={23} className='mt-1' />
+														Add
+													</a>
+												) : null}
+												{i === 0 && values.detailMr.length === 1 ? null : (
+													<a
+														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+														onClick={() => arrayMr.remove(i)}
+													>
+														<Trash2 size={22} className='mt-1 mr-1' />
+														Remove
+													</a>
+												)}
 											</div>
 										</Section>
-										{i === values.detail.length - 1 ? (
-											<a
-												className='inline-flex text-green-500 mr-6 cursor-pointer'
-												onClick={() => {
-													arraySub.push({
-														detail: "",
-														jumlah: "",
-														unit: "",
-													});
-												}}
-											>
-												<Plus size={18} className='mr-1 mt-1' /> Add Detail
-											</a>
-										) : null}
-										{values.detail.length !== 1 ? (
-											<a
-												className='inline-flex text-red-500 cursor-pointer mt-1'
-												onClick={() => {
-													arraySub.remove(i);
-												}}
-											>
-												<Trash2 size={18} className='mr-1 mt-1' /> Remove detail
-											</a>
-										) : null}
-									</div>
-								))
+									);
+								})
 							}
-						/> */}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
