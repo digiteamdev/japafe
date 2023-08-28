@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { GetEmployeById, GetBom, AddMr } from "../../../services";
+import { GetEmployeById, GetBom, EditMR, DeleteMRDetail } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -10,6 +10,7 @@ import { getIdUser } from "../../../configs/session";
 
 interface props {
 	content: string;
+	dataSelected: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
@@ -21,21 +22,25 @@ interface data {
 			bomId: string;
 			material: string;
 			materialStockId: string;
+			satuan: string;
 			qty: string;
+            id: string;
+            mrId: string
 		}
 	];
 }
 
-export const FormCreateMr = ({ content, showModal }: props) => {
+export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [user, setUser] = useState<string>("");
 	const [userId, setUserId] = useState<string>("");
 	const [departement, setDepartement] = useState<string>("");
 	const [jobNo, setJobNo] = useState<string>("");
-	const [bomId, setBomId] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
+	const [dateMR, setDateMR] = useState<any>(new Date());
 	const [listMaterial, setListMaterial] = useState<any>([]);
 	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
+    const [listMRdelete, setListMRdelete] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		userId: "",
 		date_mr: "",
@@ -43,8 +48,11 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			{
 				bomId: "",
 				material: "",
+				satuan: "",
 				materialStockId: "",
 				qty: "",
+                id: "",
+                mrId: ""
 			},
 		],
 	});
@@ -52,8 +60,58 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	useEffect(() => {
 		getEmploye();
 		getBom();
+		dataSetting();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const dataSetting = () => {
+		let newDetail: any = [];
+		let list_material: any = [];
+		let material: any = [];
+		let list_material_stock: any = [];
+		let materialStock: any = [];
+		dataSelected.detailMr.map((res: any) => {
+			newDetail.push({
+				bomId: res.bomIdD,
+				material: res.Material_Stock.materialId,
+				materialStockId: res.materialStockId,
+				satuan: res.Material_Stock.Material_master.satuan,
+				qty: res.qty,
+                id: res.id,
+                mrId: dataSelected.id
+			});
+		});
+		dataSelected.bom.bom_detail.map((res: any) => {
+			if (!material.includes(res.materialId)) {
+				material.push(res.materialId);
+				list_material.push({
+					id: res.materialId,
+					bomId: res.id,
+					satuan: res.Material_master.satuan,
+					name: res.Material_master.material_name,
+				});
+			}
+			res.Material_master.Material_Stock.map((spec: any, i: number) => {
+				if (!materialStock.includes(spec.id)) {
+					materialStock.push(spec.id);
+					list_material_stock.push({
+						material: res.materialId,
+						id: spec.id,
+						name: spec.spesifikasi,
+					});
+				}
+			});
+		});
+		setData({
+			userId: dataSelected.userId,
+			date_mr: dataSelected.date_mr,
+			detailMr: newDetail,
+		});
+		setListMaterial(list_material);
+		setListMaterialStock(list_material_stock);
+		setJobNo(dataSelected.bom.srimg.timeschedule.wor.job_no);
+		setDateMR(dataSelected.date_mr);
+	};
 
 	const getEmploye = async () => {
 		try {
@@ -68,11 +126,16 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	};
 
 	const getBom = async () => {
+		let listBom: any = [];
 		try {
 			const response = await GetBom();
 			if (response) {
-				setListWor(response.data.result);
+				listBom.push(dataSelected.bom);
+				response.data.result.map((res: any) => {
+					listBom.push(res);
+				});
 			}
+			setListWor(listBom);
 		} catch (error) {}
 	};
 
@@ -105,7 +168,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 						}
 					});
 				});
-				setBomId(data.id);
 				setListMaterial(list_material);
 				setListMaterialStock(list_material_stock);
 				setJobNo(data.srimg.timeschedule.wor.job_no);
@@ -117,7 +179,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		}
 	};
 
-	const addMr = async (payload: data) => {
+	const editMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
 		payload.detailMr.map((res: any) => {
@@ -125,19 +187,18 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				bomIdD: res.bomId,
 				materialStockId: res.materialStockId,
 				qty: parseInt(res.qty),
+				id: res.id,
+				mrId: dataSelected.id,
 			});
 		});
-		let data = {
-			userId: getIdUser(),
-			date_mr: new Date(),
-			bomIdU: bomId,
-			detailMr: listDetail,
-		};
 
+        listMRdelete.map( (res:any) => {
+            deleteMr(res)
+        })
 		try {
-			const response = await AddMr(data);
+			const response = await EditMR(listDetail);
 			if (response.data) {
-				toast.success("Add Material Request Success", {
+				toast.success("Edit Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -150,7 +211,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Material Request Failed", {
+			toast.error("Edit Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -164,13 +225,30 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
+    const deleteMr = async (id: string) => {
+		try {
+			await DeleteMRDetail(id);
+            return false
+		} catch (error) {
+            console.log(error)
+            return false
+		}
+	};
+
+    const removeDetail = (data: any) => {
+        let listDelete: any = listMRdelete
+        if(data.id !== ""){
+            listDelete.push(data.id)
+        }
+    }
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					addMr(values);
+					editMr(values);
 				}}
 				enableReinitialize
 			>
@@ -222,7 +300,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 									placeholder='Date Request Material'
 									label='Date Request Material'
 									type='text'
-									value={moment(new Date()).format("DD-MMMM-YYYY")}
+									value={moment(dateMR).format("DD-MMMM-YYYY")}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -230,7 +308,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								{/* <InputSelect
 									id='worId'
 									name='worId'
 									placeholder='Job No'
@@ -247,13 +325,25 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 									) : (
 										listWor.map((res: any, i: number) => {
 											return (
-												<option value={JSON.stringify(res)} key={i}>
+												<option value={JSON.stringify(res)} key={i} selected={ res.id === dataSelected.bomIdU }>
 													{res.srimg.timeschedule.wor.job_no}
 												</option>
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelect> */}
+								<Input
+									id='date'
+									name='date'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={jobNo}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<h5 className='text-xl font-bold mt-3'>Material</h5>
@@ -312,7 +402,11 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 													) : (
 														listMaterial.map((res: any, i: number) => {
 															return (
-																<option value={JSON.stringify(res)} key={i}>
+																<option
+																	value={JSON.stringify(res)}
+																	key={i}
+																	selected={res.id === result.material}
+																>
 																	{res.name}
 																</option>
 															);
@@ -348,7 +442,11 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 															})
 															.map((res: any, i: number) => {
 																return (
-																	<option value={res.id} key={i}>
+																	<option
+																		value={res.id}
+																		key={i}
+																		selected={res.id === result.materialStockId}
+																	>
 																		{res.name}
 																	</option>
 																);
@@ -376,6 +474,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 													name={`detailMr.${i}.qty`}
 													placeholder='Jumlah'
 													label='Jumlah'
+													value={result.qty}
 													type='number'
 													onChange={(e: any) =>
 														setFieldValue(`detailMr.${i}.qty`, e.target.value)
@@ -393,7 +492,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 															arrayMr.push({
 																bomId: "",
 																materialStockId: "",
+																satuan: "",
 																qty: "",
+                                                                id: "",
+                                                                mrId: dataSelected.id
 															})
 														}
 													>
@@ -404,7 +506,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 												{i === 0 && values.detailMr.length === 1 ? null : (
 													<a
 														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-														onClick={() => arrayMr.remove(i)}
+														onClick={() => {
+                                                            removeDetail(result)
+                                                            arrayMr.remove(i)
+                                                        }}
 													>
 														<Trash2 size={22} className='mt-1 mr-1' />
 														Remove
