@@ -1,12 +1,12 @@
 import moment from "moment";
 import { Section } from "../../../components";
+import { formatRupiah } from '../../../utils'
 
 interface props {
 	dataSelected: any;
 }
 
 export const ViewMR = ({ dataSelected }: props) => {
-    console.log(dataSelected)
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -77,7 +77,7 @@ export const ViewMR = ({ dataSelected }: props) => {
                                     return (
                                         <tr key={i}>
                                             <td className="border border-black text-center">
-                                                -
+                                                { res.bom_detail.bom.srimg.timeschedule.wor.job_no }
                                             </td>
                                             <td className="border border-black text-center">
                                                 { res.Material_Stock.Material_master.material_name }
@@ -89,7 +89,7 @@ export const ViewMR = ({ dataSelected }: props) => {
                                                 { res.qty }
                                             </td>
                                             <td className="border border-black text-center">
-                                                { res.Material_Stock.harga }
+                                                { formatRupiah(res.Material_Stock.harga.toString()) }
                                             </td>
                                         </tr>
                                     )

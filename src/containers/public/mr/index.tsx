@@ -12,8 +12,8 @@ import {
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMr } from "./formCreate";
 import { ViewMR } from "./view";
-// import { FormEditCustomer } from "./fromEdit";
-import { GetMr, SearchCustomer, DeleteCustomer } from "../../../services";
+import { FormEditMr } from "./formEdit";
+import { GetMr, SearchCustomer, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -92,11 +92,11 @@ export const Mr = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMaterialStock = async (id: string) => {
+	const deleteMR = async (id: string) => {
 		try {
-			const response = await DeleteCustomer(id);
+			const response = await DeleteMR(id);
 			if(response.data){
-				toast.success("Delete Customer Success", {
+				toast.success("Delete Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,7 +109,7 @@ export const Mr = () => {
 				getMr(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Customer Failed", {
+			toast.error("Delete Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -179,7 +179,7 @@ export const Mr = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_mr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_mr).format('DDDD-MM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_mr).format('DD-MM-YYYY') }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.sub_depart.name }</td>
                                     <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
@@ -239,7 +239,7 @@ export const Mr = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMaterialStock}
+					onDelete={deleteMR}
 				/>
 			) : (
 				<Modal
@@ -253,8 +253,7 @@ export const Mr = () => {
 					) : modalContent === "add" ? (
                         <FormCreateMr content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-						// <FormEditCustomer content={modalContent} showModal={showModal} dataCustomer={dataSelected}/>
+                        <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
