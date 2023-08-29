@@ -7,7 +7,6 @@ import {
 	GetAllMaterialType,
 	AddMaterial,
 	AddMaterialType,
-	AddMaterialStock,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
@@ -77,47 +76,6 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 		try {
 			const response = await AddMaterial(data);
 			if (response.data) {
-				let specs: any = [];
-				data.spesifikasi.map((res: any) => {
-					specs.push({
-						materialId: response.data.results.id,
-						spesifikasi: res.spesifikasi,
-						jumlah_Stock: parseInt(res.jumlah_Stock),
-						harga: parseInt(res.harga),
-					});
-				});
-				addMaterialStock(specs);
-				// toast.success("Add Material Success", {
-				// 	position: "top-center",
-				// 	autoClose: 5000,
-				// 	hideProgressBar: true,
-				// 	closeOnClick: true,
-				// 	pauseOnHover: true,
-				// 	draggable: true,
-				// 	progress: undefined,
-				// 	theme: "colored",
-				// });
-				// showModal(false, content, true);
-			}
-		} catch (error) {
-			toast.error("Add Material Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
-		setIsLoading(false);
-	};
-
-	const addMaterialStock = async (data: any) => {
-		try {
-			const response = await AddMaterialStock(data);
-			if (response) {
 				toast.success("Add Material Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -414,7 +372,7 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 									) : null}
 								</div>
 							</Section>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<h4 className='mt-4 font-semibold'>Material Spesifikasi</h4>
 								<FieldArray
 									name='spesifikasi'
@@ -514,7 +472,7 @@ export const FormCreateMaterial = ({ content, showModal }: props) => {
 										})
 									}
 								/>
-							</div>
+							</div> */}
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button

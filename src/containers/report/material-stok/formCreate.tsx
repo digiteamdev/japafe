@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { materialSchema } from "../../../schema/report/material-stok/materialStokSchema";
-import { AddMaterialStock } from "../../../services";
+import { materialStockSchema } from "../../../schema/report/material-stok/materialStokSchema";
+import { AddMaterialStock, GetAllMaterial } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 
@@ -12,35 +12,48 @@ interface props {
 }
 
 interface data {
-	nama_type: string;
-	material_name: string;
 	Material_Spek: [
 		{
-			jumlah: string;
-			unit: string;
-			detail: string;
+			materialId: string;
+			spesifikasi: string;
+			jumlah_Stock: any;
+			harga: any;
 		}
 	];
 }
 
 export const FormCreateMaterialStok = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [listMaterial, setListMaterial] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		nama_type: "",
-		material_name: "",
 		Material_Spek: [
 			{
-				jumlah: "",
-				unit: "",
-				detail: "",
+				materialId: "",
+				spesifikasi: "",
+				jumlah_Stock: null,
+				harga: null,
 			},
 		],
 	});
 
-	const addMaterial = async (data: any) => {
+	useEffect(() => {
+		getMaterial();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const addMaterialStock = async (data: any) => {
 		setIsLoading(true);
+		let dataBody: any = []
+		data.Material_Spek.map( (res: any) => {
+			dataBody.push({
+				materialId: res.materialId,
+				spesifikasi: res.spesifikasi,
+				jumlah_Stock: parseInt(res.jumlah_Stock),
+				harga: parseInt(res.harga),
+			})
+		})
 		try {
-			const response = await AddMaterialStock(data);
+			const response = await AddMaterialStock(dataBody);
 			if (response) {
 				toast.success("Add Material Success", {
 					position: "top-center",
@@ -70,141 +83,175 @@ export const FormCreateMaterialStok = ({ content, showModal }: props) => {
 		}
 	};
 
+	const getMaterial = async () => {
+		try {
+			const response = await GetAllMaterial();
+			if(response.data){
+				setListMaterial(response.data.result);
+			}
+		} catch (error) {
+			setListMaterial([]);
+		}
+	}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
-				validationSchema={materialSchema}
+				// validationSchema={materialStockSchema}
 				onSubmit={(values) => {
-					addMaterial(values);
+					addMaterialStock(values);
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelect
-									id='nama_type'
-									name='nama_type'
-									placeholder='Material Type'
-									label='Material Type'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
-										Choose a Material Type
-									</option>
-									<option value='Consumable'>Consumable</option>
-									<option value='Investasi'>Investasi</option>
-									<option value='Office'>Office</option>
-									<option value='Production'>Production</option>
-									<option value='Toold'>Tools</option>
-									<option value='Other'>Other</option>
-								</InputSelect>
-								{errors.nama_type && touched.nama_type ? (
-									<span className='text-red-500 text-xs'>
-										{errors.nama_type}
-									</span>
-								) : null}
-							</div>
-							<div className='w-full'>
-								<Input
-									id='material_name'
-									name='material_name'
-									placeholder='Material Name'
-									label='Material Name'
-									type='text'
-									value={values.material_name}
-									onChange={handleChange}
-									required={false}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-								{errors.material_name && touched.material_name ? (
-									<span className='text-red-500 text-xs'>{errors.material_name}</span>
-								) : null}
-							</div>
-						</Section>
-						<FieldArray
-							name='Material_Spek'
-							render={(arraySub) =>
-								values.Material_Spek.map((res, i) => (
-									<div key={i}>
-										<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-											<div className='w-full'>
-												<Input
-													id={`Material_Spek.${i}.detail`}
-													name={`Material_Spek.${i}.detail`}
-													placeholder='Detail Spesification'
-													label='Detail Spesification'
-													type='text'
-													value={res.detail}
-													onChange={handleChange}
-													required={false}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id={`Material_Spek.${i}.jumlah`}
-													name={`Material_Spek.${i}.jumlah`}
-													placeholder='Jumlah'
-													label='Jumlah'
-													type='text'
-													value={res.jumlah}
-													onChange={handleChange}
-													required={false}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id={`Material_Spek.${i}.unit`}
-													name={`Material_Spek.${i}.unit`}
-													placeholder='Unit'
-													label='Unit'
-													type='text'
-													value={res.unit}
-													onChange={handleChange}
-													required={false}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-										</Section>
-										{i === values.Material_Spek.length - 1 ? (
-											<a
-												className='inline-flex text-green-500 mr-6 cursor-pointer'
-												onClick={() => {
-													arraySub.push({
-														jumlah: "",
-														unit: "",
-														detail: "",
-													});
-												}}
+						<div className='w-full'>
+							<FieldArray
+								name='Material_Spek'
+								render={(arraySpecs) =>
+									values.Material_Spek.map((res: any, i: number) => {
+										return (
+											<Section
+												className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+												key={i}
 											>
-												<Plus size={18} className='mr-1 mt-1' /> Add Detail
-											</a>
-										) : null}
-										{values.Material_Spek.length !== 1 ? (
-											<a
-												className='inline-flex text-red-500 cursor-pointer mt-1'
-												onClick={() => {
-													arraySub.remove(i);
-												}}
-											>
-												<Trash2 size={18} className='mr-1 mt-1' /> Remove detail
-											</a>
-										) : null}
-									</div>
-								))
-							}
-						/>
+												<div className='w-full'>
+													<InputSelect
+														id={`Material_Spek.${i}.materialId`}
+														name={`Material_Spek.${i}.materialId`}
+														placeholder='Material Type'
+														label='Material Type'
+														onChange={ (e: any) => {
+															if( e.target.value !== 'no data' ){
+																setFieldValue(`Material_Spek.${i}.materialId`,e.target.value)
+															}else{
+																setFieldValue(`Material_Spek.${i}.materialId`, "")
+															}
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option defaultValue='no data' selected>
+															Choose a Material Name
+														</option>
+														{listMaterial.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+														listMaterial.map((res: any, i: number) => {
+																return (
+																	<option value={res.id} key={i}>
+																		{res.material_name}
+																	</option>
+																);
+															})
+														)}
+													</InputSelect>
+													{/* {errors.kd_group && touched.kd_group ? (
+														<span className='text-red-500 text-xs'>
+															{errors.kd_group}
+														</span>
+													) : null} */}
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`Material_Spek.${i}.spesifikasi`}
+														name={`Material_Spek.${i}.spesifikasi`}
+														type='text'
+														placeholder='Spesifikasi'
+														label='Spesifikasi'
+														value={res.satuan}
+														onChange={(e: any) => {
+															setFieldValue(
+																`Material_Spek.${i}.spesifikasi`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`Material_Spek.${i}.jumlah_Stock`}
+														name={`Material_Spek.${i}.jumlah_Stock`}
+														type='number'
+														placeholder='Stock'
+														label='Stock'
+														value={res.jumlah_Stock}
+														onChange={(e: any) => {
+															setFieldValue(
+																`Material_Spek.${i}.jumlah_Stock`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`Material_Spek.${i}.harga`}
+														name={`Material_Spek.${i}.harga`}
+														type='number'
+														placeholder='Price'
+														label='Price'
+														value={res.harga}
+														onChange={(e: any) => {
+															setFieldValue(
+																`Material_Spek.${i}.harga`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='flex w-full'>
+													{i + 1 === values.Material_Spek.length ? (
+														<a
+															className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+															onClick={() =>
+																arraySpecs.push({
+																	materialId: "",
+																	spesifikasi: "",
+																	jumlah_Stock: "",
+																	harga: "",
+																})
+															}
+														>
+															<Plus size={23} className='mt-1' />
+															Add
+														</a>
+													) : null}
+													{i === 0 &&
+													values.Material_Spek.length === 1 ? null : (
+														<a
+															className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+															onClick={() => arraySpecs.remove(i)}
+														>
+															<Trash2 size={22} className='mt-1 mr-1' />
+															Remove
+														</a>
+													)}
+												</div>
+											</Section>
+										);
+									})
+								}
+							/>
+						</div>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

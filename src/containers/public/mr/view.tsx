@@ -67,9 +67,6 @@ export const ViewMR = ({ dataSelected }: props) => {
                                     <th className="border border-black text-center">
                                         Quantity
                                     </th>
-                                    <th className="border border-black text-center">
-                                        Price
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,9 +84,6 @@ export const ViewMR = ({ dataSelected }: props) => {
                                             </td>
                                             <td className="border border-black text-center">
                                                 { res.qty }
-                                            </td>
-                                            <td className="border border-black text-center">
-                                                { formatRupiah(res.Material_Stock.harga.toString()) }
                                             </td>
                                         </tr>
                                     )
