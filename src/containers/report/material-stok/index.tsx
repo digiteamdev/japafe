@@ -9,13 +9,12 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Tool, Edit, Eye, Trash2 } from "react-feather";
+import { Tool} from "react-feather";
 import { FormCreateMaterialStok } from "./formCreate";
 import { ViewMaterial } from "./view";
-// import { FormEditCustomer } from "./fromEdit";
 import { GetMaterialStock } from "../../../services";
-import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
+import { formatRupiah } from '../../../utils/index'
 
 export const MaterialStok = () => {
 
@@ -32,8 +31,9 @@ export const MaterialStok = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Material Name" },
-		{ name: "Material Type" },
-        { name: "Date" }
+		{ name: "Stock" },
+		{ name: "Satuan" },
+        { name: "Price" }
 	];
 
 	useEffect(() => {
@@ -170,44 +170,16 @@ export const MaterialStok = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.material_name }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.nama_type }</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
-										</div>
-									</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.Material_master.material_name } - { res.spesifikasi }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.jumlah_Stock }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.satuan }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ formatRupiah(res.harga.toString()) }</td>
 								</tr>
 							);
 						})

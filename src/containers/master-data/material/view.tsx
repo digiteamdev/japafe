@@ -57,41 +57,6 @@ export const ViewMaterial = ({ dataSelected }: props) => {
 							</table>
 						</div>
 					</Section>
-					<h1 className='font-bold text-xl mt-3'>Material Spesifikasi</h1>
-					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-						<div className='w-full'>
-							<table className='w-full'>
-								<thead>
-									<tr>
-										<th className='w-[50%] pl-2 border border-gray-200 text-center'>Spesifikasi Name</th>
-										<th className='w-[20%] pl-2 border border-gray-200 text-center'>Stock</th>
-										<th className='w-[30%] pl-2 border border-gray-200 text-center'>Harga</th>
-									</tr>
-								</thead>
-								<tbody>
-									{
-										dataSelected.Material_Stock.length > 0 ? (
-											dataSelected.Material_Stock.map( (res: any, i: number) => {
-												return (
-													<tr key={i}>
-														<td className='w-[50%] pl-2 border border-gray-200 text-center'>
-															{res.spesifikasi}
-														</td>
-														<td className='w-[20%] pl-2 border border-gray-200 text-center'>
-															{res.jumlah_Stock}
-														</td>
-														<td className='w-[30%] pl-2 border border-gray-200 text-center'>
-															{res.harga}
-														</td>
-													</tr>
-												)
-											})
-										) : null
-									}
-								</tbody>
-							</table>
-						</div>
-					</Section>
 				</>
 			) : null}
 		</div>
