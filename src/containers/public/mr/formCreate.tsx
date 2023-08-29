@@ -480,7 +480,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 													/>
 													{isSearch ? (
 														<ul className='bg-gray-300 border border-gray-100 w-[48%] rounded-lg z-10 fixed'>
-															{listItemSearch.map((res: any) => {
+															{listItemSearch.map((res: any, i: number) => {
 																return (
 																	<li
 																		className='pl-8 pr-2 py-1 border-b-2 border-gray-100 relative cursor-pointer hover:bg-yellow-50 hover:text-gray-900'
@@ -513,6 +513,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																			setIsSearch(false);
 																			setSearch("");
 																		}}
+																		key={i}
 																	>
 																		{res.name}
 																	</li>
