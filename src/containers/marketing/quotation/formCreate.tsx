@@ -8,7 +8,11 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { quotationSchema } from "../../../schema/marketing/quotation/quotationSchema";
-import { AddQuotation, GetAllEquipment, GetAllCustomer } from "../../../services";
+import {
+	AddQuotation,
+	GetAllEquipment,
+	GetAllCustomer,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { FormCreateEquipment } from "./formCreateEquipment";
 import { FormCreateCustomer } from "./formCreateCustomer";
@@ -30,7 +34,7 @@ interface data {
 	Quotations_Detail: [
 		{
 			item_of_work: string;
-			volume: string;
+			volume: number;
 			unit: string;
 		}
 	];
@@ -43,10 +47,7 @@ interface data {
 	];
 }
 
-export const FormCreateQuotation = ({
-	content,
-	showModal,
-}: props) => {
+export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isCreateEquipment, setIsCreateEquipment] = useState<boolean>(false);
 	const [isCreateCustomer, setIsCreateCustomer] = useState<boolean>(false);
@@ -71,7 +72,7 @@ export const FormCreateQuotation = ({
 		Quotations_Detail: [
 			{
 				item_of_work: "",
-				volume: "",
+				volume: 0,
 				unit: "",
 			},
 		],
@@ -102,7 +103,10 @@ export const FormCreateQuotation = ({
 
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "customerId") {
-			if (event.target.value !== "Choose Customer" && event.target.value !== "create" ) {
+			if (
+				event.target.value !== "Choose Customer" &&
+				event.target.value !== "create"
+			) {
 				let data = JSON.parse(event.target.value);
 				setListContact(data.contact);
 				setCityCustomer(data.address[0].cities);
@@ -144,17 +148,30 @@ export const FormCreateQuotation = ({
 		const dataCustomer = JSON.parse(payload.customerId);
 		const eqandpart: any = [];
 		payload.parts.map((res: any) => {
-			listParts.map((eq: any) => {
-				if (eq.id === res.id) {
-					const dataPart = {
-						id_equipment: eq.id_equipment,
-						id_part: res.id,
-						qty: res.qty,
-						keterangan: res.keterangan,
-					};
-					eqandpart.push(dataPart);
-				}
-			});
+			if (res.id === "") {
+				toast.warning("Equipment not empty", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}else{
+				listParts.map((eq: any) => {
+					if (eq.id === res.id) {
+						const dataPart = {
+							id_equipment: eq.id_equipment,
+							id_part: res.id,
+							qty: res.qty === "" ? 0 : res.qty,
+							keterangan: res.keterangan,
+						};
+						eqandpart.push(dataPart);
+					}
+				});
+			}
 		});
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
@@ -220,21 +237,21 @@ export const FormCreateQuotation = ({
 	};
 
 	const formCreateCustomer = (data: any, show: boolean) => {
-		if(data === null){
-			getCustomer()
-			setIsCreateCustomer(false)
-		}else{
-			setData(data)
-			setIsCreateCustomer(true)
+		if (data === null) {
+			getCustomer();
+			setIsCreateCustomer(false);
+		} else {
+			setData(data);
+			setIsCreateCustomer(true);
 		}
-	}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{isCreateEquipment ? (
 				<FormCreateEquipment showModal={setIsCreateEquipment} />
 			) : isCreateCustomer ? (
-				<FormCreateCustomer content={content} showModal={formCreateCustomer}/>
+				<FormCreateCustomer content={content} showModal={formCreateCustomer} />
 			) : (
 				<Formik
 					initialValues={{ ...data }}
@@ -244,7 +261,14 @@ export const FormCreateQuotation = ({
 					}}
 					enableReinitialize
 				>
-					{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
+					{({
+						handleChange,
+						handleSubmit,
+						setFieldValue,
+						errors,
+						touched,
+						values,
+					}) => (
 						<Form onChange={handleOnChanges}>
 							<h1 className='text-xl font-bold mt-3'>Quotation</h1>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -287,15 +311,15 @@ export const FormCreateQuotation = ({
 										name='customerId'
 										placeholder='Customer'
 										label='Customer'
-										onChange={ (input: any) => {
-											if(input.target.value === 'create'){
-												formCreateCustomer(values, true)
-											}else if(input.target.value === 'Choose Customer'){
-												setFieldValue('customerId', '')
-											}else if(input.target.value === 'no data'){
-												setFieldValue('customerId', '')
-											} else{
-												setFieldValue('customerId', input.target.value)
+										onChange={(input: any) => {
+											if (input.target.value === "create") {
+												formCreateCustomer(values, true);
+											} else if (input.target.value === "Choose Customer") {
+												setFieldValue("customerId", "");
+											} else if (input.target.value === "no data") {
+												setFieldValue("customerId", "");
+											} else {
+												setFieldValue("customerId", input.target.value);
 											}
 										}}
 										required={true}
@@ -316,9 +340,7 @@ export const FormCreateQuotation = ({
 												);
 											})
 										)}
-										<option value="create">
-											Add New Customer
-										</option>
+										<option value='create'>Add New Customer</option>
 									</InputSelect>
 									{errors.customerId && touched.customerId ? (
 										<span className='text-red-500 text-xs'>
@@ -476,7 +498,7 @@ export const FormCreateQuotation = ({
 																onClick={() => {
 																	arrayDetails.push({
 																		item_of_work: "",
-																		volume: "",
+																		volume: 0,
 																		unit: "",
 																	});
 																}}

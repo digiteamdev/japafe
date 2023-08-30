@@ -239,28 +239,54 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		const desc: any = [];
 		const term: any = [];
 		payload.Deskription_CusPo.map((res: any, i: number) => {
-			const htmlTotal = document.getElementById(
-				`Deskription_CusPo.${i}.total`
-			) as HTMLInputElement;
-			desc.push({
-				description: res.description,
-				qty: res.qty,
-				unit: res.unit,
-				price: res.price.toString(),
-				discount: res.discount.toString(),
-				total: htmlTotal.value,
-			});
+			if(res.description === ""){
+				toast.warning("Description not empty", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}else{
+				const htmlTotal = document.getElementById(
+					`Deskription_CusPo.${i}.total`
+				) as HTMLInputElement;
+				desc.push({
+					description: res.description,
+					qty: res.qty,
+					unit: res.unit,
+					price: res.price.toString(),
+					discount: res.discount.toString(),
+					total: htmlTotal.value,
+				});
+			}
 		});
 		payload.term_of_pay.map((res: any, i: number) => {
-			const htmlTotal = document.getElementById(
-				`term_of_pay.${i}.price`
-			) as HTMLInputElement;
-			term.push({
-				limitpay: res.limitpay,
-				percent: res.percent,
-				price: htmlTotal.value,
-				date_limit: res.date_limit,
-			});
+			if(res.limitpay === ""){
+				toast.warning("Term Of Payment not empty", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}else{
+				const htmlTotal = document.getElementById(
+					`term_of_pay.${i}.price`
+				) as HTMLInputElement;
+				term.push({
+					limitpay: res.limitpay,
+					percent: res.percent,
+					price: htmlTotal.value,
+					date_limit: res.date_limit,
+				});
+			}
 		});
 		const dataBody = {
 			id_po: payload.id_po,
