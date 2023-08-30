@@ -147,6 +147,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		const form = new FormData();
 		const dataCustomer = JSON.parse(payload.customerId);
 		const eqandpart: any = [];
+		let equipmentEmpty: boolean = false;
 		payload.parts.map((res: any) => {
 			if (res.id === "") {
 				toast.warning("Equipment not empty", {
@@ -159,6 +160,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
+				equipmentEmpty = true
 			}else{
 				listParts.map((eq: any) => {
 					if (eq.id === res.id) {
@@ -184,20 +186,22 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		form.append("eqandpart", JSON.stringify(eqandpart));
 
 		try {
-			const response = await AddQuotation(form);
-			if (response) {
-				toast.success("Add Quotation Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				setIsLoading(false);
-				showModal(false, content, true);
+			if(!equipmentEmpty){
+				const response = await AddQuotation(form);
+				if (response) {
+					toast.success("Add Quotation Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					setIsLoading(false);
+					showModal(false, content, true);
+				}
 			}
 		} catch (error) {
 			toast.error("Add Quotation Failed", {

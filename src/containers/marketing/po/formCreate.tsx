@@ -238,6 +238,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		const htmlGrandTotal = document.getElementById("grand_tot") as HTMLInputElement
 		const desc: any = [];
 		const term: any = [];
+		let descEmpty: boolean = false
+		let termOFPaymentEmpty: boolean = false
 		payload.Deskription_CusPo.map((res: any, i: number) => {
 			if(res.description === ""){
 				toast.warning("Description not empty", {
@@ -250,6 +252,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
+				descEmpty = true
 			}else{
 				const htmlTotal = document.getElementById(
 					`Deskription_CusPo.${i}.total`
@@ -276,6 +279,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
+				termOFPaymentEmpty = true
 			}else{
 				const htmlTotal = document.getElementById(
 					`term_of_pay.${i}.price`
@@ -303,19 +307,21 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		};
 
 		try {
-			const response = await AddPo(dataBody);
-			if (response) {
-				toast.success("Add Customer PO Success", {
-					position: "top-center",
-					autoClose: 1000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				showModal(false, content, true);
+			if(!termOFPaymentEmpty && !descEmpty){
+				const response = await AddPo(dataBody);
+				if (response) {
+					toast.success("Add Customer PO Success", {
+						position: "top-center",
+						autoClose: 1000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
 			}
 		} catch (error) {
 			toast.error("Add Customer PO Failed", {
