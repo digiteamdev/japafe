@@ -13,7 +13,7 @@ import { Tool, Edit, Eye, Trash2 } from "react-feather";
 // import { FormCreateMaterialStok } from "./formCreate";
 // import { ViewCustomer } from "./view";
 // import { FormEditCustomer } from "./fromEdit";
-import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
+import { GetMaterialStock, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 
@@ -33,11 +33,11 @@ export const MaterialNameInfo = () => {
 	const headerTabel = [
 		{ name: "Material Name" },
         { name: "Specification" },
-		{ name: "Unit" }
+		{ name: "Satuan" }
 	];
 
 	useEffect(() => {
-		// getCustomer(page, perPage);
+		getMaterialStok(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -55,7 +55,7 @@ export const MaterialNameInfo = () => {
 	const getMaterialStok = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCustomer(page, perpage);
+			const response = await GetMaterialStock(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -129,7 +129,7 @@ export const MaterialNameInfo = () => {
 			/>
 			<Content
 				title='Material Name Info'
-				print={true}
+				print={false}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
@@ -175,9 +175,9 @@ export const MaterialNameInfo = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'></td>
-									<td className='whitespace-nowrap px-6 py-4'></td>
-									<td className='whitespace-nowrap px-6 py-4'></td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.material_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.spesifikasi }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.satuan }</td>
 									{/* <td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
