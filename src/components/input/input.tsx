@@ -7,6 +7,7 @@ interface props {
 	value?: string;
 	max?: string;
 	name?: string;
+	accept?: string;
 	disabled?: boolean;
 	required?: boolean;
 	withLabel?: boolean;
@@ -22,6 +23,7 @@ export const Input = ({
 	value,
 	max,
 	name,
+	accept,
 	className,
 	disabled,
 	required,
@@ -52,6 +54,7 @@ props) => {
 				max={max}
 				onChange={onChange}
 				ref={ref}
+				accept={accept}
 				multiple
 			/>
 		</div>

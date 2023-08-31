@@ -1231,6 +1231,7 @@ export const FormCreateEmploye = ({
 																	placeholder='Degree'
 																	label='Degree'
 																	type='file'
+																	accept='image/*, .pdf'
 																	onChange={handleOnChanges}
 																	withLabel={true}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -1388,6 +1389,7 @@ export const FormCreateEmploye = ({
 																placeholder='Certificate Image'
 																label='Certificate Image'
 																type='file'
+																accept='image/*, .pdf'
 																onChange={(e: any) =>
 																	setFieldValue(
 																		`Certificate_Employee.${i}.certificate_img`,

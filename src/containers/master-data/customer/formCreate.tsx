@@ -160,10 +160,11 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 
 	const addCustomer = async (payload: any) => {
 		setIsLoading(true)
-		try {
-			const response = await AddCustomer(payload);
-			if (response) {
-				toast.success('Add Customer Success', {
+		let dataEmpty: boolean = false
+		payload.contact.map( (res: any) => {
+			if(res.contact_person === ''){
+				dataEmpty = true
+				toast.warning("Contact Person Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -173,22 +174,54 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				setIsLoading(false)
-				showModal(false, content, true)
 			}
-		} catch (error) {
-			toast.error('Add Customer Failed', {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-			setIsLoading(false)
+		})
+		payload.address.map( (res: any) => {
+			if(res.address_workshop === ''){
+				dataEmpty = true
+				toast.warning("Workshop Address Not Empty", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		})
+
+		if(!dataEmpty){
+			try {
+				const response = await AddCustomer(payload);
+				if (response) {
+					toast.success('Add Customer Success', {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true)
+				}
+			} catch (error) {
+				toast.error('Add Customer Failed', {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
 		}
+		setIsLoading(false)
 	};
 
 	return (

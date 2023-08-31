@@ -30,7 +30,7 @@ export const FormCreateHoliday = ({
 	const [data, setData] = useState<data>({
 		data: [
 			{
-				date_holiday: "",
+				date_holiday: new Date(),
 				description: "",
 			},
 		],
@@ -93,43 +93,47 @@ export const FormCreateHoliday = ({
 								render={(arrayHelper) => (
 									<>
 										{values.data.map((res, i) => (
-											<div className="w-full" key={i}>
-                                                <Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-                                                    <div className='w-full'>
-                                                        <InputDate
-                                                            id={`data.${i}.date_holiday`}
-                                                            label='Date Holiday'
-                                                            value={ res.date_holiday === "" ? new Date() : res.date_holiday }
-                                                            onChange={(value: any) =>
-                                                                setFieldValue(`data.${i}.date_holiday`, value)
-                                                            }
-                                                            withLabel={true}
-                                                            className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-                                                            classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-                                                        />
-                                                    </div>
-                                                    <div className='w-full'>
-                                                        <Input
-                                                            id={`data.${i}.description`}
-                                                            name={`data.${i}.description`}
-                                                            placeholder='Description'
-                                                            label='Description'
-                                                            type='text'
-                                                            value={res.description}
-                                                            onChange={handleChange}
-                                                            required={true}
-                                                            withLabel={true}
-                                                            className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-                                                        />
-                                                    </div>
-											    </Section>
+											<div className='w-full' key={i}>
+												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='w-full'>
+														<InputDate
+															id={`data.${i}.date_holiday`}
+															label='Date Holiday'
+															value={
+																res.date_holiday === ""
+																	? new Date()
+																	: res.date_holiday
+															}
+															onChange={(value: any) =>
+																setFieldValue(`data.${i}.date_holiday`, value)
+															}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+															classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`data.${i}.description`}
+															name={`data.${i}.description`}
+															placeholder='Description'
+															label='Description'
+															type='text'
+															value={res.description}
+															onChange={handleChange}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
 												{i === values.data.length - 1 ? (
 													<a
 														className='inline-flex text-green-500 mr-6 cursor-pointer'
 														onClick={() => {
 															arrayHelper.push({
 																date_holiday: "",
-                                                                description: ""
+																description: "",
 															});
 														}}
 													>
@@ -147,7 +151,7 @@ export const FormCreateHoliday = ({
 														Holiday
 													</a>
 												) : null}
-                                            </div>
+											</div>
 										))}
 									</>
 								)}

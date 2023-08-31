@@ -191,6 +191,7 @@ export const FormCreateEquipment = ({ content, showModal }: props) => {
 										placeholder='eq_image'
 										label='Equipment Image'
 										type='file'
+										accept='image/*'
 										onChange={handleChange}
 										required={true}
 										withLabel={true}
@@ -309,6 +310,7 @@ export const FormCreateEquipment = ({ content, showModal }: props) => {
 																				placeholder='Part Image'
 																				label='Part Image'
 																				type='file'
+																				accept='image/*'
 																				required={true}
 																				withLabel={true}
 																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

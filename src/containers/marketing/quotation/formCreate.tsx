@@ -439,6 +439,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 										placeholder='Quotation File'
 										label='Quotation File'
 										type='file'
+										accept='image/*, .pdf'
 										onChange={handleChange}
 										required={false}
 										withLabel={true}

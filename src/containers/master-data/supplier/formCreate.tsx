@@ -49,7 +49,6 @@ interface props {
 }
 
 export const FormCreateSupplier = ({ content, showModal }: props) => {
-
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listProvince, setListProvince] = useState<any>([]);
 	const [listCity, setListCity] = useState<any>([]);
@@ -165,11 +164,12 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 	};
 
 	const addSupplier = async (payload: any) => {
-		setIsLoading(true)
-		try {
-			const response = await AddSupplier(payload);
-			if (response) {
-				toast.success('Add Supplier Success', {
+		setIsLoading(true);
+		let bankEmpty: boolean = false;
+		payload.SupplierBank.map((res: any) => {
+			if (res.account_name === "") {
+				bankEmpty = true
+				toast.warning("Bank Account Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -179,22 +179,53 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				setIsLoading(false)
-				showModal(false, content, true)
 			}
-		} catch (error) {
-			toast.error('Add Supplier Failed', {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-			setIsLoading(false)
+		});
+		payload.SupplierContact.map( (res: any) => {
+			if(res.contact_person === ''){
+				bankEmpty = true
+				toast.warning("Contact Person Not Empty", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		})
+		if(!bankEmpty){
+			try {
+				const response = await AddSupplier(payload);
+				if (response) {
+					toast.success('Add Supplier Success', {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true)
+				}
+			} catch (error) {
+				toast.error('Add Supplier Failed', {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
 		}
+		setIsLoading(false)
 	};
 
 	return (
@@ -241,7 +272,9 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option defaultValue='' selected>Choose a Supplier type</option>
+									<option defaultValue='' selected>
+										Choose a Supplier type
+									</option>
 									<option value='Material_Supplier'>Material Supplier</option>
 									<option value='Service_Vendor'>Service Vendor</option>
 								</InputSelect>
@@ -665,12 +698,13 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 											) : null}
 											{values.SupplierContact.length !== 1 ? (
 												<a
-												className='inline-flex text-red-500 cursor-pointer'
+													className='inline-flex text-red-500 cursor-pointer'
 													onClick={() => {
 														arrayContact.remove(i);
 													}}
 												>
-													<Trash2 size={18} className='mr-1 mt-1' /> Remove Contact
+													<Trash2 size={18} className='mr-1 mt-1' /> Remove
+													Contact
 												</a>
 											) : null}
 										</div>

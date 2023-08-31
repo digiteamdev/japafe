@@ -446,6 +446,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 									placeholder='Introduction Image'
 									label='Introduction Image'
 									type='file'
+									accept='image/*'
 									onChange={(event: any) => {
 										setFieldValue("inimg", event.currentTarget.files[0]);
 									}}
@@ -516,6 +517,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 															placeholder='File Image'
 															label='File Image'
 															type='file'
+															accept='image/*'
 															onChange={(event: any) => {
 																uploadImage(event.target.files).then( res => {
 																	setFieldValue(

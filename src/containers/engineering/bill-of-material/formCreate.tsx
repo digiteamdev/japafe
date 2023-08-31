@@ -386,7 +386,22 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 									</InputSelect>
 								</div>
 								<div className='w-full'>
-									<a className='inline-flex text-green-500 pt-8 pl-4 text-lg cursor-pointer' onClick={ () => addDetail(values)}>
+									<a className='inline-flex text-green-500 pt-8 pl-4 text-lg cursor-pointer' onClick={ () => {
+										if(partId === ""){
+											toast.warning("Please Choice Part", {
+												position: "top-center",
+												autoClose: 5000,
+												hideProgressBar: true,
+												closeOnClick: true,
+												pauseOnHover: true,
+												draggable: true,
+												progress: undefined,
+												theme: "colored",
+											});
+										}else{
+											addDetail(values)
+										}
+									}}>
 										<Plus size={18} className='mr-1 mt-1' /> Add Part
 									</a>
 								</div>

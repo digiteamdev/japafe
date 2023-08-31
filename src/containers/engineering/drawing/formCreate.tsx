@@ -272,6 +272,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 															placeholder='File'
 															label='File'
 															type='file'
+															accept='image/*, .pdf'
 															onChange={(value: any) =>
 																setFieldValue(`file.${i}.file_upload`, value.target.files[0])
 															}

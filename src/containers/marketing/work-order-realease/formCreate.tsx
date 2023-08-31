@@ -585,6 +585,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									placeholder='File List'
 									label='File List'
 									type='file'
+									accept='image/*, .pdf'
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
