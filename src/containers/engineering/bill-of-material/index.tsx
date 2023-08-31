@@ -189,7 +189,7 @@ export const BillOfMaterial = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -198,7 +198,7 @@ export const BillOfMaterial = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
