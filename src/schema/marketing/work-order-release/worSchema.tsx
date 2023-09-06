@@ -24,4 +24,5 @@ export const worSchema = yup.object().shape({
 	file_list: yup.string().nullable(),
 	noted: yup.string().nullable(),
 	status: yup.string().nullable(),
+	job_operational: yup.string().required("Job Operational not empty"),
 });

@@ -40,6 +40,7 @@ interface data {
 	file_list: string;
 	noted: string;
 	status: string;
+	job_operational: string;
 }
 
 export const FormCreateWor = ({ content, showModal }: props) => {
@@ -77,6 +78,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		file_list: "",
 		noted: "",
 		status: "",
+		job_operational: 'false'
 	});
 
 	useEffect(() => {
@@ -134,6 +136,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
         dataBody.append("scope_of_work", payload.scope_of_work);
         dataBody.append("file_list", file);
         dataBody.append("noted", payload.noted);
+		dataBody.append("job_operational", payload.job_operational);
 		try {
 			const response = await AddWor(dataBody);
 			if (response) {
@@ -206,7 +209,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Work Order Release</h1>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date'
@@ -217,6 +220,31 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='job_operational'
+									name='job_operational'
+									placeholder='Job Operasional'
+									label='Job Operasional'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option defaultValue='' selected>
+										Choose Job Operational
+									</option>
+									<option value="true">
+										Yes
+									</option>
+									<option value="false">
+										No
+									</option>
+								</InputSelect>
+								{errors.job_operational && touched.job_operational ? (
+									<span className='text-red-500 text-xs'>{errors.job_operational}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<InputSelect
