@@ -1,85 +1,68 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {useRouter} from "next/router";
-import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
-	Table,
 	Modal,
+	Table,
 	Button,
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Clock, Eye, Edit, Trash2 } from "react-feather";
-import { FormCreateSchedule } from "./formCreate";
-import {
-	GetSchedule,
-	SearchSchedule,
-	DeleteSchedule,
-	GetAllHoliday
-} from "../../../services";
+import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { FormCreateSr } from "./formCreate";
+// import { ViewMR } from "./view";
+// import { FormEditMr } from "./formEdit";
+import { GetSr, SearchCustomer, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
+import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { ViewSchedule } from './view';
-import { FormEditSchedule } from "./formEdit";
 
-export const Schedule = () => {
+export const Sr = () => {
+
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [modalContent, setModalContent] = useState<string>("add");
-	const [data, setData] = useState<any>([]);
-	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
+	const [dataSelected, setDataSelected] = useState<any>(false);
+	const [data, setData] = useState<any>([]);
+	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
-	const [holiday, setHoliday] = useState<any>([]);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No Job" },
-		{ name: "Date Schedulle" },
-		{ name: "Customer" },
-		{ name: "Subject" },
-		{ name: "Action" }
+		{ name: "SR No" },
+        { name: "SR Date" },
+		{ name: "Job No" },
+        { name: "Request By" },
+        { name: "Action" }
 	];
 
 	useEffect(() => {
-		getSchedule(page, perPage);
-		getHolidays()
+		getSr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
 		setModalContent(content);
-		if(!val){
-			setDataSelected(false)
-		}
-		if(reload){
-			getSchedule(page, perPage);
-		}
-	};
-
-	const getHolidays = async () => {
-		try {
-			const response = await GetAllHoliday();
-			if (response.data) {
-				setHoliday(response.data.result);
-			}
-		} catch (error) {
-			setHoliday([]);
+		// if(!val){
+		// 	setDataSelected({id: '',name: ''})
+		// }
+		if (reload) {
+			getSr(page, perPage);
 		}
 	};
 
-	const getSchedule = async (page: number, limit: number) => {
+	const getSr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetSchedule(page, limit);
+			const response = await GetSr(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / limit));
+				setTotalPage(Math.ceil( response.data.totalData / perpage));
 			}
 		} catch (error: any) {
 			if(error.response.data.login){
@@ -92,29 +75,28 @@ export const Schedule = () => {
 		setIsLoading(false);
 	};
 
-	const searchSchedule = async (
+	const searchMaterialStock = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchSchedule(page, limit, search);
+			const response = await SearchCustomer(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
-				setIsLoading(false);
 			}
 		} catch (error) {
 			setData([]);
-			setIsLoading(false);
 		}
+		setIsLoading(false);
 	};
 
-	const deleteSchedule = async (id: string) => {
+	const deleteMR = async (id: string) => {
 		try {
-			const response = await DeleteSchedule(id);
-			if (response.status === 201) {
-				toast.success("Delete Schedule Success", {
+			const response = await DeleteMR(id);
+			if(response.data){
+				toast.success("Delete Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -124,21 +106,10 @@ export const Schedule = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getSchedule(1, 10);
-			} else {
-				toast.error("Delete Schedule Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
+				getSr(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Schedule Failed", {
+			toast.error("Delete Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -155,15 +126,15 @@ export const Schedule = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Time Schedule'
+				title='Service Request'
 				total={countData}
-				icon={<Clock className='w-[36px] h-[36px]' />}
+				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Time Schedule'
+				title='Service Request'
 				print={true}
 				showModal={showModal}
-				search={searchSchedule}
+				search={searchMaterialStock}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -202,46 +173,42 @@ export const Schedule = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.wor.job_no }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ moment(res.timesch).format('DD-MMMM-YYYY') }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.wor.customerPo.quotations.Customer.name }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.wor.subject }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_sr).format('DD-MM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.dispacth.srimg.timeschedule.wor.job_operational ? res.dispacth.srimg.timeschedule.wor.job_no_mr : res.dispacth.srimg.timeschedule.wor.job_no }</td>
+                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.username }</td>
+									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'view', false);
-											}}>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
 												<Eye color='white' />
 											</Button>
-											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'edit', false);
-											}}>
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true,'edit', false);
+												}}
+											>
 												<Edit color='white' />
 											</Button>
-											<Button 
+											<Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={ () => {
+												onClick={() => {
 													setDataSelected(res);
-													showModal(true,'delete', false);
-												}}>
+													showModal(true, "delete", false);
+												}}
+											>
 												<Trash2 color='white' />
 											</Button>
 										</div>
@@ -260,38 +227,38 @@ export const Schedule = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getSchedule(value, perPage);
+								getSr(value, perPage);
 							}}
 						/>
 					) : null
 				}
 			</Content>
-			{
-				modalContent === 'delete' ? (
-					<ModalDelete
-						data={dataSelected}
-						isModal={isModal}
-						content={modalContent}
-						showModal={showModal}
-						onDelete={deleteSchedule}
-					/>
-				) : (
-					<Modal
-						title='Time Schedule'
-						isModal={isModal}
-						content={modalContent}
-						showModal={showModal}
-					>
-						{ modalContent === 'view' ? (
-							<ViewSchedule content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
-						) :  modalContent === 'edit' ? (
-							<FormEditSchedule content={modalContent} showModal={showModal} dataSchedulle={dataSelected} holidayDate={holiday}/>
-						) : (
-							<FormCreateSchedule content={modalContent} showModal={showModal}/>
-						)}
-					</Modal>
-				)
-			}
+			{modalContent === "delete" ? (
+				<ModalDelete
+					data={dataSelected}
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+					onDelete={deleteMR}
+				/>
+			) : (
+				<Modal
+					title='Service Request'
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+				>
+					{modalContent === "view" ? (
+                        <></>
+						// <ViewMR dataSelected={dataSelected} />
+					) : modalContent === "add" ? (
+                        <FormCreateSr content={modalContent} showModal={showModal} />
+					) : (
+                        <></>
+                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+					)}
+				</Modal>
+			)}
 		</div>
 	);
 };

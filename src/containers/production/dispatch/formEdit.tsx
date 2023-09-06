@@ -859,10 +859,11 @@ export const FormEditDispatch = ({
 		setIsLoading(false);
 	};
 
-	const startDetail = async (id: string) => {
+	const startDetail = async (id: string, so: boolean) => {
 		let dataDetail = detail;
 		let dataBody = {
 			actual: new Date(),
+			so: so
 		};
 		let arrDetail = dataDetail.filter((detail: any) => {
 			return detail.part === partName;
@@ -1357,7 +1358,7 @@ export const FormEditDispatch = ({
 															onClick={() =>
 																dataDetail.actual === null ||
 																dataDetail.actual === ""
-																	? startDetail(dataDetail.id)
+																	? startDetail(dataDetail.id, false)
 																	: finishDetail(dataDetail.id)
 															}
 														>
@@ -1373,7 +1374,7 @@ export const FormEditDispatch = ({
 															onClick={() =>
 																dataDetail.actual === null ||
 																dataDetail.actual === ""
-																	? startDetail(dataDetail.id)
+																	? startDetail(dataDetail.id, true)
 																	: finishDetail(dataDetail.id)
 															}
 														>
