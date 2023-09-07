@@ -20,7 +20,7 @@ export default function BillOfMaterailPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Bill Of Material</title>
+				<title>DWITAMA E-WIS | Bill Of Material</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<BillOfMaterial />

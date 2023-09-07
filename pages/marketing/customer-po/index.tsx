@@ -20,7 +20,7 @@ export default function PoPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Customer PO</title>
+				<title>DWITAMA E-WIS | Customer PO</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Po />

@@ -20,7 +20,7 @@ export default function RegisterPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Register New User</title>
+				<title>DWITAMA E-WIS | Register New User</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Register />

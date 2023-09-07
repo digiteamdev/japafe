@@ -20,7 +20,7 @@ export default function EquipmentPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Equipment & Part</title>
+				<title>DWITAMA E-WIS | Equipment & Part</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Equipment />

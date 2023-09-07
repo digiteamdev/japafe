@@ -20,7 +20,7 @@ export default function SupplierPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Supplier</title>
+				<title>DWITAMA E-WIS | Supplier</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Supplier />

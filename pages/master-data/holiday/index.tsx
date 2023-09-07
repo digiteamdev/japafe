@@ -20,7 +20,7 @@ export default function HolidayPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Holiday</title>
+				<title>DWITAMA E-WIS | Holiday</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Holiday />

@@ -19,7 +19,7 @@ export default function DashboardPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Dashboard</title>
+				<title>DWITAMA E-WIS | Dashboard</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Dashboard />

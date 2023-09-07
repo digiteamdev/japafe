@@ -20,7 +20,7 @@ export default function MaterialTypePage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Material Type</title>
+				<title>DWITAMA E-WIS | Material Type</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<MaterialType />

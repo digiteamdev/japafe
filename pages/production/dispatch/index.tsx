@@ -20,7 +20,7 @@ export default function DispatchPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Dispatch</title>
+				<title>DWITAMA E-WIS | Dispatch</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Dispatch />

@@ -20,7 +20,7 @@ export default function DrawingReportPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Drawing</title>
+				<title>DWITAMA E-WIS | Drawing</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Drawing />

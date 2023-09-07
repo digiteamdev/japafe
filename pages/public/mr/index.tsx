@@ -20,7 +20,7 @@ export default function MaterialRequestPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Material Request</title>
+				<title>DWITAMA E-WIS | Material Request</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Mr />

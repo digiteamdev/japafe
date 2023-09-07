@@ -20,7 +20,7 @@ export default function WorPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Work Order Release</title>
+				<title>DWITAMA E-WIS | Work Order Release</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Wor />

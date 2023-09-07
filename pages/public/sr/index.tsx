@@ -20,7 +20,7 @@ export default function ServiceRequestPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Service Request</title>
+				<title>DWITAMA E-WIS | Service Request</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Sr />

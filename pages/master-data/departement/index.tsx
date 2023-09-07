@@ -20,7 +20,7 @@ export default function DepartementPage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Departement</title>
+				<title>DWITAMA E-WIS | Departement</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Departement />

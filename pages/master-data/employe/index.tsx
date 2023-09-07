@@ -20,7 +20,7 @@ export default function EmployePage() {
 	return (
 		<Layout>
 			<Head>
-				<title>JAPA E-WIS | Employe</title>
+				<title>DWITAMA E-WIS | Employe</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
 				<Employe />
