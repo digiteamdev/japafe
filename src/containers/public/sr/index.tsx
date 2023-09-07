@@ -11,9 +11,9 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSr } from "./formCreate";
-// import { ViewMR } from "./view";
-// import { FormEditMr } from "./formEdit";
-import { GetSr, SearchCustomer, DeleteMR } from "../../../services";
+import { ViewSR } from "./view";
+import { FormEditSr } from "./formEdit";
+import { GetSr, SearchCustomer, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -92,11 +92,11 @@ export const Sr = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deleteSr = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
+			const response = await DeleteSr(id);
 			if(response.data){
-				toast.success("Delete Material Request Success", {
+				toast.success("Delete Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,7 +109,7 @@ export const Sr = () => {
 				getSr(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Service Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -239,7 +239,7 @@ export const Sr = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deleteSr}
 				/>
 			) : (
 				<Modal
@@ -249,13 +249,11 @@ export const Sr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewMR dataSelected={dataSelected} />
+						<ViewSR dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
                         <FormCreateSr content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

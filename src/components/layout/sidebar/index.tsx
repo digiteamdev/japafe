@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Logo } from "../../../assets/script/Logo";
+import Logo from "../../../assets/logo/dwitama.png";
+import Image from "next/image";
 import { ListNav } from "./listSidebar";
 import { useRouter } from "next/router";
 import { ChevronDown, ChevronUp, X } from "react-feather";
@@ -43,12 +44,20 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 				<div className='w-full p-4 flex justify-between'>
 					<div className='block md:hidden lg:hidden'>
 						<div>
-							<Logo />
+							<Image
+								className='w-[70%] h-[60%] mr-2 mb-2'
+								src={Logo}
+								alt='logo'
+							/>
 						</div>
 					</div>
 					<div className='hidden md:flex lg:flex items-center'>
 						<div className='ml-4'>
-							<Logo />
+							<Image
+								className='w-[70%] h-[60%] mr-2 mb-2'
+								src={Logo}
+								alt='logo'
+							/>
 						</div>
 					</div>
 					<div className='none md:hidden lg:hidden'>
@@ -86,7 +95,9 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 								<div key={index}>
 									<li
 										className={`pl-4 mx-[12px] my-2 rounded-lg cursor-pointer py-2  ${
-											page === value.id ? "bg-red-500 hover:bg-red-400" : "hover:bg-red-300"
+											page === value.id
+												? "bg-red-500 hover:bg-red-400"
+												: "hover:bg-red-300"
 										}`}
 										onClick={() => {
 											if (value.subMenu) {
@@ -109,9 +120,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 										>
 											<span
 												className={`w-full text-md font-bold ${
-													page === value.id
-														? "text-white"
-														: "text-black"
+													page === value.id ? "text-white" : "text-black"
 												}`}
 											>
 												{value.title}
@@ -127,7 +136,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 									{link === value.id ? (
 										<ul>
 											{value.subMenu
-												? value.subMenu.map((result,i) => {
+												? value.subMenu.map((result, i) => {
 														return (
 															<Link
 																href={result.link}
@@ -150,7 +159,8 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 																</li>
 															</Link>
 														);
-												}) : null}
+												  })
+												: null}
 										</ul>
 									) : null}
 								</div>
