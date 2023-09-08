@@ -7,6 +7,7 @@ import {
 	GetBom,
 	AddMr,
 	AddMaterialStockOne,
+	GetAllMaterial
 } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
@@ -42,8 +43,9 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	const [userId, setUserId] = useState<string>("");
 	const [departement, setDepartement] = useState<string>("");
 	const [jobNo, setJobNo] = useState<string>("");
-	const [bomId, setBomId] = useState<string>("");
+	const [bomId, setBomId] = useState<any>("");
 	const [search, setSearch] = useState<string>("");
+	const [worID, setWorID] = useState<string>("");
 	const [materialID, setMaterialID] = useState<string>("");
 	const [satuan, setSatuan] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
@@ -85,6 +87,37 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		} catch (error) {}
 	};
 
+	const getMaterial = async () => {
+		try {
+			let list_material: any = []
+			let list_material_stock: any = []
+			const response = await GetAllMaterial();
+			if (response) {
+				response.data.result.map( (res: any) => {
+					list_material.push({
+						id: res.id,
+						bomId: null,
+						satuan: res.satuan,
+						name: res.material_name,
+						grup_material: res.grup_material.material_name,
+					})
+					res.Material_Stock.map( (stock: any) => {
+						list_material_stock.push({
+							material: res.id,
+							id: stock.id,
+							bomId: null,
+							satuan: res.satuan,
+							name: stock.spesifikasi,
+						});
+					})
+				})
+			}
+			setBomId(null);
+			setListMaterialStock(list_material_stock)
+			setListMaterial(list_material);
+		} catch (error) {}
+	};
+
 	const getBom = async () => {
 		try {
 			const response = await GetBom();
@@ -93,7 +126,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			}
 		} catch (error) {}
 	};
-
+	
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "worId") {
 			if (event.target.value !== "no data") {
@@ -102,38 +135,45 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				let material: any = [];
 				let list_material_stock: any = [];
 				let materialStock: any = [];
-				data.bom_detail.map((res: any) => {
-					if (!material.includes(res.materialId)) {
-						material.push(res.materialId);
-						list_material.push({
-							id: res.materialId,
-							bomId: res.id,
-							satuan: res.Material_master.satuan,
-							name: res.Material_master.material_name,
-							grup_material: res.Material_master.grup_material.material_name,
-						});
-					}
-					res.Material_master.Material_Stock.map((spec: any, i: number) => {
-						if (!materialStock.includes(spec.id)) {
-							materialStock.push(spec.id);
-							list_material_stock.push({
-								material: res.materialId,
-								id: spec.id,
+				if(data.srimg === undefined){
+					setWorID(data.id);
+					getMaterial();
+				}else{
+					data.bom_detail.map((res: any) => {
+						if (!material.includes(res.materialId)) {
+							material.push(res.materialId);
+							list_material.push({
+								id: res.materialId,
 								bomId: res.id,
 								satuan: res.Material_master.satuan,
-								name: spec.spesifikasi,
+								name: res.Material_master.material_name,
+								grup_material: res.Material_master.grup_material.material_name,
 							});
 						}
+						res.Material_master.Material_Stock.map((spec: any, i: number) => {
+							if (!materialStock.includes(spec.id)) {
+								materialStock.push(spec.id);
+								list_material_stock.push({
+									material: res.materialId,
+									id: spec.id,
+									bomId: res.id,
+									satuan: res.Material_master.satuan,
+									name: spec.spesifikasi,
+								});
+							}
+						});
 					});
-				});
-				setBomId(data.id);
-				setListMaterial(list_material);
-				setListMaterialStock(list_material_stock);
-				setJobNo(data.srimg.timeschedule.wor.job_no);
+					setWorID(data.srimg.timeschedule.wor.id);
+					setBomId(data.id);
+					setListMaterial(list_material);
+					setListMaterialStock(list_material_stock);
+				}
+				setJobNo( data.srimg === undefined ? data.job_no_mr : data.srimg.timeschedule.wor.job_no);
 				setIsMaterial(true);
 			} else {
 				setListMaterial([]);
 				setListMaterialStock([]);
+				setWorID("");
 				setJobNo("");
 				setIsMaterial(false);
 			}
@@ -154,9 +194,9 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			userId: getIdUser(),
 			date_mr: new Date(),
 			bomIdU: bomId,
+			worId: worID,
 			detailMr: listDetail,
 		};
-
 		try {
 			const response = await AddMr(data);
 			if (response.data) {
@@ -440,10 +480,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 															value={JSON.stringify(res)}
 															key={i}
 															selected={
-																res.srimg.timeschedule.wor.job_no === jobNo
+																res.srimg === undefined ? res.job_no_mr === jobNo : res.srimg.timeschedule.wor.job_no === jobNo
 															}
 														>
-															{res.srimg.timeschedule.wor.job_no}
+															{ res.srimg === undefined ? res.job_no_mr :  res.srimg.timeschedule.wor.job_no}
 														</option>
 													);
 												})
