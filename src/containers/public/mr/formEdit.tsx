@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { GetEmployeById, GetBom, EditMR, DeleteMRDetail } from "../../../services";
+import { GetEmployeById, GetBom, EditMR, DeleteMRDetail, GetAllMaterial } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -81,36 +81,72 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
                 mrId: dataSelected.id
 			});
 		});
-		dataSelected.bom.bom_detail.map((res: any) => {
-			if (!material.includes(res.materialId)) {
-				material.push(res.materialId);
-				list_material.push({
-					id: res.materialId,
-					bomId: res.id,
-					satuan: res.Material_master.satuan,
-					name: res.Material_master.material_name,
-				});
-			}
-			res.Material_master.Material_Stock.map((spec: any, i: number) => {
-				if (!materialStock.includes(spec.id)) {
-					materialStock.push(spec.id);
-					list_material_stock.push({
-						material: res.materialId,
-						id: spec.id,
-						name: spec.spesifikasi,
+		if(dataSelected.wor.job_operational){
+			setJobNo(dataSelected.wor.job_no_mr);
+			getMaterial()
+		}else{
+			dataSelected.bom.bom_detail.map((res: any) => {
+				if (!material.includes(res.materialId)) {
+					material.push(res.materialId);
+					list_material.push({
+						id: res.materialId,
+						bomId: res.id,
+						satuan: res.Material_master.satuan,
+						name: res.Material_master.material_name,
 					});
 				}
+				res.Material_master.Material_Stock.map((spec: any, i: number) => {
+					if (!materialStock.includes(spec.id)) {
+						materialStock.push(spec.id);
+						list_material_stock.push({
+							material: res.materialId,
+							id: spec.id,
+							name: spec.spesifikasi,
+						});
+					}
+				});
 			});
-		});
+			setListMaterial(list_material);
+			setListMaterialStock(list_material_stock);
+			setJobNo(dataSelected.wor.job_no);
+		}
 		setData({
 			userId: dataSelected.userId,
 			date_mr: dataSelected.date_mr,
 			detailMr: newDetail,
 		});
-		setListMaterial(list_material);
-		setListMaterialStock(list_material_stock);
-		setJobNo(dataSelected.bom.srimg.timeschedule.wor.job_no);
 		setDateMR(dataSelected.date_mr);
+	};
+
+	const getMaterial = async () => {
+		try {
+			let list_material: any = []
+			let list_material_stock: any = []
+			const response = await GetAllMaterial();
+			if (response) {
+				response.data.result.map( (res: any) => {
+					list_material.push({
+						id: res.id,
+						bomId: null,
+						satuan: res.satuan,
+						name: res.material_name,
+						grup_material: res.grup_material.material_name,
+					})
+					res.Material_Stock.map( (stock: any) => {
+						list_material_stock.push({
+							material: res.id,
+							id: stock.id,
+							bomId: null,
+							satuan: res.satuan,
+							name: stock.spesifikasi,
+						});
+					})
+				})
+			}
+			// setBomId(null);
+			setListMaterialStock(list_material_stock)
+			setListMaterial(list_material);
+		} catch (error) {}
 	};
 
 	const getEmploye = async () => {
