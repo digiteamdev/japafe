@@ -7,7 +7,7 @@ import {
 	GetAllDispatch,
 	GetAllWorkerCenter,
 	AddSr,
-	GetAllEquipment
+	GetAllEquipment,
 } from "../../../services";
 import { getIdUser } from "../../../configs/session";
 import { Plus, Trash2 } from "react-feather";
@@ -22,6 +22,7 @@ interface props {
 interface data {
 	dispacthIDS: string;
 	userId: any;
+	worId: string;
 	date_sr: any;
 	SrDetail: [
 		{
@@ -55,6 +56,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		dispacthIDS: "",
 		userId: "",
+		worId: "",
 		date_sr: new Date(),
 		SrDetail: [
 			{
@@ -101,12 +103,12 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 		try {
 			const response = await GetAllEquipment();
 			if (response) {
-				let newlistPart: any = []
-				response.data.result.map( (res: any) => {
-					res.eq_part.map( (result: any) => {
-						newlistPart.push(result)
-					})
-				})
+				let newlistPart: any = [];
+				response.data.result.map((res: any) => {
+					res.eq_part.map((result: any) => {
+						newlistPart.push(result);
+					});
+				});
 				setListPart(newlistPart);
 			}
 		} catch (error) {}
@@ -119,56 +121,73 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 				let userID = getIdUser();
 				let list_service: any = [];
 				let list_part: any = [];
-				data.dispatchDetail.map((res: any) => {
-					if (res.so) {
-						data.srimg.srimgdetail.map((srimg: any) => {
-							if(!list_part.includes(srimg.name_part)){
-								list_part.push(srimg.name_part)
-							}
-							if (srimg.name_part === res.part) {
-								list_service.push({
-									dispacthdetailId: res.id,
-									workCenterId: res.workId,
-									description: res.workCenter.name,
-									part: res.part,
-									unit: data.srimg.timeschedule.wor.unit,
-									qty: srimg.qty,
-									note: "",
-								});
-							}
-						});
-					} else {
-						list_service.push({
-							dispacthdetailId: null,
-							workCenterId: "",
-							description: "",
-							part: "",
-							unit: "",
-							qty: 0,
-							note: "",
-						});
-					}
-				});
-				setJobNo(data.srimg.timeschedule.wor.job_no);
-				setSubject(data.srimg.timeschedule.wor.subject);
-				setCustomer(
-					data.srimg.timeschedule.wor.customerPo.quotations.Customer.name
-				);
+				if (data.srimg === undefined) {
+					list_service.push({
+						dispacthdetailId: null,
+						workCenterId: "",
+						description: "",
+						part: "",
+						unit: "",
+						qty: 0,
+						note: "",
+					});
+					setJobNo(data.job_no_mr);
+					setSubject(data.subject);
+					setCustomer(data.customerPo.quotations.Customer.name);
+					setIsOperasional(true);
+				} else {
+					data.dispatchDetail.map((res: any) => {
+						if (res.so) {
+							data.srimg.srimgdetail.map((srimg: any) => {
+								if (!list_part.includes(srimg.name_part)) {
+									list_part.push(srimg.name_part);
+								}
+								if (srimg.name_part === res.part) {
+									list_service.push({
+										dispacthdetailId: res.id,
+										workCenterId: res.workId,
+										description: res.workCenter.name,
+										part: res.part,
+										unit: data.srimg.timeschedule.wor.unit,
+										qty: srimg.qty,
+										note: "",
+									});
+								}
+							});
+						} else {
+							list_service.push({
+								dispacthdetailId: null,
+								workCenterId: "",
+								description: "",
+								part: "",
+								unit: "",
+								qty: 0,
+								note: "",
+							});
+						}
+					});
+					setJobNo(data.srimg.timeschedule.wor.job_no);
+					setSubject(data.srimg.timeschedule.wor.subject);
+					setCustomer(
+						data.srimg.timeschedule.wor.customerPo.quotations.Customer.name
+					);
+					setIsOperasional(false);
+				}
 				setData({
 					dispacthIDS: data.id,
 					userId: userID,
+					worId: data.srimg === undefined ? data.id : data.srimg.timeschedule.wor.id,
 					date_sr: new Date(),
 					SrDetail: list_service,
 				});
-				setIsOperasional(data.srimg.timeschedule.wor.job_operational)
-				setListPartDispatch(list_part)
+				setListPartDispatch(list_part);
 				setIsService(true);
 			} else {
 				setJobNo("");
 				setSubject("");
 				setCustomer("");
-				setListPartDispatch([])
-				setIsOperasional(false)
+				setListPartDispatch([]);
+				setIsOperasional(false);
 				setIsService(false);
 			}
 		}
@@ -190,6 +209,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 		let data = {
 			dispacthIDS: payload.dispacthIDS,
 			userId: payload.userId,
+			worId: payload.worId,
 			date_sr: payload.date_sr,
 			SrDetail: listService,
 		};
@@ -439,12 +459,14 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 															value={JSON.stringify(res)}
 															key={i}
 															selected={
-																res.srimg.timeschedule.wor.job_no === jobNo
+																res.srimg === undefined
+																	? res.job_no_mr === jobNo
+																	: res.srimg.timeschedule.wor.job_no === jobNo
 															}
 														>
-															{res.srimg.timeschedule.wor.job_operational
-																? res.srimg.timeschedule.wor.job_no_mr
-																: res.srimg.timeschedule.wor.job_no}
+															{res.job_operational === undefined
+																? res.srimg.timeschedule.wor.job_no
+																: res.job_no_mr}
 														</option>
 													);
 												})
@@ -511,25 +533,29 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																			<option value='no data' selected>
 																				Choose Part
 																			</option>
-																			{ isOperasional ? listPart.map((res: any, idx: number) => {
-																				return (
-																					<option
-																						value={res.nama_part}
-																						key={idx}
-																					>
-																						{res.nama_part} - { res.equipment.nama }
-																					</option>
-																				);
-																			}) : listPartDispatch.map( (res:any, idx: number) => {
-																				return (
-																					<option
-																						value={res}
-																						key={idx}
-																					>
-																						{res}
-																					</option>
-																				)
-																			})}
+																			{isOperasional
+																				? listPart.map(
+																						(res: any, idx: number) => {
+																							return (
+																								<option
+																									value={res.nama_part}
+																									key={idx}
+																								>
+																									{res.nama_part} -{" "}
+																									{res.equipment.nama}
+																								</option>
+																							);
+																						}
+																				  )
+																				: listPartDispatch.map(
+																						(res: any, idx: number) => {
+																							return (
+																								<option value={res} key={idx}>
+																									{res}
+																								</option>
+																							);
+																						}
+																				  )}
 																		</InputSelect>
 																	) : (
 																		<>
@@ -555,19 +581,18 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		placeholder='Deskription'
 																		label='Deskription'
 																		onChange={(e: any) => {
-																			if(e.target.value === 'no data'){
+																			if (e.target.value === "no data") {
 																				setFieldValue(
 																					`SrDetail.${i}.workCenterId`,
 																					null
-																				)
-																			}else{
+																				);
+																			} else {
 																				setFieldValue(
 																					`SrDetail.${i}.workCenterId`,
 																					e.target.value
-																				)
+																				);
 																			}
-																		}
-																		}
+																		}}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -575,19 +600,21 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		<option value='no data' selected>
 																			Choose Deskription
 																		</option>
-																		{listWorkCenter.map((res: any, idx: number) => {
-																			return (
-																				<option
-																					value={res.id}
-																					selected={
-																						res.id === result.workCenterId
-																					}
-																					key={idx}
-																				>
-																					{res.name}
-																				</option>
-																			);
-																		})}
+																		{listWorkCenter.map(
+																			(res: any, idx: number) => {
+																				return (
+																					<option
+																						value={res.id}
+																						selected={
+																							res.id === result.workCenterId
+																						}
+																						key={idx}
+																					>
+																						{res.name}
+																					</option>
+																				);
+																			}
+																		)}
 																	</InputSelect>
 																</div>
 																<div className='w-full'>

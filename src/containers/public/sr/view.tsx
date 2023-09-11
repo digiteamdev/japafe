@@ -6,7 +6,7 @@ interface props {
 }
 
 export const ViewSR = ({ dataSelected }: props) => {
-
+    
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -28,7 +28,7 @@ export const ViewSR = ({ dataSelected }: props) => {
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.dispacth.srimg.timeschedule.wor.job_operational ? dataSelected.dispacth.srimg.timeschedule.wor.job_no_mr : dataSelected.dispacth.srimg.timeschedule.wor.job_no }
+										{ dataSelected.wor.job_operational ? dataSelected.wor.job_no_mr : dataSelected.wor.job_no }
 									</td>
 								</tr>
                                 <tr>

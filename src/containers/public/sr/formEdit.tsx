@@ -23,6 +23,7 @@ interface props {
 interface data {
 	dispacthIDS: string;
 	userId: any;
+	worId: string;
 	date_sr: any;
 	SrDetail: [
 		{
@@ -56,6 +57,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		dispacthIDS: "",
 		userId: "",
+		worId: "",
 		date_sr: new Date(),
 		SrDetail: [
 			{
@@ -83,7 +85,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 	const settingData = () => {
 		let listDetail: any = [];
 		dataSelected.SrDetail.map((res: any) => {
-			let part: any = res.part.split(' - ')
+			let part: any = res.part.split(" - ");
 			listDetail.push({
 				dispacthdetailId: res.dispacthdetailId,
 				workCenterId: res.description,
@@ -94,19 +96,23 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 				note: res.unit,
 			});
 		});
-		getDispatch(dataSelected.dispacth);
+		getDispatch(
+			dataSelected.dispacth === null ? dataSelected.wor : dataSelected.dispacth
+		);
 		setData({
 			dispacthIDS: dataSelected.dispacthIDS,
 			userId: dataSelected.userId,
+			worId: dataSelected.worId,
 			date_sr: dataSelected.date_sr,
 			SrDetail: listDetail,
 		});
 		setIsService(true);
-		setCustomer(
-			dataSelected.dispacth.srimg.timeschedule.wor.customerPo.quotations
-				.Customer.name
-		);
-		setSubject(dataSelected.dispacth.srimg.timeschedule.wor.subject);
+		// setCustomer(
+		// 	dataSelected.dispacth.srimg.timeschedule.wor.customerPo.quotations
+		// 		.Customer.name
+		// );
+		setJobNo(dataSelected.wor.job_operational ? dataSelected.wor.job_no_mr : dataSelected.wor.job_no)
+		setSubject(dataSelected.wor.subject);
 	};
 
 	const getDispatch = async (data: any) => {
@@ -192,6 +198,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 				setData({
 					dispacthIDS: data.id,
 					userId: userID,
+					worId: dataSelected.worId,
 					date_sr: new Date(),
 					SrDetail: list_service,
 				});
@@ -445,7 +452,19 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 										/>
 									</div>
 									<div className='w-full'>
-										<InputSelect
+										<Input
+											id='job_no'
+											name='job_no'
+											placeholder='Job No'
+											label='Job No'
+											type='text'
+											value={jobNo}
+											disabled={true}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+										{/* <InputSelect
 											id='worId'
 											name='worId'
 											placeholder='Job No'
@@ -475,14 +494,14 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 															key={i}
 															selected={res.id === values.dispacthIDS}
 														>
-															{res.srimg.timeschedule.wor.job_operational
-																? res.srimg.timeschedule.wor.job_no_mr
+															{res.srimg === undefined
+																? res.job_no_mr
 																: res.srimg.timeschedule.wor.job_no}
 														</option>
 													);
 												})
 											)}
-										</InputSelect>
+										</InputSelect> */}
 									</div>
 								</Section>
 								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -545,7 +564,13 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 																		</option>
 																		{listPart.map((res: any, idx: number) => {
 																			return (
-																				<option value={res.nama_part} key={idx} selected={ res.nama_part === result.part }>
+																				<option
+																					value={res.nama_part}
+																					key={idx}
+																					selected={
+																						res.nama_part === result.part
+																					}
+																				>
 																					{res.nama_part} - {res.equipment.nama}
 																				</option>
 																			);
