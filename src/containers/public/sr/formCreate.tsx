@@ -154,16 +154,6 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 									});
 								}
 							});
-						} else {
-							list_service.push({
-								dispacthdetailId: null,
-								workCenterId: "",
-								description: "",
-								part: "",
-								unit: "",
-								qty: 0,
-								note: "",
-							});
 						}
 					});
 					setJobNo(data.srimg.timeschedule.wor.job_no);

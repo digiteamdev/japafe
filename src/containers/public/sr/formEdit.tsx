@@ -6,8 +6,9 @@ import {
 	AddMaterialStockOne,
 	GetAllDispatch,
 	GetAllWorkerCenter,
-	AddSr,
+	EditSR,
 	GetAllEquipment,
+	DeleteSRDetail
 } from "../../../services";
 import { getIdUser } from "../../../configs/session";
 import { Plus, Trash2 } from "react-feather";
@@ -27,6 +28,7 @@ interface data {
 	date_sr: any;
 	SrDetail: [
 		{
+			id: string;
 			dispacthdetailId: any;
 			workCenterId: string;
 			description: string;
@@ -54,6 +56,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 	const [listPart, setListPart] = useState<any>([]);
 	const [listPartDispatch, setListPartDispatch] = useState<any>([]);
 	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
+	const [listDeleteSR, setListDeleteSR] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		dispacthIDS: "",
 		userId: "",
@@ -61,6 +64,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 		date_sr: new Date(),
 		SrDetail: [
 			{
+				id: "",
 				dispacthdetailId: null,
 				workCenterId: "",
 				description: "",
@@ -87,8 +91,9 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 		dataSelected.SrDetail.map((res: any) => {
 			let part: any = res.part.split(" - ");
 			listDetail.push({
+				id: res.id,
 				dispacthdetailId: res.dispacthdetailId,
-				workCenterId: res.description,
+				workCenterId: res.workCenter.id,
 				description: res.workCenter.name,
 				part: part[0],
 				unit: res.unit,
@@ -107,10 +112,9 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 			SrDetail: listDetail,
 		});
 		setIsService(true);
-		// setCustomer(
-		// 	dataSelected.dispacth.srimg.timeschedule.wor.customerPo.quotations
-		// 		.Customer.name
-		// );
+		setCustomer(
+			dataSelected.wor.customerPo.quotations.Customer.name
+		);
 		setJobNo(dataSelected.wor.job_operational ? dataSelected.wor.job_no_mr : dataSelected.wor.job_no)
 		setSubject(dataSelected.wor.subject);
 	};
@@ -216,11 +220,13 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 		}
 	};
 
-	const addSr = async (payload: data) => {
+	const editSr = async (payload: data) => {
 		setIsLoading(true);
 		let listService: any = [];
 		payload.SrDetail.map((res: any) => {
 			listService.push({
+				id: res.id,
+				srId: dataSelected.id,
 				dispacthdetailId: res.dispacthdetailId,
 				description: res.workCenterId,
 				note: res.note,
@@ -229,17 +235,15 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 				unit: res.unit,
 			});
 		});
-		let data = {
-			dispacthIDS: payload.dispacthIDS,
-			userId: payload.userId,
-			date_sr: payload.date_sr,
-			SrDetail: listService,
-		};
+
+		listDeleteSR.map( (data:any) => {
+			deleteSr(data)
+		})
 
 		try {
-			const response = await AddSr(data);
+			const response = await EditSR(listService);
 			if (response.data) {
-				toast.success("Add Service Request Success", {
+				toast.success("Edit Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -252,7 +256,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Service Request Failed", {
+			toast.error("Edit Service Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -315,6 +319,23 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 			});
 		}
 		setIsLoading(false);
+	};
+
+	const removeDetail = (data: any) => {
+        let listDelete: any = listDeleteSR
+        if(data.id !== ""){
+            listDelete.push(data.id)
+        }
+		setListDeleteSR(listDelete)
+    }
+
+	const deleteSr = async (id: string) => {
+		try {
+			await DeleteSRDetail(id);
+            return false
+		} catch (error) {
+            return false
+		}
 	};
 
 	return (
@@ -420,9 +441,9 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 					<p className='hidden'>{JSON.stringify(data)}</p>
 					<Formik
 						initialValues={{ ...data }}
-						validationSchema={srSchema}
+						// validationSchema={srSchema}
 						onSubmit={(values) => {
-							console.log(values);
+							editSr(values);
 						}}
 						enableReinitialize
 					>
@@ -694,6 +715,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 																		className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 																		onClick={() =>
 																			arraySr.push({
+																				id: "",
 																				dispacthdetailId: null,
 																				workCenterId: "",
 																				description: "",
@@ -712,7 +734,10 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 																values.SrDetail.length === 1 ? null : (
 																	<a
 																		className='flex ml-4 mt-2 text-[20px] text-red-600 hover:text-red-400 cursor-pointer'
-																		onClick={() => arraySr.remove(i)}
+																		onClick={() => {
+																			removeDetail(result);
+																			arraySr.remove(i)
+																		}}
 																	>
 																		<Trash2 size={22} className='mt-1 mr-1' />
 																		Remove
