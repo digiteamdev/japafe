@@ -38,7 +38,7 @@ export const Dispatch = () => {
 		{ name: "No Job" },
 		{ name: "Id Dispatch" },
 		{ name: "Dispatch Date" },
-		{ name: "Equipment & Part" },
+		{ name: "Equipment" },
 		{ name: "Customer" },
 		{ name: "Action" }
 	];
@@ -64,9 +64,9 @@ export const Dispatch = () => {
 		if(data.length > 0){
 			data.map( (res: any) => {
 				if(equipment === null){
-					equipment = res.equipment.nama + " - " + res.eq_part.nama_part
+					equipment = res.equipment.nama
 				}else{
-					equipment = equipment + ", " + res.equipment.nama + " - " + res.eq_part.nama_part
+					equipment = equipment + ", " + res.equipment.nama
 				}
 			})
 			return equipment

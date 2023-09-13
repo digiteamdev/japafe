@@ -879,7 +879,7 @@ export const FormEditDispatch = ({
 						dispacthID: dataDispatch.id,
 						index: res.index,
 						aktivitasID: res.aktivitasID,
-						actual: new Date(),
+						actual: id === res.id ? new Date() : res.actual,
 						approvebyID: res.approvebyID,
 						workId: res.workId,
 						subdepId: res.subdepId,

@@ -276,6 +276,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
         if(data.id !== ""){
             listDelete.push(data.id)
         }
+		setListMRdelete(listDelete)
     }
 
 	return (
