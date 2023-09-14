@@ -33,21 +33,21 @@ export const Content = ({
 							/>
 						</div>
 					</div>
-					<div className='lg:w-[10%] md:w-[10%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
+					{/* <div className='lg:w-[10%] md:w-[10%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
 						{print ? (
 							<button className='bg-white hover:bg-gray-200 text-black py-2 px-4 rounded-lg inline-flex items-center border border-primary-300 w-full mr-3'>
 								<Printer size={18} />
 								<span className='ml-2'>Print</span>
 							</button>
 						) : null}
-					</div>
-					<div className='lg:w-[25%] md:w-[25%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
+					</div> */}
+					<div className='lg:w-[35%] md:w-[35%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
 						{print ? (
 							<button
-								className='bg-primary-100 hover:bg-primary-50 text-black py-2 px-4 rounded-lg inline-flex items-center border border-primary-300 w-full'
+								className='bg-primary-100 hover:bg-primary-50 text-black py-2 px-4 rounded-lg inline-flex justify-center border border-primary-300 w-full'
 								onClick={() => showModal(true, "add", false)}
 							>
-								<FilePlus size={18} />
+								<FilePlus size={18} className="mt-[5px]" />
 								<span className='ml-2'>New {title}</span>
 							</button>
 						) : null}

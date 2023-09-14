@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Menu, Search } from 'react-feather';
 import { Dropdown } from '../menu';
 import { getUsername } from '../../../configs/session';
@@ -8,6 +9,19 @@ interface props {
 }
 
 export const Header = ({ isSidebar, showSidebar }: props) => {
+
+	const [username, setUsername] = useState<any>();
+
+	useEffect( () => {
+		let user = getUsername()
+		if (user === undefined) {
+			setUsername("")
+		}else{
+			setUsername(user)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
+
 	return (
 		<nav className={`${ isSidebar ? 'md:pl-80' : 'md:pl-3' } fixed z-18 w-full bg-blue-100 transition-all duration-500 ease-in-out`}>
 			<div className='py-3 px-3 lg:px-5 lg:pl-3'>
@@ -27,7 +41,7 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
                             <Menu size={28}/>
 						</button>
 						<div className='relative mt-1 w-full'>
-							<div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none text-primary-500'>
+							{/* <div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none text-primary-500'>
 								<Search size={28}/>
 							</div>
 							<input
@@ -35,11 +49,11 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 								name='search'
 								className='bg-white text-lg border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-[90%] outline-primary-600 pl-11 p-2.5'
 								placeholder='Search'
-							/>
+							/> */}
 						</div>
 					</div>
 					<div className='flex items-center'>
-						{/* <p className='mr-2'>{ getUsername() }</p> */}
+						<p className='mr-2'>{ username }</p>
 						<Dropdown />
 					</div>
 				</div>

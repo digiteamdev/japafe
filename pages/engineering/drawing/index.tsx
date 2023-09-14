@@ -8,7 +8,7 @@ import Head from 'next/head';
 export default function DrawingReportPage() {
 
 	const router = useRouter()
-	const token = getToken();
+	const token = getToken()
 	
 	useEffect( () => {
 		if (token === undefined) {
