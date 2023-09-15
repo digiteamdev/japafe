@@ -25,6 +25,7 @@ interface data {
 			satuan: string;
 			qty: string;
             id: string;
+			note: string;
             mrId: string
 		}
 	];
@@ -52,6 +53,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				materialStockId: "",
 				qty: "",
                 id: "",
+				note: "",
                 mrId: ""
 			},
 		],
@@ -78,6 +80,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				satuan: res.Material_Stock.Material_master.satuan,
 				qty: res.qty,
                 id: res.id,
+				note: res.note,
                 mrId: dataSelected.id
 			});
 		});
@@ -224,6 +227,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				materialStockId: res.materialStockId,
 				qty: parseInt(res.qty),
 				id: res.id,
+				note: res.note,
 				mrId: dataSelected.id,
 			});
 		});
@@ -389,171 +393,188 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 							render={(arrayMr) =>
 								values.detailMr.map((result: any, i: number) => {
 									return (
-										<Section
-											className='grid md:grid-cols-6 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
-											key={i}
-										>
-											<div className='w-full'>
-												<Input
-													id='job No'
-													name='job No'
-													placeholder='Job No'
-													label='Job No'
-													type='text'
-													value={jobNo}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<InputSelect
-													id={`detailMr.${i}.material`}
-													name={`detailMr.${i}.material`}
-													placeholder='Material Name'
-													label='Material Name'
-													onChange={(e: any) => {
-														if (e.target.value === "no data") {
-															setFieldValue(`detailMr.${i}.material`, "");
-															setFieldValue(`detailMr.${i}.bomId`, "");
-														} else {
-															let data = JSON.parse(e.target.value);
-															setFieldValue(`detailMr.${i}.material`, data.id);
-															setFieldValue(`detailMr.${i}.bomId`, data.bomId);
-															setFieldValue(
-																`detailMr.${i}.satuan`,
-																data.satuan
-															);
-														}
-													}}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Material Name
-													</option>
-													{listMaterial.length === 0 ? (
-														<option value='no data'>No data</option>
-													) : (
-														listMaterial.map((res: any, i: number) => {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={res.id === result.material}
-																>
-																	{res.name}
-																</option>
-															);
-														})
-													)}
-												</InputSelect>
-											</div>
-											<div className='w-full'>
-												<InputSelect
-													id={`detailMr.${i}.materialStockId`}
-													name={`detailMr.${i}.materialStockId`}
-													placeholder='Spesifikasi'
-													label='Spesifikasi'
-													onChange={(e: any) => {
-														setFieldValue(
-															`detailMr.${i}.materialStockId`,
-															e.target.value
-														);
-													}}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Spesifikasi
-													</option>
-													{listMaterialStock.length === 0 ? (
-														<option value='no data'>No data</option>
-													) : (
-														listMaterialStock
-															.filter((res: any) => {
-																return res.material === result.material;
-															})
-															.map((res: any, i: number) => {
+										<div key={i}>
+											<Section
+												className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
+											>
+												<div className='w-full'>
+													<Input
+														id='job No'
+														name='job No'
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={jobNo}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.material`}
+														name={`detailMr.${i}.material`}
+														placeholder='Material Name'
+														label='Material Name'
+														onChange={(e: any) => {
+															if (e.target.value === "no data") {
+																setFieldValue(`detailMr.${i}.material`, "");
+																setFieldValue(`detailMr.${i}.bomId`, "");
+															} else {
+																let data = JSON.parse(e.target.value);
+																setFieldValue(`detailMr.${i}.material`, data.id);
+																setFieldValue(`detailMr.${i}.bomId`, data.bomId);
+																setFieldValue(
+																	`detailMr.${i}.satuan`,
+																	data.satuan
+																);
+															}
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option value='no data' selected>
+															Choose Material Name
+														</option>
+														{listMaterial.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+															listMaterial.map((res: any, i: number) => {
 																return (
 																	<option
-																		value={res.id}
+																		value={JSON.stringify(res)}
 																		key={i}
-																		selected={res.id === result.materialStockId}
+																		selected={res.id === result.material}
 																	>
 																		{res.name}
 																	</option>
 																);
 															})
-													)}
-												</InputSelect>
-											</div>
-											<div className='w-full'>
-												<Input
-													id={`detailMr.${i}.satuan`}
-													name={`detailMr.${i}.satuan`}
-													placeholder='Satuan'
-													label='Satuan'
-													type='text'
-													value={result.satuan}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id={`detailMr.${i}.qty`}
-													name={`detailMr.${i}.qty`}
-													placeholder='Jumlah'
-													label='Jumlah'
-													value={result.qty}
-													type='number'
-													onChange={(e: any) =>
-														setFieldValue(`detailMr.${i}.qty`, e.target.value)
-													}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='flex w-full'>
-												{i + 1 === values.detailMr.length ? (
-													<a
-														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-														onClick={() =>
-															arrayMr.push({
-																bomId: "",
-																materialStockId: "",
-																satuan: "",
-																qty: "",
-                                                                id: "",
-                                                                mrId: dataSelected.id
-															})
+														)}
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.materialStockId`}
+														name={`detailMr.${i}.materialStockId`}
+														placeholder='Spesifikasi'
+														label='Spesifikasi'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.materialStockId`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option value='no data' selected>
+															Choose Spesifikasi
+														</option>
+														{listMaterialStock.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+															listMaterialStock
+																.filter((res: any) => {
+																	return res.material === result.material;
+																})
+																.map((res: any, i: number) => {
+																	return (
+																		<option
+																			value={res.id}
+																			key={i}
+																			selected={res.id === result.materialStockId}
+																		>
+																			{res.name}
+																		</option>
+																	);
+																})
+														)}
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.satuan`}
+														name={`detailMr.${i}.satuan`}
+														placeholder='Satuan'
+														label='Satuan'
+														type='text'
+														value={result.satuan}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.qty`}
+														name={`detailMr.${i}.qty`}
+														placeholder='Jumlah'
+														label='Jumlah'
+														value={result.qty}
+														type='number'
+														onChange={(e: any) =>
+															setFieldValue(`detailMr.${i}.qty`, e.target.value)
 														}
-													>
-														<Plus size={23} className='mt-1' />
-														Add
-													</a>
-												) : null}
-												{i === 0 && values.detailMr.length === 1 ? null : (
-													<a
-														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-														onClick={() => {
-                                                            removeDetail(result)
-                                                            arrayMr.remove(i)
-                                                        }}
-													>
-														<Trash2 size={22} className='mt-1 mr-1' />
-														Remove
-													</a>
-												)}
-											</div>
-										</Section>
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														value={result.note}
+														type='text'
+														onChange={(e: any) =>
+															setFieldValue(`detailMr.${i}.note`, e.target.value)
+														}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+												<div className='flex w-full'>
+													{i + 1 === values.detailMr.length ? (
+														<a
+															className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+															onClick={() =>
+																arrayMr.push({
+																	bomId: "",
+																	materialStockId: "",
+																	satuan: "",
+																	qty: "",
+																	id: "",
+																	mrId: dataSelected.id
+																})
+															}
+														>
+															<Plus size={23} className='mt-1' />
+															Add
+														</a>
+													) : null}
+													{i === 0 && values.detailMr.length === 1 ? null : (
+														<a
+															className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+															onClick={() => {
+																removeDetail(result)
+																arrayMr.remove(i)
+															}}
+														>
+															<Trash2 size={22} className='mt-1 mr-1' />
+															Remove
+														</a>
+													)}
+												</div>
+										</div>
 									);
 								})
 							}

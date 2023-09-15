@@ -28,6 +28,7 @@ interface data {
 			material: string;
 			materialStockId: string;
 			satuan: string;
+			note: string;
 			qty: string;
 		}
 	];
@@ -61,6 +62,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				material: "",
 				satuan: "",
 				materialStockId: "",
+				note: "",
 				qty: "",
 			},
 		],
@@ -188,6 +190,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				bomIdD: res.bomId,
 				materialStockId: res.materialStockId,
 				qty: parseInt(res.qty),
+				note: res.note
 			});
 		});
 		let data = {
@@ -570,7 +573,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 												values.detailMr.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<Input
 																		id='job No'
@@ -739,6 +742,24 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.note`}
+																		name={`detailMr.${i}.note`}
+																		placeholder='Note'
+																		label='Note'
+																		type='text'
+																		onChange={(e: any) =>
+																			setFieldValue(
+																				`detailMr.${i}.note`,
+																				e.target.value
+																			)
+																		}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 															</Section>
 															<div className='flex w-full'>
 																{i + 1 === values.detailMr.length ? (
@@ -747,7 +768,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																		onClick={() =>
 																			arrayMr.push({
 																				bomId: "",
+																				material: "",
+																				satuan: "",
 																				materialStockId: "",
+																				note: "",
 																				qty: "",
 																			})
 																		}
