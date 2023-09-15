@@ -147,7 +147,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 
 	const getEmploye = async () => {
 		try {
-			const response = await GetAllEmployeDepart('SALES & MKT','Sales Marketing');
+			const response = await GetAllEmployeDepart('SALES %26 MKT','Sales Marketing');
 			if (response.data) {
 				setListEmploye(response.data.result);
 			}
