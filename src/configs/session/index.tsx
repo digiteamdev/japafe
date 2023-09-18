@@ -13,6 +13,11 @@ export const getToken = () => {
     return token
 }
 
+export const getRole = () => {
+    let role = Cookies.get('role');
+    return role
+}
+
 export const getUsername = () => {
     let username = Cookies.get('username');
     return username

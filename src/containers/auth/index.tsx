@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Logo from "../../assets/logo/logojapa.png";
+import Logo from "../../assets/logo/logoWms.png";
 import Image from "next/image";
 import { Formik, Form } from "formik";
 import { loginSchema } from "../../schema/auth/loginSchema";
@@ -41,7 +41,7 @@ export const CardLogin = () => {
 	return (
 		<div className='rounded-lg bg-white p-6 w-96'>
 			<div className='w-full justify-center flex p-3'>
-				<Image className='w-[70%] h-[60%] mr-2 mb-2' src={Logo} alt='logo' />
+				<Image className='w-[100%] h-[60%] mr-2 mb-2' src={Logo} alt='logo' />
 			</div>
 
 			<Formik
