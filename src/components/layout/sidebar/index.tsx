@@ -4,6 +4,7 @@ import Link from "next/link";
 import Logo from "../../../assets/logo/dwitama.png";
 import Image from "next/image";
 import { ListNav } from "./listSidebar";
+import { getRole } from "../../../configs/session";
 import { useRouter } from "next/router";
 import { ChevronDown, ChevronUp, X } from "react-feather";
 
@@ -18,8 +19,25 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 	const [link, setLink] = useState<any>("dashboard");
 	const [subMenu, setSubMenu] = useState<any>(null);
 	const [page, setPage] = useState<string>("dashboard");
+	const [role, setRole] = useState<any>([]);
+	const [listSidebar, setListSidebar] = useState<any>([]);
 
 	useEffect(() => {
+		let roles = getRole();
+		if (roles !== undefined) {
+			let sidebar: any = []
+			let role = JSON.parse(roles)
+			role.map( (role:any, i: number) => {
+				ListNav.filter( (res: any) => {
+					if(res.role === 'all'){
+						sidebar.push(res)
+					}else if(res.role.includes(role.role.role_name)){
+						sidebar.push(res)
+					}
+				})
+			})
+			setListSidebar(sidebar)
+		}
 		let route = router.pathname;
 		let arrayRouter = route.split("/");
 		if (arrayRouter.length == 1) {
@@ -69,7 +87,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 			</div>
 			<div className='scrollbar-thin scrollbar-thumb-blue-700 scrollbar-track-blue-300 h-[80%] overflow-y-scroll'>
 				<ul className='relative mt-4 mb-6'>
-					{ListNav.map((value, index) => {
+					{listSidebar.map((value: any, index: number) => {
 						if (value.subMenu === null) {
 							return (
 								<Link key={index} href={value.link}>
@@ -136,7 +154,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 									{link === value.id ? (
 										<ul>
 											{value.subMenu
-												? value.subMenu.map((result, i) => {
+												? value.subMenu.map((result: any, i: number) => {
 														return (
 															<Link
 																href={result.link}

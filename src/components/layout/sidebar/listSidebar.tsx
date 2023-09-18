@@ -3,81 +3,73 @@ export const ListNav = [
         id: 'dashboard',
         link: "/dashboard",
         title: "Dashboard",
+        role: "all",
         subMenu: null
     },
     {
         id: 'master-data',
         link: "/master-data",
         title: "Master Data",
+        role: "ADMINISTRATOR,MASTER",
         subMenu: [
             {
                 id: 'supplier',
                 link: "/master-data/supplier",
                 title: "Supplier",
-    
                 subMenu: null
             },
             {
                 id: 'customer',
                 link: "/master-data/customer",
                 title: "Customer",
-    
                 subMenu: null
             },
             {
                 id: 'employe',
                 link: "/master-data/employe",
                 title: "Employe",
-    
                 subMenu: null
             },
             {
                 id: 'equipment-part',
                 link: "/master-data/equipment-part",
                 title: "Equipment & Part",
-    
                 subMenu: null
             },
             {
                 id: 'departement',
                 link: "/master-data/departement",
                 title: "Departement",
-    
                 subMenu: null
             },
             {
                 id: 'worker-center',
                 link: "/master-data/worker-center",
                 title: "Worker Center",
-    
                 subMenu: null
             },
             {
                 id: 'activity',
                 link: "/master-data/activity",
                 title: "Activity",
-    
                 subMenu: null
             },
             {
                 id: 'holiday',
                 link: "/master-data/holiday",
                 title: "Holiday",
-    
                 subMenu: null
             },
             {
                 id: 'material-type',
                 link: "/master-data/material-type",
                 title: "Material Type",
-    
                 subMenu: null
             },
             {
                 id: 'material',
                 link: "/master-data/material",
                 title: "Material",
-    
                 subMenu: null
             },
         ]
@@ -86,6 +78,7 @@ export const ListNav = [
         id: 'marketing',
         link: "/marketing",
         title: "Marketing",
+        role: "ADMINISTRATOR, MARKETING",
         subMenu: [
             {
                 id: 'quotation',
@@ -128,6 +121,7 @@ export const ListNav = [
         id: 'public',
         link: "/public",
         title: "Public",
+        role: "ADMINISTRATOR, Ppic",
         subMenu: [
             {
                 id: 'mr',
@@ -198,6 +192,7 @@ export const ListNav = [
         id: 'purchasing-logistic',
         link: "/purchasing-logistic",
         title: "Purchasing & Logistic",
+        role: "ADMINISTRATOR,PURCHASING",
         subMenu: [
             {
                 id: 'approval-mr',
@@ -303,6 +298,7 @@ export const ListNav = [
         id: 'director',
         link: "/director",
         title: "Director",
+        role: "ADMINISTRATOR",
         subMenu: [
             {
                 id: 'approval',
@@ -338,6 +334,7 @@ export const ListNav = [
         id: 'finance-accounting',
         link: "/finance-accounting",
         title: "Finance & Accounting",
+        role: "ADMINISTRATOR,FINANCE & ACC",
         subMenu: [
             {
                 id: 'open-close-cashier',
@@ -457,6 +454,7 @@ export const ListNav = [
         id: 'hrd-ga',
         link: "/hrd-ga",
         title: "HRD & GA",
+        role: "ADMINISTRATOR, HR & GA",
         subMenu: [
             {
                 id: 'sallary-overtime',
@@ -485,6 +483,7 @@ export const ListNav = [
         id: 'production',
         link: "/production",
         title: "Production",
+        role: "ADMINISTRATOR,Ppic",
         subMenu: [
             {
                 id: 'shift',
@@ -541,6 +540,7 @@ export const ListNav = [
         id: 'engineering',
         link: "/engineering",
         title: "Engineering",
+        role: "ADMINISTRATOR,QA & ENG",
         subMenu: [
             {
                 id: 'sumary-report',
@@ -576,6 +576,7 @@ export const ListNav = [
         id: 'report',
         link: "/report",
         title: "Report",
+        role: "ADMINISTRATOR",
         subMenu: [
             {
                 id: 'material-name-info',
@@ -646,6 +647,7 @@ export const ListNav = [
         id: 'utility',
         link: "/utility",
         title: "Utility",
+        role: "ADMINISTRATOR,Utility/ty",
         subMenu: [
             {
                 id: 'invoice',
