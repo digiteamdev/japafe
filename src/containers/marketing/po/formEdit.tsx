@@ -1193,10 +1193,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																						className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2'
 																						onClick={() => {
 																							arrayTerm.push({
+																								id: "",
+																								cuspoId: "",
 																								limitpay: "",
 																								percent: "",
 																								price: "",
-																								date_limit: "",
+																								date_limit: new Date()
 																							});
 																						}}
 																					>
