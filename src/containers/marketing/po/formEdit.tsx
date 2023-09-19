@@ -7,7 +7,7 @@ import {
 	EditPo,
 	EditPoDetail,
 	DeletePoDetail,
-    EditPoPayment,
+	EditPoPayment,
 } from "../../../services";
 import { toast } from "react-toastify";
 
@@ -45,8 +45,8 @@ interface dataDetail {
 interface dataTerm {
 	term_of_pay: [
 		{
-            id: string;
-            cuspoId: string;
+			id: string;
+			cuspoId: string;
 			limitpay: string;
 			percent: string;
 			price: string;
@@ -66,6 +66,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	const [total, setTotal] = useState<number>(0);
 	const [vat, setVat] = useState<number>(0);
 	const [grandTotal, setGrandTotal] = useState<number>(0);
+	const [totalTerm, setTotalTerm] = useState<number>(0);
 	const [customer, setCustomer] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
@@ -94,17 +95,17 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			},
 		],
 	});
-    const [dataTerm, setDataTerm] = useState<dataTerm>({
+	const [dataTerm, setDataTerm] = useState<dataTerm>({
 		term_of_pay: [
-            {
-                id: "",
+			{
+				id: "",
 				cuspoId: "",
-                limitpay: "",
-                percent: "",
-                price: "",
-                date_limit: ""
-            }
-        ]
+				limitpay: "",
+				percent: "",
+				price: "",
+				date_limit: "",
+			},
+		],
 	});
 
 	useEffect(() => {
@@ -115,7 +116,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 
 	const settingData = () => {
 		let dataDetail: any = [];
-        let dataTerm: any = [];
+		let dataTerm: any = [];
 		setData({
 			id: dataPo.id,
 			id_po: dataPo.id_po,
@@ -162,34 +163,34 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			setTax(0);
 		}
 
-        if (dataPo.term_of_pay.length > 0){
-            dataPo.term_of_pay.map( (res: any) => {
-                dataTerm.push({
-                    id: res.id,
-                    cuspoId: res.cuspoId,
-                    limitpay: res.limitpay,
-                    percent: res.percent,
-                    price: res.price,
-                    date_limit: new Date(res.date_limit)
-                })
-            })
-        }else{
-            dataTerm.puhs({
-                id: "",
-                cuspoId: dataPo.id,
-                limitpay: "",
-                percent: "",
-                price: "",
-                date_limit: new Date()
-            })
-        }
+		if (dataPo.term_of_pay.length > 0) {
+			dataPo.term_of_pay.map((res: any) => {
+				dataTerm.push({
+					id: res.id,
+					cuspoId: res.cuspoId,
+					limitpay: res.limitpay,
+					percent: res.percent,
+					price: res.price,
+					date_limit: new Date(res.date_limit),
+				});
+			});
+		} else {
+			dataTerm.puhs({
+				id: "",
+				cuspoId: dataPo.id,
+				limitpay: "",
+				percent: "",
+				price: "",
+				date_limit: new Date(),
+			});
+		}
 
 		setDataDetail({
 			Deskription_CusPo: dataDetail,
 		});
-        setDataTerm({
-            term_of_pay: dataTerm
-        })
+		setDataTerm({
+			term_of_pay: dataTerm,
+		});
 		setEquipment(dataPo.quotations.eqandpart[0].equipment.nama);
 		setSubject(dataPo.quotations.deskription);
 		setCustomer(dataPo.quotations.Customer.name);
@@ -213,9 +214,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				totals = totals + parseInt(totalPrice);
 			}
 		});
-		if(totals === 0){
+		if (totals === 0) {
 			return total.toString();
-		}else{
+		} else {
 			return totals.toString();
 		}
 		// return formatRupiah(total.toString())
@@ -235,9 +236,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		const htmlVat = document.getElementById("vat") as HTMLInputElement;
 		if (htmlTotal !== null && htmlVat !== null) {
 			const Total: number = parseInt(htmlTotal.value) + parseInt(htmlVat.value);
-			if(isNaN(Total)){
+			if (isNaN(Total)) {
 				return grandTotal.toString();
-			}else{
+			} else {
 				return Total.toString();
 			}
 			// return formatRupiah(Total.toString())
@@ -326,12 +327,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			const nameSplit = event.target.name.split("."),
 				index = nameSplit[1],
 				percent = event.target.value,
-				htmlTotal = document.getElementById("Grand_total") as HTMLInputElement,
 				htmlTotalTerm = document.getElementById(
 					`term_of_pay.${index}.price`
 				) as HTMLInputElement,
-				total: any = htmlTotal.value === "" ? 0 : htmlTotal.value,
+				total: any = grandTotal,
 				totalTerm: any = (parseInt(total) * percent) / 100;
+				setTotalTerm(totalTerm)
 			htmlTotalTerm.value = totalTerm.toString();
 		} else if (event.target.name === "tax") {
 			if (event.target.value === "ppn") {
@@ -436,7 +437,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-    const editPoTerm = async (payload: any) => {
+	const editPoTerm = async (payload: any) => {
 		setIsLoading(true);
 		const term: any = [];
 		payload.term_of_pay.map((res: any, i: number) => {
@@ -444,7 +445,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				`term_of_pay.${i}.price`
 			) as HTMLInputElement;
 			term.push({
-                id: res.id,
+				id: res.id,
 				cuspoId: res.cuspoId,
 				limitpay: res.limitpay,
 				percent: res.percent,
@@ -1083,7 +1084,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 							editPoTerm(values);
 						}}
 						enableReinitialize
-                        key={2}
+						key={2}
 					>
 						{({
 							handleChange,
@@ -1116,7 +1117,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			placeholder='Limit Pay'
 																			label='Limit Pay'
 																			onChange={handleChange}
-                                                                            value={res.limitpay}
+																			value={res.limitpay}
 																			required={true}
 																			withLabel={false}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -1150,8 +1151,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			name={`term_of_pay.${i}.percent`}
 																			placeholder='%'
 																			type='number'
-																			onChange={handleChange}
-                                                                            value={res.percent}
+																			onChange={ () => {
+																				handleChange
+																			}}
+																			value={res.percent}
 																			required={true}
 																			withLabel={false}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -1164,7 +1167,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			placeholder='10000'
 																			label='Noted'
 																			type='text'
-                                                                            value={res.price}
+																			value={res.price}
 																			disabled={true}
 																			required={true}
 																			withLabel={false}
@@ -1177,7 +1180,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			label='date_limit'
 																			value={res.date_limit}
 																			onChange={(value: any) =>
-																				setFieldValue(`term_of_pay.${i}.date_limit`, value)
+																				setFieldValue(
+																					`term_of_pay.${i}.date_limit`,
+																					value
+																				)
 																			}
 																			withLabel={false}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600 mt-6'
@@ -1198,7 +1204,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																								limitpay: "",
 																								percent: "",
 																								price: "",
-																								date_limit: new Date()
+																								date_limit: new Date(),
 																							});
 																						}}
 																					>

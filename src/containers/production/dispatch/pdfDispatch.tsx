@@ -114,7 +114,7 @@ export const PdfDispatch = ({
 											<div>
 												<div className='border border-collapse border-black py-2'>
 													<p className='text-black text-center text-2xl font-semibold m-0'>
-														JAPA
+														DWITAMA
 													</p>
 												</div>
 												<p className='text-black text-center text-lg font-semibold py-2'>
