@@ -10,7 +10,7 @@ export const ListNav = [
         id: 'master-data',
         link: "/master-data",
         title: "Master Data",
-        role: "ADMINISTRATOR,MASTER",
+        role: "all",
         subMenu: [
             {
                 id: 'supplier',
@@ -121,7 +121,7 @@ export const ListNav = [
         id: 'public',
         link: "/public",
         title: "Public",
-        role: "ADMINISTRATOR, Ppic",
+        role: "all",
         subMenu: [
             {
                 id: 'mr',

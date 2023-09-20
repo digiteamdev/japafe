@@ -383,19 +383,15 @@ export const FormEditQuotation = ({
 		setIsLoading(true);
 		let bodyForm: any = [];
 		payload.parts.map((res: any) => {
-			listParts.map((eq: any) => {
-				if (eq.id === res.id) {
-					const dataPart = {
-						id: res.id,
-						id_quotation: res.id_quotation,
-						id_part: res.id_part,
-						id_equipment: eq.id_equipment,
-						qty: res.qty,
-						keterangan: res.keterangan
-					};
-					bodyForm.push(dataPart);
-				}
-			});
+			const dataPart = {
+				id: res.id,
+				id_quotation: res.id_quotation,
+				id_part: res.id_part,
+				id_equipment: res.id_equipment,
+				qty: res.qty,
+				keterangan: res.keterangan
+			};
+			bodyForm.push(dataPart);
 		});
 
 		try {

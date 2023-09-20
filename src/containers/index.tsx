@@ -7,3 +7,4 @@ export * from './report';
 export * from './public';
 export * from './engineering';
 export * from './production';
+export * from './user';
