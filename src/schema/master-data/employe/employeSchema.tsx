@@ -13,6 +13,7 @@ export const employeSchema = yup.object().shape({
     province:  yup.string().required("Province not empty"),
     city:  yup.string().required("City not empty"),
     districts:  yup.string().required("Districts not empty"),
+    position:   yup.string().required("Position not empty"),
     sub_districts:  yup.string().required("Sub Districts not empty"),
     ec_postalcode:  yup.string().required("Postal Code not empty"),
     phone_number:  yup.string().required("Phone not empty"),

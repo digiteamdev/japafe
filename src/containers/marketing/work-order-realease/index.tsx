@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {useRouter} from "next/router";
-import { removeToken } from "../../../configs/session";
+import { removeToken, getPosition } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -30,6 +30,7 @@ export const Wor = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
+	const [position, setPosition] = useState<any>(null);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const headerTabel = [
 		{ name: "No" },
@@ -42,6 +43,10 @@ export const Wor = () => {
 
 	useEffect(() => {
 		getWor(page, perPage);
+		let jabatan = getPosition()
+		if(jabatan !== undefined){
+			setPosition(jabatan)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -256,6 +261,7 @@ export const Wor = () => {
 							dataSelected={dataSelected}
 							content={modalContent}
 							showModal={showModal}
+							position={position}
 						/>
 					) : modalContent === "add" ? (
 						<FormCreateWor content={modalContent} showModal={showModal} />

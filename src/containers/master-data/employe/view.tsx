@@ -73,6 +73,14 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Position
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+									{dataSelected.position}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Gender
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>

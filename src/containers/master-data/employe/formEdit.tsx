@@ -20,7 +20,7 @@ import {
 	EditEmployeEdu,
 	DeleteEmployeCertificate,
 	DeleteEmployeChild,
-	DeleteEmployeEdu
+	DeleteEmployeEdu,
 } from "../../../services";
 import { toast } from "react-toastify";
 
@@ -46,6 +46,7 @@ interface dataEmploye {
 	city: string;
 	districts: string;
 	sub_districts: string;
+	position: string;
 	ec_postalcode: string;
 	phone_number: string;
 	start_join: Date;
@@ -131,6 +132,7 @@ export const FormEditEmploye = ({
 		province: "",
 		city: "",
 		districts: "",
+		position: "",
 		sub_districts: "",
 		ec_postalcode: "",
 		phone_number: "",
@@ -277,6 +279,7 @@ export const FormEditEmploye = ({
 			address: dataEmploye.address,
 			province: dataEmploye.province,
 			city: dataEmploye.city,
+			position: dataEmploye.position,
 			districts: dataEmploye.districts,
 			sub_districts: dataEmploye.sub_districts,
 			ec_postalcode: dataEmploye.ec_postalcode,
@@ -871,6 +874,32 @@ export const FormEditEmploye = ({
 									)}
 								</div>
 								<div className='w-full'>
+									<InputSelect
+										id='position'
+										name='position'
+										placeholder='Position'
+										label='Position'
+										onChange={handleChange}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									>
+										<option defaultValue='' selected>
+											Select Posision
+										</option>
+										<option value='Operator' selected={ values.position === 'Operator' }>Operator</option>
+										<option value='Staff' selected={ values.position === 'Staff' }>Staff</option>
+										<option value='Supervisor' selected={ values.position === 'Supervisor' }>Supervisor</option>
+										<option value='Manager' selected={ values.position === 'Manager' }>Manager</option>
+										<option value='Director' selected={ values.position === 'Director' }>Director</option>
+									</InputSelect>
+									{touched.position && errors.position && (
+										<span className='mt-2 text-xs text-red-500 font-semibold'>
+											{errors.position}
+										</span>
+									)}
+								</div>
+								<div className='w-full'>
 									<Input
 										id='email'
 										name='email'
@@ -889,6 +918,8 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
+							</Section>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<InputWithIcon
 										id='phone_number'
@@ -910,8 +941,6 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<Input
 										id='remainingDayOff'
@@ -950,6 +979,8 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
+							</Section>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputDate
 										id='birthDate'
@@ -968,8 +999,6 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputSelect
 										id='matirialStatus'
@@ -1018,6 +1047,8 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
+							</Section>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<Input
 										id='NPWP'
@@ -1037,8 +1068,6 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<InputDate
 										id='start_join'
@@ -1090,6 +1119,8 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
+							</Section>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputSelect
 										id='city'
@@ -1123,8 +1154,6 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputSelect
 										id='districts'
@@ -1191,6 +1220,8 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
+							</Section>
+							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<Input
 										id='ec_postalcode'
@@ -1210,8 +1241,6 @@ export const FormEditEmploye = ({
 										</span>
 									)}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-3'>
 								<div className='w-full'>
 									<InputArea
 										id='address'
@@ -1663,7 +1692,7 @@ export const FormEditEmploye = ({
 														<a
 															className='inline-flex text-red-500 cursor-pointer mt-1'
 															onClick={() => {
-																res.id !== "" ? deleteEmployeEdu(res.id) : null
+																res.id !== "" ? deleteEmployeEdu(res.id) : null;
 																arrayEdu.remove(i);
 															}}
 														>
@@ -1774,10 +1803,7 @@ export const FormEditEmploye = ({
 																<option
 																	defaultValue='Male'
 																	selected={
-																		res.gender_child ===
-																		'Male'
-																			? true
-																			: false
+																		res.gender_child === "Male" ? true : false
 																	}
 																>
 																	Male
@@ -1785,10 +1811,7 @@ export const FormEditEmploye = ({
 																<option
 																	value='Female'
 																	selected={
-																		res.gender_child ===
-																		'Female'
-																			? true
-																			: false
+																		res.gender_child === "Female" ? true : false
 																	}
 																>
 																	Female
@@ -1940,9 +1963,7 @@ export const FormEditEmploye = ({
 										render={(arrayCerti) =>
 											values.Certificate_Employee.map((res, i) => (
 												<div key={i}>
-													<Section
-														className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
-														>
+													<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 														<Input
 															id={`Certificate_Employee.${i}.certificate_name`}
 															name={`Certificate_Employee.${i}.certificate_name`}

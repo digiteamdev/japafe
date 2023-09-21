@@ -5,14 +5,16 @@ import { ValidateWor } from "../../../services";
 import { toast } from "react-toastify";
 import { PdfWor } from "./pdfWor";
 import { Printer } from "react-feather";
+import { position } from "html2canvas/dist/types/css/property-descriptors/position";
 
 interface props {
 	dataSelected: any;
+	position: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewWor = ({ dataSelected, content, showModal }: props) => {
+export const ViewWor = ({ dataSelected, content, position, showModal }: props) => {
 
 	const [isModal,setIsModal] = useState<boolean>(false)
 
@@ -68,12 +70,14 @@ export const ViewWor = ({ dataSelected, content, showModal }: props) => {
 									<Printer size={16} className="mr-1"/> Print
 								</div>
 							</button>
-							<button 
+							{ position === "Manager" || position === "Supervisor" ? (
+								<button 
 								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}
 							>
 								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? (<p className="px-1 py-1">Validate</p>) : (<p className="px-1 py-1">Unvalid</p>) }
 							</button>
+							) : null }
 						</div>
 					</div>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
