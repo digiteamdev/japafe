@@ -9,9 +9,7 @@ import {
 	Button,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import {
-	employeSchema
-} from "../../../schema/master-data/employe/employeSchema";
+import { employeSchema } from "../../../schema/master-data/employe/employeSchema";
 import provinceJson from "../../../assets/data/kodepos.json";
 import { GetListYear } from "../../../utils";
 import { Plus, Trash2 } from "react-feather";
@@ -55,6 +53,7 @@ interface data {
 	remaining_days_of: string;
 	marital_status: string;
 	subdepartId: string;
+	position: string;
 	employee_status: string;
 	email: string;
 	spouse_name: any;
@@ -105,7 +104,7 @@ export const FormCreateEmploye = ({
 	];
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [employeeID, setEmployeeID] = useState<string>('');
+	const [employeeID, setEmployeeID] = useState<string>("");
 	const [activeTab, setActiveTab] = useState<any>(dataTabs[0]);
 	const [listProvince, setListProvince] = useState<any>([]);
 	const [files, setFiles] = useState<any>([]);
@@ -126,6 +125,7 @@ export const FormCreateEmploye = ({
 		sub_districts: "",
 		ec_postalcode: "",
 		phone_number: "",
+		position: "",
 		start_join: new Date(),
 		remaining_days_of: "",
 		marital_status: "Single",
@@ -278,7 +278,7 @@ export const FormCreateEmploye = ({
 					theme: "colored",
 				});
 
-				setEmployeeID( response.data.results.id)
+				setEmployeeID(response.data.results.id);
 				setActiveTab(dataTabs[1]);
 				showModal(true, "add", true);
 			}
@@ -394,7 +394,7 @@ export const FormCreateEmploye = ({
 					initialValues={{ ...data }}
 					validationSchema={employeSchema}
 					onSubmit={(values) => {
-						addEmploye(values)
+						addEmploye(values);
 					}}
 					enableReinitialize
 				>
@@ -565,6 +565,32 @@ export const FormCreateEmploye = ({
 										)}
 									</div>
 									<div className='w-full'>
+										<InputSelect
+											id='position'
+											name='position'
+											placeholder='Position'
+											label='Position'
+											onChange={handleChange}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option defaultValue='' selected>
+												Select Posision
+											</option>
+											<option value='Operator'>Operator</option>
+											<option value='Staff'>Staff</option>
+											<option value='Supervisor'>Supervisor</option>
+											<option value='Manager'>Manager</option>
+											<option value='Director'>Director</option>
+										</InputSelect>
+										{touched.position && errors.position && (
+											<span className='mt-2 text-xs text-red-500 font-semibold'>
+												{errors.position}
+											</span>
+										)}
+									</div>
+									<div className='w-full'>
 										<Input
 											id='email'
 											name='email'
@@ -583,6 +609,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputWithIcon
 											id='phone_number'
@@ -604,8 +632,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<Input
 											id='remainingDayOff'
@@ -644,6 +670,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputDate
 											id='birthDate'
@@ -662,8 +690,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='matirialStatus'
@@ -712,6 +738,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<Input
 											id='NPWP'
@@ -731,8 +759,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputDate
 											id='start_join'
@@ -763,7 +789,9 @@ export const FormCreateEmploye = ({
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										>
-											<option defaultValue='' selected>Choose Province</option>
+											<option defaultValue='' selected>
+												Choose Province
+											</option>
 											{listProvince.length === 0 ? (
 												<option value=''>No Data Province</option>
 											) : (
@@ -782,6 +810,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='city'
@@ -794,7 +824,9 @@ export const FormCreateEmploye = ({
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										>
-											<option defaultValue='' selected>Choose City</option>
+											<option defaultValue='' selected>
+												Choose City
+											</option>
 											{listCity.length === 0 ? (
 												<option>No Data City</option>
 											) : (
@@ -813,8 +845,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='districts'
@@ -827,7 +857,9 @@ export const FormCreateEmploye = ({
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										>
-											<option defaultValue='' selected>Choose District</option>
+											<option defaultValue='' selected>
+												Choose District
+											</option>
 											{listDistrict.length === 0 ? (
 												<option>No Data District</option>
 											) : (
@@ -858,7 +890,9 @@ export const FormCreateEmploye = ({
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										>
-											<option defaultValue='' selected>Choose Sub District</option>
+											<option defaultValue='' selected>
+												Choose Sub District
+											</option>
 											{listSubDistrict.length === 0 ? (
 												<option>No Data Sub District</option>
 											) : (
@@ -877,6 +911,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='ec_postalcode'
@@ -896,8 +932,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputArea
 											id='address'
@@ -1043,10 +1077,11 @@ export const FormCreateEmploye = ({
 																	id={`Employee_Child.${i}.child_birth_date`}
 																	label='Birthdate'
 																	value={
-																		values.Employee_Child[i].child_birth_date ===
-																		null
+																		values.Employee_Child[i]
+																			.child_birth_date === null
 																			? null
-																			: values.Employee_Child[i].child_birth_date
+																			: values.Employee_Child[i]
+																					.child_birth_date
 																	}
 																	onChange={(value: any) =>
 																		setFieldValue(
@@ -1062,31 +1097,31 @@ export const FormCreateEmploye = ({
 														</div>
 													</Section>
 													{i === values.Employee_Child.length - 1 ? (
-													<a
-														className='inline-flex text-green-500 mr-6 cursor-pointer'
-														onClick={() => {
-															arrayHelpers.push({
-                                                                name: null,
-                                                                gender_child: null,
-                                                                child_birth_place: null,
-                                                                child_birth_date: null,
-															});
-														}}
-													>
-														<Plus size={18} className='mr-1 mt-1' /> Add Child
-													</a>
-												) : null}
-												{values.Employee_Child.length !== 1 ? (
-													<a
-														className='inline-flex text-red-500 cursor-pointer mt-1'
-														onClick={() => {
-															arrayHelpers.remove(i);
-														}}
-													>
-														<Trash2 size={18} className='mr-1 mt-1' /> Remove
-														Child
-													</a>
-												) : null}
+														<a
+															className='inline-flex text-green-500 mr-6 cursor-pointer'
+															onClick={() => {
+																arrayHelpers.push({
+																	name: null,
+																	gender_child: null,
+																	child_birth_place: null,
+																	child_birth_date: null,
+																});
+															}}
+														>
+															<Plus size={18} className='mr-1 mt-1' /> Add Child
+														</a>
+													) : null}
+													{values.Employee_Child.length !== 1 ? (
+														<a
+															className='inline-flex text-red-500 cursor-pointer mt-1'
+															onClick={() => {
+																arrayHelpers.remove(i);
+															}}
+														>
+															<Trash2 size={18} className='mr-1 mt-1' /> Remove
+															Child
+														</a>
+													) : null}
 												</div>
 											))
 										}
@@ -1321,10 +1356,10 @@ export const FormCreateEmploye = ({
 						)}
 					</Formik>
 				</div>
-			) : activeTab.name === "Certificate" ? (
+			) : (
 				<div>
 					<h1 className='text-xl font-bold'>Certificate</h1>
-					<p className="hidden">{ JSON.stringify(dataCerti) }</p>
+					<p className='hidden'>{JSON.stringify(dataCerti)}</p>
 					<Formik
 						initialValues={dataCerti}
 						// validationSchema={eduSchema}
@@ -1479,8 +1514,6 @@ export const FormCreateEmploye = ({
 						)}
 					</Formik>
 				</div>
-			) : (
-				<></>
 			)}
 		</div>
 	);

@@ -90,6 +90,10 @@ export const Account = () => {
 							<td className="w-[70%] text-2xl">: { user !== null ? user.employee.sub_depart.name : "" }</td>
 						</tr>
 						<tr>
+							<td className="w-[30%] text-2xl">Position</td>
+							<td className="w-[70%] text-2xl">: { user !== null ? user.employee.position : "" }</td>
+						</tr>
+						<tr>
 							<td className="w-[30%] text-2xl">Start Join</td>
 							<td className="w-[70%] text-2xl">: { user !== null ? moment(user.employee.start_join).format("DD-MMMM-YYYY") : "" }</td>
 						</tr>
