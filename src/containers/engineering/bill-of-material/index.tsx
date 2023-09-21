@@ -6,7 +6,7 @@ import { File, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateBillOfMaterial } from "./formCreate";
 import { ViewBillOfMaterial } from "./view";
 import { FormEditBillOfMaterial } from "./formEdit";
-import { GetBillOfMaterial, SearchPo, DeleteSummary  } from "../../../services";
+import { GetBillOfMaterial, SearchPo, DeleteBillOfMaterial  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
 
@@ -80,11 +80,11 @@ export const BillOfMaterial = () => {
 		setIsLoading(false);
 	};
 
-	const deleteSummary = async (id: string) => {
+	const deleteBillOfMaterial = async (id: string) => {
 		try {
-			const response = await DeleteSummary(id);
+			const response = await DeleteBillOfMaterial(id);
 			if(response.data){
-				toast.success("Delete Summary Report Success", {
+				toast.success("Delete Bill Of Material Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -97,7 +97,7 @@ export const BillOfMaterial = () => {
 				getBillOfMaterial(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Summary Report Failed", {
+			toast.error("Delete Bill Of Material Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -198,7 +198,7 @@ export const BillOfMaterial = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -206,7 +206,7 @@ export const BillOfMaterial = () => {
 												}}
 											>
 												<Trash2 color='white' />
-											</Button> */}
+											</Button>
 										</div>
 									</td>
 								</tr>
@@ -235,7 +235,7 @@ export const BillOfMaterial = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteSummary}
+					onDelete={deleteBillOfMaterial}
 				/>
 			) : (
 				<Modal
