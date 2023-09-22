@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import {useRouter} from "next/router";
 import { removeToken } from "../../../configs/session";
-import { SectionTitle, Content, Modal, Table, Button, Pagination } from "../../../components";
+import { SectionTitle, Content, Modal, Table, Button, Pagination, ModalDelete } from "../../../components";
 import { User, Edit, Trash2, Eye } from "react-feather";
 import { FormCreateUser } from "./formCreate";
-import { GetUser } from "../../../services";
+import { GetUser, DeleteUser, SearchUser } from "../../../services";
+import { toast } from "react-toastify";
+import { ViewUser } from './view';
+import { FormEditUser } from './formEdit';
 
 export const Register = () => {
 
@@ -14,6 +17,7 @@ export const Register = () => {
 	const [data, setData] = useState<any>([]);
 	const [countData, setCountData] = useState<number>(0);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -31,12 +35,20 @@ export const Register = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const showModal = (val: boolean, content: string) => {
+	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
 		setModalContent(content);
+		if(!val){
+			setDataSelected(false)
+		}
+		if(reload){
+			getUser(page, perPage);
+		}
 	};
 
-	const getUser = async (page: number, perpage: number) => {
+	
+
+	const getUser = async (page: number,  perpage: number) => {
 		setIsLoading(true);
 		try {
 			const response = await GetUser(page, perpage);
@@ -56,8 +68,64 @@ export const Register = () => {
 		setIsLoading(false);
 	};
 
-	const searcUser = () => {
-		return false;
+	const searchUser = async (
+		page: number,
+		limit: number,
+		search: string
+	) => {
+		setIsLoading(true);
+		try {
+			const response = await SearchUser(page, limit, search);
+			if (response.data) {
+				setData(response.data.result);
+				setIsLoading(false);
+			}
+		} catch (error) {
+			setData([]);
+			setIsLoading(false);
+		}
+	};
+
+	const deleteUser = async (id: string) => {
+		try {
+			const response = await DeleteUser(id);
+			if (response.status === 201) {
+				toast.success("Delete User Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				getUser(1, 10);
+			} else {
+				toast.error("Delete User Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Delete User Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+		setIsModal(false);
 	};
 
 	return (
@@ -71,7 +139,7 @@ export const Register = () => {
 				title='User'
 				print={true}
 				showModal={showModal}
-				search={searcUser}
+				search={searchUser}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -132,8 +200,8 @@ export const Register = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
-													// setDataSelected(res);
-													// showModal(true, "view", false);
+													setDataSelected(res);
+													showModal(true, "view", false);
 												}}
 											>
 												<Eye color='white' />
@@ -141,8 +209,8 @@ export const Register = () => {
 											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
-													// selectedData(res);
-													// showModal(true,'edit', false);
+													setDataSelected(res);
+													showModal(true,'edit', false);
 												}}
 											>
 												<Edit color='white' />
@@ -150,8 +218,8 @@ export const Register = () => {
 											<Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
-													// setDataSelected(res);
-													// showModal(true, "delete", false);
+													setDataSelected(res);
+													showModal(true, "delete", false);
 												}}
 											>
 												<Trash2 color='white' />
@@ -178,14 +246,32 @@ export const Register = () => {
 					) : null
 				}
 			</Content>
-			<Modal
-				title='User'
-				isModal={isModal}
-				content={modalContent}
-				showModal={showModal}
-			>
-				<FormCreateUser content={modalContent} showModal={showModal} />
-			</Modal>
+			{
+				modalContent === 'delete' ? (
+					<ModalDelete
+						data={dataSelected}
+						isModal={isModal}
+						content={modalContent}
+						showModal={showModal}
+						onDelete={deleteUser}
+					/>
+				) : (
+					<Modal
+						title='User'
+						isModal={isModal}
+						content={modalContent}
+						showModal={showModal}
+					>
+						{ modalContent === 'view' ? (
+							<ViewUser dataSelected={dataSelected} />
+						) :  modalContent === 'edit' ? (
+							<FormEditUser content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						) : (
+							<FormCreateUser content={modalContent} showModal={showModal} />
+						)}
+					</Modal>
+				)
+			}
 		</div>
 	);
 };
