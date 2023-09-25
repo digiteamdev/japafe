@@ -8,3 +8,4 @@ export * from './public';
 export * from './engineering';
 export * from './production';
 export * from './user';
+export * from './purchasing-logistic';

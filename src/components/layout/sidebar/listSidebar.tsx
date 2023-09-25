@@ -12,30 +12,30 @@ export const ListNav = [
         title: "Master Data",
         role: "all",
         subMenu: [
-            {
-                id: 'supplier',
-                link: "/master-data/supplier",
-                title: "Supplier",
-                subMenu: null
-            },
-            {
-                id: 'customer',
-                link: "/master-data/customer",
-                title: "Customer",
-                subMenu: null
-            },
-            {
-                id: 'employe',
-                link: "/master-data/employe",
-                title: "Employe",
-                subMenu: null
-            },
-            {
-                id: 'equipment-part',
-                link: "/master-data/equipment-part",
-                title: "Equipment & Part",
-                subMenu: null
-            },
+            // {
+            //     id: 'supplier',
+            //     link: "/master-data/supplier",
+            //     title: "Supplier",
+            //     subMenu: null
+            // },
+            // {
+            //     id: 'customer',
+            //     link: "/master-data/customer",
+            //     title: "Customer",
+            //     subMenu: null
+            // },
+            // {
+            //     id: 'employe',
+            //     link: "/master-data/employe",
+            //     title: "Employe",
+            //     subMenu: null
+            // },
+            // {
+            //     id: 'equipment-part',
+            //     link: "/master-data/equipment-part",
+            //     title: "Equipment & Part",
+            //     subMenu: null
+            // },
             {
                 id: 'departement',
                 link: "/master-data/departement",
@@ -54,12 +54,12 @@ export const ListNav = [
                 title: "Activity",
                 subMenu: null
             },
-            {
-                id: 'holiday',
-                link: "/master-data/holiday",
-                title: "Holiday",
-                subMenu: null
-            },
+            // {
+            //     id: 'holiday',
+            //     link: "/master-data/holiday",
+            //     title: "Holiday",
+            //     subMenu: null
+            // },
             {
                 id: 'material-type',
                 link: "/master-data/material-type",
@@ -80,6 +80,12 @@ export const ListNav = [
         title: "Marketing",
         role: "ADMINISTRATOR, MARKETING",
         subMenu: [
+            {
+                id: 'customer',
+                link: "/marketing/customer",
+                title: "Customer",
+                subMenu: null
+            },
             {
                 id: 'quotation',
                 link: "/marketing/quotation",
@@ -194,6 +200,12 @@ export const ListNav = [
         title: "Purchasing & Logistic",
         role: "ADMINISTRATOR,PURCHASING",
         subMenu: [
+            {
+                id: 'supplier',
+                link: "/purchasing-logistic/supplier",
+                title: "Supplier",
+                subMenu: null
+            },
             {
                 id: 'approval-mr',
                 link: "/purchasing-logistic/approval-mr",
@@ -457,6 +469,12 @@ export const ListNav = [
         role: "ADMINISTRATOR, HR & GA",
         subMenu: [
             {
+                id: 'employe',
+                link: "/hrd-ga/employe",
+                title: "Employe",
+                subMenu: null
+            },
+            {
                 id: 'sallary-overtime',
                 link: "/hrd-ga/sallary-overtime",
                 title: "Sallary & Overtime",
@@ -534,6 +552,12 @@ export const ListNav = [
     
                 subMenu: null
             },
+            {
+                id: 'equipment-part',
+                link: "/production/equipment-part",
+                title: "Equipment & Part",
+                subMenu: null
+            },
         ]
     },
     {
@@ -568,6 +592,12 @@ export const ListNav = [
                 link: "/engineering/drawing",
                 title: "Drawing",
     
+                subMenu: null
+            },
+            {
+                id: 'equipment-part',
+                link: "/engineering/equipment-part",
+                title: "Equipment & Part",
                 subMenu: null
             },
         ]
