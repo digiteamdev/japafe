@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Section } from "../../../components";
-import { GetAllHoliday } from "../../../services";
+import { GetAllHoliday, ApproveScheduleSpv, ApproveScheduleManager } from "../../../services";
 import { monthDiff, getMonthName, countDay } from "../../../utils/dateFunction";
 import { PdfTimeSchedule } from "./pdfTimeSchedule";
+import { getPosition } from '../../../configs/session'
 import moment from "moment";
-import { Printer } from 'react-feather';
+import { Printer, Check } from 'react-feather';
+import { toast } from "react-toastify";
 
 interface props {
 	content: string;
@@ -24,12 +26,17 @@ export const ViewSchedule = ({
 	const [numHoliday, setNumHoliday] = useState<number>(0);
 	const [listMoth, setListMonth] = useState<any>([]);
 	const [listDate, setListDate] = useState<any>([]);
+	const [position, setPosition] = useState<any>([]);
 	const [listDateHoliday, setListDateHoliday] = useState<any>([]);
 	const [aktivitas, setAktivitas] = useState<any>([]);
 	const [isModal, setIsModal] = useState<boolean>(false);
 	// const [tableCalender, setTableCalender] = useState<any>([]);
-	console.log(dataSelected);
+
 	useEffect(() => {
+		let positionAkun = getPosition()
+		if( positionAkun !== undefined ){
+			setPosition(positionAkun)
+		}
 		showDate();
 		settingData();
 		setNumMonth(
@@ -207,6 +214,75 @@ export const ViewSchedule = ({
 		setIsModal(val);
 	};
 
+	const approve = async (val: string) => {
+		try {
+			if( val === "Supervisor"){
+				const response = await ApproveScheduleSpv(dataSelected.id);
+				if (response.status === 201) {
+					toast.success("Approve Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				} else {
+					toast.error("Approve Failed", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+				}
+			}else{
+				const response = await ApproveScheduleManager(dataSelected.id);
+				if (response.status === 201) {
+					toast.success("Approve Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				} else {
+					toast.error("Approve Failed", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+				}
+			}
+		} catch (error) {
+			toast.error("Approve Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
 			<PdfTimeSchedule
@@ -233,6 +309,30 @@ export const ViewSchedule = ({
 									<Printer size={16} className='mr-1' /> Print
 								</div>
 							</button>
+							{
+								dataSelected.status_spv === null && position === "Supervisor" || dataSelected.status_spv === null && position === "Manager" ? (
+									<button
+										className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+										onClick={() => approve("Supervisor")}
+									>
+										<div className='flex px-1 py-1'>
+											<Check size={16} className='mr-1' /> Approve SPV
+										</div>
+									</button>
+								) : null
+							}
+							{
+								dataSelected.status_spv === "valid" && dataSelected.status_manager === null && position === "Manager" ? (
+									<button
+										className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+										onClick={() => approve("Manager")}
+									>
+										<div className='flex px-1 py-1'>
+											<Check size={16} className='mr-1' /> Approve Manager
+										</div>
+									</button>
+								) : null
+							}
 						</div>
 					</div>
 					{aktivitas.length > 0 ? (

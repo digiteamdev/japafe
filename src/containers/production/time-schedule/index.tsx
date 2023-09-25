@@ -229,7 +229,7 @@ export const Schedule = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+											<Button className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md ${ res.status_spv !== null ? 'cursor-not-allowed' : '' }`}
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'edit', false);

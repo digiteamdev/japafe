@@ -8,3 +8,5 @@ export const DeleteScheduleActivity = (id: string) => Axios.delete(process.env.B
 export const EditSchedule = (id: string,data: any) => Axios.put(process.env.BASE_URL+`/timeschedule/${id}`, data);
 export const EditScheduleAktivity = (data: any) => Axios.put(process.env.BASE_URL+`/timeschedule`, data);
 export const SearchSchedule = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/timeschedule?page=${page}&limit=${perpage}&search=${search}`);
+export const ApproveScheduleSpv = (id: string) => Axios.put(process.env.BASE_URL+`/timescheduleSpv/${id}`);
+export const ApproveScheduleManager = (id: string) => Axios.put(process.env.BASE_URL+`/timescheduleMgr/${id}`);
