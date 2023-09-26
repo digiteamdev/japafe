@@ -6,3 +6,5 @@ export const GetMr = (page: number, perpage: number) => Axios.get(process.env.BA
 export const DeleteMR = (id: string) => Axios.delete(process.env.BASE_URL+`/MR/${id}`);
 export const EditMR = (data: any) => Axios.put(process.env.BASE_URL+`/MR`, data);
 export const DeleteMRDetail = (id: string) => Axios.delete(process.env.BASE_URL+`/MRdetail/${id}`);
+export const ApproveMrSpv = (id: string) => Axios.put(process.env.BASE_URL+`/MRStatusSpv/${id}`);
+export const ApproveMrManager = (id: string) => Axios.put(process.env.BASE_URL+`/MRStatusManger/${id}`);

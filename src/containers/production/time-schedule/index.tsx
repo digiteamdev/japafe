@@ -202,7 +202,6 @@ export const Schedule = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -229,21 +228,27 @@ export const Schedule = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											<Button className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md ${ res.status_spv !== null ? 'cursor-not-allowed' : '' }`}
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'edit', false);
-											}}>
-												<Edit color='white' />
-											</Button>
-											<Button 
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={ () => {
-													setDataSelected(res);
-													showModal(true,'delete', false);
-												}}>
-												<Trash2 color='white' />
-											</Button>
+											{
+												res.status_spv === null || res.status_spv === "unvalid" ? (
+													<>
+														<Button className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md `}
+														onClick={ () => {
+															setDataSelected(res);
+															showModal(true,'edit', false);
+														}}>
+															<Edit color='white' />
+														</Button>
+														<Button 
+															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+															onClick={ () => {
+																setDataSelected(res);
+																showModal(true,'delete', false);
+															}}>
+															<Trash2 color='white' />
+														</Button>
+													</>
+												) : null
+											}
 										</div>
 									</td>
 								</tr>

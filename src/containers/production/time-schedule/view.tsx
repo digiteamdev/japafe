@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { Section } from "../../../components";
-import { GetAllHoliday, ApproveScheduleSpv, ApproveScheduleManager } from "../../../services";
+import {
+	GetAllHoliday,
+	ApproveScheduleSpv,
+	ApproveScheduleManager,
+} from "../../../services";
 import { monthDiff, getMonthName, countDay } from "../../../utils/dateFunction";
 import { PdfTimeSchedule } from "./pdfTimeSchedule";
-import { getPosition } from '../../../configs/session'
+import { getPosition } from "../../../configs/session";
 import moment from "moment";
-import { Printer, Check } from 'react-feather';
+import { Printer, Check, X } from "react-feather";
 import { toast } from "react-toastify";
 
 interface props {
@@ -33,9 +37,9 @@ export const ViewSchedule = ({
 	// const [tableCalender, setTableCalender] = useState<any>([]);
 
 	useEffect(() => {
-		let positionAkun = getPosition()
-		if( positionAkun !== undefined ){
-			setPosition(positionAkun)
+		let positionAkun = getPosition();
+		if (positionAkun !== undefined) {
+			setPosition(positionAkun);
 		}
 		showDate();
 		settingData();
@@ -216,7 +220,7 @@ export const ViewSchedule = ({
 
 	const approve = async (val: string) => {
 		try {
-			if( val === "Supervisor"){
+			if (val === "Supervisor") {
 				const response = await ApproveScheduleSpv(dataSelected.id);
 				if (response.status === 201) {
 					toast.success("Approve Success", {
@@ -242,7 +246,7 @@ export const ViewSchedule = ({
 						theme: "colored",
 					});
 				}
-			}else{
+			} else {
 				const response = await ApproveScheduleManager(dataSelected.id);
 				if (response.status === 201) {
 					toast.success("Approve Success", {
@@ -281,7 +285,57 @@ export const ViewSchedule = ({
 				theme: "colored",
 			});
 		}
-	}
+	};
+
+	const showButtonValid = (data: any) => {
+		if (position === "Supervisor") {
+			if (data.status_spv === null || data.status_spv === "unvalid") {
+				return (
+					<button
+						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => approve("Supervisor")}
+					>
+						<div className='flex px-1 py-1'>
+							<Check size={16} className='mr-1' /> Valid SPV
+						</div>
+					</button>
+				);
+			} else {
+				<button
+					className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+					onClick={() => approve("Supervisor")}
+				>
+					<div className='flex px-1 py-1'>
+						<X size={16} className='mr-1' /> Unvalid SPV
+					</div>
+				</button>;
+			}
+		} else if (position === "Manager") {
+			if (data.status_manager === "unvalid" || data.status_manager === null) {
+				return (
+					<button
+						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => approve("Manager")}
+					>
+						<div className='flex px-1 py-1'>
+							<Check size={16} className='mr-1' /> Valid Manager
+						</div>
+					</button>
+				);
+			} else {
+				return (
+				<button
+					className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+					onClick={() => approve("Manager")}
+				>
+					<div className='flex px-1 py-1'>
+						<Check size={16} className='mr-1' /> Unvalid Manager
+					</div>
+				</button>
+				)
+			}
+		}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-hidden'>
@@ -309,30 +363,7 @@ export const ViewSchedule = ({
 									<Printer size={16} className='mr-1' /> Print
 								</div>
 							</button>
-							{
-								dataSelected.status_spv === null && position === "Supervisor" || dataSelected.status_spv === null && position === "Manager" ? (
-									<button
-										className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-										onClick={() => approve("Supervisor")}
-									>
-										<div className='flex px-1 py-1'>
-											<Check size={16} className='mr-1' /> Approve SPV
-										</div>
-									</button>
-								) : null
-							}
-							{
-								dataSelected.status_spv === "valid" && dataSelected.status_manager === null && position === "Manager" ? (
-									<button
-										className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-										onClick={() => approve("Manager")}
-									>
-										<div className='flex px-1 py-1'>
-											<Check size={16} className='mr-1' /> Approve Manager
-										</div>
-									</button>
-								) : null
-							}
+							{showButtonValid(dataSelected)}
 						</div>
 					</div>
 					{aktivitas.length > 0 ? (
@@ -383,6 +414,22 @@ export const ViewSchedule = ({
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.holiday ? "Not Working" : "Working"}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Approval Supervisor
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.status_spv === "valid" ? dataSelected.status_spv : "Unvalid"}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Approval Manager
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.status_manager === "valid" ? dataSelected.status_manager : "Unvalid"}
 										</td>
 									</tr>
 								</table>

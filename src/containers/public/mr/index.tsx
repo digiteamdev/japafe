@@ -17,6 +17,7 @@ import { GetMr, SearchCustomer, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
+import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 
 export const Mr = () => {
 
@@ -193,24 +194,30 @@ export const Mr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
+											{
+												dataSelected.status_spv === null || dataSelected.status_spv === null ? (
+													<>
+														<Button
+															className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true,'edit', false);
+															}}
+														>
+															<Edit color='white' />
+														</Button>
+														<Button
+															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true, "delete", false);
+															}}
+														>
+															<Trash2 color='white' />
+														</Button>
+													</>
+												) : null
+											}
 										</div>
 									</td>
 								</tr>
@@ -249,7 +256,7 @@ export const Mr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewMR dataSelected={dataSelected} />
+						<ViewMR dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : modalContent === "add" ? (
                         <FormCreateMr content={modalContent} showModal={showModal} />
 					) : (
