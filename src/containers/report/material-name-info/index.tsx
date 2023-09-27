@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,18 +7,23 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { Tool, Edit, Eye, Trash2 } from "react-feather";
 // import { FormCreateMaterialStok } from "./formCreate";
 // import { ViewCustomer } from "./view";
 // import { FormEditCustomer } from "./fromEdit";
-import { GetMaterialStock, SearchCustomer, DeleteCustomer } from "../../../services";
+import {
+	GetMaterialStock,
+	SearchCustomer,
+	DeleteCustomer,
+	GetMaterial,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
+import React from "react";
 
 export const MaterialNameInfo = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,12 +33,12 @@ export const MaterialNameInfo = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Material Name" },
-        { name: "Specification" },
-		{ name: "Satuan" }
+		{ name: "Specification" },
+		{ name: "Satuan" },
 	];
 
 	useEffect(() => {
@@ -55,18 +60,18 @@ export const MaterialNameInfo = () => {
 	const getMaterialStok = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMaterialStock(page, perpage);
+			const response = await GetMaterial(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -92,7 +97,7 @@ export const MaterialNameInfo = () => {
 	const deleteMaterialStock = async (id: string) => {
 		try {
 			const response = await DeleteCustomer(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Customer Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -171,63 +176,40 @@ export const MaterialNameInfo = () => {
 					) : (
 						data.map((res: any, i: number) => {
 							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.material_name }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.spesifikasi }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.satuan }</td>
-									{/* <td className='whitespace-nowrap px-6 py-4 w-[10%]'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
+								<React.Fragment key={i}>
+									{res.Material_Stock.map((material: any, idx: number) => {
+										return (
+											<tr
+												className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+												key={idx}
 											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
-										</div>
-									</td> */}
-								</tr>
+												<td className='whitespace-nowrap px-6 py-4'>{ idx === 0 ? res.material_name : null }</td>
+												<td className='whitespace-nowrap px-6 py-4'>
+													{material.spesifikasi}
+												</td>
+												<td className='whitespace-nowrap px-6 py-4'>
+													{res.satuan}
+												</td>
+											</tr>
+										);
+									})}
+								</React.Fragment>
 							);
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={11} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getMaterialStok(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={11}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getMaterialStok(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -245,13 +227,13 @@ export const MaterialNameInfo = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCustomer dataSelected={dataSelected} />
-					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateMaterialStok content={modalContent} showModal={showModal} />
+						<></>
+					) : // <ViewCustomer dataSelected={dataSelected} />
+					modalContent === "add" ? (
+						<></>
 					) : (
-                        <></>
+						// <FormCreateMaterialStok content={modalContent} showModal={showModal} />
+						<></>
 						// <FormEditCustomer content={modalContent} showModal={showModal} dataCustomer={dataSelected}/>
 					)}
 				</Modal>

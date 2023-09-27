@@ -206,7 +206,7 @@ export const Sr = () => {
 														>
 															<Edit color='white' />
 														</Button>
-														<Button
+														{/* <Button
 															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 															onClick={() => {
 																setDataSelected(res);
@@ -214,7 +214,7 @@ export const Sr = () => {
 															}}
 														>
 															<Trash2 color='white' />
-														</Button>
+														</Button> */}
 													</>
 												) 
 											}

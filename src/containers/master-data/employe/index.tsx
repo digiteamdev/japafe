@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import {useRouter} from "next/router";
-import { removeToken } from "../../../configs/session";
+import { removeToken, getRole } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -36,6 +36,7 @@ export const Employe = () => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [roleHRD, setRoleHRD] = useState<boolean>(false);
 	const [data, setData] = useState<any>([]);
 	const [listDepartement, setListDepartement] = useState<dataDepartement[]>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
@@ -52,10 +53,26 @@ export const Employe = () => {
 		{ name: "Phone" },
 		{ name: "Action" },
 	];
+	const headerTabelPublic = [
+		{ name: "No" },
+		{ name: "Name" },
+		{ name: "Departement" },
+		{ name: "Phone" },
+	];
 
 	useEffect(() => {
+		let roleUsers: any = getRole()
 		getDepartement();
 		getEmploye(page, perPage);
+		if(roleUsers !== undefined){
+			let roleUser = JSON.parse(roleUsers)
+			for( var i = 0; i < roleUser.length; i++){
+				if(roleUser[i].role.role_name === "HR & GA"){
+					setRoleHRD(true)
+					break;
+				}
+			}
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -165,15 +182,15 @@ export const Employe = () => {
 			/>
 			<Content
 				title='Employe'
-				print={true}
+				print={ roleHRD }
 				showModal={showModal}
 				search={searchEmploye}
 			>
-				<Table header={headerTabel}>
+				<Table header={ roleHRD ? headerTabel : headerTabelPublic}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
 							<td
-								colSpan={headerTabel?.length}
+								colSpan={roleHRD ? headerTabel?.length : headerTabelPublic?.length}
 								className='whitespace-nowrap px-6 py-4 text-center text-lg'
 							>
 								<svg
@@ -198,7 +215,7 @@ export const Employe = () => {
 					) : data.length === 0 ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
 							<td
-								colSpan={headerTabel?.length}
+								colSpan={roleHRD ? headerTabel?.length : headerTabelPublic?.length}
 								className='whitespace-nowrap px-6 py-4 text-center text-lg'
 							>
 								No Data
@@ -206,59 +223,81 @@ export const Employe = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.NIK}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.employee_name}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.sub_depart.name}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										+62{res.phone_number}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
-										</div>
-									</td>
-								</tr>
-							);
+							if(roleHRD){
+								return (
+									<tr
+										className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+										key={i}
+									>
+										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+											{i + 1}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.NIK}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.employee_name}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.sub_depart.name}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											+62{res.phone_number}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+											<div>
+												<Button
+													className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "view", false);
+													}}
+												>
+													<Eye color='white' />
+												</Button>
+												<Button
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true,'edit', false);
+													}}
+												>
+													<Edit color='white' />
+												</Button>
+												<Button
+													className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "delete", false);
+													}}
+												>
+													<Trash2 color='white' />
+												</Button>
+											</div>
+										</td>
+									</tr>
+								);
+							}else{
+								return (
+									<tr
+										className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+										key={i}
+									>
+										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+											{i + 1}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.employee_name}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.sub_depart.name}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											+62{res.phone_number}
+										</td>
+									</tr>
+								);
+							}
 						})
 					)}
 				</Table>

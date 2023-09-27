@@ -10,11 +10,12 @@ import { position } from "html2canvas/dist/types/css/property-descriptors/positi
 interface props {
 	dataSelected: any;
 	position: any;
+	role: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewWor = ({ dataSelected, content, position, showModal }: props) => {
+export const ViewWor = ({ dataSelected, content, position, role, showModal }: props) => {
 
 	const [isModal,setIsModal] = useState<boolean>(false)
 
@@ -70,7 +71,7 @@ export const ViewWor = ({ dataSelected, content, position, showModal }: props) =
 									<Printer size={16} className="mr-1"/> Print
 								</div>
 							</button>
-							{ position === "Manager" || position === "Supervisor" ? (
+							{ position === "Manager" && role === "MARKETING" || position === "Supervisor" && role === "MARKETING" ? (
 								<button 
 								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}

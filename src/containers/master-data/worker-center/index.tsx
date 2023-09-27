@@ -206,13 +206,13 @@ export const WorkerCenter = () => {
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
 										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											{/* <Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'view', false);
 											}}>
 												<Eye color='white' />
-											</Button>
+											</Button> */}
 											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);

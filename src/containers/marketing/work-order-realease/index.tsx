@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
-import { removeToken, getPosition } from "../../../configs/session";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { removeToken, getPosition, getRole } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -19,11 +19,11 @@ import moment from "moment";
 import { toast } from "react-toastify";
 
 export const Wor = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
+	const [roleMarketing, setRoleMarketing] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,9 +43,19 @@ export const Wor = () => {
 
 	useEffect(() => {
 		getWor(page, perPage);
-		let jabatan = getPosition()
-		if(jabatan !== undefined){
-			setPosition(jabatan)
+		let jabatan = getPosition();
+		let roleUsers: any = getRole()
+		if(roleUsers !== undefined){
+			let roleUser = JSON.parse(roleUsers)
+			for( var i = 0; i < roleUser.length; i++){
+				if(roleUser[i].role.role_name === "MARKETING"){
+					setRoleMarketing(true)
+					break;
+				}
+			}
+		}
+		if (jabatan !== undefined) {
+			setPosition(jabatan);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -71,11 +81,11 @@ export const Wor = () => {
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -134,7 +144,7 @@ export const Wor = () => {
 			/>
 			<Content
 				title='Work Order Release'
-				print={true}
+				print={roleMarketing}
 				showModal={showModal}
 				search={searchwor}
 			>
@@ -176,54 +186,119 @@ export const Wor = () => {
 					) : (
 						data.map((res: any, i: number) => {
 							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.job_operational ? res.job_no_mr : res.job_no} {res.refivision}</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{moment(res.date_wor).format("DD-MMMM-YYYY")}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.customerPo.quotations.Customer.name}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>{res.subject}</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
+								<React.Fragment key={i}>
+									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
+										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+											{i + 1}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.job_operational ? res.job_no_mr : res.job_no}{" "}
+											{res.refivision}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{moment(res.date_wor).format("DD-MMMM-YYYY")}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.customerPo.quotations.Customer.name}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4'>
+											{res.subject}
+										</td>
+										<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
+											<div>
+												<Button
+													className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "view", false);
+													}}
+												>
+													<Eye color='white' />
+												</Button>
+												{ roleMarketing ? (
+													<>
+														<Button
+															className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md ${
+																res.status === "valid"
+																	? "cursor-not-allowed"
+																	: "cursor-pointer"
+															}`}
+															disabled={res.status === "valid" ? true : false}
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true, "edit", false);
+															}}
+														>
+															<Edit color='white' />
+														</Button>
+														<Button
+															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true, "delete", false);
+															}}
+														>
+															<Trash2 color='white' />
+														</Button>
+													</>
+												) : null }
+											</div>
+										</td>
+									</tr>
+									<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
+										<td
+											colSpan={headerTabel?.length}
+											className='whitespace-nowrap px-4 py-2'
+										>
+											<button
+												className={`${
+													res.timeschedule === null
+														? "bg-red-500"
+														: "bg-green-500"
+												} text-white py-1 px-1 rounded-md mr-2`}
 											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md ${ res.status === "valid" ? 'cursor-not-allowed' : 'cursor-pointer' }`}
-												disabled={ res.status === "valid" ? true : false }
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
+												Schedule
+											</button>
+											<button
+												className={`${
+													res.timeschedule === null ||
+													res.timeschedule.srimg === null
+														? "bg-red-500"
+														: "bg-green-500"
+												} text-white py-1 px-1 rounded-md mr-2`}
 											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
+												Summary
+											</button>
+											<button
+												className={`${
+													res.timeschedule === null ||
+													res.timeschedule.drawing === null
+														? "bg-red-500"
+														: "bg-green-500"
+												} text-white py-1 px-1 rounded-md mr-2`}
 											>
-												<Trash2 color='white' />
-											</Button>
-										</div>
-									</td>
-								</tr>
+												Drawing
+											</button>
+											<button
+												className={`${
+													res.timeschedule === null ||
+													res.timeschedule.srimg === null ||
+													res.timeschedule.srimg.dispacth === null
+														? "bg-red-500"
+														: "bg-green-500"
+												} text-white py-1 px-1 rounded-md mr-2`}
+											>
+												Dispatch
+											</button>
+											<button className='bg-orange-500 text-white py-1 px-1 rounded-md mr-2'>
+												Cost
+											</button>
+											<button className='bg-orange-500 text-white py-1 px-1 rounded-md'>
+												Man Our
+											</button>
+										</td>
+									</tr>
+								</React.Fragment>
 							);
 						})
 					)}
@@ -262,6 +337,7 @@ export const Wor = () => {
 							content={modalContent}
 							showModal={showModal}
 							position={position}
+							role={roleMarketing ? "MARKETING" : null }
 						/>
 					) : modalContent === "add" ? (
 						<FormCreateWor content={modalContent} showModal={showModal} />

@@ -132,7 +132,7 @@ export const ApprovalMr = () => {
 			/>
 			<Content
 				title='Approval Material Request'
-				print={false}
+				print={true}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
@@ -243,7 +243,7 @@ export const ApprovalMr = () => {
 				/>
 			) : (
 				<Modal
-					title='Material Request'
+					title='Approval Material Request'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}

@@ -30,9 +30,13 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 			role.map( (role:any, i: number) => {
 				ListNav.filter( (res: any) => {
 					if(res.role === 'all'){
-						sidebar.push(res)
+						if(!sidebar.includes(res)){
+							sidebar.push(res)
+						}
 					}else if(res.role.includes(role.role.role_name)){
-						sidebar.push(res)
+						if(!sidebar.includes(res)){
+							sidebar.push(res)
+						}
 					}
 				})
 			})
