@@ -6,3 +6,4 @@ export * from './report';
 export * from './engineering';
 export * from './production';
 export * from './public';
+export * from './purchasing-logistic';

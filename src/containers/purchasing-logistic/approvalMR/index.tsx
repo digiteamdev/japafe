@@ -9,11 +9,11 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateMr } from "./formCreate";
-// import { ViewMR } from "./view";
-// import { FormEditMr } from "./formEdit";
-import { GetMr, SearchCustomer, DeleteMR } from "../../../services";
+import { Send, Edit, Eye } from "react-feather";
+import { FormCreateApprovalMr } from "./formCreate";
+import { ViewApprovalMR } from "./view";
+import { FormEditApprovalMr } from "./formEdit";
+import { GetApprovalMr, SearchApprovalMr, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -33,14 +33,15 @@ export const ApprovalMr = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "MR No" },
-        { name: "MR Date" },
-		{ name: "Departement" },
-        { name: "User" },
+		{ name: "ID Approval MR" },
+        { name: "Approval MR Date" },
+        { name: "Request By" },
+		{ name: "Approval By" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getMr(page, perPage);
+		getApprovalMr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -51,14 +52,14 @@ export const ApprovalMr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getMr(page, perPage);
+			getApprovalMr(page, perPage);
 		}
 	};
 
-	const getMr = async (page: number, perpage: number) => {
+	const getApprovalMr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMr(page, perpage);
+			const response = await GetApprovalMr(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -75,14 +76,14 @@ export const ApprovalMr = () => {
 		setIsLoading(false);
 	};
 
-	const searchMaterialStock = async (
+	const searchApprovalMr = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchApprovalMr(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -106,7 +107,7 @@ export const ApprovalMr = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMr(1, 10);
+				getApprovalMr(1, 10);
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -134,7 +135,7 @@ export const ApprovalMr = () => {
 				title='Approval Material Request'
 				print={true}
 				showModal={showModal}
-				search={searchMaterialStock}
+				search={searchApprovalMr}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -179,9 +180,10 @@ export const ApprovalMr = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_mr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_mr).format('DD-MM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idMrAppr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MM-YYYY') }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.sub_depart.name }</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.approvebyMr.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -193,7 +195,7 @@ export const ApprovalMr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -202,7 +204,7 @@ export const ApprovalMr = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -227,7 +229,7 @@ export const ApprovalMr = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getMr(value, perPage);
+								getApprovalMr(value, perPage);
 							}}
 						/>
 					) : null
@@ -249,14 +251,11 @@ export const ApprovalMr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-                        // <ViewMR dataSelected={dataSelected} />
+                        <ViewApprovalMR dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
 					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateMr content={modalContent} showModal={showModal} />
+                        <FormCreateApprovalMr content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditApprovalMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

@@ -10,9 +10,9 @@ import {
 	Pagination
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateSr } from "./formCreate";
+import { FormCreateApprovalSr } from "./formCreate";
 // import { ViewSR } from "./view";
-// import { FormEditSr } from "./formEdit";
+import { FormEditApprovalSr } from "./formEdit";
 import { GetSr, SearchCustomer, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
@@ -132,7 +132,7 @@ export const ApprovalSr = () => {
 			/>
 			<Content
 				title='Approval Service Request'
-				print={false}
+				print={true}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
@@ -193,7 +193,7 @@ export const ApprovalSr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -202,7 +202,7 @@ export const ApprovalSr = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -252,11 +252,9 @@ export const ApprovalSr = () => {
 						<></>
                         // <ViewSR dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateSr content={modalContent} showModal={showModal} />
+                        <FormCreateApprovalSr content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-                        // <FormEditSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditApprovalSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
