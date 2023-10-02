@@ -164,7 +164,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 					setIsOperasional(false);
 				}
 				setData({
-					dispacthIDS: data.id,
+					dispacthIDS: data.srimg === undefined ? null : data.id,
 					userId: userID,
 					worId: data.srimg === undefined ? data.id : data.srimg.timeschedule.wor.id,
 					date_sr: new Date(),

@@ -11,9 +11,9 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateApprovalSr } from "./formCreate";
-// import { ViewSR } from "./view";
+import { ViewApprovalSR } from "./view";
 import { FormEditApprovalSr } from "./formEdit";
-import { GetSr, SearchCustomer, DeleteSr } from "../../../services";
+import { GetApprovalSr, SearchApprovalSr, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -33,9 +33,10 @@ export const ApprovalSr = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "SR No" },
-        { name: "SR Date" },
-		{ name: "Job No" },
+		{ name: "ID Approval SR" },
+        { name: "Approval SR Date" },
         { name: "Request By" },
+		{ name: "Approval By" },
         { name: "Action" }
 	];
 
@@ -58,7 +59,7 @@ export const ApprovalSr = () => {
 	const getSr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetSr(page, perpage);
+			const response = await GetApprovalSr(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -75,14 +76,14 @@ export const ApprovalSr = () => {
 		setIsLoading(false);
 	};
 
-	const searchMaterialStock = async (
+	const searchApprSr = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchApprovalSr(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -134,7 +135,7 @@ export const ApprovalSr = () => {
 				title='Approval Service Request'
 				print={true}
 				showModal={showModal}
-				search={searchMaterialStock}
+				search={searchApprSr}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -179,9 +180,10 @@ export const ApprovalSr = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_sr).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no }</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.username }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idSrAppr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.approvebySr.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -249,8 +251,7 @@ export const ApprovalSr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-                        // <ViewSR dataSelected={dataSelected} />
+                        <ViewApprovalSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
 					) : modalContent === "add" ? (
                         <FormCreateApprovalSr content={modalContent} showModal={showModal} />
 					) : (
