@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
-	GetEmployeById,
+	ApprovalEditMr,
 	GetAllSupplier,
-	GetMrValid,
 	ApprovalMr,
 } from "../../../services";
+import { Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
+import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -31,23 +32,24 @@ interface data {
 			qty: string;
 			note: string;
 			qtyAppr: number;
+			no_mr: string;
+			job_no: string;
+			stock: string;
+			approvedRequestId: string;
 		}
 	];
 }
 
 export const FormEditApprovalMr = ({
-	dataSelected,
 	content,
+	dataSelected,
 	showModal,
 }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
-	const [isDetail, setIsDetail] = useState<boolean>(true);
-	const [user, setUser] = useState<string>("");
+	const [listMrRemove, setListMrRemove] = useState<any>([]);
 	const [userId, setUserId] = useState<string>("");
-	const [jobNo, setJobNo] = useState<string>("");
-	const [noMR, setNoMR] = useState<string>("");
-	const [dateMrAppr, setDateMrAppr] = useState<any>(new Date());
+	const [IdApproval, setIdApproval] = useState<string>("");
 	const [data, setData] = useState<data>({
 		id: "",
 		idMrAppr: "",
@@ -62,49 +64,51 @@ export const FormEditApprovalMr = ({
 				qty: "",
 				note: "",
 				qtyAppr: 0,
+				no_mr: "",
+				job_no: "",
+				stock: "",
+				approvedRequestId: ""
 			},
 		],
 	});
 
 	useEffect(() => {
 		let idUser = getIdUser();
+		let detail: any = [];
 		if (idUser !== undefined) {
 			setUserId(idUser);
 		}
-		getSupplier();
-		settingData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const settingData = () => {
-		let detail: any = [];
 		dataSelected.detailMr.map((res: any) => {
 			detail.push({
 				id: res.id,
 				mrappr: res.mrappr,
 				supId: res.supId,
-				material: res.Material_Stock.spesifikasi,
+				material:
+					res.Material_Stock.Material_master.material_name +
+					" - " +
+					res.Material_Stock.spesifikasi,
 				qty: res.qty,
 				note: res.note,
 				qtyAppr: res.qtyAppr,
+				no_mr: res.mr.no_mr,
+				job_no: res.mr.wor.job_operational
+					? res.mr.wor.job_no_mr
+					: res.mr.wor.job_no,
+				stock: res.Material_Stock.jumlah_Stock,
+				approvedRequestId: res.approvedRequestId
 			});
 		});
-		setJobNo(
-			dataSelected.bom === null
-				? dataSelected.wor.job_no_mr
-				: dataSelected.wor.job_no
-		);
-		setUser(dataSelected.user.employee.employee_name);
-		setDateMrAppr(dataSelected.dateOfAppr);
-		setNoMR(dataSelected.no_mr);
+		getSupplier();
+		setIdApproval(dataSelected.idApprove);
 		setData({
-			id: dataSelected.id,
-			idMrAppr: dataSelected.idMrAppr,
-			dateOfAppr: dataSelected.dateOfAppr,
-			approveById: dataSelected.approvedById,
+			id: "",
+			idMrAppr: dataSelected.idApprove,
+			dateOfAppr: dataSelected.dateApprove,
+			approveById: userId,
 			detailMr: detail,
 		});
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getSupplier = async () => {
 		try {
@@ -115,6 +119,34 @@ export const FormEditApprovalMr = ({
 		} catch (error) {}
 	};
 
+	const removeMr = (dataRemove: any) => {
+		let detail: any = []
+		let detailRemove: any = []
+		data.detailMr.map( (res: any) => {
+			if(dataRemove.id !== res.id){
+				detail.push(res)
+			}else{
+				listMrRemove.map( (result: any) => {
+					detailRemove.push(result)
+				})
+				detailRemove.push({
+					id: res.id,
+					mrappr: null,
+					supId: null,
+					qtyAppr: 0,
+				})
+			}
+		})
+		setListMrRemove(detailRemove)
+		setData({
+			id: "",
+			idMrAppr: dataSelected.idApprove,
+			dateOfAppr: dataSelected.dateApprove,
+			approveById: userId,
+			detailMr: detail,
+		})
+	}
+
 	const approveMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
@@ -124,19 +156,28 @@ export const FormEditApprovalMr = ({
 				mrappr: res.mrappr,
 				supId: res.supId,
 				qtyAppr: parseInt(res.qtyAppr),
+				approvedRequestId: res.approvedRequestId
 			});
 		});
+		listMrRemove.map( (res: any) => {
+			listDetail.push({
+				id: res.id,
+				mrappr: null,
+				supId: null,
+				qtyAppr: 0,
+				approvedRequestId: null
+			});
+		})
 		let data = {
-			id: payload.id,
-			idMrAppr: payload.idMrAppr,
-			dateOfAppr: payload.dateOfAppr,
+			id: dataSelected.id,
 			approveById: userId,
 			detailMr: listDetail,
 		};
+
 		try {
-			const response = await ApprovalMr(data);
+			const response = await ApprovalEditMr(data);
 			if (response.data) {
-				toast.success("Approval Material Request Success", {
+				toast.success("Edit Approval Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -149,7 +190,7 @@ export const FormEditApprovalMr = ({
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Approval Material Request Failed", {
+			toast.error("Edit Approval Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -185,42 +226,12 @@ export const FormEditApprovalMr = ({
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
-									id='no_mr'
-									name='no_mr'
-									placeholder='No MR'
-									label='No MR'
+									id='idApproval'
+									name='idApproval'
+									placeholder='ID Approval'
+									label='ID Approval'
 									type='text'
-									value={noMR}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='jobNo'
-									name='jobNo'
-									placeholder='Job No'
-									label='Job No'
-									type='text'
-									value={jobNo}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='date'
-									name='date'
-									placeholder='Date Approval Request Material'
-									label='Date Approval Request Material'
-									type='text'
-									value={moment(dateMrAppr).format("DD-MMMM-YYYY")}
+									value={IdApproval}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -234,7 +245,7 @@ export const FormEditApprovalMr = ({
 									placeholder='Request By'
 									label='Request By'
 									type='text'
-									value={user}
+									value={moment(new Date()).format("DD-MMMM-YYYY")}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -242,156 +253,184 @@ export const FormEditApprovalMr = ({
 								/>
 							</div>
 						</Section>
-						{isDetail ? (
-							<FieldArray
-								name='detailMr'
-								render={(arrayMr) =>
-									values.detailMr.map((result: any, i: number) => {
-										return (
-											<div key={i}>
-												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-													<div className='w-full'>
-														<InputSelect
-															id={`detailMr.${i}.mrappr`}
-															name={`detailMr.${i}.mrappr`}
-															placeholder='Type'
-															label='Type'
-															onChange={(e: any) => {
-																setFieldValue(
-																	`detailMr.${i}.mrappr`,
-																	e.target.value
-																);
-															}}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='no data'>
-																Choose Type
-															</option>
-															<option
-																value='PO'
-																selected={result.mrappr === "PO"}
-															>
-																PO
-															</option>
-															<option
-																value='DP'
-																selected={result.mrappr === "DP"}
-															>
-																DP
-															</option>
-															<option
-																value='Stock'
-																selected={result.mrappr === "Stock"}
-															>
-																Stock
-															</option>
-														</InputSelect>
-													</div>
-													<div className='w-full'>
-														<InputSelect
-															id={`detailMr.${i}.supId`}
-															name={`detailMr.${i}.supId`}
-															placeholder='Suplier'
-															label='Suplier'
-															onChange={(e: any) => {
-																setFieldValue(
-																	`detailMr.${i}.supId`,
-																	e.target.value
-																);
-															}}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option value='no data' selected>
-																Choose Suplier
-															</option>
-															{listSupplier.length === 0 ? (
-																<option value='no data'>No data</option>
-															) : (
-																listSupplier.map((res: any, i: number) => {
-																	return (
-																		<option
-																			value={res.id}
-																			key={i}
-																			selected={res.id === result.supId}
-																		>
-																			{res.supplier_name}
+						<FieldArray
+							name='detailMr'
+							render={(arrayMr) =>
+								values.detailMr.map((result: any, i: number) => {
+									return (
+										<div key={i}>
+											<Disclosure defaultOpen>
+												{({ open }) => (
+													<div>
+														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
+															<h4 className='text-lg font-bold'>
+																Job No : {result.job_no}
+															</h4>
+															<h4 className='text-lg font-bold'>
+																{open ? <ChevronDown /> : <ChevronUp />}
+															</h4>
+														</Disclosure.Button>
+														<Disclosure.Panel>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<InputSelect
+																		id={`detailMr.${i}.mrappr`}
+																		name={`detailMr.${i}.mrappr`}
+																		placeholder='Type'
+																		label='Type'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.mrappr`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	>
+																		<option value='PO' selected={ result.mrappr === "PO" }>PO</option>
+																		<option value='DP' selected={ result.mrappr === "DP" }>DP</option>
+																		<option value='Stock' selected={ result.mrappr === "Stock" }>Stock</option>
+																	</InputSelect>
+																</div>
+																<div className='w-full'>
+																	<InputSelect
+																		id={`detailMr.${i}.supId`}
+																		name={`detailMr.${i}.supId`}
+																		placeholder='Suplier'
+																		label='Suplier'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.supId`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	>
+																		<option value='no data' selected>
+																			Choose Suplier
 																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+																		{listSupplier.length === 0 ? (
+																			<option value='no data'>No data</option>
+																		) : (
+																			listSupplier.map(
+																				(res: any, i: number) => {
+																					return (
+																						<option
+																							value={res.id}
+																							key={i}
+																							selected={res.id === result.supId}
+																						>
+																							{res.supplier_name}
+																						</option>
+																					);
+																				}
+																			)
+																		)}
+																	</InputSelect>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.material`}
+																		name={`detailMr.${i}.material`}
+																		placeholder='Material Name'
+																		label='Material Name'
+																		type='text'
+																		value={result.material}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.qty`}
+																		name={`detailMr.${i}.qty`}
+																		placeholder='Qty'
+																		label='Qty'
+																		type='number'
+																		value={result.qty}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.stock`}
+																		name={`detailMr.${i}.stock`}
+																		placeholder='Stock'
+																		label='Stock'
+																		type='number'
+																		disabled={true}
+																		value={result.stock}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+															</Section>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.qtyAppr`}
+																		name={`detailMr.${i}.qtyAppr`}
+																		placeholder='Qty Approval'
+																		label='Qty Approval'
+																		type='number'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.qtyAppr`,
+																				e.target.value
+																			);
+																		}}
+																		value={result.qtyAppr}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.note`}
+																		name={`detailMr.${i}.note`}
+																		placeholder='Note'
+																		label='Note'
+																		type='text'
+																		value={result.note}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	{values.detailMr.length === 1 ? null : (
+																		<a
+																			className='inline-flex text-red-500 cursor-pointer mt-10'
+																			onClick={() => {
+																				removeMr(result),
+																				arrayMr.remove(i);
+																			}}
+																		>
+																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
+																			Remove Contact
+																		</a>
+																	)}
+																</div>
+															</Section>
+														</Disclosure.Panel>
 													</div>
-													<div className='w-full'>
-														<Input
-															id={`detailMr.${i}.material`}
-															name={`detailMr.${i}.material`}
-															placeholder='Material Name'
-															label='Material Name'
-															type='text'
-															value={result.material}
-															disabled={true}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='w-full'>
-														<Input
-															id={`detailMr.${i}.qty`}
-															name={`detailMr.${i}.qty`}
-															placeholder='Qty'
-															label='Qty'
-															type='number'
-															value={result.qty}
-															disabled={true}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='w-full'>
-														<Input
-															id={`detailMr.${i}.note`}
-															name={`detailMr.${i}.note`}
-															placeholder='Note'
-															label='Note'
-															type='text'
-															value={result.note}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='w-full'>
-														<Input
-															id={`detailMr.${i}.qtyAppr`}
-															name={`detailMr.${i}.qtyAppr`}
-															placeholder='Qty Approval'
-															label='Qty Approval'
-															type='number'
-															onChange={(e: any) => {
-																setFieldValue(
-																	`detailMr.${i}.qtyAppr`,
-																	e.target.value
-																);
-															}}
-															value={result.qtyAppr}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-												</Section>
-											</div>
-										);
-									})
-								}
-							/>
-						) : null}
+												)}
+											</Disclosure>
+										</div>
+									);
+								})
+							}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
@@ -428,7 +467,6 @@ export const FormEditApprovalMr = ({
 								</button>
 							</div>
 						</div>
-						;
 					</Form>
 				)}
 			</Formik>

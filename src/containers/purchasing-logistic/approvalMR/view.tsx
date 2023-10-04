@@ -8,7 +8,6 @@ interface props {
 }
 
 export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
-
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -19,26 +18,10 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 							<table className='w-full'>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										No MR
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.no_mr}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Approval MR
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.idMrAppr}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Job No
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.bom === null ? dataSelected.wor.job_no_mr : dataSelected.wor.job_no}
+										{dataSelected.idApprove}
 									</td>
 								</tr>
 								<tr>
@@ -46,15 +29,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 										Date Approval MR
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{moment(dataSelected.dateOfAppr).format("DD-MMMM-YYYY")}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Request By
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.user.employee.employee_name}
+										{moment(dataSelected.dateApprove).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
@@ -62,15 +37,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 										Approval By
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.approvebyMr.employee.employee_name}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Departement
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.user.employee.sub_depart.name}
+										{dataSelected.user.employee.employee_name}
 									</td>
 								</tr>
 							</table>
@@ -80,16 +47,16 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
+									<th className='border border-black text-center'>Job No</th>
 									<th className='border border-black text-center'>Type</th>
 									<th className='border border-black text-center'>Supplier</th>
 									<th className='border border-black text-center'>
-										Material Name
-									</th>
-									<th className='border border-black text-center'>
-										Material Spesifikasi
+										Material Name / Material Spesifikasi
 									</th>
 									<th className='border border-black text-center'>Qty</th>
-									<th className='border border-black text-center'>Qty Approval</th>
+									<th className='border border-black text-center'>
+										Qty Approval
+									</th>
 									<th className='border border-black text-center'>Note</th>
 								</tr>
 							</thead>
@@ -98,15 +65,16 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
+												{res.mr.wor.job_operational ? res.mr.wor.job_no_mr : res.mr.wor.job_no }
+											</td>
+											<td className='border border-black text-center'>
 												{res.mrappr}
 											</td>
 											<td className='border border-black text-center'>
 												{res.supplier.supplier_name}
 											</td>
 											<td className='border border-black text-center'>
-												{res.Material_Stock.Material_master.material_name}
-											</td>
-											<td className='border border-black text-center'>
+												{res.Material_Stock.Material_master.material_name} -{" "}
 												{res.Material_Stock.spesifikasi}
 											</td>
 											<td className='border border-black text-center'>

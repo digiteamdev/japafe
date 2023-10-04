@@ -409,7 +409,7 @@ export const FormEditApprovalSr = ({
 											Loading
 										</>
 									) : (
-										"Approval"
+										"Edit"
 									)}
 								</button>
 							</div>

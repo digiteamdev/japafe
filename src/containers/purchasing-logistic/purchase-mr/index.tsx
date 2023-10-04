@@ -9,16 +9,16 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Send, Edit, Eye } from "react-feather";
-import { FormCreateApprovalMr } from "./formCreate";
-import { ViewApprovalMR } from "./view";
-import { FormEditApprovalMr } from "./formEdit";
-import { GetApprovalMr, SearchApprovalMr, DeleteMR } from "../../../services";
+import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { FormCreatePurchaseMr } from "./formCreate";
+// import { ViewApprovalSR } from "./view";
+// import { FormEditApprovalSr } from "./formEdit";
+import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 
-export const ApprovalMr = () => {
+export const PurchaseMR = () => {
 
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -32,14 +32,15 @@ export const ApprovalMr = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Approval MR" },
-        { name: "Approval MR Date" },
-		{ name: "Approval By" },
+		{ name: "PR No" },
+		{ name: "PR Date" },
+        { name: "MR No" },
+        { name: "Request By" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getApprovalMr(page, perPage);
+		getPurchaseMR(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,14 +51,14 @@ export const ApprovalMr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getApprovalMr(page, perPage);
+			getPurchaseMR(page, perPage);
 		}
 	};
 
-	const getApprovalMr = async (page: number, perpage: number) => {
+	const getPurchaseMR = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalMr(page, perpage);
+			const response = await GetPurchaseMR(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -74,14 +75,14 @@ export const ApprovalMr = () => {
 		setIsLoading(false);
 	};
 
-	const searchApprovalMr = async (
+	const searchPurchaseMR = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchApprovalMr(page, limit, search);
+			const response = await SearchPurchaseMR(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -91,11 +92,11 @@ export const ApprovalMr = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deletePurchaseMR = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
+			const response = await DeletePurchaseMR(id);
 			if(response.data){
-				toast.success("Delete Material Request Success", {
+				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -105,10 +106,10 @@ export const ApprovalMr = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getApprovalMr(1, 10);
+				getPurchaseMR(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Purchase Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -125,15 +126,15 @@ export const ApprovalMr = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Approval Material Request'
+				title='Purchase Material Request'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Approval Material Request'
+				title='Purchase Material Request'
 				print={true}
 				showModal={showModal}
-				search={searchApprovalMr}
+				search={searchPurchaseMR}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -177,9 +178,10 @@ export const ApprovalMr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idApprove }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idSrAppr }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -225,7 +227,7 @@ export const ApprovalMr = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getApprovalMr(value, perPage);
+								getPurchaseMR(value, perPage);
 							}}
 						/>
 					) : null
@@ -237,21 +239,23 @@ export const ApprovalMr = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deletePurchaseMR}
 				/>
 			) : (
 				<Modal
-					title='Approval Material Request'
+					title='Purchase Material Request'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewApprovalMR dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
+                        <></>
+                        // <ViewApprovalSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
 					) : modalContent === "add" ? (
-                        <FormCreateApprovalMr content={modalContent} showModal={showModal} />
+                        <FormCreatePurchaseMr content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditApprovalMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <></>
+                        // <FormEditApprovalSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
