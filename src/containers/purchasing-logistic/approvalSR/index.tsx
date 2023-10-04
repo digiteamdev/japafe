@@ -32,10 +32,8 @@ export const ApprovalSr = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "SR No" },
 		{ name: "ID Approval SR" },
         { name: "Approval SR Date" },
-        { name: "Request By" },
 		{ name: "Approval By" },
         { name: "Action" }
 	];
@@ -174,49 +172,49 @@ export const ApprovalSr = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idSrAppr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.approvebySr.employee.employee_name }</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
-										</div>
-									</td>
-								</tr>
-							);
+							// return (
+							// 	<tr
+							// 		className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+							// 		key={i}
+							// 	>
+							// 		<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
+							// 		<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idSrAppr }</td>
+							// 		<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MMMM-YYYY') }</td>
+							// 		<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+							// 		<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.approvebySr.employee.employee_name }</td>
+							// 		<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+							// 			<div>
+							// 				<Button
+							// 					className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+							// 					onClick={() => {
+							// 						setDataSelected(res);
+							// 						showModal(true, "view", false);
+							// 					}}
+							// 				>
+							// 					<Eye color='white' />
+							// 				</Button>
+							// 				<Button
+							// 					className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+							// 					onClick={() => {
+							// 						setDataSelected(res);
+							// 						showModal(true,'edit', false);
+							// 					}}
+							// 				>
+							// 					<Edit color='white' />
+							// 				</Button>
+							// 				{/* <Button
+							// 					className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+							// 					onClick={() => {
+							// 						setDataSelected(res);
+							// 						showModal(true, "delete", false);
+							// 					}}
+							// 				>
+							// 					<Trash2 color='white' />
+							// 				</Button> */}
+							// 			</div>
+							// 		</td>
+							// 	</tr>
+							// );
 						})
 					)}
 				</Table>
