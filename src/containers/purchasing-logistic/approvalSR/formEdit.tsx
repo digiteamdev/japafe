@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { GetAllSupplier, GetSrValid, ApprovalSr } from "../../../services";
+import { GetAllSupplier, ApprovalEditSr, ApprovalSr } from "../../../services";
+import { Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
+import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -14,19 +16,22 @@ interface props {
 
 interface data {
 	id: string;
-	idSrAppr: string;
-	dateOfAppr: any;
+	idApprove: string;
+	dateApprove: any;
 	approveById: string;
-	detailSr: [
+	srDetail: [
 		{
 			id: string;
-			srappr: string;
+			mrappr: string;
+			supId: string;
 			part: string;
 			service: string;
-			qty: string;
+			qty: number;
 			note: string;
-			supId: string;
 			qtyAppr: number;
+			no_sr: string;
+			job_no: string;
+			approvedRequestId: string;
 		}
 	];
 }
@@ -38,28 +43,27 @@ export const FormEditApprovalSr = ({
 }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
-	const [listMr, setListMr] = useState<any>([]);
-	const [isDetail, setIsDetail] = useState<boolean>(false);
-	const [user, setUser] = useState<string>("");
+	const [listMrRemove, setListMrRemove] = useState<any>([]);
 	const [userId, setUserId] = useState<string>("");
-	const [jobNo, setJobNo] = useState<string>("");
-	const [noSr, setNoSr] = useState<string>("");
-	const [dateSrAppr, setDateSrAppr] = useState<any>(new Date());
+	const [IdApproval, setIdApproval] = useState<string>("");
 	const [data, setData] = useState<data>({
 		id: "",
-		idSrAppr: "",
-		dateOfAppr: new Date(),
+		idApprove: "",
+		dateApprove: new Date(),
 		approveById: "",
-		detailSr: [
+		srDetail: [
 			{
 				id: "",
-				srappr: "",
+				mrappr: "",
+				supId: "",
 				part: "",
 				service: "",
-				qty: "",
+				qty: 0,
 				note: "",
-				supId: "",
 				qtyAppr: 0,
+				no_sr: "",
+				job_no: "",
+				approvedRequestId: "",
 			},
 		],
 	});
@@ -70,50 +74,34 @@ export const FormEditApprovalSr = ({
 			setUserId(idUser);
 		}
 		getSupplier();
-		getSr();
-		settingData();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const settingData = () => {
 		let detail: any = [];
 		dataSelected.SrDetail.map((res: any) => {
 			detail.push({
 				id: res.id,
 				srappr: res.srappr,
-				part: res.part,
-				service: res.workCenter.name,
-				qty: res.qty,
-				note: res.note,
 				supId: res.supId,
-				qtyAppr: 0,
+				part: res.part,
+				qty: res.qty,
+				service: res.workCenter.name,
+				note: res.note,
+				qtyAppr: res.qtyAppr,
+				no_sr: res.sr.no_sr,
+				job_no: res.sr.wor.job_operational
+					? res.sr.wor.job_no_mr
+					: res.sr.wor.job_no,
+				approvedRequestId: res.approvedRequestId,
+			});
+			setIdApproval(dataSelected.idApprove);
+			setData({
+				id: "",
+				idApprove: dataSelected.idApprove,
+				dateApprove: dataSelected.dateApprove,
+				approveById: userId,
+				srDetail: detail,
 			});
 		});
-		setJobNo(
-			dataSelected.wor.job_operational
-				? dataSelected.wor.job_no_mr
-				: dataSelected.wor.job_no
-		);
-		setUser(dataSelected.user.employee.employee_name);
-		setDateSrAppr(dataSelected.dateOfAppr);
-		setNoSr(dataSelected.no_sr);
-		setData({
-			id: dataSelected.id,
-			idSrAppr: dataSelected.idSrAppr,
-			dateOfAppr: dataSelected.dateOfAppr,
-			approveById: dataSelected.approvedById,
-			detailSr: detail,
-		});
-	};
-
-	const getSr = async () => {
-		try {
-			const response = await GetSrValid();
-			if (response) {
-				setListMr(response.data.result);
-			}
-		} catch (error) {}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const getSupplier = async () => {
 		try {
@@ -124,28 +112,65 @@ export const FormEditApprovalSr = ({
 		} catch (error) {}
 	};
 
+	const removeSr = (dataRemove: any) => {
+		let detail: any = [];
+		let detailRemove: any = [];
+		data.srDetail.map((res: any) => {
+			if (dataRemove.id !== res.id) {
+				detail.push(res);
+			} else {
+				listMrRemove.map((result: any) => {
+					detailRemove.push(result);
+				});
+				detailRemove.push({
+					id: res.id,
+					srappr: null,
+					supId: null,
+					qtyAppr: 0,
+					approvedRequestId: null
+				});
+			}
+		});
+		setListMrRemove(detailRemove);
+		setData({
+			id: "",
+			idApprove: dataSelected.idApprove,
+			dateApprove: dataSelected.dateApprove,
+			approveById: userId,
+			srDetail: detail,
+		});
+	};
+
 	const approveSr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.detailSr.map((res: any) => {
+		payload.srDetail.map((res: any) => {
 			listDetail.push({
 				id: res.id,
 				srappr: res.srappr,
 				supId: res.supId,
 				qtyAppr: parseInt(res.qtyAppr),
+				approvedRequestId: res.approvedRequestId
 			});
 		});
+		listMrRemove.map( (res: any) => {
+			listDetail.push({
+				id: res.id,
+				srappr: null,
+				supId: null,
+				qtyAppr: 0,
+				approvedRequestId: null
+			});
+		})
 		let data = {
-			id: payload.id,
-			idSrAppr: payload.idSrAppr,
-			dateOfAppr: payload.dateOfAppr,
+			id: dataSelected.id,
 			approveById: userId,
 			srDetail: listDetail,
 		};
 		try {
-			const response = await ApprovalSr(data);
+			const response = await ApprovalEditSr(data);
 			if (response.data) {
-				toast.success("Approval Service Request Success", {
+				toast.success("Edit Approval Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -158,7 +183,7 @@ export const FormEditApprovalSr = ({
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Approval Service Request Failed", {
+			toast.error("Edit Approval Service Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -194,42 +219,12 @@ export const FormEditApprovalSr = ({
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
-									id='no_sr'
-									name='no_sr'
-									placeholder='No SR'
-									label='No SR'
+									id='idApproval'
+									name='idApproval'
+									placeholder='ID Approval'
+									label='ID Approval'
 									type='text'
-									value={noSr}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='jobNo'
-									name='jobNo'
-									placeholder='Job No'
-									label='Job No'
-									type='text'
-									value={jobNo}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='date'
-									name='date'
-									placeholder='Date Approval Service Request'
-									label='Date Approval Service Request'
-									type='text'
-									value={moment(dateSrAppr).format("DD-MMMM-YYYY")}
+									value={IdApproval}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -240,10 +235,12 @@ export const FormEditApprovalSr = ({
 								<Input
 									id='requestBy'
 									name='requestBy'
-									placeholder='Request By'
-									label='Request By'
+									placeholder='Date Of Approve'
+									label='Date Of Approve'
 									type='text'
-									value={user}
+									value={moment(dataSelected.dateApprove).format(
+										"DD-MMMM-YYYY"
+									)}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -252,127 +249,171 @@ export const FormEditApprovalSr = ({
 							</div>
 						</Section>
 						<FieldArray
-							name='detailSr'
+							name='srDetail'
 							render={(arrayMr) =>
-								values.detailSr.map((result: any, i: number) => {
+								values.srDetail.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-												<div className='w-full'>
-													<InputSelect
-														id={`detailSr.${i}.srappr`}
-														name={`detailSr.${i}.srappr`}
-														placeholder='Type'
-														label='Type'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailSr.${i}.srappr`,
-																e.target.value
-															);
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='no data'>
-															Choose Type
-														</option>
-														<option value='SO' selected={ result.srappr === 'SO' }>SO</option>
-														<option value='DSO' selected={ result.srappr === 'DSO' }>DSO</option>
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`detailSr.${i}.supId`}
-														name={`detailSr.${i}.supId`}
-														placeholder='Suplier'
-														label='Suplier'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailSr.${i}.supId`,
-																e.target.value
-															);
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Suplier
-														</option>
-														{listSupplier.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listSupplier.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		selected={res.id === result.supId}
+											<Disclosure defaultOpen>
+												{({ open }) => (
+													<div>
+														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
+															<h4 className='text-lg font-bold'>
+																Job No : {result.job_no}
+															</h4>
+															<h4 className='text-lg font-bold'>
+																{open ? <ChevronDown /> : <ChevronUp />}
+															</h4>
+														</Disclosure.Button>
+														<Disclosure.Panel>
+															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<InputSelect
+																		id={`srDetail.${i}.srappr`}
+																		name={`srDetail.${i}.srappr`}
+																		placeholder='Type'
+																		label='Type'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`srDetail.${i}.srappr`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	>
-																		{res.supplier_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailSr.${i}.part`}
-														name={`detailSr.${i}.part`}
-														placeholder='Part/Item'
-														label='Part/Item'
-														type='text'
-														value={result.part}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailSr.${i}.service`}
-														name={`detailSr.${i}.service`}
-														placeholder='Service Description'
-														label='Service Description'
-														type='text'
-														value={result.service}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailSr.${i}.qty`}
-														name={`detailSr.${i}.qty`}
-														placeholder='Qty'
-														label='Qty'
-														type='number'
-														value={result.qty}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailSr.${i}.note`}
-														name={`detailSr.${i}.note`}
-														placeholder='Note'
-														label='Note'
-														type='text'
-														value={result.note}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
+																		<option defaultValue='no data'>
+																			Choose Type
+																		</option>
+																		<option
+																			value='SO'
+																			selected={result.srappr === "SO"}
+																		>
+																			SO
+																		</option>
+																		<option
+																			value='DSO'
+																			selected={result.srappr === "DSO"}
+																		>
+																			DSO
+																		</option>
+																	</InputSelect>
+																</div>
+																<div className='w-full'>
+																	<InputSelect
+																		id={`srDetail.${i}.supId`}
+																		name={`srDetail.${i}.supId`}
+																		placeholder='Suplier'
+																		label='Suplier'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`srDetail.${i}.supId`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	>
+																		<option value='no data' selected>
+																			Choose Suplier
+																		</option>
+																		{listSupplier.length === 0 ? (
+																			<option value='no data'>No data</option>
+																		) : (
+																			listSupplier.map(
+																				(res: any, i: number) => {
+																					return (
+																						<option
+																							value={res.id}
+																							key={i}
+																							selected={res.id === result.supId}
+																						>
+																							{res.supplier_name}
+																						</option>
+																					);
+																				}
+																			)
+																		)}
+																	</InputSelect>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.part`}
+																		name={`srDetail.${i}.part`}
+																		placeholder='Part/Item'
+																		label='Part/Item'
+																		type='text'
+																		value={result.part}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.service`}
+																		name={`srDetail.${i}.service`}
+																		placeholder='Service Description'
+																		label='Service Description'
+																		type='text'
+																		value={result.service}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+															</Section>
+															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.qty`}
+																		name={`srDetail.${i}.qty`}
+																		placeholder='Qty'
+																		label='Qty'
+																		type='number'
+																		disabled={true}
+																		value={result.qty}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.note`}
+																		name={`srDetail.${i}.note`}
+																		placeholder='Note'
+																		label='Note'
+																		type='text'
+																		value={result.note}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	{values.srDetail.length === 1 ? null : (
+																		<a
+																			className='inline-flex text-red-500 cursor-pointer mt-10'
+																			onClick={() => {
+																				removeSr(result),
+																				arrayMr.remove(i);
+																			}}
+																		>
+																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
+																			Remove Service Request
+																		</a>
+																	)}
+																</div>
+															</Section>
+														</Disclosure.Panel>
+													</div>
+												)}
+											</Disclosure>
 										</div>
 									);
 								})
