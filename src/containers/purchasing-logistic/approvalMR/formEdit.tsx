@@ -417,7 +417,7 @@ export const FormEditApprovalMr = ({
 																			}}
 																		>
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
-																			Remove Contact
+																			Remove Material Request
 																		</a>
 																	)}
 																</div>
@@ -462,7 +462,7 @@ export const FormEditApprovalMr = ({
 											Loading
 										</>
 									) : (
-										"Approval"
+										"Edit"
 									)}
 								</button>
 							</div>

@@ -254,8 +254,8 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 								<Input
 									id='requestBy'
 									name='requestBy'
-									placeholder='Request By'
-									label='Request By'
+									placeholder='Date Of Approve'
+									label='Date Of Approve'
 									type='text'
 									value={moment(new Date()).format("DD-MMMM-YYYY")}
 									disabled={true}
@@ -265,49 +265,6 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						{/* <Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelect
-									id='listMR'
-									name='listMR'
-									placeholder='No MR / Job NO'
-									label='No MR / Job NO'
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose No MR / Job NO
-									</option>
-									{ listMr.length === 0 ? (
-										<option value='no data'>No data</option>
-									) : listMr.map( (res: any, i: number) => {
-										return (
-											<option
-												value={res.id}
-												key={i}
-												// selected={res.id === result.material}
-											>
-												{res.mr.no_mr} / { res.mr.wor.job_operational ? res.mr.wor.job_no_mr : res.mr.job_no }
-											</option>
-										);
-									})
-									}
-								</InputSelect>
-							</div>
-							<div className='w-full'>
-								<button
-									type='button'
-									className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 md:mt-8 sm:mt-2'
-									disabled={isLoading}
-									onClick={() => {
-										handleSubmit();
-									}}
-								>
-									Add MR
-								</button>
-							</div>
-						</Section> */}
 						<FieldArray
 							name='detailMr'
 							render={(arrayMr) =>
@@ -474,7 +431,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 																			}}
 																		>
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
-																			Remove Contact
+																			Remove Material Request
 																		</a>
 																	) }
 																</div>
