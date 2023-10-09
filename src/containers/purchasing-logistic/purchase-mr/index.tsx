@@ -11,8 +11,8 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseMr } from "./formCreate";
-// import { ViewApprovalSR } from "./view";
-// import { FormEditApprovalSr } from "./formEdit";
+import { ViewPurchaseMR } from "./view";
+import { FormEditPurchaseMr } from "./formEdit";
 import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
@@ -32,15 +32,13 @@ export const PurchaseMR = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "PR No" },
-		{ name: "PR Date" },
-        { name: "MR No" },
-        { name: "Request By" },
+		{ name: "ID Purhcase MR" },
+		{ name: "Purchase MR Date" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage);
+		getPurchaseMR(page, perPage, 'PO');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -51,14 +49,14 @@ export const PurchaseMR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage);
+			getPurchaseMR(page, perPage, 'PO');
 		}
 	};
 
-	const getPurchaseMR = async (page: number, perpage: number) => {
+	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPurchaseMR(page, perpage);
+			const response = await GetPurchaseMR(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -82,7 +80,7 @@ export const PurchaseMR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseMR(page, limit, search);
+			const response = await SearchPurchaseMR(page, limit, search, 'PO');
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -106,7 +104,7 @@ export const PurchaseMR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10);
+				getPurchaseMR(1, 10, 'PO');
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -178,10 +176,8 @@ export const PurchaseMR = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idSrAppr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfAppr).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idPurchase }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -193,15 +189,17 @@ export const PurchaseMR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
+											{ res.status_manager_pr ? null : (
+												<Button
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true,'edit', false);
+													}}
+												>
+													<Edit color='white' />
+												</Button>
+											) }
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
@@ -227,7 +225,7 @@ export const PurchaseMR = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getPurchaseMR(value, perPage);
+								getPurchaseMR(value, perPage, 'PO');
 							}}
 						/>
 					) : null
@@ -249,13 +247,11 @@ export const PurchaseMR = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-                        // <ViewApprovalSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+                        <ViewPurchaseMR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
 					) : modalContent === "add" ? (
                         <FormCreatePurchaseMr content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-                        // <FormEditApprovalSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditPurchaseMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
