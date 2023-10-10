@@ -2,41 +2,40 @@ import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
-	GetMRForApproval,
 	GetAllSupplier,
-	GetDetailSr,
-	ApprovalSr,
+	EditPrSr,
+	GetAllCoa,
 } from "../../../services";
-import { Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
 import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
+import { Disclosure } from "@headlessui/react";
 
 interface props {
 	content: string;
+	dataSelected: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
 interface data {
-	id: string;
-	idApprove: string;
-	dateApprove: any;
-	approveById: string;
-	srDetail: any;
+	dateOfPurchase: any;
+	idPurchase: string;
+	detailMr: any;
 }
 
-export const FormCreateApprovalSr = ({ content, showModal }: props) => {
+export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
+	const [listMr, setListMr] = useState<any>([]);
+	const [listCoa, setListCoa] = useState<any>([]);
 	const [userId, setUserId] = useState<string>("");
-	const [IdApproval, setIdApproval] = useState<string>("");
+	const [idPR, setIdPR] = useState<string>("");
+	const [datePurchase, setDatePurchase] = useState<any>(new Date());
 	const [data, setData] = useState<data>({
-		id: "",
-		idApprove: "",
-		dateApprove: new Date(),
-		approveById: "",
-		srDetail: [],
+		dateOfPurchase: new Date(),
+		idPurchase: "",
+		detailMr: [],
 	});
 
 	useEffect(() => {
@@ -45,42 +44,51 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 			setUserId(idUser);
 		}
 		getSupplier();
-		getMr();
+		settingData();
+		getCoa();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getMr = async () => {
+	const settingData = async () => {
+		console.log(dataSelected)
+		let detail: any = [];
+		setIdPR(dataSelected.idPurchase)
+		setDatePurchase(dataSelected.setDatePurchase)
+		dataSelected.SrDetail.map((res: any) => {
+			detail.push({
+				id: res.id,
+				supId: res.supId,
+				tax: res.taxPsrDmr,
+				akunId: res.akunId,
+				disc: res.disc,
+				currency: res.currency,
+				total: res.total,
+				material: res.part,
+				service: res.workCenter.name,
+				qty: res.qty,
+				note: res.note,
+				price: res.total / res.qty,
+				job_no: res.sr.wor.job_operational
+					? res.sr.wor.job_no_mr
+					: res.sr.wor.job_no,
+			});
+		});
+		setData({
+			dateOfPurchase: dataSelected.dateOfPurchase,
+			idPurchase: dataSelected.idPurchase,
+			detailMr: detail,
+		});
+	};
+
+	const getCoa = async () => {
 		try {
-			const response = await GetDetailSr();
+			const response = await GetAllCoa();
 			if (response) {
-				let detail: any = [];
-				let idAppr: string = generateIdNum();
-				response.data.result.map((res: any) => {
-					detail.push({
-						id: res.id,
-						mrappr: res.mrappr,
-						supId: res.supId,
-						part: res.part,
-						qty: res.qty,
-						service: res.workCenter.name,
-						note: res.note,
-						qtyAppr: res.qtyAppr,
-						no_sr: res.sr.no_sr,
-						job_no: res.sr.wor.job_operational
-							? res.sr.wor.job_no_mr
-							: res.sr.wor.job_no,
-					});
-				});
-				setIdApproval(idAppr);
-				setData({
-					id: "",
-					idApprove: idAppr,
-					dateApprove: new Date(),
-					approveById: userId,
-					srDetail: detail,
-				});
+				setListCoa(response.data.result);
 			}
-		} catch (error) {}
+		} catch (error) {
+			setListCoa([]);
+		}
 	};
 
 	const getSupplier = async () => {
@@ -92,40 +100,32 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 		} catch (error) {}
 	};
 
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"SA" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 100);
-		return id;
+	const totalHarga = (harga: number, qty: number, disc: number) => {
+		let totalHarga = harga * qty - disc;
+		return totalHarga;
 	};
 
-	const approveSr = async (payload: data) => {
+	const purchaseSr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.srDetail.map((res: any) => {
+		payload.detailMr.map((res: any, i: number) => {
 			listDetail.push({
 				id: res.id,
-				srappr: res.srappr,
 				supId: res.supId,
-				qtyAppr: parseInt(res.qtyAppr),
+				taxPsrDmr: res.tax,
+				akunId: res.akunId,
+				disc: parseInt(res.disc),
+				currency: res.currency,
+				total: parseInt(res.total)
 			});
 		});
 		let data = {
-			// id: payload.id,
-			idApprove: payload.idApprove,
-			dateApprove: new Date(),
-			approveById: userId,
 			srDetail: listDetail,
 		};
 		try {
-			const response = await ApprovalSr(data);
+			const response = await EditPrSr(data);
 			if (response.data) {
-				toast.success("Approval Service Request Success", {
+				toast.success("Edit Purchase Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -138,7 +138,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Approval Service Request Failed", {
+			toast.error("Edit Purchase Service Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -158,7 +158,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					approveSr(values);
+					purchaseSr(values);
 				}}
 				enableReinitialize
 			>
@@ -174,12 +174,12 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
-									id='idApproval'
-									name='idApproval'
-									placeholder='ID Approval'
-									label='ID Approval'
+									id='idPurchase'
+									name='idPurchase'
+									placeholder='ID Purchase'
+									label='ID Purchase'
 									type='text'
-									value={IdApproval}
+									value={idPR}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -188,12 +188,12 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<Input
-									id='requestBy'
-									name='requestBy'
-									placeholder='Date Of Approve'
-									label='Date Of Approve'
+									id='datePR'
+									name='datePR'
+									placeholder='Date Of Purchase'
+									label='Date Of Purchase'
 									type='text'
-									value={moment(new Date()).format("DD-MMMM-YYYY")}
+									value={moment(datePurchase).format("DD-MMMM-YYYY")}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -202,9 +202,9 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						<FieldArray
-							name='srDetail'
+							name='detailMr'
 							render={(arrayMr) =>
-								values.srDetail.map((result: any, i: number) => {
+								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
 											<Disclosure defaultOpen>
@@ -219,16 +219,16 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 															</h4>
 														</Disclosure.Button>
 														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<InputSelect
-																		id={`srDetail.${i}.srappr`}
-																		name={`srDetail.${i}.srappr`}
-																		placeholder='Type'
-																		label='Type'
+																		id={`detailMr.${i}.tax`}
+																		name={`detailMr.${i}.tax`}
+																		placeholder='Tax'
+																		label='Tax'
 																		onChange={(e: any) => {
 																			setFieldValue(
-																				`srDetail.${i}.srappr`,
+																				`detailMr.${i}.tax`,
 																				e.target.value
 																			);
 																		}}
@@ -239,19 +239,21 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																		<option defaultValue='no data' selected>
 																			Choose Type
 																		</option>
-																		<option value='SO'>SO</option>
-																		<option value='DSO'>DSO</option>
+																		<option value='ppn' selected={ result.tax === 'ppn' }>PPN</option>
+																		<option value='pph' selected={ result.tax === 'pph' }>PPH</option>
+																		<option value='ppn_and_pph' selected={ result.tax === 'ppn_and_pph' }>PPN dan PPH</option>
+																		<option value='nontax' selected={ result.tax === 'nontax' }>Non Tax</option>
 																	</InputSelect>
 																</div>
 																<div className='w-full'>
 																	<InputSelect
-																		id={`srDetail.${i}.supId`}
-																		name={`srDetail.${i}.supId`}
+																		id={`detailMr.${i}.supId`}
+																		name={`detailMr.${i}.supId`}
 																		placeholder='Suplier'
 																		label='Suplier'
 																		onChange={(e: any) => {
 																			setFieldValue(
-																				`srDetail.${i}.supId`,
+																				`detailMr.${i}.supId`,
 																				e.target.value
 																			);
 																		}}
@@ -271,7 +273,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																						<option
 																							value={res.id}
 																							key={i}
-																							// selected={res.id === result.material}
+																							selected={res.id === result.supId}
 																						>
 																							{res.supplier_name}
 																						</option>
@@ -282,13 +284,49 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																	</InputSelect>
 																</div>
 																<div className='w-full'>
+																	<InputSelect
+																		id={`detailMr.${i}.akunId`}
+																		name={`detailMr.${i}.akunId`}
+																		placeholder='Akun'
+																		label='Akun'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.akunId`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	>
+																		<option value='no data' selected>
+																			Choose Akun
+																		</option>
+																		{listCoa.length === 0 ? (
+																			<option value='no data'>No data</option>
+																		) : (
+																			listCoa.map((res: any, i: number) => {
+																				return (
+																					<option
+																						value={res.id}
+																						key={i}
+																						selected={res.id === result.akunId}
+																					>
+																						{res.coa_name}
+																					</option>
+																				);
+																			})
+																		)}
+																	</InputSelect>
+																</div>
+																<div className='w-full'>
 																	<Input
-																		id={`srDetail.${i}.part`}
-																		name={`srDetail.${i}.part`}
-																		placeholder='Part/Item'
-																		label='Part/Item'
+																		id={`detailMr.${i}.material`}
+																		name={`detailMr.${i}.material`}
+																		placeholder='Part / Item'
+																		label='Part / Item'
 																		type='text'
-																		value={result.part}
+																		value={result.material}
 																		disabled={true}
 																		required={true}
 																		withLabel={true}
@@ -297,10 +335,10 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																</div>
 																<div className='w-full'>
 																	<Input
-																		id={`srDetail.${i}.service`}
-																		name={`srDetail.${i}.service`}
-																		placeholder='Service Description'
-																		label='Service Description'
+																		id={`detailMr.${i}.service`}
+																		name={`detailMr.${i}.service`}
+																		placeholder='Description Service'
+																		label='Description Service'
 																		type='text'
 																		value={result.service}
 																		disabled={true}
@@ -310,55 +348,129 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																	/>
 																</div>
 															</Section>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
-																	<Input
-																		id={`srDetail.${i}.qty`}
-																		name={`srDetail.${i}.qty`}
-																		placeholder='Qty'
-																		label='Qty'
-																		type='number'
-																		disabled={true}
-																		value={result.qty}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+																	<div className='w-full'>
+																		<Input
+																			id={`detailMr.${i}.qty`}
+																			name={`detailMr.${i}.qty`}
+																			placeholder='Qty'
+																			label='Qty'
+																			type='number'
+																			value={result.qty}
+																			disabled={true}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</div>
+																	<div className='w-full'>
+																		<InputSelect
+																			id={`detailMr.${i}.currency`}
+																			name={`detailMr.${i}.currency`}
+																			placeholder='Currency'
+																			label='Currency'
+																			onChange={(e: any) => {
+																				setFieldValue(
+																					`detailMr.${i}.Currency`,
+																					e.target.value
+																				);
+																			}}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		>
+																			<option value='IDR' selected>
+																				IDR
+																			</option>
+																			<option value='EUR'>EUR</option>
+																			<option value='SGD'>SGD</option>
+																			<option value='USD'>USD</option>
+																			<option value='YEN'>YEN</option>
+																		</InputSelect>
+																	</div>
 																</div>
 																<div className='w-full'>
 																	<Input
-																		id={`srDetail.${i}.qtyAppr`}
-																		name={`srDetail.${i}.qtyAppr`}
-																		placeholder='Qty Approve'
-																		label='Qty Approve'
-																		type='number'
-																		onChange={ (e: any) => {
-																			setFieldValue(`srDetail.${i}.qtyAppr`, e.target.value)
-																		}}
-																		value={result.qtyAppr}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`srDetail.${i}.note`}
-																		name={`srDetail.${i}.note`}
+																		id={`detailMr.${i}.note`}
+																		name={`detailMr.${i}.note`}
 																		placeholder='Note'
 																		label='Note'
 																		type='text'
-																		onChange={ (e: any) => {
-																			setFieldValue(`srDetail.${i}.note`, e.target.value)
-																		}}
 																		value={result.note}
+																		disabled={true}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
 																<div className='w-full'>
-																	{values.srDetail.length === 1 ? null : (
+																	<Input
+																		id={`detailMr.${i}.price`}
+																		name={`detailMr.${i}.price`}
+																		placeholder='Price'
+																		label='Price'
+																		type='number'
+																		onChange={ (e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.total`,
+																				totalHarga(
+																					e.target.value,
+																					result.qty,
+																					result.disc
+																				)
+																			);
+																			setFieldValue(`detailMr.${i}.price`, e.target.value)
+																		}}
+																		value={result.price}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.disc`}
+																		name={`detailMr.${i}.disc`}
+																		placeholder='Discount'
+																		label='Discount'
+																		type='number'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.total`,
+																				totalHarga(
+																					result.price,
+																					result.qty,
+																					e.target.value
+																				)
+																			);
+																			setFieldValue(
+																				`detailMr.${i}.disc`,
+																				e.target.value
+																			);
+																		}}
+																		value={result.disc}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.total`}
+																		name={`detailMr.${i}.total`}
+																		placeholder='Total Price'
+																		label='Total Price'
+																		type='number'
+																		value={result.total}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	{values.detailMr.length === 1 ? null : (
 																		<a
 																			className='inline-flex text-red-500 cursor-pointer mt-10'
 																			onClick={() => {
@@ -366,7 +478,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																			}}
 																		>
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
-																			Remove Service Request
+																			Remove Material Request
 																		</a>
 																	)}
 																</div>
@@ -380,7 +492,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 								})
 							}
 						/>
-						{values.srDetail.length > 0 ? (
+						{ values.detailMr.length === 0 ? null : (
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button
@@ -412,12 +524,12 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 												Loading
 											</>
 										) : (
-											"Approval"
+											"Save"
 										)}
 									</button>
 								</div>
 							</div>
-						) : null}
+						) }
 					</Form>
 				)}
 			</Formik>
