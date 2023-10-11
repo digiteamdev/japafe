@@ -3,8 +3,9 @@ import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
-	EditPrSr,
+	GetAllSRPo,
 	GetAllCoa,
+	AddPrSr,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -14,7 +15,6 @@ import { Disclosure } from "@headlessui/react";
 
 interface props {
 	content: string;
-	dataSelected: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
@@ -24,14 +24,13 @@ interface data {
 	detailMr: any;
 }
 
-export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) => {
+export const FormCreateDirectSr = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
 	const [listMr, setListMr] = useState<any>([]);
 	const [listCoa, setListCoa] = useState<any>([]);
 	const [userId, setUserId] = useState<string>("");
 	const [idPR, setIdPR] = useState<string>("");
-	const [datePurchase, setDatePurchase] = useState<any>(new Date());
 	const [data, setData] = useState<data>({
 		dateOfPurchase: new Date(),
 		idPurchase: "",
@@ -43,40 +42,47 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 		if (idUser !== undefined) {
 			setUserId(idUser);
 		}
+		setIdPR(generateIdNum());
 		getSupplier();
-		settingData();
+		getSrPo();
 		getCoa();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const settingData = async () => {
-		let detail: any = [];
-		setIdPR(dataSelected.idPurchase)
-		setDatePurchase(dataSelected.setDatePurchase)
-		dataSelected.SrDetail.map((res: any) => {
-			detail.push({
-				id: res.id,
-				supId: res.supId,
-				tax: res.taxPsrDmr,
-				akunId: res.akunId,
-				disc: res.disc,
-				currency: res.currency,
-				total: res.total,
-				material: res.part,
-				service: res.workCenter.name,
-				qty: res.qty,
-				note: res.note,
-				price: res.total / res.qty,
-				job_no: res.sr.wor.job_operational
-					? res.sr.wor.job_no_mr
-					: res.sr.wor.job_no,
-			});
-		});
-		setData({
-			dateOfPurchase: dataSelected.dateOfPurchase,
-			idPurchase: dataSelected.idPurchase,
-			detailMr: detail,
-		});
+	const getSrPo = async () => {
+		try {
+			const response = await GetAllSRPo('DSO');
+			if (response) {
+				let detail: any = [];
+				response.data.result.map((res: any) => {
+					detail.push({
+						id: res.id,
+						supId: res.supId,
+						tax: res.tax,
+						akunId: res.akunId,
+						disc: res.disc,
+						currency: 'IDR',
+						total: res.total,
+						material: res.part,
+						service: res.workCenter.name,
+						qty: res.qty,
+						note: res.note,
+						price: 0,
+						job_no: res.sr.wor.job_operational
+							? res.sr.wor.job_no_mr
+							: res.sr.wor.job_no,
+					});
+				});
+				setData({
+					dateOfPurchase: new Date(),
+					idPurchase: generateIdNum(),
+					detailMr: detail,
+				});
+				setListMr(response.data.result);
+			}
+		} catch (error) {
+			setListMr([]);
+		}
 	};
 
 	const getCoa = async () => {
@@ -99,6 +105,18 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 		} catch (error) {}
 	};
 
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id =
+			"DSR" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 1000);
+		return id;
+	};
+
 	const totalHarga = (harga: number, qty: number, disc: number) => {
 		let totalHarga = harga * qty - disc;
 		return totalHarga;
@@ -107,7 +125,7 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 	const purchaseSr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.detailMr.map((res: any, i: number) => {
+		payload.detailMr.map((res: any) => {
 			listDetail.push({
 				id: res.id,
 				supId: res.supId,
@@ -115,16 +133,18 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 				akunId: res.akunId,
 				disc: parseInt(res.disc),
 				currency: res.currency,
-				total: parseInt(res.total)
+				total: parseInt(res.total),
 			});
 		});
 		let data = {
+			dateOfPurchase: payload.dateOfPurchase,
+			idPurchase: payload.idPurchase,
 			srDetail: listDetail,
 		};
 		try {
-			const response = await EditPrSr(data);
+			const response = await AddPrSr(data);
 			if (response.data) {
-				toast.success("Edit Purchase Service Request Success", {
+				toast.success("Purchase Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -137,7 +157,7 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Edit Purchase Service Request Failed", {
+			toast.error("Purchase Service Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -192,7 +212,7 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 									placeholder='Date Of Purchase'
 									label='Date Of Purchase'
 									type='text'
-									value={moment(datePurchase).format("DD-MMMM-YYYY")}
+									value={moment(new Date()).format("DD-MMMM-YYYY")}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -240,8 +260,8 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 																		</option>
 																		<option value='ppn' selected={ result.tax === 'ppn' }>PPN</option>
 																		<option value='pph' selected={ result.tax === 'pph' }>PPH</option>
-																		<option value='ppn_and_pph' selected={ result.tax === 'ppn_and_pph' }>PPN dan PPH</option>
-																		<option value='nontax' selected={ result.tax === 'nontax' }>Non Tax</option>
+																		<option value='ppnandpph' selected={ result.tax === 'pph' }>PPN dan PPH</option>
+																		<option value='nontax'>No Tax</option>
 																	</InputSelect>
 																</div>
 																<div className='w-full'>
@@ -309,7 +329,7 @@ export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) 
 																					<option
 																						value={res.id}
 																						key={i}
-																						selected={res.id === result.akunId}
+																						// selected={res.id === result.material}
 																					>
 																						{res.coa_name}
 																					</option>

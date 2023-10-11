@@ -38,7 +38,7 @@ interface data {
 	eq_rotation: string;
 	eq_power: string;
 	scope_of_work: string;
-	file_list: string;
+	file_list: any;
 	noted: string;
 	status: string;
 	refivision: any;
@@ -730,7 +730,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								{values.file_list !== "" &&
+								{values.file_list !== null &&
 								values.file_list.includes("https://res.cloudinary.com/") ? (
 									<div>
 										<label className='block mb-2 text-sm font-medium text-gray-900'>

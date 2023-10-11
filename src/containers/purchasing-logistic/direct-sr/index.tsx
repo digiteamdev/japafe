@@ -10,15 +10,15 @@ import {
 	Pagination
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateDirectMr } from "./formCreate";
-import { ViewDirectMR } from "./view";
-import { FormEditDirectMr } from "./formEdit";
-import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
+import { FormCreateDirectSr } from "./formCreate";
+import { ViewDirectSR } from "./view";
+import { FormEditDirectSr } from "./formEdit";
+import { GetPurchaseSR, SearchPurchaseSR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 
-export const DirectPurchaseMR = () => {
+export const DirectSR = () => {
 
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -32,14 +32,14 @@ export const DirectPurchaseMR = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id Direct MR" },
-		{ name: "Direct Date MR" },
+		{ name: "Id Direct SR" },
+		{ name: "Direct Date SR" },
         { name: "Note" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage, 'DMR');
+		getPurchaseSR(page, perPage, 'DSR');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,14 +50,14 @@ export const DirectPurchaseMR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage, 'DMR');
+			getPurchaseSR(page, perPage, 'DSR');
 		}
 	};
 
-	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
+	const getPurchaseSR = async (page: number, perpage: number, type:string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPurchaseMR(page, perpage, type);
+			const response = await GetPurchaseSR(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -74,14 +74,14 @@ export const DirectPurchaseMR = () => {
 		setIsLoading(false);
 	};
 
-	const searchPurchaseMR = async (
+	const searchPurchaseSR = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseMR(page, limit, search, 'DMR');
+			const response = await SearchPurchaseSR(page, limit, search, 'DSR');
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -105,7 +105,7 @@ export const DirectPurchaseMR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10, 'DMR');
+				getPurchaseSR(1, 10, 'DSR');
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -125,15 +125,15 @@ export const DirectPurchaseMR = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Direct Material Request'
+				title='Direct Service Request'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Direct Material Request'
+				title='Direct Service Request'
 				print={true}
 				showModal={showModal}
-				search={searchPurchaseMR}
+				search={searchPurchaseSR}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -179,7 +179,7 @@ export const DirectPurchaseMR = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idPurchase }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'></td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'></td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -227,7 +227,7 @@ export const DirectPurchaseMR = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getPurchaseMR(value, perPage, 'DMR');
+								getPurchaseSR(value, perPage, 'DSR');
 							}}
 						/>
 					) : null
@@ -243,17 +243,17 @@ export const DirectPurchaseMR = () => {
 				/>
 			) : (
 				<Modal
-					title='Direct Material Request'
+					title='Direct Service Request'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewDirectMR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+                        <ViewDirectSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
 					) : modalContent === "add" ? (
-                        <FormCreateDirectMr content={modalContent} showModal={showModal} />
+                        <FormCreateDirectSr content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditDirectMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <FormEditDirectSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

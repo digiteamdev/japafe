@@ -221,7 +221,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 										</td>
 										<td className='w-[50%] py-2 px-2 border border-gray-200'>
 											{
-												dataSelected.file_list === '' ? 'Tidak Ada File' : (
+												dataSelected.file_list === null ? 'Tidak Ada File' : (
 													<a
 														href={dataSelected.file_list}
 														target='_blank'

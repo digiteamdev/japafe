@@ -24,7 +24,7 @@ interface data {
 	detailMr: any;
 }
 
-export const FormEditPurchaseSr = ({ content, dataSelected, showModal }: props) => {
+export const FormEditDirectSr = ({ content, dataSelected, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
 	const [listMr, setListMr] = useState<any>([]);

@@ -38,7 +38,7 @@ export const PurchaseSR = () => {
 	];
 
 	useEffect(() => {
-		getPurchaseSR(page, perPage, 'SO');
+		getPurchaseSR(page, perPage, 'PSR');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -49,7 +49,7 @@ export const PurchaseSR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseSR(page, perPage, 'SO');
+			getPurchaseSR(page, perPage, 'PSR');
 		}
 	};
 
@@ -80,7 +80,7 @@ export const PurchaseSR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseSR(page, limit, search, 'SO');
+			const response = await SearchPurchaseSR(page, limit, search, 'PSR');
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -104,7 +104,7 @@ export const PurchaseSR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseSR(1, 10, 'SO');
+				getPurchaseSR(1, 10, 'PSR');
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -225,7 +225,7 @@ export const PurchaseSR = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getPurchaseSR(value, perPage, 'SO');
+								getPurchaseSR(value, perPage, 'PSR');
 							}}
 						/>
 					) : null
