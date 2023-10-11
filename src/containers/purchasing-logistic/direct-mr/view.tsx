@@ -81,9 +81,14 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 		return formatRupiah(total.toString());
 	};
 
-	const approve = async () => {
+	const approve = async (status: boolean) => {
+		let data = {
+			statusApprove: {
+				status_manager_pr: status,
+			},
+		};
 		try {
-			const response = await ApprovalPrMr(dataSelected.id);
+			const response = await ApprovalPrMr(dataSelected.id, data);
 			if (response.status === 201) {
 				toast.success("Approve Success", {
 					position: "top-center",
@@ -126,20 +131,20 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 		if (position === "Manager") {
 			if (data.status_manager_pr) {
 				return (
-				<button
-					className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-					onClick={() => approve()}
-				>
-					<div className='flex px-1 py-1'>
-						<X size={16} className='mr-1' /> Unvalid Manager
-					</div>
-				</button>
-				)
+					<button
+						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => approve(false)}
+					>
+						<div className='flex px-1 py-1'>
+							<X size={16} className='mr-1' /> Unvalid Manager
+						</div>
+					</button>
+				);
 			} else {
 				return (
 					<button
 						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve()}
+						onClick={() => approve(true)}
 					>
 						<div className='flex px-1 py-1'>
 							<Check size={16} className='mr-1' /> Valid Manager
@@ -147,8 +152,8 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 					</button>
 				);
 			}
-		}else{
-			return null
+		} else {
+			return null;
 		}
 	};
 
