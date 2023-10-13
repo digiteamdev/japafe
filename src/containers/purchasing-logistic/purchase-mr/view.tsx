@@ -257,7 +257,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 																	</td>
 																	<td className='border border-black text-center'>
 																		{formatRupiah(
-																			result.Material_Stock.harga.toString()
+																			result.price.toString()
 																		)}
 																	</td>
 																	<td className='border border-black text-center'>

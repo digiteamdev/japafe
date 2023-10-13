@@ -69,6 +69,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 						job_no: res.sr.wor.job_operational
 							? res.sr.wor.job_no_mr
 							: res.sr.wor.job_no,
+						user: res.sr.user.employee.employee_name
 					});
 				});
 				setIdApproval(idAppr);
@@ -205,6 +206,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 							name='srDetail'
 							render={(arrayMr) =>
 								values.srDetail.map((result: any, i: number) => {
+									console.log(result);
 									return (
 										<div key={i}>
 											<Disclosure defaultOpen>
@@ -219,7 +221,21 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 															</h4>
 														</Disclosure.Button>
 														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.no_sr`}
+																		name={`srDetail.${i}.no_sr`}
+																		placeholder='No SR'
+																		label='No SR'
+																		type='text'
+																		value={result.no_sr}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 																<div className='w-full'>
 																	<InputSelect
 																		id={`srDetail.${i}.srappr`}
@@ -310,7 +326,21 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																	/>
 																</div>
 															</Section>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.user`}
+																		name={`srDetail.${i}.user`}
+																		placeholder='Request By'
+																		label='Request By'
+																		type='text'
+																		value={result.user}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 																<div className='w-full'>
 																	<Input
 																		id={`srDetail.${i}.qty`}
@@ -332,8 +362,11 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																		placeholder='Qty Approve'
 																		label='Qty Approve'
 																		type='number'
-																		onChange={ (e: any) => {
-																			setFieldValue(`srDetail.${i}.qtyAppr`, e.target.value)
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`srDetail.${i}.qtyAppr`,
+																				e.target.value
+																			);
 																		}}
 																		value={result.qtyAppr}
 																		required={true}
@@ -348,8 +381,11 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 																		placeholder='Note'
 																		label='Note'
 																		type='text'
-																		onChange={ (e: any) => {
-																			setFieldValue(`srDetail.${i}.note`, e.target.value)
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`srDetail.${i}.note`,
+																				e.target.value
+																			);
 																		}}
 																		value={result.note}
 																		required={true}

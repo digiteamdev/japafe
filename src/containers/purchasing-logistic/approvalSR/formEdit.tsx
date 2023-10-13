@@ -32,6 +32,7 @@ interface data {
 			no_sr: string;
 			job_no: string;
 			approvedRequestId: string;
+			user: string;
 		}
 	];
 }
@@ -64,10 +65,11 @@ export const FormEditApprovalSr = ({
 				no_sr: "",
 				job_no: "",
 				approvedRequestId: "",
+				user: "",
 			},
 		],
 	});
-
+	console.log(dataSelected);
 	useEffect(() => {
 		let idUser = getIdUser();
 		if (idUser !== undefined) {
@@ -90,6 +92,7 @@ export const FormEditApprovalSr = ({
 					? res.sr.wor.job_no_mr
 					: res.sr.wor.job_no,
 				approvedRequestId: res.approvedRequestId,
+				user: res.sr.user.employee.employee_name,
 			});
 			setIdApproval(dataSelected.idApprove);
 			setData({
@@ -127,7 +130,7 @@ export const FormEditApprovalSr = ({
 					srappr: null,
 					supId: null,
 					qtyAppr: 0,
-					approvedRequestId: null
+					approvedRequestId: null,
 				});
 			}
 		});
@@ -150,18 +153,18 @@ export const FormEditApprovalSr = ({
 				srappr: res.srappr,
 				supId: res.supId,
 				qtyAppr: parseInt(res.qtyAppr),
-				approvedRequestId: res.approvedRequestId
+				approvedRequestId: res.approvedRequestId,
 			});
 		});
-		listMrRemove.map( (res: any) => {
+		listMrRemove.map((res: any) => {
 			listDetail.push({
 				id: res.id,
 				srappr: null,
 				supId: null,
 				qtyAppr: 0,
-				approvedRequestId: null
+				approvedRequestId: null,
 			});
-		})
+		});
 		let data = {
 			id: dataSelected.id,
 			approveById: userId,
@@ -266,7 +269,21 @@ export const FormEditApprovalSr = ({
 															</h4>
 														</Disclosure.Button>
 														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.no_sr`}
+																		name={`srDetail.${i}.no_sr`}
+																		placeholder='No SR'
+																		label='No SR'
+																		type='text'
+																		value={result.no_sr}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 																<div className='w-full'>
 																	<InputSelect
 																		id={`srDetail.${i}.srappr`}
@@ -367,7 +384,21 @@ export const FormEditApprovalSr = ({
 																	/>
 																</div>
 															</Section>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.user`}
+																		name={`srDetail.${i}.user`}
+																		placeholder='Request By'
+																		label='Request By'
+																		type='text'
+																		value={result.user}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 																<div className='w-full'>
 																	<Input
 																		id={`srDetail.${i}.qty`}
@@ -377,6 +408,25 @@ export const FormEditApprovalSr = ({
 																		type='number'
 																		disabled={true}
 																		value={result.qty}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`srDetail.${i}.qtyAppr`}
+																		name={`srDetail.${i}.qtyAppr`}
+																		placeholder='Qty Approve'
+																		label='Qty Approve'
+																		type='number'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`srDetail.${i}.qtyAppr`,
+																				e.target.value
+																			);
+																		}}
+																		value={result.qtyAppr}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -400,8 +450,7 @@ export const FormEditApprovalSr = ({
 																		<a
 																			className='inline-flex text-red-500 cursor-pointer mt-10'
 																			onClick={() => {
-																				removeSr(result),
-																				arrayMr.remove(i);
+																				removeSr(result), arrayMr.remove(i);
 																			}}
 																		>
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,19 +7,24 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateApprovalSr } from "./formCreate";
-import { ViewApprovalSR } from "./view";
-import { FormEditApprovalSr } from "./formEdit";
-import { GetApprovalRequest, SearchApprovalRequest, DeleteSr } from "../../../services";
+import { Send, CheckSquare, Eye } from "react-feather";
+// import { FormCreateDirectMr } from "./formCreate";
+import { ViewApprovalDirector } from "./view";
+import { FormEditApproval } from "./formEdit";
+import {
+	GetPurchaseApproval,
+	SearchPurchaseApproval,
+	DeletePurchaseMR,
+    ApprovalPrMr
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
+import { formatRupiah } from "../../../utils/index";
 
-export const ApprovalSr = () => {
-
+export const ApprovalList = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,17 +34,17 @@ export const ApprovalSr = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Approval SR" },
-        { name: "Approval SR Date" },
-		{ name: "Approval By" },
-        { name: "Action" }
+		{ name: "Id Number" },
+		{ name: "Date Prepared" },
+		{ name: "Nominal (Exc Tax)" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getSr(page, perPage, "SA");
+		getPurchaseApproval(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,38 +55,38 @@ export const ApprovalSr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getSr(page, perPage, "SA");
+			getPurchaseApproval(page, perPage);
 		}
 	};
 
-	const getSr = async (page: number, perpage: number, type: string) => {
+	const getPurchaseApproval = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalRequest(page, perpage, type);
+			const response = await GetPurchaseApproval(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchApprSr = async (
+	const searchPurchaseApproval = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchApprovalRequest(page, limit, search, "SA");
+			const response = await SearchPurchaseApproval(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -91,11 +96,11 @@ export const ApprovalSr = () => {
 		setIsLoading(false);
 	};
 
-	const deleteSr = async (id: string) => {
+	const deletePurchaseMR = async (id: string) => {
 		try {
-			const response = await DeleteSr(id);
-			if(response.data){
-				toast.success("Delete Service Request Success", {
+			const response = await DeletePurchaseMR(id);
+			if (response.data) {
+				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -105,10 +110,10 @@ export const ApprovalSr = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getSr(1, 10, "SA");
+				getPurchaseApproval(page, perPage);
 			}
 		} catch (error) {
-			toast.error("Delete Service Request Failed", {
+			toast.error("Delete Purchase Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -122,18 +127,71 @@ export const ApprovalSr = () => {
 		setIsModal(false);
 	};
 
+    const approve = async (id: string,status: boolean) => {
+		let data = {
+			statusApprove: {
+				status_manager_director: status,
+			},
+		};
+		try {
+			const response = await ApprovalPrMr(id, data);
+			if (response.status === 201) {
+				toast.success("Approve Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			} else {
+				toast.error("Approve Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Approve Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	};
+
+	const total = (datas: any) => {
+		let totalHarga: number = 0;
+		datas.map((res: any) => {
+			totalHarga = totalHarga + res.total;
+		});
+		return formatRupiah(totalHarga.toString());
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Approval Service Request'
+				title='Approval List'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Approval Service Request'
-				print={true}
+				title='Approval List'
+				print={false}
 				showModal={showModal}
-				search={searchApprSr}
+				search={searchPurchaseApproval}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -177,9 +235,17 @@ export const ApprovalSr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idApprove }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.idPurchase}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{moment(res.dateOfPurchase).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{total(
+											res.SrDetail.length > 0 ? res.SrDetail : res.detailMr
+										)}
+									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -195,10 +261,10 @@ export const ApprovalSr = () => {
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
-													showModal(true,'edit', false);
+													showModal(true, "edit", false);
 												}}
 											>
-												<Edit color='white' />
+												<CheckSquare color='white' />
 											</Button>
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
@@ -216,20 +282,18 @@ export const ApprovalSr = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={11} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getSr(value, perPage, "SA");
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={11}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getPurchaseApproval(page, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -237,21 +301,22 @@ export const ApprovalSr = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteSr}
+					onDelete={deletePurchaseMR}
 				/>
 			) : (
 				<Modal
-					title='Approval Service Request'
+					title='Approval List'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewApprovalSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
-					) : modalContent === "add" ? (
-                        <FormCreateApprovalSr content={modalContent} showModal={showModal} />
+						<ViewApprovalDirector dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+					) :
+					modalContent === "add" ? (
+						<></>
 					) : (
-                        <FormEditApprovalSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditApproval content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

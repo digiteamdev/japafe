@@ -278,14 +278,14 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 																	{result.workCenter.name}
 																</td>
 																<td className='border border-black text-center'>
-																	{result.qty}
+																	{result.qtyAppr}
 																</td>
 																<td className='border border-black text-center'>
 																	{result.note}
 																</td>
 																<td className='border border-black text-center'>
 																	{formatRupiah(
-																		price(result.total, result.disc)
+																		result.price.toString()
 																	)}
 																</td>
 																<td className='border border-black text-center'>
