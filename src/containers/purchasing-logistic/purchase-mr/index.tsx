@@ -66,8 +66,8 @@ export const PurchaseMR = () => {
 			if(error.response.data.login){
 				setData([]);
 			}else{
-				removeToken();
-				router.push('/');
+				// removeToken();
+				// router.push('/');
 			}
 		}
 		setIsLoading(false);

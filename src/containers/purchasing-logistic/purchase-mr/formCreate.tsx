@@ -51,17 +51,19 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 
 	const getMrPo = async () => {
 		try {
-			const response = await GetAllMRPo('PO');
+			const response = await GetAllMRPo("PO");
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any, i: number) => {
 					detail.push({
 						id: res.id,
+						no_mr: res.mr.no_mr,
+						user: res.mr.user.employee.employee_name,
 						supId: res.supId,
 						taxpr: res.taxpr,
 						akunId: res.akunId,
 						disc: res.disc,
-						currency: 'IDR',
+						currency: "IDR",
 						total: res.Material_Stock.harga * res.qtyAppr,
 						material: res.Material_Stock.spesifikasi,
 						qty: res.qtyAppr,
@@ -130,9 +132,11 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 				supId: res.supId,
 				taxpr: res.taxpr,
 				akunId: res.akunId,
-				disc: parseInt(res.disc),
 				currency: res.currency,
-				total: parseInt(res.total),
+				qtyAppr: parseInt(res.qty),
+				price: parseInt(res.price),
+				disc: parseInt(res.disc),
+				total: parseInt(res.total)
 			});
 		});
 		let data = {
@@ -238,6 +242,20 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														</Disclosure.Button>
 														<Disclosure.Panel>
 															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.no_mr`}
+																		name={`detailMr.${i}.no_mr`}
+																		placeholder='No MR'
+																		label='No MR'
+																		type='text'
+																		value={result.no_mr}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
 																<div className='w-full'>
 																	<InputSelect
 																		id={`detailMr.${i}.taxpr`}
@@ -349,49 +367,57 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
-																<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-																	<div className='w-full'>
-																		<Input
-																			id={`detailMr.${i}.qty`}
-																			name={`detailMr.${i}.qty`}
-																			placeholder='Qty'
-																			label='Qty'
-																			type='number'
-																			value={result.qty}
-																			disabled={true}
-																			required={true}
-																			withLabel={true}
-																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																		/>
-																	</div>
-																	<div className='w-full'>
-																		<InputSelect
-																			id={`detailMr.${i}.currency`}
-																			name={`detailMr.${i}.currency`}
-																			placeholder='Currency'
-																			label='Currency'
-																			onChange={(e: any) => {
-																				setFieldValue(
-																					`detailMr.${i}.Currency`,
-																					e.target.value
-																				);
-																			}}
-																			required={true}
-																			withLabel={true}
-																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																		>
-																			<option value='IDR' selected>
-																				IDR
-																			</option>
-																			<option value='EUR'>EUR</option>
-																			<option value='SGD'>SGD</option>
-																			<option value='USD'>USD</option>
-																			<option value='YEN'>YEN</option>
-																		</InputSelect>
-																	</div>
-																</div>
 															</Section>
 															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.qty`}
+																		name={`detailMr.${i}.qty`}
+																		placeholder='Qty'
+																		label='Qty'
+																		type='number'
+																		value={result.qty}
+																		onChange={ (e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.total`,
+																				totalHarga(
+																					result.price,
+																					e.target.value,
+																					result.disc
+																				)
+																			);
+																			setFieldValue(`detailMr.${i}.qty`, e.target.value)
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<InputSelect
+																		id={`detailMr.${i}.currency`}
+																		name={`detailMr.${i}.currency`}
+																		placeholder='Currency'
+																		label='Currency'
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.Currency`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	>
+																		<option value='IDR' selected>
+																			IDR
+																		</option>
+																		<option value='EUR'>EUR</option>
+																		<option value='SGD'>SGD</option>
+																		<option value='USD'>USD</option>
+																		<option value='YEN'>YEN</option>
+																	</InputSelect>
+																</div>
 																<div className='w-full'>
 																	<Input
 																		id={`detailMr.${i}.note`}
@@ -414,7 +440,17 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																		label='Price'
 																		type='number'
 																		value={result.price}
-																		disabled={true}
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.total`,
+																				totalHarga(
+																					e.target.value,
+																					result.qty,
+																					result.disc
+																				)
+																			);
+																			setFieldValue(`detailMr.${i}.price`, e.target.value)
+																		}}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -447,6 +483,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
+															</Section>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<Input
 																		id={`detailMr.${i}.total`}
@@ -455,6 +493,20 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																		label='Total Price'
 																		type='number'
 																		value={result.total}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.user`}
+																		name={`detailMr.${i}.user`}
+																		placeholder='Request By'
+																		label='Request By'
+																		type='text'
+																		value={result.user}
 																		disabled={true}
 																		required={true}
 																		withLabel={true}
@@ -484,7 +536,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								})
 							}
 						/>
-						{ values.detailMr.length === 0 ? null : (
+						{values.detailMr.length === 0 ? null : (
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button
@@ -521,7 +573,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									</button>
 								</div>
 							</div>
-						) }
+						)}
 					</Form>
 				)}
 			</Formik>

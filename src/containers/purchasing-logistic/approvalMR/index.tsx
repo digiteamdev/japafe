@@ -13,7 +13,7 @@ import { Send, Edit, Eye } from "react-feather";
 import { FormCreateApprovalMr } from "./formCreate";
 import { ViewApprovalMR } from "./view";
 import { FormEditApprovalMr } from "./formEdit";
-import { GetApprovalMr, SearchApprovalMr, DeleteMR } from "../../../services";
+import { GetApprovalRequest, SearchApprovalRequest, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -39,7 +39,7 @@ export const ApprovalMr = () => {
 	];
 
 	useEffect(() => {
-		getApprovalMr(page, perPage);
+		getApprovalMr(page, perPage, "MP");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,14 +50,14 @@ export const ApprovalMr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getApprovalMr(page, perPage);
+			getApprovalMr(page, perPage, "MP");
 		}
 	};
 
-	const getApprovalMr = async (page: number, perpage: number) => {
+	const getApprovalMr = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalMr(page, perpage);
+			const response = await GetApprovalRequest(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -81,7 +81,7 @@ export const ApprovalMr = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchApprovalMr(page, limit, search);
+			const response = await SearchApprovalRequest(page, limit, search, "MP");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -105,7 +105,7 @@ export const ApprovalMr = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getApprovalMr(1, 10);
+				getApprovalMr(1, 10, "MP");
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -225,7 +225,7 @@ export const ApprovalMr = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getApprovalMr(value, perPage);
+								getApprovalMr(value, perPage, "MP");
 							}}
 						/>
 					) : null

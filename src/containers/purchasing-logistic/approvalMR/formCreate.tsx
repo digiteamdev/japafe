@@ -35,6 +35,7 @@ interface data {
 			no_mr: string;
 			job_no: string;
 			stock: string;
+			user: string;
 		}
 	];
 }
@@ -65,6 +66,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 				no_mr: "",
 				job_no: "",
 				stock: "",
+				user: ""
 			},
 		],
 	});
@@ -90,7 +92,10 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 						id: res.id,
 						mrappr: res.mrappr,
 						supId: res.supId,
-						material: res.Material_Stock.Material_master.material_name + ' - ' + res.Material_Stock.spesifikasi,
+						material:
+							res.Material_Stock.Material_master.material_name +
+							" - " +
+							res.Material_Stock.spesifikasi,
 						qty: res.qty,
 						note: res.note,
 						qtyAppr: 0,
@@ -99,6 +104,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 							? res.mr.wor.job_no_mr
 							: res.mr.wor.job_no,
 						stock: res.Material_Stock.jumlah_Stock,
+						user: res.mr.user.employee.employee_name
 					});
 				});
 				setIdApproval(idAppr);
@@ -285,6 +291,20 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 														<Disclosure.Panel>
 															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.no_mr`}
+																		name={`detailMr.${i}.no_mr`}
+																		placeholder='No MR'
+																		label='No MR'
+																		type='string'
+																		disabled={true}
+																		value={result.no_mr}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
 																	<InputSelect
 																		id={`detailMr.${i}.mrappr`}
 																		name={`detailMr.${i}.mrappr`}
@@ -362,6 +382,22 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 																</div>
 																<div className='w-full'>
 																	<Input
+																		id={`detailMr.${i}.user`}
+																		name={`detailMr.${i}.user`}
+																		placeholder='Request By'
+																		label='Request By'
+																		type='string'
+																		value={result.user}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+															</Section>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
 																		id={`detailMr.${i}.qty`}
 																		name={`detailMr.${i}.qty`}
 																		placeholder='Qty'
@@ -388,8 +424,6 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
-															</Section>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<Input
 																		id={`detailMr.${i}.qtyAppr`}
@@ -423,7 +457,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 																	/>
 																</div>
 																<div className='w-full'>
-																	{ values.detailMr.length === 1 ? null : (
+																	{values.detailMr.length === 1 ? null : (
 																		<a
 																			className='inline-flex text-red-500 cursor-pointer mt-10'
 																			onClick={() => {
@@ -433,7 +467,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
 																			Remove Material Request
 																		</a>
-																	) }
+																	)}
 																</div>
 															</Section>
 														</Disclosure.Panel>

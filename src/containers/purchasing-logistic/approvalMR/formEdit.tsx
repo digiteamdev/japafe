@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import {
-	ApprovalEditMr,
-	GetAllSupplier,
-	ApprovalMr,
-} from "../../../services";
+import { ApprovalEditMr, GetAllSupplier, ApprovalMr } from "../../../services";
 import { Disclosure } from "@headlessui/react";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -36,6 +32,7 @@ interface data {
 			job_no: string;
 			stock: string;
 			approvedRequestId: string;
+			user: string;
 		}
 	];
 }
@@ -67,7 +64,8 @@ export const FormEditApprovalMr = ({
 				no_mr: "",
 				job_no: "",
 				stock: "",
-				approvedRequestId: ""
+				approvedRequestId: "",
+				user: "",
 			},
 		],
 	});
@@ -95,7 +93,8 @@ export const FormEditApprovalMr = ({
 					? res.mr.wor.job_no_mr
 					: res.mr.wor.job_no,
 				stock: res.Material_Stock.jumlah_Stock,
-				approvedRequestId: res.approvedRequestId
+				approvedRequestId: res.approvedRequestId,
+				user: res.mr.user.employee.employee_name,
 			});
 		});
 		getSupplier();
@@ -120,32 +119,32 @@ export const FormEditApprovalMr = ({
 	};
 
 	const removeMr = (dataRemove: any) => {
-		let detail: any = []
-		let detailRemove: any = []
-		data.detailMr.map( (res: any) => {
-			if(dataRemove.id !== res.id){
-				detail.push(res)
-			}else{
-				listMrRemove.map( (result: any) => {
-					detailRemove.push(result)
-				})
+		let detail: any = [];
+		let detailRemove: any = [];
+		data.detailMr.map((res: any) => {
+			if (dataRemove.id !== res.id) {
+				detail.push(res);
+			} else {
+				listMrRemove.map((result: any) => {
+					detailRemove.push(result);
+				});
 				detailRemove.push({
 					id: res.id,
 					mrappr: null,
 					supId: null,
 					qtyAppr: 0,
-				})
+				});
 			}
-		})
-		setListMrRemove(detailRemove)
+		});
+		setListMrRemove(detailRemove);
 		setData({
 			id: "",
 			idMrAppr: dataSelected.idApprove,
 			dateOfAppr: dataSelected.dateApprove,
 			approveById: userId,
 			detailMr: detail,
-		})
-	}
+		});
+	};
 
 	const approveMr = async (payload: data) => {
 		setIsLoading(true);
@@ -156,18 +155,18 @@ export const FormEditApprovalMr = ({
 				mrappr: res.mrappr,
 				supId: res.supId,
 				qtyAppr: parseInt(res.qtyAppr),
-				approvedRequestId: res.approvedRequestId
+				approvedRequestId: res.approvedRequestId,
 			});
 		});
-		listMrRemove.map( (res: any) => {
+		listMrRemove.map((res: any) => {
 			listDetail.push({
 				id: res.id,
 				mrappr: null,
 				supId: null,
 				qtyAppr: 0,
-				approvedRequestId: null
+				approvedRequestId: null,
 			});
-		})
+		});
 		let data = {
 			id: dataSelected.id,
 			approveById: userId,
@@ -273,6 +272,20 @@ export const FormEditApprovalMr = ({
 														<Disclosure.Panel>
 															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.no_mr`}
+																		name={`detailMr.${i}.no_mr`}
+																		placeholder='No MR'
+																		label='No MR'
+																		type='string'
+																		disabled={true}
+																		value={result.no_mr}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
 																	<InputSelect
 																		id={`detailMr.${i}.mrappr`}
 																		name={`detailMr.${i}.mrappr`}
@@ -288,9 +301,24 @@ export const FormEditApprovalMr = ({
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	>
-																		<option value='PO' selected={ result.mrappr === "PO" }>PO</option>
-																		<option value='DP' selected={ result.mrappr === "DP" }>DP</option>
-																		<option value='Stock' selected={ result.mrappr === "Stock" }>Stock</option>
+																		<option
+																			value='PO'
+																			selected={result.mrappr === "PO"}
+																		>
+																			PO
+																		</option>
+																		<option
+																			value='DP'
+																			selected={result.mrappr === "DP"}
+																		>
+																			DP
+																		</option>
+																		<option
+																			value='Stock'
+																			selected={result.mrappr === "Stock"}
+																		>
+																			Stock
+																		</option>
 																	</InputSelect>
 																</div>
 																<div className='w-full'>
@@ -347,6 +375,22 @@ export const FormEditApprovalMr = ({
 																</div>
 																<div className='w-full'>
 																	<Input
+																		id={`detailMr.${i}.user`}
+																		name={`detailMr.${i}.user`}
+																		placeholder='Request By'
+																		label='Request By'
+																		type='string'
+																		value={result.user}
+																		disabled={true}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+															</Section>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																<div className='w-full'>
+																	<Input
 																		id={`detailMr.${i}.qty`}
 																		name={`detailMr.${i}.qty`}
 																		placeholder='Qty'
@@ -373,8 +417,6 @@ export const FormEditApprovalMr = ({
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
-															</Section>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<Input
 																		id={`detailMr.${i}.qtyAppr`}
@@ -412,8 +454,7 @@ export const FormEditApprovalMr = ({
 																		<a
 																			className='inline-flex text-red-500 cursor-pointer mt-10'
 																			onClick={() => {
-																				removeMr(result),
-																				arrayMr.remove(i);
+																				removeMr(result), arrayMr.remove(i);
 																			}}
 																		>
 																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
