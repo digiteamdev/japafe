@@ -199,7 +199,6 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 						progress: undefined,
 						theme: "colored",
 					});
-					setIsLoading(false);
 					showModal(false, content, true);
 				}
 			}
@@ -214,8 +213,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				progress: undefined,
 				theme: "colored",
 			});
-			setIsLoading(false);
 		}
+		setIsLoading(false);
 	};
 
 	const getEquipment = async () => {

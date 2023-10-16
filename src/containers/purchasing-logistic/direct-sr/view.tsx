@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { ApprovalPrSr } from "../../../services";
+import { ApprovalPrMr } from "../../../services";
 import { Section } from "../../../components";
 import { formatRupiah } from "../../../utils";
 import { getPosition } from "../../../configs/session";
@@ -116,7 +116,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 			},
 		};
 		try {
-			const response = await ApprovalPrSr(dataSelected.id, data);
+			const response = await ApprovalPrMr(dataSelected.id, data);
 			if (response.status === 201) {
 				toast.success("Approve Success", {
 					position: "top-center",

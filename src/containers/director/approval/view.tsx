@@ -21,7 +21,6 @@ export const ViewApprovalDirector = ({
 	const [dataSuplier, setDataSuplier] = useState<any>([]);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
-	const [request, setRequest] = useState<string>("");
 
 	useEffect(() => {
 		let dataSuplier: any = [];
@@ -56,7 +55,7 @@ export const ViewApprovalDirector = ({
 		setDataSuplier(dataSuplier);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-console.log(dataSelected)
+
 	const Total = (suplier: string) => {
 		let jumlahTotal: any = 0;
 		dataSelected.detailMr
@@ -66,10 +65,15 @@ console.log(dataSelected)
 			.map((res: any) => {
 				jumlahTotal = jumlahTotal + res.total;
 			});
+		dataSelected.SrDetail.filter((fil: any) => {
+			return fil.supplier.supplier_name === suplier;
+		}).map((res: any) => {
+			jumlahTotal = jumlahTotal + res.total;
+		});
 		return jumlahTotal.toString();
 	};
 
-    const price = (total: number, disc: number) => {
+	const price = (total: number, disc: number) => {
 		let priceSr: number = total + disc;
 		return priceSr.toString();
 	};
@@ -149,7 +153,7 @@ console.log(dataSelected)
 							</table>
 						</div>
 					</Section>
-					{ dataSelected.detailMr.length > 0 ? (
+					{dataSelected.detailMr.length > 0 ? (
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							{dataSuplier.length > 0
 								? dataSuplier.map((res: any, i: number) => {
@@ -259,11 +263,11 @@ console.log(dataSelected)
 												</table>
 											</div>
 										);
-								})
+								  })
 								: null}
 						</Section>
-					) : null }
-					{ dataSelected.SrDetail.length > 0 ? (
+					) : null}
+					{dataSelected.SrDetail.length > 0 ? (
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							{dataSuplier.length > 0
 								? dataSuplier.map((res: any, i: number) => {
@@ -373,10 +377,10 @@ console.log(dataSelected)
 												</table>
 											</div>
 										);
-								})
+								  })
 								: null}
 						</Section>
-					) : null }
+					) : null}
 				</>
 			) : null}
 		</div>

@@ -127,51 +127,6 @@ export const ApprovalList = () => {
 		setIsModal(false);
 	};
 
-    const approve = async (id: string,status: boolean) => {
-		let data = {
-			statusApprove: {
-				status_manager_director: status,
-			},
-		};
-		try {
-			const response = await ApprovalPrMr(id, data);
-			if (response.status === 201) {
-				toast.success("Approve Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Approve Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		} catch (error) {
-			toast.error("Approve Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
-	};
-
 	const total = (datas: any) => {
 		let totalHarga: number = 0;
 		datas.map((res: any) => {

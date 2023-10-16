@@ -68,6 +68,7 @@ export const FormEditPurchaseSr = ({
 				service: res.workCenter.name,
 				qty: res.qtyAppr,
 				note: res.note,
+				note_revision: res.note_revision,
 				price: res.total / res.qty,
 				job_no: res.sr.wor.job_operational
 					? res.sr.wor.job_no_mr
@@ -517,6 +518,22 @@ export const FormEditPurchaseSr = ({
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
+																{result.note_revision !== null ? (
+																	<div className='w-full'>
+																		<Input
+																			id={`detailMr.${i}.note_revision`}
+																			name={`detailMr.${i}.note_revision`}
+																			placeholder='Note Revision'
+																			label='Note Revision'
+																			type='text'
+																			value={result.note_revision}
+																			disabled={true}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</div>
+																) : null}
 																<div className='w-full'>
 																	{values.detailMr.length === 1 ? null : (
 																		<a
@@ -572,7 +589,7 @@ export const FormEditPurchaseSr = ({
 												Loading
 											</>
 										) : (
-											"Save"
+											"Edit"
 										)}
 									</button>
 								</div>

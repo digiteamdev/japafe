@@ -69,12 +69,13 @@ export const FormEditPurchaseMr = ({
 				material: res.Material_Stock.spesifikasi,
 				qty: res.qtyAppr,
 				note: res.note,
+				note_revision: res.note_revision,
 				job_no: res.mr.wor.job_operational
 					? res.mr.wor.job_no_mr
 					: res.mr.wor.job_no,
 				no_mr: res.mr.no_mr,
 				user: res.mr.user.employee.employee_name,
-				price: res.price
+				price: res.price,
 			});
 		});
 		setData({
@@ -167,9 +168,9 @@ export const FormEditPurchaseMr = ({
 				akunId: res.akunId,
 				currency: res.currency,
 				qtyAppr: parseInt(res.qty),
-				price: parseInt(res.price), 
+				price: parseInt(res.price),
 				disc: parseInt(res.disc),
-				total: parseInt(res.total)
+				total: parseInt(res.total),
 			});
 		});
 		let data = {
@@ -303,8 +304,24 @@ export const FormEditPurchaseMr = ({
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	>
-																		<option value='ppn' selected={ result.taxpr === 'ppn' ? true : false }>PPN</option>
-																		<option value='noneppn' selected={ result.taxpr === 'noneppn' ? true : false }>Non PPN</option>
+																		<option
+																			value='ppn'
+																			selected={
+																				result.taxpr === "ppn" ? true : false
+																			}
+																		>
+																			PPN
+																		</option>
+																		<option
+																			value='noneppn'
+																			selected={
+																				result.taxpr === "noneppn"
+																					? true
+																					: false
+																			}
+																		>
+																			Non PPN
+																		</option>
 																	</InputSelect>
 																</div>
 																<div className='w-full'>
@@ -402,7 +419,7 @@ export const FormEditPurchaseMr = ({
 																		label='Qty'
 																		type='number'
 																		value={result.qty}
-																		onChange={ (e: any) => {
+																		onChange={(e: any) => {
 																			setFieldValue(
 																				`detailMr.${i}.total`,
 																				totalHarga(
@@ -411,7 +428,10 @@ export const FormEditPurchaseMr = ({
 																					result.disc
 																				)
 																			);
-																			setFieldValue(`detailMr.${i}.qty`, e.target.value)
+																			setFieldValue(
+																				`detailMr.${i}.qty`,
+																				e.target.value
+																			);
 																		}}
 																		required={true}
 																		withLabel={true}
@@ -474,7 +494,10 @@ export const FormEditPurchaseMr = ({
 																					result.disc
 																				)
 																			);
-																			setFieldValue(`detailMr.${i}.price`, e.target.value)
+																			setFieldValue(
+																				`detailMr.${i}.price`,
+																				e.target.value
+																			);
 																		}}
 																		required={true}
 																		withLabel={true}
@@ -538,6 +561,22 @@ export const FormEditPurchaseMr = ({
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
+																{result.note_revision !== null ? (
+																	<div className='w-full'>
+																		<Input
+																			id={`detailMr.${i}.note_revision`}
+																			name={`detailMr.${i}.note_revision`}
+																			placeholder='Note Revision'
+																			label='Note Revision'
+																			type='text'
+																			value={result.note_revision}
+																			disabled={true}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</div>
+																) : null}
 																{/* <div className='w-full'>
 																	{values.detailMr.length === 1 ? null : (
 																		<a
