@@ -15,7 +15,7 @@ interface props {
 	showModalPdf: (val: boolean) => void;
 }
 
-export const PdfPsr = ({
+export const PdfDpr = ({
 	isModal,
 	data,
 	dataSuplier,
@@ -35,11 +35,13 @@ export const PdfPsr = ({
 
 	const Total = (suplier: string) => {
 		let jumlahTotal: any = 0;
-		data.SrDetail.filter((fil: any) => {
-			return fil.supplier.supplier_name === suplier;
-		}).map((res: any) => {
-			jumlahTotal = jumlahTotal + res.total;
-		});
+		data.detailMr
+			.filter((fil: any) => {
+				return fil.supplier.supplier_name === suplier;
+			})
+			.map((res: any) => {
+				jumlahTotal = jumlahTotal + res.total;
+			});
 		return jumlahTotal.toString();
 	};
 
@@ -114,7 +116,7 @@ export const PdfPsr = ({
 												as='h4'
 												className='text-base font-bold leading-6 text-white'
 											>
-												Download Purchase Service Request
+												Download Direct Purchase Material Request
 											</Dialog.Title>
 										</div>
 
@@ -140,7 +142,7 @@ export const PdfPsr = ({
 										id='divToPrint'
 									>
 										<h1 className='font-bold text-center text-xl my-4'>
-											PURCHASE Service REQUEST
+											DIRECT PURCHASE MATERIAL REQUEST
 										</h1>
 										<div className='grid grid-cols-2 gap-2'>
 											<div className='w-full'>
@@ -153,6 +155,21 @@ export const PdfPsr = ({
 												</p>
 											</div>
 										</div>
+										<div className='grid grid-cols-2 gap-2'>
+											<div className='w-full'>
+												<p>Cash Advance ID :</p>
+											</div>
+											<div className='w-full'>
+												<p>
+													Total Cash Adv :
+												</p>
+											</div>
+										</div>
+										<div className='grid grid-cols-2 gap-2'>
+											<div className='w-full'>
+												<p>Note : </p>
+											</div>
+										</div>
 										<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 											{dataSuplier.length > 0
 												? dataSuplier.map((res: any, i: number) => {
@@ -163,7 +180,7 @@ export const PdfPsr = ({
 																	<thead>
 																		<tr>
 																			<th className='border-black border-t border-l text-center mb-1'>
-																				<p className='mb-1'>No Sr</p>
+																				<p className='mb-1'>No MR</p>
 																			</th>
 																			<th className='border-black border-t border-l text-center mb-1'>
 																				<p className='mb-1'>Job no</p>
@@ -173,7 +190,7 @@ export const PdfPsr = ({
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
 																				<p className='mb-1'>
-																					Description
+																					Material / Material Spesifikasi
 																				</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
@@ -191,62 +208,75 @@ export const PdfPsr = ({
 																		</tr>
 																	</thead>
 																	<tbody>
-																		{data.SrDetail.filter((fil: any) => {
-																			return fil.supplier.supplier_name === res;
-																		}).map((result: any, idx: number) => {
-																			return (
-																				<tr key={idx}>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.sr.no_sr}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l  text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.sr.wor.job_operational
-																								? result.sr.wor.job_no_mr
-																								: result.sr.wor.job_no}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.coa.coa_code}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.workCenter.name}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.qtyAppr}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.price.toString()
-																							)}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.disc.toString()
-																							)}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l border-r text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.total.toString()
-																							)}
-																						</p>
-																					</td>
-																				</tr>
-																			);
-																		})}
+																		{data.detailMr
+																			.filter((fil: any) => {
+																				return (
+																					fil.supplier.supplier_name === res
+																				);
+																			})
+																			.map((result: any, idx: number) => {
+																				return (
+																					<tr key={idx}>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.mr.no_mr}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l  text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.mr.wor.job_operational
+																									? result.mr.wor.job_no_mr
+																									: result.mr.wor.job_no}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.coa.coa_code}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{
+																									result.Material_Stock
+																										.Material_master
+																										.material_name
+																								}{" "}
+																								/{" "}
+																								{
+																									result.Material_Stock
+																										.spesifikasi
+																								}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.qtyAppr}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.price.toString()
+																								)}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.disc.toString()
+																								)}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l border-r text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.total.toString()
+																								)}
+																							</p>
+																						</td>
+																					</tr>
+																				);
+																			})}
 																		<tr>
 																			<td
 																				className='border-black border-t border-l  text-right pr-4 mb-1'

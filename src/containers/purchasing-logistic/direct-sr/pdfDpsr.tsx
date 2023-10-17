@@ -15,7 +15,7 @@ interface props {
 	showModalPdf: (val: boolean) => void;
 }
 
-export const PdfPsr = ({
+export const PdfDpsr = ({
 	isModal,
 	data,
 	dataSuplier,
@@ -114,7 +114,7 @@ export const PdfPsr = ({
 												as='h4'
 												className='text-base font-bold leading-6 text-white'
 											>
-												Download Purchase Service Request
+												Download Direct Purchase Service Request
 											</Dialog.Title>
 										</div>
 
@@ -140,7 +140,7 @@ export const PdfPsr = ({
 										id='divToPrint'
 									>
 										<h1 className='font-bold text-center text-xl my-4'>
-											PURCHASE Service REQUEST
+											Direct PURCHASE Service REQUEST
 										</h1>
 										<div className='grid grid-cols-2 gap-2'>
 											<div className='w-full'>
@@ -151,6 +151,21 @@ export const PdfPsr = ({
 													Date Prepare :{" "}
 													{moment(data.dateOfPurchase).format("DD-MMMM-YYYY")}
 												</p>
+											</div>
+										</div>
+										<div className='grid grid-cols-2 gap-2'>
+											<div className='w-full'>
+												<p>Cash Advance ID :</p>
+											</div>
+											<div className='w-full'>
+												<p>
+													Total Cash Adv :
+												</p>
+											</div>
+										</div>
+										<div className='grid grid-cols-2 gap-2'>
+											<div className='w-full'>
+												<p>Note :</p>
 											</div>
 										</div>
 										<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>

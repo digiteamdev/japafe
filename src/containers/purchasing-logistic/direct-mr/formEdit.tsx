@@ -69,6 +69,7 @@ export const FormEditDirectMr = ({
 				material: res.Material_Stock.spesifikasi,
 				qty: res.qtyAppr,
 				note: res.note,
+				note_revision: res.note_revision,
 				job_no: res.mr.wor.job_operational
 					? res.mr.wor.job_no_mr
 					: res.mr.wor.job_no,
@@ -101,6 +102,7 @@ export const FormEditDirectMr = ({
 						material: res.Material_Stock.spesifikasi,
 						qty: res.qtyAppr,
 						note: res.note,
+						note_revision: res.note_revision,
 						price: res.Material_Stock.harga,
 						job_no: res.mr.wor.job_operational
 							? res.mr.wor.job_no_mr
@@ -204,7 +206,7 @@ export const FormEditDirectMr = ({
 		}
 		setIsLoading(false);
 	};
-
+console.log(data)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -535,6 +537,22 @@ export const FormEditDirectMr = ({
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
+																{ result.note_revision === null ? null : (
+																	<div className='w-full'>
+																		<Input
+																			id={`detailMr.${i}.note_revision`}
+																			name={`detailMr.${i}.note_revision`}
+																			placeholder='Note Revision'
+																			label='Note Revision'
+																			type='text'
+																			value={result.note_revision}
+																			disabled={true}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</div>
+																) }
 																{/* <div className='w-full'>
 																	{values.detailMr.length === 1 ? null : (
 																		<a

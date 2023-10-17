@@ -189,7 +189,17 @@ export const PurchaseMR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.status_manager_director !== 'revision' || res.status_manager_director !== null && res.status_manager_pr ? null : (
+											{ res.status_manager_director === 'revision' ? (
+												<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true,'edit', false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											) : res.status_manager_pr ? null : (
 												<Button
 													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 													onClick={() => {
