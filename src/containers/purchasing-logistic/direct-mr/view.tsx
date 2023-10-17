@@ -4,8 +4,9 @@ import { ApprovalPrMr } from "../../../services";
 import { Section } from "../../../components";
 import { formatRupiah } from "../../../utils";
 import { getPosition } from "../../../configs/session";
-import { Check, X } from "react-feather";
+import { Check, X, Printer } from "react-feather";
 import { toast } from "react-toastify";
+import { PdfDpr } from "./pdfDpr";
 
 interface props {
 	dataSelected: any;
@@ -15,6 +16,7 @@ interface props {
 
 export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 	const [dataSuplier, setDataSuplier] = useState<any>([]);
+	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
 
@@ -131,34 +133,76 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 		if (position === "Manager") {
 			if (data.status_manager_pr) {
 				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve(false)}
-					>
-						<div className='flex px-1 py-1'>
-							<X size={16} className='mr-1' /> Unvalid Manager
-						</div>
-					</button>
+					<div>
+						<button
+							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => showModalPdf(true)}
+						>
+							<div className='flex px-1 py-1'>
+								<Printer size={16} className='mr-1' /> Print
+							</div>
+						</button>
+						<button
+							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve(false)}
+						>
+							<div className='flex px-1 py-1'>
+								<X size={16} className='mr-1' /> Unvalid Manager
+							</div>
+						</button>
+					</div>
 				);
 			} else {
 				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve(true)}
-					>
-						<div className='flex px-1 py-1'>
-							<Check size={16} className='mr-1' /> Valid Manager
-						</div>
-					</button>
+					<div>
+						<button
+							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => showModalPdf(true)}
+						>
+							<div className='flex px-1 py-1'>
+								<Printer size={16} className='mr-1' /> Print
+							</div>
+						</button>
+						<button
+							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve(true)}
+						>
+							<div className='flex px-1 py-1'>
+								<Check size={16} className='mr-1' /> Valid Manager
+							</div>
+						</button>
+					</div>
 				);
 			}
 		} else {
-			return null;
+			return (
+				<div>
+					<button
+						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => showModalPdf(true)}
+					>
+						<div className='flex px-1 py-1'>
+							<Printer size={16} className='mr-1' /> Print
+						</div>
+					</button>
+				</div>
+			);
 		}
+	};
+
+	const showModalPdf = (val: boolean) => {
+		setIsModal(val);
 	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
+			<PdfDpr
+				isModal={isModal}
+				data={dataSelected}
+				dataPPN={dataPPN}
+				dataSuplier={dataSuplier}
+				showModalPdf={showModalPdf}
+			/>
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -256,9 +300,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																		{result.note}
 																	</td>
 																	<td className='border border-black text-center'>
-																		{formatRupiah(
-																			result.price.toString()
-																		)}
+																		{formatRupiah(result.price.toString())}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{formatRupiah(result.disc.toString())}
