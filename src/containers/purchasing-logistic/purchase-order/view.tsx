@@ -221,7 +221,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										Valid Manager
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.status_manager ? "Valid" : "Unvalid"}
+										{ dataSelected.status_manager ? "Valid" : "Unvalid" }
 									</td>
 								</tr>
 							</table>
