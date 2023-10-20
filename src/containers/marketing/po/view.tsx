@@ -241,7 +241,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 													{res.percent}%
 												</td>
 												<td className='pl-2 w-[10%] border border-gray-200 text-center'>
-													({formatRupiah(res.price)})
+													({formatRupiah(res.price.toString())})
 												</td>
 												<td className='pl-2 w-[30%] border border-gray-200'>
 													{moment(res.date_limit).format('DD-MMMM-YYYY')}

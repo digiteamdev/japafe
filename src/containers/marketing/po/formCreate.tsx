@@ -261,7 +261,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					description: res.description,
 					qty: res.qty,
 					unit: res.unit,
-					price: res.price.toString(),
+					price: res.price,
 					discount: res.discount.toString(),
 					total: htmlTotal.value,
 				});
