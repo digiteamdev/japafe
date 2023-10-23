@@ -448,8 +448,8 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				id: res.id,
 				cuspoId: res.cuspoId,
 				limitpay: res.limitpay,
-				percent: res.percent,
-				price: htmlTotal.value,
+				percent: parseInt(res.percent),
+				price: parseInt(res.price),
 				date_limit: res.date_limit,
 			});
 		});
@@ -513,6 +513,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			});
 		}
 	};
+
+	const totalTermPrice = (data:number) => {
+		let total: number = 0
+		total = (grandTotal * data) / 100
+		return total
+	}
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -1151,8 +1157,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			name={`term_of_pay.${i}.percent`}
 																			placeholder='%'
 																			type='number'
-																			onChange={ () => {
-																				handleChange
+																			onChange={ (e: any) => {
+																				setFieldValue(`term_of_pay.${i}.percent`, e.target.value),
+																				setFieldValue(`term_of_pay.${i}.price`, totalTermPrice(e.target.value))
 																			}}
 																			value={res.percent}
 																			required={true}

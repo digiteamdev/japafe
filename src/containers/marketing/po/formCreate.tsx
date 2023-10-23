@@ -261,7 +261,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					description: res.description,
 					qty: res.qty,
 					unit: res.unit,
-					price: res.price,
+					price: res.price.toString(),
 					discount: res.discount.toString(),
 					total: htmlTotal.value,
 				});
@@ -286,8 +286,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				) as HTMLInputElement;
 				term.push({
 					limitpay: res.limitpay,
-					percent: res.percent,
-					price: htmlTotal.value,
+					percent: parseInt(res.percent),
+					price: parseInt(htmlTotal.value),
 					date_limit: res.date_limit,
 				});
 			}
