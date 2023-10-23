@@ -5,7 +5,8 @@ import moment from "moment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Printer } from "react-feather";
-import { formatRupiah } from "../../../utils";
+import { formatRupiah, pembilang } from "../../../utils";
+import { Section } from "@/src/components";
 
 interface props {
 	isModal?: boolean;
@@ -13,11 +14,7 @@ interface props {
 	showModalPdf: (val: boolean) => void;
 }
 
-export const PdfPo = ({
-	isModal,
-	data,
-	showModalPdf,
-}: props) => {
+export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -29,45 +26,31 @@ export const PdfPo = ({
 		});
 	};
 
-	// const Total = (suplier: string) => {
-	// 	let jumlahTotal: any = 0;
-	// 	data.detailMr
-	// 		.filter((fil: any) => {
-	// 			return fil.supplier.supplier_name === suplier;
-	// 		})
-	// 		.map((res: any) => {
-	// 			jumlahTotal = jumlahTotal + res.total;
-	// 		});
-	// 	return jumlahTotal.toString();
-	// };
+	const Total = () => {
+		let jumlahTotal: any = 0;
+		data.detailMr.map((res: any) => {
+			jumlahTotal = jumlahTotal + res.total;
+		});
+		return jumlahTotal.toString();
+	};
+	console.log(data);
 
-	// const Ppn = (suplier: string, type: string) => {
-	// 	let supplierPPN: number = 0;
-	// 	let totalBayar: any = Total(suplier);
-	// 	if (type === "ppn") {
-	// 		dataPPN.filter((fil: any) => {
-	// 			if (fil.supplier === suplier) {
-	// 				supplierPPN = fil.ppn;
-	// 			}
-	// 		});
-	// 		return `PPN ${supplierPPN} %`;
-	// 	} else {
-	// 		dataPPN.filter((fil: any) => {
-	// 			if (fil.supplier === suplier) {
-	// 				supplierPPN = fil.ppn;
-	// 			}
-	// 		});
-	// 		let totalPPN: any = (totalBayar * supplierPPN) / 100;
-	// 		return totalPPN.toString();
-	// 	}
-	// };
+	const Ppn = () => {
+		let totalBayar: any = Total();
+		if (data.detailMr[0].taxpr === "ppn") {
+			let totalPPN: any = (totalBayar * data.detailMr[0].supplier.ppn) / 100;
+			return totalPPN.toString();
+		} else {
+			return "0";
+		}
+	};
 
-	// const grandTotal = (suplier: string) => {
-	// 	let totalBayar: any = Total(suplier);
-	// 	let totalPPN: any = Ppn(suplier, "total");
-	// 	let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-	// 	return formatRupiah(total.toString());
-	// };
+	const grandTotal = () => {
+		let totalBayar: any = Total();
+		let totalPPN: any = Ppn();
+		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+		return total;
+	};
 
 	return (
 		<div className='z-80'>
@@ -140,6 +123,229 @@ export const PdfPo = ({
 										<h1 className='font-bold text-center text-xl my-4'>
 											PURCHASE ORDER
 										</h1>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>No</div>
+												<div className='w-[70%]'>: {data.id_so}</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Date Prepare</div>
+												<div className='w-[65%]'>
+													: {moment(data.date_prepared).format("DD-MMMM-YYYY")}
+												</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>To</div>
+												<div className='w-[70%]'>
+													: {data.supplier.supplier_name}
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Ship To</div>
+												<div className='w-[65%]'>
+													: PT. Dwitama Mulya Persada
+												</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>Address</div>
+												<div className='w-[70%]'>
+													: {data.supplier.addresses_sup} -{" "}
+													{data.supplier.cities} - {data.supplier.provinces}
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Address</div>
+												<div className='w-[65%]'>
+													: Kawasan Industri De Prima Terra, Tegalluar,
+													Kab.Bandung
+												</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>Phone</div>
+												<div className='w-[70%]'>
+													: +62{data.supplier.SupplierContact[0].phone}
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Phone</div>
+												<div className='w-[65%]'>: -</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>Fax</div>
+												<div className='w-[70%]'>: </div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Fax</div>
+												<div className='w-[65%]'>: -</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>Contact</div>
+												<div className='w-[70%]'>
+													: {data.supplier.SupplierContact[0].contact_person}
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Contact</div>
+												<div className='w-[65%]'>: -</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+											<div className='flex w-full'>
+												<div className='w-[30%]'>Refrensi</div>
+												<div className='w-[70%]'>: {data.your_reff}</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-[35%]'>Currency</div>
+												<div className='w-[65%]'>
+													: {data.detailMr[0].currency}
+												</div>
+											</div>
+										</Section>
+										<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
+											<table className='w-full'>
+												<thead>
+													<tr>
+														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center'>
+															Job No
+														</th>
+														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center'>
+															Material
+														</th>
+														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center'>
+															Qty
+														</th>
+														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center'>
+															Price
+														</th>
+														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center'>
+															Disc
+														</th>
+														<th className='border border-t-black border-l-black border-r-black border-b-0 text-center'>
+															Total
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{data.detailMr.map((res: any, i: number) => {
+														return (
+															<tr key={i}>
+																<td
+																	className={`border border-t-black border-l-black border-r-0 ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{res.mr.wor.job_operational
+																		? res.mr.wor.job_no_mr
+																		: res.mr.wor.job_no}
+																</td>
+																<td
+																	className={`border border-t-black border-l-black border-r-0 ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{res.Material_Stock.spesifikasi}
+																</td>
+																<td
+																	className={`border border-t-black border-l-black border-r-0 ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{res.qtyAppr}
+																</td>
+																<td
+																	className={`border border-t-black border-l-black border-r-0 ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{formatRupiah(res.price.toString())}
+																</td>
+																<td
+																	className={`border border-t-black border-l-black border-r-0 ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{formatRupiah(res.disc.toString())}
+																</td>
+																<td
+																	className={`border border-t-black border-l-black border-r-black ${
+																		i === data.detailMr.length - 1
+																			? "border-b-black"
+																			: "border-b-0"
+																	} text-center`}
+																>
+																	{formatRupiah(res.total.toString())}
+																</td>
+															</tr>
+														);
+													})}
+													<tr>
+														<td
+															colSpan={5}
+															className='border border-l-black border-r-0 border-t-0 border-b-0 text-center'
+														>
+															Total
+														</td>
+														<td className='border border-t-0 border-b-0 border-l-black border-r-black text-center'>
+															{formatRupiah(Total())}
+														</td>
+													</tr>
+													<tr>
+														<td
+															colSpan={5}
+															className='border border-l-black border-r-0 border-t-black border-b-0 text-center'
+														>
+															{data.detailMr[0].taxpr === "ppn"
+																? `PPN ${data.detailMr[0].supplier.ppn}%`
+																: "PPN 0%"}
+														</td>
+														<td className='border border-t-black border-b-0 border-l-black border-r-black text-center'>
+															{formatRupiah(Ppn())}
+														</td>
+													</tr>
+													<tr>
+														<td
+															colSpan={5}
+															className='border border-l-black border-r-0 border-t-black border-b-black text-center'
+														>
+															Grand Total
+														</td>
+														<td className='border border-t-black border-b-black border-l-black border-r-black text-center'>
+															{formatRupiah(grandTotal().toString())}
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</Section>
+										<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
+											<div className='w-full'>
+												<p>
+													Said :{" "}
+													<span className='font-bold'>
+														{pembilang(grandTotal())}
+													</span>
+												</p>
+											</div>
+										</Section>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

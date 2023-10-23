@@ -106,48 +106,90 @@ export const ViewApprovalDirector = ({
 		return formatRupiah(total.toString());
 	};
 
+	const title = () => {
+		if(dataSelected.idPurchase){
+			if(dataSelected.idPurchase.startsWith("PSR")){
+				return "Purchase Service Request"
+			}else if(dataSelected.idPurchase.startsWith("DSR")){
+				return "Direct Service Purchase"
+			}else if(dataSelected.idPurchase.startsWith("PR")){
+				return "Purchase Material Request"
+			}else{
+				return "Direct Material Request"
+			}
+		}else{
+			if(dataSelected.id_so.startsWith("PO")){
+				return "Purchase Order Material"
+			}else{
+				return "Purchase Order Service"
+			}
+		}
+	}
+
+	const titleID = () => {
+		if(dataSelected.idPurchase){
+			if(dataSelected.idPurchase.startsWith("PSR")){
+				return "ID Purchase Service Request"
+			}else if(dataSelected.idPurchase.startsWith("DSR")){
+				return "ID Direct Service Purchase"
+			}else if(dataSelected.idPurchase.startsWith("PR")){
+				return "ID Purchase Material Request"
+			}else{
+				return "ID Direct Material Request"
+			}
+		}else{
+			if(dataSelected.id_so.startsWith("PO")){
+				return "ID Purchase Order Material"
+			}else{
+				return "ID Purchase Order Service"
+			}
+		}
+	}
+
+	const titleDate = () => {
+		if(dataSelected.idPurchase){
+			if(dataSelected.idPurchase.startsWith("PSR")){
+				return "Date Purchase Service Request"
+			}else if(dataSelected.idPurchase.startsWith("DSR")){
+				return "Date Direct Service Purchase"
+			}else if(dataSelected.idPurchase.startsWith("PR")){
+				return "Date Purchase Material Request"
+			}else{
+				return "Date Direct Material Request"
+			}
+		}else{
+			if(dataSelected.id_so.startsWith("PO")){
+				return "Date Purchase Order Material"
+			}else{
+				return "Date Purchase Order Service"
+			}
+		}
+	}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
 				<>
 					<h1 className='font-bold text-xl'>
-						{dataSelected.idPurchase.startsWith("PSR")
-							? "Purchase Service Request"
-							: dataSelected.idPurchase.startsWith("DSR")
-							? "Direct Service Purchase"
-							: dataSelected.idPurchase.startsWith("PR")
-							? "Purchase Material Request"
-							: "Direct Material Request"}
+						{ title() }
 					</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										{dataSelected.idPurchase.startsWith("PSR")
-											? "Id Purchase Service Request"
-											: dataSelected.idPurchase.startsWith("DSR")
-											? "Id Direct Service Purchase"
-											: dataSelected.idPurchase.startsWith("PR")
-											? "Id Purchase Material Request"
-											: "Id Direct Material Request"}
+										{ titleID() }
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.idPurchase}
+										{dataSelected.idPurchase ? dataSelected.idPurchase : dataSelected.id_so}
 									</td>
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										{dataSelected.idPurchase.startsWith("PSR")
-											? "Date Purchase Service Request"
-											: dataSelected.idPurchase.startsWith("DSR")
-											? "Date Direct Service Purchase"
-											: dataSelected.idPurchase.startsWith("PR")
-											? "Date Purchase Material Request"
-											: "Date Direct Material Request"}
+										{ titleDate() }
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{moment(dataSelected.dateOfPurchase).format("DD-MMMM-YYYY")}
+										{ dataSelected.dateOfPurchase ? moment(dataSelected.dateOfPurchase).format("DD-MMMM-YYYY") : moment(dataSelected.date_prepared).format("DD-MMMM-YYYY") }
 									</td>
 								</tr>
 							</table>
