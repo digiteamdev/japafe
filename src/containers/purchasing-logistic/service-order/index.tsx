@@ -11,7 +11,7 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseSr } from "./formCreate";
-// import { ViewPoMR } from "./view";
+import { ViewSoSR } from "./view";
 // import { FormEditPurchaseMr } from "./formEdit";
 import { GetPoMr, SearchPoMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
@@ -126,12 +126,12 @@ export const PurchaseSO = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Purchase Order Material Request'
+				title='Purchase Order Service Request'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Purchase Order Material Request'
+				title='Purchase Order Service Request'
 				print={true}
 				showModal={showModal}
 				search={searchPurchaseMR}
@@ -245,14 +245,13 @@ export const PurchaseSO = () => {
 				/>
 			) : (
 				<Modal
-					title='Purchase Order Material Request'
+					title='Purchase Order Service Request'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-                        // <ViewPoMR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+                        <ViewSoSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
 					) : modalContent === "add" ? (
                         <FormCreatePurchaseSr content={modalContent} showModal={showModal} />
 					) : (

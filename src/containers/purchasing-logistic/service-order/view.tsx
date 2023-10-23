@@ -6,7 +6,7 @@ import { formatRupiah, pembilang } from "../../../utils";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
 import { toast } from "react-toastify";
-import { PdfPo } from "./pdfPo";
+// import { PdfPo } from "./pdfPo";
 
 interface props {
 	dataSelected: any;
@@ -14,7 +14,7 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
+export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [position, setPosition] = useState<any>([]);
 
@@ -28,7 +28,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 
 	const Total = () => {
 		let jumlahTotal: any = 0;
-		dataSelected.detailMr.map((res: any) => {
+		dataSelected.SrDetail.map((res: any) => {
 			jumlahTotal = jumlahTotal + res.total;
 		});
 		return jumlahTotal.toString();
@@ -36,9 +36,17 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		if (dataSelected.detailMr[0].taxpr === "ppn") {
+		if (dataSelected.SrDetail[0].taxPsrDmr === "ppn") {
 			let totalPPN: any =
-				(totalBayar * dataSelected.detailMr[0].supplier.ppn) / 100;
+				(totalBayar * dataSelected.SrDetail[0].supplier.ppn) / 100;
+			return totalPPN.toString();
+		} else if (dataSelected.SrDetail[0].taxPsrDmr === "pph") {
+			let totalPPN: any =
+				(totalBayar * dataSelected.SrDetail[0].supplier.pph) / 100;
+			return totalPPN.toString();
+		}  else if (dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph") {
+			let totalPPN: any =
+				(totalBayar * (dataSelected.SrDetail[0].supplier.ppn + dataSelected.SrDetail[0].supplier.pph) ) / 100;
 			return totalPPN.toString();
 		} else {
 			return "0";
@@ -98,14 +106,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 			if (data.status_manager) {
 				return (
 					<div>
-						<button
+						{/* <button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<button
 							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -119,14 +127,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 			} else {
 				return (
 					<div>
-						<button
+						{/* <button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -141,14 +149,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 		} else {
 			return (
 				<div>
-					<button
+					{/* <button
 						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 						onClick={() => showModalPdf(true)}
 					>
 						<div className='flex px-1 py-1'>
 							<Printer size={16} className='mr-1' /> Print
 						</div>
-					</button>
+					</button> */}
 				</div>
 			);
 		}
@@ -160,11 +168,11 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfPo
+			{/* <PdfPo
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -172,7 +180,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 							{showButtonValid(dataSelected)}
 						</div>
 					</div>
-					<h1 className='font-bold text-xl'>Purchase Order Material Request</h1>
+					<h1 className='font-bold text-xl'>Purchase Order Service Request</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -232,13 +240,13 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 							<thead>
 								<tr>
 									<th className='border border-black text-center'>
-										Id Purchase MR
+										Id Purchase SR
 									</th>
 									<th className='border border-black text-center'>
-										Date Purchase MR
+										Date Purchase SR
 									</th>
 									<th className='border border-black text-center'>Job no</th>
-									<th className='border border-black text-center'>Material</th>
+									<th className='border border-black text-center'>Part/Service</th>
 									<th className='border border-black text-center'>Qty</th>
 									<th className='border border-black text-center'>Price</th>
 									<th className='border border-black text-center'>Discount</th>
@@ -246,22 +254,22 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 							</thead>
 							<tbody>
-								{dataSelected.detailMr.map((res: any, i: number) => {
+								{dataSelected.SrDetail.map((res: any, i: number) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{res.mr.no_mr}
+												{res.sr.no_sr}
 											</td>
 											<td className='border border-black text-center'>
-												{moment(res.mr.date_mr).format("DD-MMMM-YYYY")}
+												{moment(res.sr.date_sr).format("DD-MMMM-YYYY")}
 											</td>
 											<td className='border border-black text-center'>
-												{res.mr.wor.job_operational
-													? res.mr.wor.job_no_mr
-													: res.mr.wor.job_no}
+												{res.sr.wor.job_operational
+													? res.sr.wor.job_no_mr
+													: res.sr.wor.job_no}
 											</td>
 											<td className='border border-black text-center'>
-												{`${res.Material_Stock.Material_master.material_name} - ${res.Material_Stock.spesifikasi}`}
+												{`${res.part} / ${res.workCenter.name}`}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qtyAppr}
@@ -294,9 +302,9 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										colSpan={7}
 										className='border border-black text-right pr-4'
 									>
-										{dataSelected.detailMr[0].taxpr === "ppn"
-											? `PPN ${dataSelected.detailMr[0].supplier.ppn}%`
-											: "PPN 0%"}
+										{dataSelected.SrDetail[0].taxPsrDmr === "ppn"
+											? `PPN ${dataSelected.SrDetail[0].supplier.ppn}%`
+											: dataSelected.SrDetail[0].taxPsrDmr === "pph" ? `PPH ${dataSelected.SrDetail[0].supplier.pph}%` : dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? `PPN and PPH ${dataSelected.SrDetail[0].supplier.ppn + dataSelected.SrDetail[0].supplier.pph}%` : "No Tax"}
 									</td>
 									<td className='border border-black text-center'>
 										{formatRupiah(Ppn())}

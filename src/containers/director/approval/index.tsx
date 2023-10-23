@@ -191,10 +191,10 @@ export const ApprovalList = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.idPurchase}
+										{res.idPurchase ? res.idPurchase : res.id_so}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{moment(res.dateOfPurchase).format("DD-MMMM-YYYY")}
+										{ res.dateOfPurchase ? moment(res.dateOfPurchase).format("DD-MMMM-YYYY") : moment(res.date_prepared).format("DD-MMMM-YYYY") }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{total(
