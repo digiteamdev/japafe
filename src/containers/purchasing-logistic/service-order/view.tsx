@@ -6,7 +6,7 @@ import { formatRupiah, pembilang } from "../../../utils";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
 import { toast } from "react-toastify";
-// import { PdfPo } from "./pdfPo";
+import { PdfSo } from "./pdfSo";
 
 interface props {
 	dataSelected: any;
@@ -36,21 +36,15 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		if (dataSelected.SrDetail[0].taxPsrDmr === "ppn") {
-			let totalPPN: any =
-				(totalBayar * dataSelected.SrDetail[0].supplier.ppn) / 100;
-			return totalPPN.toString();
-		} else if (dataSelected.SrDetail[0].taxPsrDmr === "pph") {
-			let totalPPN: any =
-				(totalBayar * dataSelected.SrDetail[0].supplier.pph) / 100;
-			return totalPPN.toString();
-		}  else if (dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph") {
-			let totalPPN: any =
-				(totalBayar * (dataSelected.SrDetail[0].supplier.ppn + dataSelected.SrDetail[0].supplier.pph) ) / 100;
-			return totalPPN.toString();
-		} else {
-			return "0";
-		}
+		let totalPPN: any = (totalBayar * dataSelected.SrDetail[0].supplier.ppn) / 100;
+		return totalPPN.toString();
+	};
+
+	const Pph = () => {
+		let totalBayar: any = Total();
+		let totalPPN: any =
+			(totalBayar * dataSelected.SrDetail[0].supplier.pph) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = () => {
@@ -106,14 +100,14 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 			if (data.status_manager) {
 				return (
 					<div>
-						{/* <button
+						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button> */}
+						</button>
 						<button
 							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -127,14 +121,14 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 			} else {
 				return (
 					<div>
-						{/* <button
+						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button> */}
+						</button>
 						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -149,14 +143,14 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 		} else {
 			return (
 				<div>
-					{/* <button
+					<button
 						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 						onClick={() => showModalPdf(true)}
 					>
 						<div className='flex px-1 py-1'>
 							<Printer size={16} className='mr-1' /> Print
 						</div>
-					</button> */}
+					</button>
 				</div>
 			);
 		}
@@ -168,11 +162,11 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			{/* <PdfPo
+			<PdfSo
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/> */}
+			/>
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -208,12 +202,13 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										{`${dataSelected.supplier.supplier_name} - ${dataSelected.supplier.addresses_sup}, ${dataSelected.supplier.districts}, ${dataSelected.supplier.cities}, ${dataSelected.supplier.provinces}`}
 									</td>
 								</tr>
-                                <tr>
+								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier Contact
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-                                        { dataSelected.supplier.SupplierContact[0].contact_person } - +62{ dataSelected.supplier.SupplierContact[0].phone }
+										{dataSelected.supplier.SupplierContact[0].contact_person} -
+										+62{dataSelected.supplier.SupplierContact[0].phone}
 									</td>
 								</tr>
 								<tr>
@@ -229,7 +224,7 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										Valid Manager
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.status_manager ? "Valid" : "Unvalid" }
+										{dataSelected.status_manager ? "Valid" : "Unvalid"}
 									</td>
 								</tr>
 							</table>
@@ -246,7 +241,9 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										Date Purchase SR
 									</th>
 									<th className='border border-black text-center'>Job no</th>
-									<th className='border border-black text-center'>Part/Service</th>
+									<th className='border border-black text-center'>
+										Part/Service
+									</th>
 									<th className='border border-black text-center'>Qty</th>
 									<th className='border border-black text-center'>Price</th>
 									<th className='border border-black text-center'>Discount</th>
@@ -297,19 +294,56 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										{formatRupiah(Total())}
 									</td>
 								</tr>
-								<tr>
-									<td
-										colSpan={7}
-										className='border border-black text-right pr-4'
-									>
-										{dataSelected.SrDetail[0].taxPsrDmr === "ppn"
-											? `PPN ${dataSelected.SrDetail[0].supplier.ppn}%`
-											: dataSelected.SrDetail[0].taxPsrDmr === "pph" ? `PPH ${dataSelected.SrDetail[0].supplier.pph}%` : dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? `PPN and PPH ${dataSelected.SrDetail[0].supplier.ppn + dataSelected.SrDetail[0].supplier.pph}%` : "No Tax"}
-									</td>
-									<td className='border border-black text-center'>
-										{formatRupiah(Ppn())}
-									</td>
-								</tr>
+								{dataSelected.SrDetail[0].taxPsrDmr === "ppn" ? (
+									<tr>
+										<td
+											colSpan={7}
+											className='border border-black text-right pr-4'
+										>
+											{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+										</td>
+										<td className='border border-black text-center'>
+											{formatRupiah(Ppn())}
+										</td>
+									</tr>
+								) : dataSelected.SrDetail[0].taxPsrDmr === "pph" ? (
+									<tr>
+										<td
+											colSpan={7}
+											className='border border-black text-right pr-4'
+										>
+											{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+										</td>
+										<td className='border border-black text-center'>
+											{formatRupiah(Pph())}
+										</td>
+									</tr>
+								) : dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? (
+									<>
+										<tr>
+											<td
+												colSpan={7}
+												className='border border-black text-right pr-4'
+											>
+												{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+											</td>
+											<td className='border border-black text-center'>
+												{formatRupiah(Ppn())}
+											</td>
+										</tr>
+										<tr>
+											<td
+												colSpan={7}
+												className='border border-black text-right pr-4'
+											>
+												{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+											</td>
+											<td className='border border-black text-center'>
+												{formatRupiah(Pph())}
+											</td>
+										</tr>
+									</>
+								) : null}
 								<tr>
 									<td
 										colSpan={7}
@@ -332,16 +366,18 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 							</p>
 						</div>
 						<div className='w-full'>
-							<p>Term & Condition</p>
+							<p>Term & Condition : {dataSelected.note}</p>
 						</div>
 						<div className='w-full'>
 							{dataSelected.term_of_pay_po_so.map((res: any, i: number) => {
 								return (
 									<div className='flex w-full' key={i}>
-										<p className="pr-4">{ res.limitpay }</p>
-                                        <p className="pr-4">{ res.percent }%</p>
-                                        <p className="pr-4">({ formatRupiah(res.price.toString()) })</p>
-                                        <p className="pr-4">Invoice : {res.invoice}</p>
+										<p className='pr-4'>{res.limitpay}</p>
+										<p className='pr-4'>{res.percent}%</p>
+										<p className='pr-4'>
+											({formatRupiah(res.price.toString())})
+										</p>
+										<p className='pr-4'>Invoice : {res.invoice}</p>
 									</div>
 								);
 							})}

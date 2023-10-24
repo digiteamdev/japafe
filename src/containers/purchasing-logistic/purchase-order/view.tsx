@@ -324,7 +324,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 							</p>
 						</div>
 						<div className='w-full'>
-							<p>Term & Condition</p>
+							<p>Term & Condition : { dataSelected.note }</p>
 						</div>
 						<div className='w-full'>
 							{dataSelected.term_of_pay_po_so.map((res: any, i: number) => {
