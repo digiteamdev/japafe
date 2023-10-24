@@ -14,7 +14,7 @@ interface props {
 	showModalPdf: (val: boolean) => void;
 }
 
-export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
+export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -28,7 +28,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 
 	const Total = () => {
 		let jumlahTotal: any = 0;
-		data.detailMr.map((res: any) => {
+		data.SrDetail.map((res: any) => {
 			jumlahTotal = jumlahTotal + res.total;
 		});
 		return jumlahTotal.toString();
@@ -36,19 +36,33 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		if (data.detailMr[0].taxpr === "ppn") {
-			let totalPPN: any = (totalBayar * data.detailMr[0].supplier.ppn) / 100;
-			return totalPPN.toString();
-		} else {
-			return "0";
-		}
+		let totalPPN: any = (totalBayar * data.SrDetail[0].supplier.ppn) / 100;
+		return totalPPN.toString();
+	};
+
+	const Pph = () => {
+		let totalBayar: any = Total();
+		let totalPPN: any = (totalBayar * data.SrDetail[0].supplier.pph) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
 		let totalPPN: any = Ppn();
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return total;
+		let totalPPH: any = Pph();
+		if(data.SrDetail[0].taxPsrDmr === 'ppn'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return total;
+		}else if (data.SrDetail[0].taxPsrDmr === 'pph'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
+			return total;
+		}else if(data.SrDetail[0].taxPsrDmr === 'ppn_and_pph'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
+			return total;
+		}else{
+			let total: any = parseInt(totalBayar);
+			return total;
+		}
 	};
 
 	return (
@@ -206,7 +220,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 											<div className='flex w-full'>
 												<div className='w-[35%]'>Currency</div>
 												<div className='w-[65%]'>
-													: {data.detailMr[0].currency}
+													: {data.SrDetail[0].currency}
 												</div>
 											</div>
 										</Section>
@@ -218,7 +232,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 															Job No
 														</th>
 														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Material
+															Description
 														</th>
 														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
 															Qty
@@ -235,32 +249,32 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 													</tr>
 												</thead>
 												<tbody>
-													{data.detailMr.map((res: any, i: number) => {
+													{data.SrDetail.map((res: any, i: number) => {
 														return (
 															<tr key={i}>
 																<td
 																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
 																>
-																	{res.mr.wor.job_operational
-																		? res.mr.wor.job_no_mr
-																		: res.mr.wor.job_no}
+																	{res.sr.wor.job_operational
+																		? res.sr.wor.job_no_mr
+																		: res.sr.wor.job_no}
 																</td>
 																<td
 																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
 																>
-																	{res.Material_Stock.spesifikasi}
+																	{ res.part} - { res.workCenter.name}
 																</td>
 																<td
 																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
@@ -269,7 +283,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 																</td>
 																<td
 																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
@@ -278,7 +292,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 																</td>
 																<td
 																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
@@ -287,7 +301,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 																</td>
 																<td
 																	className={`border border-t-black border-l-black border-r-black ${
-																		i === data.detailMr.length - 1
+																		i === data.SrDetail.length - 1
 																			? "border-b-black"
 																			: "border-b-0"
 																	} text-center p-2`}
@@ -308,19 +322,56 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 															{formatRupiah(Total())}
 														</td>
 													</tr>
-													<tr>
-														<td
-															colSpan={5}
-															className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
-														>
-															{data.detailMr[0].taxpr === "ppn"
-																? `PPN ${data.detailMr[0].supplier.ppn}%`
-																: "PPN 0%"}
-														</td>
-														<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
-															{formatRupiah(Ppn())}
-														</td>
-													</tr>
+													{ data.SrDetail[0].taxPsrDmr === "ppn" ? (
+														<tr>
+															<td
+																colSpan={5}
+																className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+															>
+																{`PPN ${data.SrDetail[0].supplier.ppn}%`}
+															</td>
+															<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
+																{formatRupiah(Ppn())}
+															</td>
+														</tr>
+													) : data.SrDetail[0].taxPsrDmr === "pph" ? (
+														<tr>
+															<td
+																colSpan={5}
+																className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+															>
+																{`PPH ${data.SrDetail[0].supplier.pph}%`}
+															</td>
+															<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
+																{formatRupiah(Pph())}
+															</td>
+														</tr>
+													) : data.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? (
+														<>
+															<tr>
+																<td
+																	colSpan={5}
+																	className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+																>
+																	{`PPN ${data.SrDetail[0].supplier.ppn}%`}
+																</td>
+																<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
+																	{formatRupiah(Ppn())}
+																</td>
+															</tr>
+															<tr>
+																<td
+																	colSpan={5}
+																	className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+																>
+																	{`PPH ${data.SrDetail[0].supplier.pph}%`}
+																</td>
+																<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
+																	{formatRupiah(Pph())}
+																</td>
+															</tr>
+														</>
+													) : null }
 													<tr>
 														<td
 															colSpan={5}
@@ -368,11 +419,11 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 												</p>
 											</div>
 										</Section>
-										<div className='flex w-full'>
-											<div className="w-[20%]">
+										<Section className='flex w-full'>
+											<div className="w-[30%]">
 
 											</div>
-											<div className="w-[80%]">
+											<div className="w-[70%]">
 												<Section className="grid grid-cols-2">
 													<div className="w-full">
 														<p className="pb-28">Approved By</p>
@@ -383,7 +434,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 													</div>
 												</Section>
 											</div>
-										</div>
+										</Section>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
