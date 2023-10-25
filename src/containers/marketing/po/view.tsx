@@ -33,16 +33,16 @@ export const ViewPo = ({ dataSelected }: props) => {
 
 	const grandTotal = () => {
 		if(dataSelected.tax === 'ppn'){
-			const Total: any = parseInt(dataSelected.total) + ppn();
+			const Total: any = total() + ppn();
 			return Total
 		}else if(dataSelected.tax === 'pph'){
-			const Total: any = parseInt(dataSelected.total) + pph();
+			const Total: any = total() + pph();
 			return Total
 		}else if(dataSelected.tax === 'ppn_and_pph'){
-			const Total: any = parseInt(dataSelected.total) + ppn() + pph();
+			const Total: any = total() + ppn() + pph();
 			return Total
 		}else{
-			const Total: any = parseInt(dataSelected.total);
+			const Total: any = total();
 			return Total
 		}
 	};
