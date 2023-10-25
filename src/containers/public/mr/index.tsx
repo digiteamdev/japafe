@@ -195,7 +195,7 @@ export const Mr = () => {
 												<Eye color='white' />
 											</Button>
 											{
-												dataSelected.status_spv === null || dataSelected.status_spv === null ? (
+												res.status_spv !== 'valid' || res.status_manager !== 'valid' ? (
 													<>
 														<Button
 															className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'

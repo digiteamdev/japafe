@@ -4,6 +4,7 @@ import { Formik, Form, FieldArray } from "formik";
 import { poSchema } from "../../../schema/marketing/po/PoSchema";
 import { AddPo, GetAllQuotation } from "../../../services";
 import { toast } from "react-toastify";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -212,12 +213,19 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		// return formatRupiah(total.toString())
 	};
 
-	const vat = () => {
+	const vat = (taxType: string) => {
 		const htmlTotal = document.getElementById("total") as HTMLInputElement;
 		if (htmlTotal !== null) {
-			const jumlahTax = (parseInt(htmlTotal.value) * tax) / 100;
-			return jumlahTax.toString();
+			if(taxType === 'ppn'){
+				const jumlahTax = (parseInt(htmlTotal.value) * taxPPN) / 100;
+				return jumlahTax.toString();
+			}else{
+				const jumlahTax = (parseInt(htmlTotal.value) * taxPPH) / 100;
+				return jumlahTax.toString();
+			}
 			// return formatRupiah(jumlahTax.toString())
+		}else{
+			return "0"
 		}
 	};
 
@@ -235,13 +243,16 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		setIsLoading(true);
 		const htmlTotals = document.getElementById("total") as HTMLInputElement;
 		const htmlVat = document.getElementById("vat") as HTMLInputElement;
-		const htmlGrandTotal = document.getElementById("grand_tot") as HTMLInputElement
+		const htmlGrandTotal = document.getElementById(
+			"grand_tot"
+		) as HTMLInputElement;
 		const desc: any = [];
 		const term: any = [];
-		let descEmpty: boolean = false
-		let termOFPaymentEmpty: boolean = false
+		let vattotal: string = "0"
+		let descEmpty: boolean = false;
+		let termOFPaymentEmpty: boolean = false;
 		payload.Deskription_CusPo.map((res: any, i: number) => {
-			if(res.description === ""){
+			if (res.description === "") {
 				toast.warning("Description not empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -252,8 +263,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				descEmpty = true
-			}else{
+				descEmpty = true;
+			} else {
 				const htmlTotal = document.getElementById(
 					`Deskription_CusPo.${i}.total`
 				) as HTMLInputElement;
@@ -268,7 +279,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			}
 		});
 		payload.term_of_pay.map((res: any, i: number) => {
-			if(res.limitpay === ""){
+			if (res.limitpay === "") {
 				toast.warning("Term Of Payment not empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -279,8 +290,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				termOFPaymentEmpty = true
-			}else{
+				termOFPaymentEmpty = true;
+			} else {
 				const htmlTotal = document.getElementById(
 					`term_of_pay.${i}.price`
 				) as HTMLInputElement;
@@ -292,6 +303,13 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				});
 			}
 		});
+		if(payload.tax === 'ppn'){
+			vattotal = vat('ppn')
+		}else if(payload.tax === 'pph'){
+			vattotal = vat('pph')
+		}else if(payload.tax === 'ppn_and_pph'){
+			vattotal = (parseInt(vat('ppn')) + parseInt(vat('pph'))).toString()
+		}
 		const dataBody = {
 			id_po: payload.id_po,
 			po_num_auto: idAutoNum,
@@ -301,13 +319,13 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			date_of_po: payload.date_of_po,
 			Deskription_CusPo: desc,
 			term_of_pay: term,
-			vat: htmlVat.value,
+			vat: vattotal,
 			grand_tot: htmlGrandTotal.value,
-			total: htmlTotals.value
+			total: htmlTotals.value,
 		};
 
 		try {
-			if(!termOFPaymentEmpty && !descEmpty){
+			if (!termOFPaymentEmpty && !descEmpty) {
 				const response = await AddPo(dataBody);
 				if (response) {
 					toast.success("Add Customer PO Success", {
@@ -535,7 +553,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 								<InputDate
 									id='date'
 									label='Date'
-									value={values.date_of_po === null ? new Date() : values.date_of_po}
+									value={
+										values.date_of_po === null ? new Date() : values.date_of_po
+									}
 									onChange={(value: any) => setFieldValue("date_of_po", value)}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
@@ -640,41 +660,33 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															<td className='w-[15%]'>
 																<div className='flex w-full'>
 																	{i === values.Deskription_CusPo.length - 1 ? (
-																		<div className='h-[80%]'>
-																			<button
-																				type='button'
-																				className={`inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2 ${
-																					i > 0 ? "" : "mt-6"
-																				}`}
-																				onClick={() => {
-																					arrayDeskription.push({
-																						description: "",
-																						qty: "",
-																						unit: "",
-																						price: "",
-																						discount: "",
-																						total: "",
-																					});
-																				}}
-																			>
-																				Add
-																			</button>
-																		</div>
+																		<a
+																			className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																			onClick={() =>
+																				arrayDeskription.push({
+																					description: "",
+																					qty: "",
+																					unit: "",
+																					price: "",
+																					discount: "",
+																					total: "",
+																				})
+																			}
+																		>
+																			<Plus size={23} className='mt-1' />
+																			Add
+																		</a>
 																	) : null}
 																	{values.Deskription_CusPo.length !== 1 ? (
-																		<div className='h-[80%]'>
-																			<button
-																				type='button'
-																				className={`inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 ${
-																					i > 0 ? "" : "mt-6"
-																				}`}
-																				onClick={() => {
-																					arrayDeskription.remove(i);
-																				}}
-																			>
-																				Remove
-																			</button>
-																		</div>
+																		<a
+																			className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																			onClick={() => {
+																				arrayDeskription.remove(i);
+																			}}
+																		>
+																			<Trash2 size={22} className='mt-1 mr-1' />
+																			Remove
+																		</a>
 																	) : null}
 																</div>
 															</td>
@@ -704,25 +716,88 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 													</td>
 													<td className='w-[15%]'></td>
 												</tr>
-												<tr>
-													<td className='w-[50%]'></td>
-													<td className='w-[10%]'>Vat</td>
-													<td className='w-[25%]'>
-														<Input
-															id='vat'
-															name='vat'
-															placeholder='Vat'
-															label='Vat'
-															type='text'
-															value={vat()}
-															required={true}
-															disabled={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</td>
-													<td className='w-[15%]'></td>
-												</tr>
+												{ values.tax === 'ppn' ? (
+													<tr>
+														<td className='w-[50%]'></td>
+														<td className='w-[10%]'>PPN</td>
+														<td className='w-[25%]'>
+															<Input
+																id='vat'
+																name='vat'
+																placeholder='Vat'
+																label='Vat'
+																type='text'
+																value={vat('ppn')}
+																required={true}
+																disabled={true}
+																withLabel={false}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</td>
+														<td className='w-[15%]'></td>
+													</tr>
+												) : values.tax === 'pph' ? (
+													<tr>
+														<td className='w-[50%]'></td>
+														<td className='w-[10%]'>PPH</td>
+														<td className='w-[25%]'>
+															<Input
+																id='vat'
+																name='vat'
+																placeholder='Vat'
+																label='Vat'
+																type='text'
+																value={vat('pph')}
+																required={true}
+																disabled={true}
+																withLabel={false}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														</td>
+														<td className='w-[15%]'></td>
+													</tr>
+												) : values.tax === 'ppn_and_pph' ? (
+													<>
+														<tr>
+															<td className='w-[50%]'></td>
+															<td className='w-[10%]'>PPN</td>
+															<td className='w-[25%]'>
+																<Input
+																	id='vat'
+																	name='vat'
+																	placeholder='Vat'
+																	label='Vat'
+																	type='text'
+																	value={vat('ppn')}
+																	required={true}
+																	disabled={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</td>
+															<td className='w-[15%]'></td>
+														</tr>
+														<tr>
+															<td className='w-[50%]'></td>
+															<td className='w-[10%]'>PPH</td>
+															<td className='w-[25%]'>
+																<Input
+																	id='vat'
+																	name='vat'
+																	placeholder='Vat'
+																	label='Vat'
+																	type='text'
+																	value={vat('pph')}
+																	required={true}
+																	disabled={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</td>
+															<td className='w-[15%]'></td>
+														</tr>
+													</>
+												) : null }
 												<tr>
 													<td className='w-[50%]'></td>
 													<td className='w-[10%]'>Grand Total</td>
@@ -819,9 +894,12 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																<InputDate
 																	id={`term_of_pay.${i}.date_limit`}
 																	label='date_limit'
-																	value={ res.date_limit}
+																	value={res.date_limit}
 																	onChange={(value: any) =>
-																		setFieldValue(`term_of_pay.${i}.date_limit`, value)
+																		setFieldValue(
+																			`term_of_pay.${i}.date_limit`,
+																			value
+																		)
 																	}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600 mt-6'
@@ -831,35 +909,31 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															<td className='w-[20%]'>
 																<div className='flex w-full'>
 																	{i === values.term_of_pay.length - 1 ? (
-																		<div className='h-[80%]'>
-																			<button
-																				type='button'
-																				className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2'
-																				onClick={() => {
-																					arrayTerm.push({
-																						limitpay: "",
-																						percent: "",
-																						price: "",
-																						date_limit: new Date(),
-																					});
-																				}}
-																			>
-																				Add
-																			</button>
-																		</div>
+																		<a
+																			className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																			onClick={() => {
+																				arrayTerm.push({
+																					limitpay: "",
+																					percent: "",
+																					price: "",
+																					date_limit: new Date(),
+																				});
+																			}}
+																		>
+																			<Plus size={23} className='mt-1' />
+																			Add
+																		</a>
 																	) : null}
 																	{values.term_of_pay.length !== 1 ? (
-																		<div className='h-[80%]'>
-																			<button
-																				type='button'
-																				className='inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-																				onClick={() => {
-																					arrayTerm.remove(i);
-																				}}
-																			>
-																				Remove
-																			</button>
-																		</div>
+																		<a
+																			className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																			onClick={() => {
+																				arrayTerm.remove(i);
+																			}}
+																		>
+																			<Trash2 size={22} className='mt-1 mr-1' />
+																			Remove
+																		</a>
 																	) : null}
 																</div>
 															</td>

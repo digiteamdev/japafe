@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputWithIcon,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
@@ -11,7 +12,7 @@ import { Disclosure } from "@headlessui/react";
 import { Plus, Trash2 } from "react-feather";
 import provinceJson from "../../../assets/data/kodepos.json";
 import { AddCustomer } from "../../../services";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 interface props {
 	content: string;
@@ -20,6 +21,7 @@ interface props {
 
 interface data {
 	id_custom: string;
+	// customerType: string;
 	name: string;
 	email: string;
 	ppn: string;
@@ -46,7 +48,6 @@ interface data {
 }
 
 export const FormCreateCustomer = ({ content, showModal }: props) => {
-
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listProvince, setListProvince] = useState<any>([]);
 	const [listCity, setListCity] = useState<any>([]);
@@ -55,6 +56,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		id_custom: "",
 		name: "",
+		// customerType: "PT.",
 		email: "",
 		ppn: "",
 		pph: "",
@@ -88,69 +90,97 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 
 	const getProvince = () => {
 		const keys = ["province"];
+		const dataProvince: any = []
 		const filtered = json.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
 		);
-		const provinces = filtered.filter((res: any) => {
+		filtered.filter((res: any) => {
 			return res.province !== "province";
+		}).map( (prov: any) => {
+			dataProvince.push({
+				type: 'province',
+				value: prov.province,
+				label: prov.province
+			})
 		});
-		setListProvince(provinces);
+
+		setListProvince(dataProvince);
 		setListCity([]);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getCity = (province: string) => {
+		let dataCity: any = []
 		const filtered = json.filter((res: any) => {
 			return res.province === province;
 		});
 		const keys = ["city"];
-		const city = filtered.filter(
+		filtered.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
-		);
-		setListCity(city);
+		).map(( res: any ) => {
+			dataCity.push({
+				value: res.city,
+				label: res.city
+			})
+		});
+
+		setListCity(dataCity);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getDistrict = (city: string) => {
+		let dataDistrict: any = []
 		const filtered = json.filter((res: any) => {
 			return res.city === city;
 		});
 		const keys = ["district"];
-		const district = filtered.filter(
+		filtered.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
-		);
-		setListDistrict(district);
+		).map( (res: any) => {
+			dataDistrict.push({
+				value: res.district,
+				label: res.district
+			})
+		});
+		setListDistrict(dataDistrict);
 		setListSubDistrict([]);
 	};
 
 	const getSubDistrict = (district: string) => {
+		let dataSubDistrict: any = []
 		const filtered = json.filter((res: any) => {
 			return res.district === district;
 		});
 		const keys = ["subdistrict"];
-		const subdistrict = filtered.filter(
+		filtered.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
-		);
-		setListSubDistrict(subdistrict);
+		).map( (res: any) => {
+			dataSubDistrict.push({
+				value: res.subdistrict,
+				label: res.subdistrict,
+				postal_code: res.postal_code
+			})
+		});
+		setListSubDistrict(dataSubDistrict);
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "address.0.provinces") {
-			getCity(event.target.value);
+		if (event.type === "province") {
+			getCity(event.value);
 		} else if (event.target.name === "address.0.cities") {
 			getDistrict(event.target.value);
 		} else if (event.target.name === "address.0.districts") {
@@ -159,11 +189,11 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 	};
 
 	const addCustomer = async (payload: any) => {
-		setIsLoading(true)
-		let dataEmpty: boolean = false
-		payload.contact.map( (res: any) => {
-			if(res.contact_person === ''){
-				dataEmpty = true
+		setIsLoading(true);
+		let dataEmpty: boolean = false;
+		payload.contact.map((res: any) => {
+			if (res.contact_person === "") {
+				dataEmpty = true;
 				toast.warning("Contact Person Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -175,10 +205,10 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 					theme: "colored",
 				});
 			}
-		})
-		payload.address.map( (res: any) => {
-			if(res.address_workshop === ''){
-				dataEmpty = true
+		});
+		payload.address.map((res: any) => {
+			if (res.address_workshop === "") {
+				dataEmpty = true;
 				toast.warning("Workshop Address Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -190,13 +220,13 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 					theme: "colored",
 				});
 			}
-		})
-
-		if(!dataEmpty){
+		});
+		
+		if (!dataEmpty) {
 			try {
 				const response = await AddCustomer(payload);
 				if (response) {
-					toast.success('Add Customer Success', {
+					toast.success("Add Customer Success", {
 						position: "top-center",
 						autoClose: 5000,
 						hideProgressBar: true,
@@ -206,10 +236,10 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 						progress: undefined,
 						theme: "colored",
 					});
-					showModal(false, content, true)
+					showModal(false, content, true);
 				}
 			} catch (error) {
-				toast.error('Add Customer Failed', {
+				toast.error("Add Customer Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -221,7 +251,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 				});
 			}
 		}
-		setIsLoading(false)
+		setIsLoading(false);
 	};
 
 	return (
@@ -230,27 +260,59 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 				initialValues={{ ...data }}
 				validationSchema={customerSchema}
 				onSubmit={(values) => {
-					addCustomer(values)
+					addCustomer(values);
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Customer</h1>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<Input
-									id='name'
-									name='name'
-									placeholder='Name'
-									label='Customer Name'
-									type='text'
-									value={values.name}
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
+								<div className='flex w-full'>
+									{/* <div className='w-[30%]'>
+										<InputSelect
+											id='customerType'
+											name='customerType'
+											placeholder='Customer type'
+											label='Customer type'
+											onChange={handleChange}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option defaultValue='PT.' selected>
+												PT
+											</option>
+											<option value='CV.'>
+												CV
+											</option>
+											<option value='Persero'>
+												Persero
+											</option>
+											<option value='Koperasi'>
+												Koperasi
+											</option>
+											<option value=''>
+												Other
+											</option>
+										</InputSelect>
+									</div> */}
+									<div className='w-full'>
+										<Input
+											id='name'
+											name='name'
+											placeholder='Name'
+											label='Customer Name'
+											type='text'
+											value={values.name}
+											onChange={handleChange}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</div>
 								{errors.name && touched.name ? (
 									<span className='text-red-500 text-xs'>{errors.name}</span>
 								) : null}
@@ -321,114 +383,70 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 												</h1>
 												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 													<div className='w-full'>
-														<InputSelect
+														<InputSelectSearch
+															datas={listProvince}
 															id={`address.${i}.provinces`}
 															name={`address.${i}.provinces`}
 															placeholder='Province'
 															label='Province'
-															onChange={handleChange}
+															onChange={ (e: any) => {
+																getCity(e.value)
+																setFieldValue(`address.${i}.provinces`, e.value)
+															}}
 															required={true}
 															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='' selected>
-																Choose Province
-															</option>
-															{listProvince.length === 0 ? (
-																<option value=''>No Data Province</option>
-															) : (
-																listProvince.map((res: any, i: number) => {
-																	return (
-																		<option value={res.province} key={i}>
-																			{res.province}
-																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
 													</div>
 													<div className='w-full'>
-														<InputSelect
+														<InputSelectSearch
+															datas={listCity}
 															id={`address.${i}.cities`}
 															name={`address.${i}.cities`}
 															placeholder='City'
 															label='City'
-															onChange={handleChange}
+															onChange={ (e: any) => {
+																getDistrict(e.value)
+																setFieldValue(`address.${i}.cities`, e.value)
+															}}
 															required={true}
 															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='' selected>
-																Choose City
-															</option>
-															{listCity.length === 0 ? (
-																<option>No Data City</option>
-															) : (
-																listCity.map((res: any, i: number) => {
-																	return (
-																		<option value={res.city} key={i}>
-																			{res.city}
-																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
 													</div>
 												</Section>
 												<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 													<div className='w-full'>
-														<InputSelect
+														<InputSelectSearch
+															datas={listDistrict}
 															id={`address.${i}.districts`}
 															name={`address.${i}.districts`}
 															placeholder='District'
 															label='District'
-															onChange={handleChange}
+															onChange={ (e: any) => {
+																getSubDistrict(e.value)
+																setFieldValue(`address.${i}.districts`, e.value)
+															}}
 															required={true}
 															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='' selected>
-																Choose District
-															</option>
-															{listDistrict.length === 0 ? (
-																<option>No Data District</option>
-															) : (
-																listDistrict.map((res: any, i: number) => {
-																	return (
-																		<option value={res.district} key={i}>
-																			{res.district}
-																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
 													</div>
 													<div className='w-full'>
-														<InputSelect
+														<InputSelectSearch
+														datas={listSubDistrict}
 															id={`address.${i}.sub_districts`}
 															name={`address.${i}.sub_districts`}
 															placeholder='Sub District'
 															label='Sub District'
-															onChange={handleChange}
+															onChange={ (e: any) => {
+																setFieldValue(`address.${i}.sub_districts`, e.value)
+																setFieldValue(`address.${i}.ec_postalcode`, e.postal_code)
+															}}
 															required={true}
 															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='' selected>
-																Choose Sub District
-															</option>
-															{listSubDistrict.length === 0 ? (
-																<option>No Data Sub District</option>
-															) : (
-																listSubDistrict.map((res: any, i: number) => {
-																	return (
-																		<option value={res.subdistrict} key={i}>
-																			{res.subdistrict}
-																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
 													</div>
 													<div className='w-full'>
 														<Input
@@ -437,6 +455,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 															placeholder='Postal Code'
 															label='Postal Code'
 															type='number'
+															value={res.ec_postalcode}
 															onChange={handleChange}
 															required={true}
 															withLabel={true}
@@ -495,7 +514,8 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 														arrayAddress.remove(i);
 													}}
 												>
-													<Trash2  size={18} className='mr-1 mt-1' /> Remove Address
+													<Trash2 size={18} className='mr-1 mt-1' /> Remove
+													Address
 												</a>
 											) : null}
 										</div>
@@ -586,7 +606,8 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 														arrayContact.remove(i);
 													}}
 												>
-													<Trash2  size={18} className='mr-1 mt-1' /> Remove Contact
+													<Trash2 size={18} className='mr-1 mt-1' /> Remove
+													Contact
 												</a>
 											) : null}
 										</div>

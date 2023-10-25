@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import Select from 'react-select'
 
 interface props {
 	id?: string;
@@ -12,10 +12,10 @@ interface props {
 	required?: boolean;
 	withLabel?: boolean;
 	onChange?: any;
-	children: ReactNode;
+	datas?: any;
 }
 
-export const InputSelect = ({
+export const InputSelectSearch = ({
 	id,
 	placeholder,
 	label,
@@ -26,7 +26,7 @@ export const InputSelect = ({
 	required,
 	withLabel,
 	onChange,
-	children,
+	datas,
 }: props) => {
 	return (
 		<div>
@@ -38,8 +38,8 @@ export const InputSelect = ({
 					{label}
 				</label>
 			) : null}
-			<select
-				disabled={disabled}
+			<Select
+				// disabled={disabled}
 				name={name}
 				id={id}
 				placeholder={placeholder}
@@ -47,10 +47,8 @@ export const InputSelect = ({
 				className={`${className}`}
 				required={required}
 				onChange={onChange}
-			>
-				{children}
-			</select>
+				options={datas}
+			/>
 		</div>
 	);
 };
-

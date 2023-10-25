@@ -79,7 +79,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 										</td>
 										<td className='w-[50%] px-2 py-2 border border-gray-200'>
 											{
-												dataSelected.quo_img === '' ? 'Tidak Ada File' : (
+												dataSelected.quo_img === null ? 'Tidak Ada File' : (
 													<a
 														href={dataSelected.quo_img}
 														target='_blank'
@@ -101,13 +101,13 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[50%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[50%] pl-2 border border-black text-center font-semibold'>
 											Item of work
 										</th>
-										<th className='w-[25%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[25%] pl-2 border border-black text-center font-semibold'>
 											Volume
 										</th>
-										<th className='w-[25%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[25%] pl-2 border border-black text-center font-semibold'>
 											Unit
 										</th>
 									</tr>
@@ -116,13 +116,13 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 									dataSelected.Quotations_Detail.map((res: any, i: number) => (
 										<tbody key={i}>
 											<tr>
-												<td className='pl-2 border border-gray-200'>
+												<td className='pl-2 border border-black'>
 													{res.item_of_work}
 												</td>
-												<td className='pl-2 border border-gray-200 text-center'>
+												<td className='pl-2 border border-black text-center'>
 													{res.volume}
 												</td>
-												<td className='pl-2 border border-gray-200 text-center'>
+												<td className='pl-2 border border-black text-center'>
 													{res.unit}
 												</td>
 											</tr>
@@ -131,9 +131,9 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 								) : (
 									<tbody>
 										<tr>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
 										</tr>
 									</tbody>
 								)}
@@ -146,16 +146,16 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
 											Equipment
 										</th>
-										<th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
 											Part
 										</th>
-										<th className='w-[10%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[10%] pl-2 border border-black text-center font-semibold'>
 											Quantity
 										</th>
-										<th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
 											Description
 										</th>
 									</tr>
@@ -164,16 +164,16 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 									dataSelected.eqandpart.map((res: any, i: number) => (
 										<tbody key={i}>
 											<tr>
-												<td className='pl-2 border border-gray-200'>
+												<td className='pl-2 border border-black'>
 													{res.equipment.nama}
 												</td>
-												<td className='pl-2 border border-gray-200'>
+												<td className='pl-2 border border-black'>
 													{res.eq_part.nama_part}
 												</td>
-												<td className='pl-2 border border-gray-200 text-center'>
+												<td className='pl-2 border border-black text-center'>
 													{res.qty}
 												</td>
-												<td className='pl-2 border border-gray-200'>
+												<td className='pl-2 border border-black'>
 													{res.keterangan}
 												</td>
 											</tr>
@@ -182,10 +182,10 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 								) : (
 									<tbody>
 										<tr>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
 										</tr>
 									</tbody>
 								)}

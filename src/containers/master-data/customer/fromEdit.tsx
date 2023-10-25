@@ -367,7 +367,7 @@ export const FormEditCustomer = ({
 			{activeTabs === "Customer" ? (
 				<Formik
 					initialValues={{ ...data }}
-					validationSchema={customerSchema}
+					// validationSchema={customerSchema}
 					onSubmit={(values) => {
 						editCustomer(values);
 					}}

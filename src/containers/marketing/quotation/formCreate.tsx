@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputArea,
 	MultipleSelect,
 } from "../../../components";
@@ -16,7 +17,7 @@ import {
 import { toast } from "react-toastify";
 import { FormCreateEquipment } from "./formCreateEquipment";
 import { FormCreateCustomer } from "./formCreateCustomer";
-import { Plus } from "react-feather";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -59,6 +60,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const [listParts, setListParts] = useState<any>([]);
 	const [parts, setParts] = useState<any>([]);
 	const [equipmentSelected, setEquipmentSelected] = useState<string>("");
+	const [searchCustomer, setSearchCustomer] = useState<string>("");
 	const [imgQuotation, setImgQuotation] = useState<any>(null);
 	const [idAutoNum, setIdAutoNum] = useState<string>("");
 	const [data, setData] = useState<data>({
@@ -145,7 +147,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const addQuotation = async (payload: any) => {
 		setIsLoading(true);
 		const form = new FormData();
-		const dataCustomer = JSON.parse(payload.customerId);
+		// const dataCustomer = JSON.parse(payload.customerId);
 		const eqandpart: any = [];
 		let equipmentEmpty: boolean = false;
 		payload.parts.map((res: any) => {
@@ -160,8 +162,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				equipmentEmpty = true
-			}else{
+				equipmentEmpty = true;
+			} else {
 				listParts.map((eq: any) => {
 					if (eq.id === res.id) {
 						const dataPart = {
@@ -177,7 +179,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		});
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
-		form.append("customerId", dataCustomer.id);
+		form.append("customerId", payload.customerId);
 		form.append("customercontactId", payload.customercontactId);
 		form.append("deskription", payload.deskription);
 		form.append("quo_img", imgQuotation);
@@ -186,7 +188,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		form.append("eqandpart", JSON.stringify(eqandpart));
 
 		try {
-			if(!equipmentEmpty){
+			if (!equipmentEmpty) {
 				const response = await AddQuotation(form);
 				if (response) {
 					toast.success("Add Quotation Success", {
@@ -229,13 +231,20 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	};
 
 	const getCustomer = async () => {
+		let dataCustomers: any = [];
 		try {
 			const response = await GetAllCustomer();
 			if (response.data) {
-				setDataCustomer(response.data.result);
+				response.data.result.map((res: any) => {
+					dataCustomers.push({
+						...res,
+						label: res.name,
+					});
+				});
+				setDataCustomer(dataCustomers);
 			}
 		} catch (error) {
-			setDataCustomer([]);
+			setDataCustomer(dataCustomers);
 		}
 	};
 
@@ -309,27 +318,38 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 							</Section>
 							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<InputSelect
+									<InputSelectSearch
+										datas={dataCustomer}
 										id='customerId'
 										name='customerId'
 										placeholder='Customer'
 										label='Customer'
 										onChange={(input: any) => {
-											if (input.target.value === "create") {
-												formCreateCustomer(values, true);
-											} else if (input.target.value === "Choose Customer") {
-												setFieldValue("customerId", "");
-											} else if (input.target.value === "no data") {
-												setFieldValue("customerId", "");
-											} else {
-												setFieldValue("customerId", input.target.value);
-											}
+											let dataContacts: any = [];
+											// if (input.target.value === "create") {
+											// 	formCreateCustomer(values, true);
+											// } else if (input.target.value === "Choose Customer") {
+											// 	setFieldValue("customerId", "");
+											// } else if (input.target.value === "no data") {
+											// 	setFieldValue("customerId", "");
+											// } else {
+											// }
+											input.contact.map((res: any) => {
+												dataContacts.push({
+													...res,
+													label: `${res.contact_person} - ${res.phone}`,
+												});
+											});
+											setListContact(dataContacts);
+											setCityCustomer(input.address[0].cities);
+											setCustomerAddress(input.address[0].address_workshop);
+											setFieldValue("customerId", input.id);
 										}}
 										required={true}
 										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option defaultValue='' selected>
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									/>
+									{/* <option defaultValue='' selected>
 											Choose Customer
 										</option>
 										{dataCustomer.length === 0 ? (
@@ -344,7 +364,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 											})
 										)}
 										<option value='create'>Add New Customer</option>
-									</InputSelect>
+									</InputSelect> */}
 									{errors.customerId && touched.customerId ? (
 										<span className='text-red-500 text-xs'>
 											{errors.customerId}
@@ -352,17 +372,20 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 									) : null}
 								</div>
 								<div className='w-full'>
-									<InputSelect
+									<InputSelectSearch
+										datas={listContact}
 										id='customercontactId'
 										name='customercontactId'
 										placeholder='contact person'
 										label='Contact person'
-										onChange={handleChange}
+										onChange={ (input:any) => {
+											setFieldValue('customercontactId', input.id)
+										}}
 										required={true}
 										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option defaultValue='' selected>
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full  outline-primary-600'
+									/>
+									{/* <option defaultValue='' selected>
 											Choose Contact Person
 										</option>
 										{listContact.length === 0 ? (
@@ -376,7 +399,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 												);
 											})
 										)}
-									</InputSelect>
+									</InputSelect> */}
 									{errors.customercontactId && touched.customercontactId ? (
 										<span className='text-red-500 text-xs'>
 											{errors.customercontactId}
@@ -495,35 +518,30 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 												</div>
 												<div className='flex w-full'>
 													{i === values.Quotations_Detail.length - 1 ? (
-														<div className='h-[80%] mt-7'>
-															<button
-																type='button'
-																className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2'
-																onClick={() => {
-																	arrayDetails.push({
-																		item_of_work: "",
-																		volume: 0,
-																		unit: "",
-																	});
-																}}
-															>
-																{" "}
-																Add
-															</button>
-														</div>
+														<a
+															className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+															onClick={() =>
+																arrayDetails.push({
+																	item_of_work: "",
+																	volume: 0,
+																	unit: "",
+																})
+															}
+														>
+															<Plus size={23} className='mt-1' />
+															Add
+														</a>
 													) : null}
 													{values.Quotations_Detail.length !== 1 ? (
-														<div className='h-[80%] mt-7'>
-															<button
-																type='button'
-																className='inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-																onClick={() => {
-																	arrayDetails.remove(i);
-																}}
-															>
-																Remove
-															</button>
-														</div>
+														<a
+															className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+															onClick={() => {
+																arrayDetails.remove(i);
+															}}
+														>
+															<Trash2 size={22} className='mt-1 mr-1' />
+															Remove
+														</a>
 													) : null}
 												</div>
 											</Section>
@@ -560,7 +578,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 											)}
 										</InputSelect> */}
 									<MultipleSelect
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 										listdata={equipment}
 										placeholder='Select Equipment'
 										displayValue='nama'
@@ -641,34 +659,30 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 														</div>
 														<div className='flex w-full'>
 															{i === values.parts.length - 1 ? (
-																<div className='h-[80%] mt-7'>
-																	<button
-																		type='button'
-																		className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2'
-																		onClick={() => {
-																			arrayParts.push({
-																				id: "",
-																				qty: "",
-																				keterangan: "",
-																			});
-																		}}
-																	>
-																		Add
-																	</button>
-																</div>
+																<a
+																	className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																	onClick={() =>
+																		arrayParts.push({
+																			id: "",
+																			qty: "",
+																			keterangan: "",
+																		})
+																	}
+																>
+																	<Plus size={23} className='mt-1' />
+																	Add
+																</a>
 															) : null}
 															{values.parts.length !== 1 ? (
-																<div className='h-[80%] mt-7'>
-																	<button
-																		type='button'
-																		className='inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-																		onClick={() => {
-																			arrayParts.remove(i);
-																		}}
-																	>
-																		Remove
-																	</button>
-																</div>
+																<a
+																	className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																	onClick={() => {
+																		arrayParts.remove(i);
+																	}}
+																>
+																	<Trash2 size={22} className='mt-1 mr-1' />
+																	Remove
+																</a>
 															) : null}
 														</div>
 													</Section>

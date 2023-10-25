@@ -191,7 +191,7 @@ export const Quotation = () => {
 									<td className='whitespace-nowrap px-6 py-4'>
 										{moment(res.date).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
@@ -202,24 +202,28 @@ export const Quotation = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
+											{ res.CustomerPo === null ? (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true,'edit', false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+													<Button
+														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "delete", false);
+														}}
+													>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) : null }
 										</div>
 									</td>
 								</tr>

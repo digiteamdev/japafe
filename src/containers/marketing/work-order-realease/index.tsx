@@ -44,12 +44,12 @@ export const Wor = () => {
 	useEffect(() => {
 		getWor(page, perPage);
 		let jabatan = getPosition();
-		let roleUsers: any = getRole()
-		if(roleUsers !== undefined){
-			let roleUser = JSON.parse(roleUsers)
-			for( var i = 0; i < roleUser.length; i++){
-				if(roleUser[i].role.role_name === "MARKETING"){
-					setRoleMarketing(true)
+		let roleUsers: any = getRole();
+		if (roleUsers !== undefined) {
+			let roleUser = JSON.parse(roleUsers);
+			for (var i = 0; i < roleUser.length; i++) {
+				if (roleUser[i].role.role_name === "MARKETING") {
+					setRoleMarketing(true);
 					break;
 				}
 			}
@@ -215,33 +215,32 @@ export const Wor = () => {
 												>
 													<Eye color='white' />
 												</Button>
-												{ roleMarketing ? (
+												{roleMarketing ? (
 													<>
-														<Button
-															className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md ${
-																res.status === "valid"
-																	? "cursor-not-allowed"
-																	: "cursor-pointer"
-															}`}
-															disabled={res.status === "valid" ? true : false}
-															onClick={() => {
-																setDataSelected(res);
-																showModal(true, "edit", false);
-															}}
-														>
-															<Edit color='white' />
-														</Button>
-														<Button
-															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-															onClick={() => {
-																setDataSelected(res);
-																showModal(true, "delete", false);
-															}}
-														>
-															<Trash2 color='white' />
-														</Button>
+														{res.status === "valid" ? null : (
+															<>
+																<Button
+																	className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md cursor-pointer`}
+																	onClick={() => {
+																		setDataSelected(res);
+																		showModal(true, "edit", false);
+																	}}
+																>
+																	<Edit color='white' />
+																</Button>
+																<Button
+																	className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+																	onClick={() => {
+																		setDataSelected(res);
+																		showModal(true, "delete", false);
+																	}}
+																>
+																	<Trash2 color='white' />
+																</Button>
+															</>
+														) }
 													</>
-												) : null }
+												) : null}
 											</div>
 										</td>
 									</tr>
@@ -337,7 +336,7 @@ export const Wor = () => {
 							content={modalContent}
 							showModal={showModal}
 							position={position}
-							role={roleMarketing ? "MARKETING" : null }
+							role={roleMarketing ? "MARKETING" : null}
 						/>
 					) : modalContent === "add" ? (
 						<FormCreateWor content={modalContent} showModal={showModal} />

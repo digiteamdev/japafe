@@ -10,6 +10,7 @@ import {
 	EditPoPayment,
 } from "../../../services";
 import { toast } from "react-toastify";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -332,7 +333,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				) as HTMLInputElement,
 				total: any = grandTotal,
 				totalTerm: any = (parseInt(total) * percent) / 100;
-				setTotalTerm(totalTerm)
+			setTotalTerm(totalTerm);
 			htmlTotalTerm.value = totalTerm.toString();
 		} else if (event.target.name === "tax") {
 			if (event.target.value === "ppn") {
@@ -514,11 +515,15 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		}
 	};
 
-	const totalTermPrice = (data:number) => {
-		let total: number = 0
-		total = (grandTotal * data) / 100
-		return total
-	}
+	const totalTermPrice = (data: number) => {
+		let total: number = 0;
+		total = (grandTotal * data) / 100;
+		return total;
+	};
+
+	const totalDetail = (qty: number, price: number, disc: number ) => {
+		return (qty * price) - disc
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -823,7 +828,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 						enableReinitialize
 						key={1}
 					>
-						{({ handleChange, handleSubmit, errors, touched, values }) => (
+						{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
 							<Form onChange={handleOnChanges}>
 								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<FieldArray
@@ -858,7 +863,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			placeholder='Quantity'
 																			label='Quantity'
 																			type='number'
-																			onChange={handleChange}
+																			onChange={(e: any) => {
+																				setFieldValue(`Deskription_CusPo.${i}.qty`, parseInt(e.target.value))
+																				setFieldValue(`Deskription_CusPo.${i}.total`, totalDetail(e.target.value,parseInt(res.price),parseInt(res.discount) ))
+																			}}
 																			value={res.qty}
 																			required={true}
 																			withLabel={i > 0 ? false : true}
@@ -887,7 +895,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			label='Price'
 																			type='number'
 																			value={res.price}
-																			onChange={handleChange}
+																			onChange={(e: any) => {
+																				setFieldValue(`Deskription_CusPo.${i}.price`, e.target.value)
+																				setFieldValue(`Deskription_CusPo.${i}.total`, totalDetail(parseInt(res.qty),e.target.value,parseInt(res.discount) ))
+																			}}
 																			required={true}
 																			withLabel={i > 0 ? false : true}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -900,7 +911,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			placeholder='Discount'
 																			label='Discount'
 																			type='number'
-																			onChange={handleChange}
+																			onChange={(e: any) => {
+																				setFieldValue(`Deskription_CusPo.${i}.discount`, e.target.value)
+																				setFieldValue(`Deskription_CusPo.${i}.total`, totalDetail(parseInt(res.qty),parseInt(res.price), e.target.value))
+																			}}
 																			value={res.discount}
 																			required={true}
 																			withLabel={i > 0 ? false : true}
@@ -915,8 +929,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			label='total'
 																			type='total'
 																			disabled={true}
-																			// value={res.total !== "" ? res.total : }
-																			onChange={handleChange}
+																			value={res.total}
 																			required={true}
 																			withLabel={i > 0 ? false : true}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -926,46 +939,41 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																		<div className='flex w-full'>
 																			{i ===
 																			values.Deskription_CusPo.length - 1 ? (
-																				<div className='h-[80%]'>
-																					<button
-																						type='button'
-																						className={`inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2 ${
-																							i > 0 ? "" : "mt-6"
-																						}`}
-																						onClick={() => {
-																							arrayDeskription.push({
-																								id: "",
-																								cuspoId: dataPo.id,
-																								description: "",
-																								qty: "",
-																								unit: "",
-																								price: "",
-																								discount: "",
-																								total: "",
-																							});
-																						}}
-																					>
-																						Add
-																					</button>
-																				</div>
+																				<a
+																					className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																					onClick={() => {
+																						arrayDeskription.push({
+																							id: "",
+																							cuspoId: dataPo.id,
+																							description: "",
+																							qty: "",
+																							unit: "",
+																							price: "",
+																							discount: "",
+																							total: "",
+																						});
+																					}}
+																				>
+																					<Plus size={23} className='mt-1' />
+																					Add
+																				</a>
 																			) : null}
 																			{values.Deskription_CusPo.length !== 1 ? (
-																				<div className='h-[80%]'>
-																					<button
-																						type='button'
-																						className={`inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 ${
-																							i > 0 ? "" : "mt-6"
-																						}`}
-																						onClick={() => {
-																							res.id !== ""
-																								? deletePoDetail(res.id)
-																								: null;
-																							arrayDeskription.remove(i);
-																						}}
-																					>
-																						Remove
-																					</button>
-																				</div>
+																				<a
+																					className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																					onClick={() => {
+																						res.id !== ""
+																							? deletePoDetail(res.id)
+																							: null;
+																						arrayDeskription.remove(i);
+																					}}
+																				>
+																					<Trash2
+																						size={22}
+																						className='mt-1 mr-1'
+																					/>
+																					Remove
+																				</a>
 																			) : null}
 																		</div>
 																	</td>
@@ -1157,9 +1165,15 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																			name={`term_of_pay.${i}.percent`}
 																			placeholder='%'
 																			type='number'
-																			onChange={ (e: any) => {
-																				setFieldValue(`term_of_pay.${i}.percent`, e.target.value),
-																				setFieldValue(`term_of_pay.${i}.price`, totalTermPrice(e.target.value))
+																			onChange={(e: any) => {
+																				setFieldValue(
+																					`term_of_pay.${i}.percent`,
+																					e.target.value
+																				),
+																					setFieldValue(
+																						`term_of_pay.${i}.price`,
+																						totalTermPrice(e.target.value)
+																					);
 																			}}
 																			value={res.percent}
 																			required={true}
@@ -1201,9 +1215,8 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																		<div className='flex w-full'>
 																			{i === values.term_of_pay.length - 1 ? (
 																				<div className='h-[80%]'>
-																					<button
-																						type='button'
-																						className='inline-flex justify-center rounded-lg border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mr-2'
+																					<a
+																						className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 																						onClick={() => {
 																							arrayTerm.push({
 																								id: "",
@@ -1215,22 +1228,24 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																							});
 																						}}
 																					>
+																						<Plus size={23} className='mt-1' />
 																						Add
-																					</button>
+																					</a>
 																				</div>
 																			) : null}
 																			{values.term_of_pay.length !== 1 ? (
-																				<div className='h-[80%]'>
-																					<button
-																						type='button'
-																						className='inline-flex justify-center rounded-lg border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
-																						onClick={() => {
-																							arrayTerm.remove(i);
-																						}}
-																					>
-																						Remove
-																					</button>
-																				</div>
+																				<a
+																					className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																					onClick={() => {
+																						arrayTerm.remove(i);
+																					}}
+																				>
+																					<Trash2
+																						size={22}
+																						className='mt-1 mr-1'
+																					/>
+																					Remove
+																				</a>
 																			) : null}
 																		</div>
 																	</td>

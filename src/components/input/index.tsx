@@ -4,4 +4,5 @@ export * from './inputSearch';
 export * from './inputSelect';
 export * from './inputDate';
 export * from './inputArea';
-export * from './multiSelect'
+export * from './multiSelect';
+export * from './inputSelectSearch';

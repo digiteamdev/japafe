@@ -235,10 +235,10 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									<option defaultValue='' selected>
 										Choose Job Operational
 									</option>
-									<option value="true">
+									<option value="false">
 										Yes
 									</option>
-									<option value="false">
+									<option value="true">
 										No
 									</option>
 								</InputSelect>

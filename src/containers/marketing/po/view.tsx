@@ -8,48 +8,43 @@ interface props {
 }
 
 export const ViewPo = ({ dataSelected }: props) => {
-    
-    const [total, setTotal] = useState<any>("0")
-    const [vatTotal, setVatTotal] = useState<any>("0")
-    const [granTotal, setGrandTotal] = useState<any>("0")
 
-    useEffect( () => {
-        totalPrice(dataSelected.Deskription_CusPo)
-        vat(dataSelected.Deskription_CusPo, dataSelected.tax)
-        grandTotal()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-    },[total, vatTotal])
-
-    const totalPrice = (data: any) => {
+	const total = () => {
 		let total: number = 0
-        data.map( (res: any) => {
-            total += parseInt(res.total) + total
-        })
-        setTotal(total.toString())
+		dataSelected.Deskription_CusPo.map( (res: any) => {
+			total = total + parseInt(res.total)
+		})
+		return total
+	}
+
+	const ppn = () => {
+		let ppn =
+			(parseInt(dataSelected.total) * dataSelected.quotations.Customer.ppn) /
+			100;
+		return Math.ceil(ppn);
 	};
 
-	const vat = (data: any, tax: any) => {
-        let total: number = 0
-        let persenTax: number = 0
-        if (tax === "ppn") {
-            persenTax = 11
-        } else if (tax === "pph") {
-            persenTax = 2
-        } else if (tax === "ppn_and_pph") {
-            persenTax = 13
-        } else {
-            persenTax = 0
-        }
-        data.map( (res: any) => {
-            total += parseInt(res.total) + total
-        })
-        const jumlahTax = ((total) * persenTax) / 100
-        setVatTotal(jumlahTax.toString())
+	const pph = () => {
+		let pph =
+			(parseInt(dataSelected.total) * dataSelected.quotations.Customer.pph) /
+			100;
+		return Math.ceil(pph);
 	};
 
 	const grandTotal = () => {
-        const Total: any = parseInt(total) + parseInt(vatTotal);
-        setGrandTotal(Total.toString())
+		if(dataSelected.tax === 'ppn'){
+			const Total: any = parseInt(dataSelected.total) + ppn();
+			return Total
+		}else if(dataSelected.tax === 'pph'){
+			const Total: any = parseInt(dataSelected.total) + pph();
+			return Total
+		}else if(dataSelected.tax === 'ppn_and_pph'){
+			const Total: any = parseInt(dataSelected.total) + ppn() + pph();
+			return Total
+		}else{
+			const Total: any = parseInt(dataSelected.total);
+			return Total
+		}
 	};
 
 	return (
@@ -91,10 +86,11 @@ export const ViewPo = ({ dataSelected }: props) => {
 											Quotation Id / Quotation Number
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.quotations.quo_auto} / {dataSelected.quotations.quo_num}
+											{dataSelected.quotations.quo_auto} /{" "}
+											{dataSelected.quotations.quo_num}
 										</td>
 									</tr>
-                                    <tr>
+									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Customer
 										</td>
@@ -102,15 +98,16 @@ export const ViewPo = ({ dataSelected }: props) => {
 											{dataSelected.quotations.Customer.name}
 										</td>
 									</tr>
-                                    <tr>
+									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.quotations.eqandpart[0].equipment.nama} / {dataSelected.quotations.eqandpart.length} Count Part
+											{dataSelected.quotations.eqandpart[0].equipment.nama} /{" "}
+											{dataSelected.quotations.eqandpart.length} Count Part
 										</td>
 									</tr>
-                                    <tr>
+									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Subject
 										</td>
@@ -144,84 +141,139 @@ export const ViewPo = ({ dataSelected }: props) => {
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[30%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
 											Description
 										</th>
-										<th className='w-[10%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[10%] pl-2 border border-black text-center font-semibold'>
 											Quantity
 										</th>
-										<th className='w-[15%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[15%] pl-2 border border-black text-center font-semibold'>
 											Unit
 										</th>
-                                        <th className='w-[15%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[15%] pl-2 border border-black text-center font-semibold'>
 											Price
 										</th>
-                                        <th className='w-[15%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[15%] pl-2 border border-black text-center font-semibold'>
 											Discount
 										</th>
-                                        <th className='w-[15%] pl-2 border border-gray-200 text-center font-semibold'>
+										<th className='w-[15%] pl-2 border border-black text-center font-semibold'>
 											Total
 										</th>
 									</tr>
 								</thead>
-								{dataSelected.Deskription_CusPo.length > 0 ? (
-									dataSelected.Deskription_CusPo.map((res: any, i: number) => (
-										<tbody key={i}>
+								<tbody>
+									{dataSelected.Deskription_CusPo.length > 0 ? (
+										dataSelected.Deskription_CusPo.map(
+											(res: any, i: number) => (
+												<tr key={i}>
+													<td className='pl-2 border border-black'>
+														{res.description}
+													</td>
+													<td className='pl-2 border border-black text-center'>
+														{res.qty}
+													</td>
+													<td className='pl-2 border border-black text-center'>
+														{res.unit}
+													</td>
+													<td className='pl-2 border border-black text-center'>
+														{formatRupiah(res.price)}
+													</td>
+													<td className='pl-2 border border-black text-center'>
+														{formatRupiah(res.discount)}
+													</td>
+													<td className='pl-2 border border-black text-center'>
+														{formatRupiah(res.total)}
+													</td>
+												</tr>
+											)
+										)
+									) : (
+										<tbody>
 											<tr>
-												<td className='pl-2 border border-gray-200'>
-													{res.description}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
-												<td className='pl-2 border border-gray-200 text-center'>
-													{res.qty}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
-												<td className='pl-2 border border-gray-200 text-center'>
-													{res.unit}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
-                                                <td className='pl-2 border border-gray-200 text-center'>
-													{formatRupiah(res.price)}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
-                                                <td className='pl-2 border border-gray-200 text-center'>
-													{formatRupiah(res.discount)}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
-                                                <td className='pl-2 border border-gray-200 text-center'>
-													{formatRupiah(res.total)}
+												<td className='w-full pl-2 border border-black'>
+													-
 												</td>
 											</tr>
-                                            <tr>
-                                                <td className="pl-2 border-l border-b border-gray-200" colSpan={4}></td>
-                                                <td className="pl-2 border-b">Total</td>
-                                                <td className="pl-2 border border-gray-200 text-center">
-                                                    <p>{ formatRupiah(total) }</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                            <td className="pl-2 border-l  border-b border-gray-200" colSpan={4}></td>
-                                                <td className="pl-2 border-b">Vat</td>
-                                                <td className="pl-2 border border-gray-200 text-center">
-                                                    <p>{ formatRupiah(vatTotal) }</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                            <td className="pl-2 border-l border-b border-gray-200" colSpan={4}></td>
-                                                <td className="pl-2 border-b">Grand Total</td>
-                                                <td className="pl-2 border border-gray-200 text-center">
-                                                    <p>{ formatRupiah(granTotal) }</p>
-                                                </td>
-                                            </tr>
 										</tbody>
-									))
-								) : (
-									<tbody>
+									)}
+									<tr>
+										<td colSpan={5} className='pr-4 text-right border border-black'>Total</td>
+										<td className='pl-2 border border-black text-center'>
+											<p>{formatRupiah(total().toString())}</p>
+										</td>
+									</tr>
+									{dataSelected.tax === "ppn" ? (
 										<tr>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-                                            <td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
+											<td
+												className='border border-black text-right pr-4'
+												colSpan={5}
+											>
+												PPN {dataSelected.quotations.Customer.ppn}%
+											</td>
+											<td className='pl-2 border border-black text-center'>
+												<p>{formatRupiah(ppn().toString())}</p>
+											</td>
 										</tr>
-									</tbody>
-								)}
+									) : dataSelected.tax === "pph" ? (
+										<tr>
+											<td
+												className='border border-black text-right pr-4'
+												colSpan={5}
+											>
+												PPH {dataSelected.quotations.Customer.pph}%
+											</td>
+											<td className='pl-2 border border-black text-center'>
+												<p>{formatRupiah(pph().toString())}</p>
+											</td>
+										</tr>
+									) : dataSelected.tax === "ppn_and_pph" ? (
+										<>
+											<tr>
+												<td
+													className='border border-black text-right pr-4'
+													colSpan={5}
+												>
+													PPN {dataSelected.quotations.Customer.ppn}%
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													<p>{formatRupiah(ppn().toString())}</p>
+												</td>
+											</tr>
+											<tr>
+												<td
+													className='border border-black text-right pr-4'
+													colSpan={5}
+												>
+													PPH {dataSelected.quotations.Customer.pph}%
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													<p>{formatRupiah(pph().toString())}</p>
+												</td>
+											</tr>
+										</>
+									) : null}
+									<tr>
+										<td colSpan={5} className='pr-4 text-right border border-black'>Grand Total</td>
+										<td className='pl-2 border border-black text-center'>
+											<p>{formatRupiah(grandTotal().toString())}</p>
+										</td>
+									</tr>
+								</tbody>
 							</table>
 						</div>
 					</Section>
@@ -234,17 +286,17 @@ export const ViewPo = ({ dataSelected }: props) => {
 									dataSelected.term_of_pay.map((res: any, i: number) => (
 										<tbody key={i}>
 											<tr>
-												<td className='pl-2 w-[50%] border border-gray-200'>
+												<td className='pl-2 w-[50%] border border-black'>
 													{res.limitpay}
 												</td>
-												<td className='pl-2 w-[10%] border border-gray-200 text-center'>
+												<td className='pl-2 w-[10%] border border-black text-center'>
 													{res.percent}%
 												</td>
-												<td className='pl-2 w-[10%] border border-gray-200 text-center'>
+												<td className='pl-2 w-[10%] border border-black text-center'>
 													({formatRupiah(res.price.toString())})
 												</td>
-												<td className='pl-2 w-[30%] border border-gray-200'>
-													{moment(res.date_limit).format('DD-MMMM-YYYY')}
+												<td className='pl-2 w-[30%] border border-black'>
+													{moment(res.date_limit).format("DD-MMMM-YYYY")}
 												</td>
 											</tr>
 										</tbody>
@@ -252,10 +304,10 @@ export const ViewPo = ({ dataSelected }: props) => {
 								) : (
 									<tbody>
 										<tr>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
-											<td className='w-full pl-2 border border-gray-200'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
+											<td className='w-full pl-2 border border-black'>-</td>
 										</tr>
 									</tbody>
 								)}
