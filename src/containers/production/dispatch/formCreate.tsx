@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+	InputDate,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import { workerCenterSchema } from "../../../schema/master-data/worker-center/workerCenterSchema";
@@ -10,7 +16,7 @@ import {
 	GetAllEmployeDepart,
 	AddDispatch,
 	GetSummaryDispatch,
-	AddWorkerCenter
+	AddWorkerCenter,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
@@ -79,8 +85,8 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 			},
 		],
 	});
-	const [dataWorkerCenter, setDataWorkerCenter] = useState<dataWorkerCenter>({ 
-		name: ""
+	const [dataWorkerCenter, setDataWorkerCenter] = useState<dataWorkerCenter>({
+		name: "",
 	});
 
 	useEffect(() => {
@@ -110,12 +116,14 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				let equipment: any = [];
 				let part: any = [];
 				let lastEquipment: string = "";
-				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
-					if (lastEquipment !== res.equipment.nama) {
-						equipment.push(res.equipment.nama);
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map(
+					(res: any) => {
+						if (lastEquipment !== res.equipment.nama) {
+							equipment.push(res.equipment.nama);
+						}
+						lastEquipment = res.equipment.nama;
 					}
-					lastEquipment = res.equipment.nama;
-				});
+				);
 				data.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
@@ -603,13 +611,24 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	const getSchedule = async () => {
+		let datasSchedulle: any = [];
 		try {
 			const response = await GetSummaryDispatch();
 			if (response.data) {
-				setListSchedule(response.data.result);
+				response.data.result.map((res: any) => {
+					datasSchedulle.push({
+						value: res,
+						label: `${res.id_summary} - ${
+							res.timeschedule.wor.job_operational
+								? res.timeschedule.wor.job_no_mr
+								: res.timeschedule.wor.job_no
+						}`,
+					});
+				});
+				setListSchedule(datasSchedulle);
 			}
 		} catch (error) {
-			setListSchedule([]);
+			setListSchedule(datasSchedulle);
 		}
 	};
 
@@ -711,7 +730,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getWorkerCenter()
+				getWorkerCenter();
 				setIsFormCreateWorkerCenter(false);
 			}
 		} catch (error) {
@@ -730,9 +749,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	const showFormWorkerCenter = (data: any) => {
-		setData(data)
-		setIsFormCreateWorkerCenter(true)
-	}
+		setData(data);
+		setIsFormCreateWorkerCenter(true);
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -829,7 +848,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 												</svg>
 												Loading
 											</>
-										) : "Cancel" }
+										) : (
+											"Cancel"
+										)}
 									</button>
 								</div>
 							</div>
@@ -860,7 +881,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									<InputDate
 										id='dispacth_date'
 										label='Date Prepare'
-										value={ new Date() }
+										value={new Date()}
 										onChange={(value: any) =>
 											setFieldValue("dispacth_date", value)
 										}
@@ -870,22 +891,44 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									/>
 								</div>
 								<div className='w-full'>
-									<InputSelect
+									<InputSelectSearch
+										datas={listSchedule}
 										id='summaryId'
 										name='summaryId'
 										placeholder='Shedulle'
 										label='Id Schedulle'
-										onChange={(event: any) => {
-											if (event.target.value !== "no data") {
-												let data = JSON.parse(event.target.value);
-												setFieldValue("summaryId", data.id);
-											}
+										onChange={(e: any) => {
+											let equipment: any = [];
+											let part: any = [];
+											let lastEquipment: string = "";
+											e.value.timeschedule.wor.customerPo.quotations.eqandpart.map(
+												(res: any) => {
+													if (lastEquipment !== res.equipment.nama) {
+														equipment.push(res.equipment.nama);
+													}
+													lastEquipment = res.equipment.nama;
+												}
+											);
+											e.value.srimgdetail.map((res: any) => {
+												part.push(res);
+											});
+											setJobNo(e.value.timeschedule.wor.job_no);
+											setSubject(e.value.timeschedule.wor.subject);
+											setDateWor(e.value.timeschedule.wor.date_wor);
+											setDateFinish(e.value.timeschedule.wor.delivery_date);
+											setEquipment(equipment.toString());
+											setPart(part);
+											setListActivity(e.value.timeschedule.aktivitas);
+											setFieldValue("summaryId", e.value.id);
+											// if (event.target.value !== "no data") {
+											// 	let data = JSON.parse(event.target.value);
+											// }
 										}}
 										required={true}
 										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option value='no data' selected>
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									/>
+									{/* <option value='no data' selected>
 											Choose Schedulle
 										</option>
 										{listSchedule.length === 0 ? (
@@ -899,7 +942,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 												);
 											})
 										)}
-									</InputSelect>
+									</InputSelectSearch> */}
 								</div>
 								<div className='w-full'>
 									<Input
@@ -1033,9 +1076,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 														placeholder='Worker Center'
 														label='Worker Center'
 														required={true}
-														onChange={ (input: any) => {
-															if(input.target.value === 'create'){
-																showFormWorkerCenter(values)
+														onChange={(input: any) => {
+															if (input.target.value === "create") {
+																showFormWorkerCenter(values);
 															}
 														}}
 														withLabel={true}

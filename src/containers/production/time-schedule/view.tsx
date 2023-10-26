@@ -301,14 +301,16 @@ export const ViewSchedule = ({
 					</button>
 				);
 			} else {
-				<button
-					className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-					onClick={() => approve("Supervisor")}
-				>
-					<div className='flex px-1 py-1'>
-						<X size={16} className='mr-1' /> Unvalid SPV
-					</div>
-				</button>;
+				return (
+					<button
+						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => approve("Supervisor")}
+					>
+						<div className='flex px-1 py-1'>
+							<X size={16} className='mr-1' /> Unvalid SPV
+						</div>
+					</button>
+				)
 			}
 		} else if (position === "Manager") {
 			if (data.status_manager === "unvalid" || data.status_manager === null) {

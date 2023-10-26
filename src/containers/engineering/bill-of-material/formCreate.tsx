@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { billOfMaterialSchema } from "../../../schema/engineering/bill-0f-material/billOfMaterial";
 import {
 	GetSummaryBillOfMaterial,
 	AddBillOfMaterial,
 	GetAllMaterial,
-	GetAllMaterialType
+	GetAllMaterialType,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus } from "react-feather";
@@ -88,18 +93,22 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 				let equipment: any = [];
 				let part: any = [];
 				let listPartDetail: any = [];
-				setCustomerName(data.timeschedule.wor.customerPo.quotations.Customer.name);
+				setCustomerName(
+					data.timeschedule.wor.customerPo.quotations.Customer.name
+				);
 				setDateSummary(moment(data.date_of_summary).format("DD-MM-YYYY"));
 				setSubject(data.timeschedule.wor.subject);
-				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
-					if (!equipment.includes(res.equipment.nama)) {
-						equipment.push(res.equipment.nama);
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map(
+					(res: any) => {
+						if (!equipment.includes(res.equipment.nama)) {
+							equipment.push(res.equipment.nama);
+						}
 					}
-				});
+				);
 				data.srimgdetail.map((res: any) => {
 					part.push({
 						id: res.id,
-						name: res.name_part
+						name: res.name_part,
 					});
 					listPartDetail.push({
 						partId: res.id,
@@ -127,14 +136,60 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 		}
 	};
 
+	const selectSummary = (datas: any) => {
+		let equipment: any = [];
+		let part: any = [];
+		let listPartDetail: any = [];
+		setCustomerName(datas.timeschedule.wor.customerPo.quotations.Customer.name);
+		setDateSummary(moment(datas.date_of_summary).format("DD-MM-YYYY"));
+		setSubject(datas.timeschedule.wor.subject);
+		datas.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
+			if (!equipment.includes(res.equipment.nama)) {
+				equipment.push(res.equipment.nama);
+			}
+		});
+		datas.srimgdetail.map((res: any) => {
+			part.push({
+				id: res.id,
+				name: res.name_part,
+			});
+			listPartDetail.push({
+				partId: res.id,
+				part: res.name_part,
+				materialId: "",
+				material: "",
+				satuan: "",
+				jumlah: res.qty,
+				dimensi: "",
+			});
+		});
+		setEquipment(equipment);
+		setListPart(part);
+		setData({
+			srId: datas.id,
+			bom_detail: listPartDetail,
+		});
+	};
+
 	const getSummary = async () => {
+		let datasSummary: any = [];
 		try {
 			const response = await GetSummaryBillOfMaterial();
 			if (response.data) {
-				setListSummary(response.data.result);
+				response.data.result.map((res: any) => {
+					datasSummary.push({
+						value: res,
+						label: `${res.id_summary} - ${
+							res.timeschedule.wor.job_operational
+								? res.timeschedule.wor.job_no_mr
+								: res.timeschedule.wor.job_no
+						}`,
+					});
+				});
+				setListSummary(datasSummary);
 			}
 		} catch (error) {
-			setListSummary([]);
+			setListSummary(datasSummary);
 		}
 	};
 
@@ -150,7 +205,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	};
 
 	const addDetail = (data: any) => {
-		let newDetail: any = data.bom_detail
+		let newDetail: any = data.bom_detail;
 		newDetail.push({
 			partId: partId,
 			part: part,
@@ -159,12 +214,12 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 			satuan: "",
 			jumlah: "",
 			dimensi: "",
-		})
+		});
 		setData({
 			srId: data.srId,
-			bom_detail: newDetail
-		})
-	}
+			bom_detail: newDetail,
+		});
+	};
 
 	const addBillOfMaterial = async (payload: data) => {
 		setIsLoading(true);
@@ -227,14 +282,14 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	};
 
 	const hideFormMaterial = () => {
-		getMaterial()
+		getMaterial();
 		setIsFormMaterial(false);
-	}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{isFormMaterial ? (
-				<FormCreateMaterial content={content} showModal={hideFormMaterial}/>
+				<FormCreateMaterial content={content} showModal={hideFormMaterial} />
 			) : (
 				<Formik
 					initialValues={{ ...data }}
@@ -256,22 +311,24 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 							<h1 className='text-xl font-bold mt-3'>Bill Of Material</h1>
 							<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<InputSelect
+									<InputSelectSearch
+										datas={listSummary}
 										id='srId'
 										name='srId'
 										placeholder='id Summary'
 										label='Id Summary'
-										onChange={(event: any) => {
-											if (event.target.value !== "Choose Id Summary") {
-												let data = JSON.parse(event.target.value);
-												setFieldValue("srId", data.id);
-											}
+										onChange={(e: any) => {
+											selectSummary(e.value)
+											setFieldValue("srId", e.value.id);
+											// if (event.target.value !== "Choose Id Summary") {
+											// 	let data = JSON.parse(event.target.value);
+											// }
 										}}
 										required={true}
 										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option defaultValue='' selected>
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									/>
+									{/* <option defaultValue='' selected>
 											Choose Id Summary
 										</option>
 										{listSummary.length === 0 ? (
@@ -285,7 +342,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 												);
 											})
 										)}
-									</InputSelect>
+									</InputSelectSearch> */}
 								</div>
 								<div className='w-full'>
 									<Input
@@ -356,13 +413,13 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 										placeholder='Part'
 										label='Part'
 										onChange={(event: any) => {
-											if(event.target.value !== 'no data'){
+											if (event.target.value !== "no data") {
 												let data = JSON.parse(event.target.value);
-												setPart(data.name)
-												setPartId(data.id)
-											}else{
-												setPart("")
-												setPartId("")
+												setPart(data.name);
+												setPartId(data.id);
+											} else {
+												setPart("");
+												setPartId("");
 											}
 										}}
 										required={true}
@@ -386,22 +443,25 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 									</InputSelect>
 								</div>
 								<div className='w-full'>
-									<a className='inline-flex text-green-500 pt-8 pl-4 text-lg cursor-pointer' onClick={ () => {
-										if(partId === ""){
-											toast.warning("Please Choice Part", {
-												position: "top-center",
-												autoClose: 5000,
-												hideProgressBar: true,
-												closeOnClick: true,
-												pauseOnHover: true,
-												draggable: true,
-												progress: undefined,
-												theme: "colored",
-											});
-										}else{
-											addDetail(values)
-										}
-									}}>
+									<a
+										className='inline-flex text-green-500 pt-8 pl-4 text-lg cursor-pointer'
+										onClick={() => {
+											if (partId === "") {
+												toast.warning("Please Choice Part", {
+													position: "top-center",
+													autoClose: 5000,
+													hideProgressBar: true,
+													closeOnClick: true,
+													pauseOnHover: true,
+													draggable: true,
+													progress: undefined,
+													theme: "colored",
+												});
+											} else {
+												addDetail(values);
+											}
+										}}
+									>
 										<Plus size={18} className='mr-1 mt-1' /> Add Part
 									</a>
 								</div>

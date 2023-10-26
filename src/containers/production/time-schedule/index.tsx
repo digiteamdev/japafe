@@ -219,7 +219,7 @@ export const Schedule = () => {
 									<td className='whitespace-nowrap px-6 py-4'>
 										{ res.wor.subject }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
+									<td className='whitespace-nowrap px-6 py-4 w-[15%] text-center'>
 										<div>
 											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
@@ -229,7 +229,7 @@ export const Schedule = () => {
 												<Eye color='white' />
 											</Button>
 											{
-												res.status_spv === null || res.status_spv === "unvalid" ? (
+												res.status_manager === null || res.status_manager === "unvalid" ? (
 													<>
 														<Button className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md `}
 														onClick={ () => {

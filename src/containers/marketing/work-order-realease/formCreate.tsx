@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputDate,
 	InputArea,
 } from "../../../components";
@@ -48,12 +49,12 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	const [listPo, setListPo] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [customerId, setCustomerId] = useState<string>("");
-    const [customer, setCustomer] = useState<string>("");
+	const [customer, setCustomer] = useState<string>("");
 	const [customerContact, setCustomerContact] = useState<string>("");
 	const [customerAddress, setCustomerAddress] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
 	const [valueContract, setValueContract] = useState<string>("");
-    const [file, setFile] = useState<string>("");
+	const [file, setFile] = useState<string>("");
 	const [data, setData] = useState<data>({
 		job_no: "",
 		date_wor: new Date(),
@@ -78,7 +79,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		file_list: "",
 		noted: "",
 		status: "",
-		job_operational: 'false'
+		job_operational: "false",
 	});
 
 	useEffect(() => {
@@ -91,51 +92,51 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		if (event.target.name === "cuspoId") {
 			if (event.target.value !== "Choose Customer PO") {
 				const data = JSON.parse(event.target.value);
-                setCustomerId(data.id)
+				setCustomerId(data.id);
 				setCustomer(data.quotations.Customer.name);
 				setCustomerContact(`+62${data.quotations.CustomerContact.phone}`);
 				setCustomerAddress(
 					data.quotations.Customer.address[0].address_workshop
 				);
 				setEquipment(data.quotations.eqandpart[0].equipment.nama);
-				setValueContract(data.total)
+				setValueContract(data.total);
 			} else {
-                setCustomerId("");
+				setCustomerId("");
 				setCustomer("");
 				setCustomerContact("");
 				setCustomerAddress("");
 				setEquipment("");
 			}
-		} else if(event.target.name === 'file_list'){
-            setFile(event.target.files[0]);
-        }
+		} else if (event.target.name === "file_list") {
+			setFile(event.target.files[0]);
+		}
 	};
 
 	const addWor = async (payload: any) => {
 		setIsLoading(true);
 		const dataBody = new FormData();
-        dataBody.append("job_no", "");
-        dataBody.append("date_wor", payload.date_wor);
-        dataBody.append("cuspoId", customerId);
-        dataBody.append("subject", payload.subject);
-        dataBody.append("job_desk", payload.job_desk);
-        dataBody.append("contract_no_spk", payload.contract_no_spk);
-        dataBody.append("employeeId", payload.employeeId);
-        dataBody.append("value_contract", valueContract);
-        dataBody.append("priority_status", payload.priority_status);
-        dataBody.append("qty", payload.qty);
-        dataBody.append("unit", payload.unit);
-        dataBody.append("date_of_order", payload.date_of_order);
-        dataBody.append("delivery_date", payload.delivery_date);
-        dataBody.append("shipping_address", payload.shipping_address);
-        dataBody.append("estimated_man_our", payload.estimated_man_our);
-        dataBody.append("eq_model", payload.eq_model);
-        dataBody.append("eq_mfg", payload.eq_mfg);
-        dataBody.append("eq_rotation", payload.eq_rotation);
-        dataBody.append("eq_power", payload.eq_power);
-        dataBody.append("scope_of_work", payload.scope_of_work);
-        dataBody.append("file_list", file);
-        dataBody.append("noted", payload.noted);
+		dataBody.append("job_no", "");
+		dataBody.append("date_wor", payload.date_wor);
+		dataBody.append("cuspoId", customerId);
+		dataBody.append("subject", payload.subject);
+		dataBody.append("job_desk", payload.job_desk);
+		dataBody.append("contract_no_spk", payload.contract_no_spk);
+		dataBody.append("employeeId", payload.employeeId);
+		dataBody.append("value_contract", valueContract);
+		dataBody.append("priority_status", payload.priority_status);
+		dataBody.append("qty", payload.qty);
+		dataBody.append("unit", payload.unit);
+		dataBody.append("date_of_order", payload.date_of_order);
+		dataBody.append("delivery_date", payload.delivery_date);
+		dataBody.append("shipping_address", payload.shipping_address);
+		dataBody.append("estimated_man_our", payload.estimated_man_our);
+		dataBody.append("eq_model", payload.eq_model);
+		dataBody.append("eq_mfg", payload.eq_mfg);
+		dataBody.append("eq_rotation", payload.eq_rotation);
+		dataBody.append("eq_power", payload.eq_power);
+		dataBody.append("scope_of_work", payload.scope_of_work);
+		dataBody.append("file_list", file);
+		dataBody.append("noted", payload.noted);
 		dataBody.append("job_operational", payload.job_operational);
 		try {
 			const response = await AddWor(dataBody);
@@ -168,24 +169,41 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	};
 
 	const getPo = async () => {
+		let datasPo: any = [];
 		try {
 			const response = await GetAllPo();
 			if (response.data) {
-				setListPo(response.data.result);
+				response.data.result.map((res: any) => {
+					datasPo.push({
+						value: res,
+						label: `${res.po_num_auto} - ${res.quotations.Customer.name}`,
+					});
+				});
+				setListPo(datasPo);
 			}
 		} catch (error) {
-			setListPo([]);
+			setListPo(datasPo);
 		}
 	};
 
 	const getEmploye = async () => {
+		let datasEmploye: any = []
 		try {
-			const response = await GetAllEmployeDepart('SALES %26 MKT','Sales Marketing');
+			const response = await GetAllEmployeDepart(
+				"SALES %26 MKT",
+				"Sales Marketing"
+			);
 			if (response.data) {
-				setListEmploye(response.data.result);
+				response.data.result.map((res: any) => {
+					datasEmploye.push({
+						value: res,
+						label: res.employee_name
+					})
+				})
+				setListEmploye(datasEmploye);
 			}
 		} catch (error) {
-			setListEmploye([]);
+			setListEmploye(datasEmploye);
 		}
 	};
 
@@ -235,28 +253,39 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									<option defaultValue='' selected>
 										Choose Job Operational
 									</option>
-									<option value="false">
-										Yes
-									</option>
-									<option value="true">
-										No
-									</option>
+									<option value='false'>Yes</option>
+									<option value='true'>No</option>
 								</InputSelect>
 								{errors.job_operational && touched.job_operational ? (
-									<span className='text-red-500 text-xs'>{errors.job_operational}</span>
+									<span className='text-red-500 text-xs'>
+										{errors.job_operational}
+									</span>
 								) : null}
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listPo}
 									id='cuspoId'
 									name='cuspoId'
 									placeholder='Customer PO'
 									label='Customer PO'
+									onChange={(e: any) => {
+										setCustomerId(e.value.id);
+										setCustomer(e.value.quotations.Customer.name);
+										setCustomerContact(
+											`+62${e.value.quotations.CustomerContact.phone}`
+										);
+										setCustomerAddress(
+											e.value.quotations.Customer.address[0].address_workshop
+										);
+										setEquipment(e.value.quotations.eqandpart[0].equipment.nama);
+										setValueContract(e.value.total);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Customer PO
 									</option>
 									{listPo.length === 0 ? (
@@ -270,7 +299,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.cuspoId && touched.cuspoId ? (
 									<span className='text-red-500 text-xs'>{errors.cuspoId}</span>
 								) : null}
@@ -361,17 +390,20 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listEmploye}
 									id='employeeId'
 									name='employeeId'
 									placeholder='Sales'
 									label='Sales'
-									onChange={handleChange}
+									onChange={ (e: any) => {
+										setFieldValue('employeeId', e.value.id)
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+									{/* <option defaultValue='' selected>
 										Choose Sales
 									</option>
 									{listEmploye.length === 0 ? (
@@ -379,15 +411,17 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									) : (
 										listEmploye.map((res: any, i: number) => {
 											return (
-                                                <option value={res.id} key={i}>
+												<option value={res.id} key={i}>
 													{res.employee_name}
 												</option>
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.employeeId && touched.employeeId ? (
-									<span className='text-red-500 text-xs'>{errors.employeeId}</span>
+									<span className='text-red-500 text-xs'>
+										{errors.employeeId}
+									</span>
 								) : null}
 							</div>
 						</Section>
@@ -428,7 +462,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									<option value='XXTASREQ'>XXT As Req</option>
 								</InputSelect>
 								{errors.priority_status && touched.priority_status ? (
-									<span className='text-red-500 text-xs'>{errors.priority_status}</span>
+									<span className='text-red-500 text-xs'>
+										{errors.priority_status}
+									</span>
 								) : null}
 							</div>
 							<div className='w-full'>

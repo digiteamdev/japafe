@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputDate,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { poSchema } from "../../../schema/marketing/po/PoSchema";
 import { AddPo, GetAllQuotation } from "../../../services";
@@ -216,16 +222,16 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	const vat = (taxType: string) => {
 		const htmlTotal = document.getElementById("total") as HTMLInputElement;
 		if (htmlTotal !== null) {
-			if(taxType === 'ppn'){
+			if (taxType === "ppn") {
 				const jumlahTax = (parseInt(htmlTotal.value) * taxPPN) / 100;
 				return jumlahTax.toString();
-			}else{
+			} else {
 				const jumlahTax = (parseInt(htmlTotal.value) * taxPPH) / 100;
 				return jumlahTax.toString();
 			}
 			// return formatRupiah(jumlahTax.toString())
-		}else{
-			return "0"
+		} else {
+			return "0";
 		}
 	};
 
@@ -248,7 +254,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		) as HTMLInputElement;
 		const desc: any = [];
 		const term: any = [];
-		let vattotal: string = "0"
+		let vattotal: string = "0";
 		let descEmpty: boolean = false;
 		let termOFPaymentEmpty: boolean = false;
 		payload.Deskription_CusPo.map((res: any, i: number) => {
@@ -303,12 +309,12 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				});
 			}
 		});
-		if(payload.tax === 'ppn'){
-			vattotal = vat('ppn')
-		}else if(payload.tax === 'pph'){
-			vattotal = vat('pph')
-		}else if(payload.tax === 'ppn_and_pph'){
-			vattotal = (parseInt(vat('ppn')) + parseInt(vat('pph'))).toString()
+		if (payload.tax === "ppn") {
+			vattotal = vat("ppn");
+		} else if (payload.tax === "pph") {
+			vattotal = vat("pph");
+		} else if (payload.tax === "ppn_and_pph") {
+			vattotal = (parseInt(vat("ppn")) + parseInt(vat("pph"))).toString();
 		}
 		const dataBody = {
 			id_po: payload.id_po,
@@ -357,13 +363,20 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	};
 
 	const getQuatation = async () => {
+		let dataQuotation: any = [];
 		try {
 			const response = await GetAllQuotation();
 			if (response.data) {
-				setListQuotation(response.data.result);
+				response.data.result.map((res: any) => {
+					dataQuotation.push({
+						value: res,
+						label: `${res.quo_auto} - ${res.Customer.name}`,
+					});
+				});
+				setListQuotation(dataQuotation);
 			}
 		} catch (error) {
-			setListQuotation([]);
+			setListQuotation(dataQuotation);
 		}
 	};
 
@@ -422,16 +435,26 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 						</Section>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listQuotation}
 									id='quotation'
 									name='quotation'
 									placeholder='Quotation'
 									label='Quotation'
+									onChange={(e: any) => {
+										setCustomerName(e.value.Customer.name);
+										setDeskription(e.value.deskription);
+										setEquipment(e.value.eqandpart[0].equipment.nama);
+										setCountPart(e.value.eqandpart.length);
+										setQuoId(e.value.id);
+										setTaxPPH(e.value.Customer.pph);
+										setTaxPPN(e.value.Customer.ppn);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Quotation
 									</option>
 									{listQuotation.length === 0 ? (
@@ -445,7 +468,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSe> */}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -716,7 +739,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 													</td>
 													<td className='w-[15%]'></td>
 												</tr>
-												{ values.tax === 'ppn' ? (
+												{values.tax === "ppn" ? (
 													<tr>
 														<td className='w-[50%]'></td>
 														<td className='w-[10%]'>PPN</td>
@@ -727,7 +750,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																placeholder='Vat'
 																label='Vat'
 																type='text'
-																value={vat('ppn')}
+																value={vat("ppn")}
 																required={true}
 																disabled={true}
 																withLabel={false}
@@ -736,7 +759,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 														</td>
 														<td className='w-[15%]'></td>
 													</tr>
-												) : values.tax === 'pph' ? (
+												) : values.tax === "pph" ? (
 													<tr>
 														<td className='w-[50%]'></td>
 														<td className='w-[10%]'>PPH</td>
@@ -747,7 +770,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																placeholder='Vat'
 																label='Vat'
 																type='text'
-																value={vat('pph')}
+																value={vat("pph")}
 																required={true}
 																disabled={true}
 																withLabel={false}
@@ -756,7 +779,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 														</td>
 														<td className='w-[15%]'></td>
 													</tr>
-												) : values.tax === 'ppn_and_pph' ? (
+												) : values.tax === "ppn_and_pph" ? (
 													<>
 														<tr>
 															<td className='w-[50%]'></td>
@@ -768,7 +791,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																	placeholder='Vat'
 																	label='Vat'
 																	type='text'
-																	value={vat('ppn')}
+																	value={vat("ppn")}
 																	required={true}
 																	disabled={true}
 																	withLabel={false}
@@ -787,7 +810,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																	placeholder='Vat'
 																	label='Vat'
 																	type='text'
-																	value={vat('pph')}
+																	value={vat("pph")}
 																	required={true}
 																	disabled={true}
 																	withLabel={false}
@@ -797,7 +820,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															<td className='w-[15%]'></td>
 														</tr>
 													</>
-												) : null }
+												) : null}
 												<tr>
 													<td className='w-[50%]'></td>
 													<td className='w-[10%]'>Grand Total</td>

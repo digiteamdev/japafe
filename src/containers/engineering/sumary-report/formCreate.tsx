@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputDate,
 	InputArea,
 } from "../../../components";
@@ -46,7 +47,6 @@ interface data {
 }
 
 export const FormCreateSummaryReport = ({ content, showModal }: props) => {
-	
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isLoadingUpload, setIsLoadingUpload] = useState<boolean>(false);
 	const [listWor, setListWor] = useState<any>([]);
@@ -89,8 +89,13 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		var dateObj = new Date();
 		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
 		var year = dateObj.getUTCFullYear();
-		const id = "SUM"+year.toString()+month.toString()+Math.floor(Math.random() * 100) +1;
-		return id
+		const id =
+			"SUM" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 100) +
+			1;
+		return id;
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -101,7 +106,9 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				setCustomerName(data.wor.customerPo.quotations.Customer.name);
 				setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
 				setSubject(data.wor.subject);
-				setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
+				setEquipment(
+					data.wor.customerPo.quotations.eqandpart[0].equipment.nama
+				);
 				setEquipmentModel(data.wor.eq_model);
 				if (data.wor.customerPo.quotations.eqandpart.length > 0) {
 					data.wor.customerPo.quotations.eqandpart.map((res: any) => {
@@ -123,14 +130,37 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	};
 
 	const getWor = async () => {
+		let datasWor: any = [];
 		try {
 			const response = await GetSummaryTimeSchedulle();
 			if (response.data) {
-				setListWor(response.data.result);
+				response.data.result.map((res: any) => {
+					datasWor.push({
+						value: res,
+						label: `${res.idTs} - ${res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no }`,
+					});
+				});
+				setListWor(datasWor);
 			}
 		} catch (error) {
-			setListWor([]);
+			setListWor(datasWor);
 		}
+	};
+
+	const selectWor = (data: any) => {
+		let part: any = [];
+		setCustomerName(data.wor.customerPo.quotations.Customer.name);
+		setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
+		setSubject(data.wor.subject);
+		setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
+		setEquipmentModel(data.wor.eq_model);
+		if (data.wor.customerPo.quotations.eqandpart.length > 0) {
+			data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+				part.push(res.eq_part);
+			});
+		}
+		setQuantity(data.wor.qty);
+		setPart(part);
 	};
 
 	const uploadImage = async (payload: any) => {
@@ -144,11 +174,11 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 			const response = await UploadImageSummary(form);
 			if (response) {
 				setIsLoadingUpload(false);
-				return response.data.img
+				return response.data.img;
 			}
 		} catch (error) {
 			setIsLoadingUpload(false);
-			return []
+			return [];
 		}
 	};
 
@@ -234,22 +264,24 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listWor}
 									id='timeschId'
 									name='timeschId'
 									placeholder='Job Number'
 									label='Job Number'
-									onChange={(event: any) => {
-										if (event.target.value !== "Choose Job Number WOR") {
-											let data = JSON.parse(event.target.value);
-											setFieldValue("timeschId", data.id);
-										}
+									onChange={(e: any) => {
+										selectWor(e.value)
+										setFieldValue("timeschId", e.value.id);
+										// if (event.target.value !== "Choose Job Number WOR") {
+										// 	let data = JSON.parse(event.target.value);
+										// }
 									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Job Number WOR
 									</option>
 									{listWor.length === 0 ? (
@@ -262,11 +294,13 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 												</option>
 											);
 										})
-									)}
-									{errors.timeschId && touched.timeschId ? (
-										<span className='text-red-500 text-xs'>{errors.timeschId}</span>
-									) : null}
-								</InputSelect>
+									)} */}
+								{errors.timeschId && touched.timeschId ? (
+									<span className='text-red-500 text-xs'>
+										{errors.timeschId}
+									</span>
+								) : null}
+								{/* </InputSelect> */}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -519,12 +553,12 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 															type='file'
 															accept='image/*'
 															onChange={(event: any) => {
-																uploadImage(event.target.files).then( res => {
+																uploadImage(event.target.files).then((res) => {
 																	setFieldValue(
 																		`srimgdetail.${i}.imgSummary`,
 																		res
 																	);
-																})
+																});
 															}}
 															required={true}
 															withLabel={true}
@@ -650,7 +684,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 											Loading
 										</>
 									) : isLoadingUpload ? (
-<>
+										<>
 											<svg
 												role='status'
 												className='inline mr-3 w-4 h-4 text-white animate-spin'

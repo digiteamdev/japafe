@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputWithIcon,
 	InputDate,
 	InputArea,
@@ -177,63 +178,100 @@ export const FormCreateEmploye = ({
 
 	const getProvince = () => {
 		const keys = ["province"];
+		const dataProvince: any = [];
 		const filtered = json.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
 		);
-		const provinces = filtered.filter((res: any) => {
-			return res.province !== "province";
-		});
-		setListProvince(provinces);
+		filtered
+			.filter((res: any) => {
+				return res.province !== "province";
+			})
+			.map((prov: any) => {
+				dataProvince.push({
+					type: "province",
+					value: prov.province,
+					label: prov.province,
+				});
+			});
+
+		setListProvince(dataProvince);
 		setListCity([]);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getCity = (province: string) => {
+		let dataCity: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.province === province;
 		});
 		const keys = ["city"];
-		const city = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListCity(city);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataCity.push({
+					value: res.city,
+					label: res.city,
+				});
+			});
+
+		setListCity(dataCity);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getDistrict = (city: string) => {
+		let dataDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.city === city;
 		});
 		const keys = ["district"];
-		const district = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListDistrict(district);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataDistrict.push({
+					value: res.district,
+					label: res.district,
+				});
+			});
+		setListDistrict(dataDistrict);
+		setListSubDistrict([]);
 	};
 
 	const getSubDistrict = (district: string) => {
+		let dataSubDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.district === district;
 		});
 		const keys = ["subdistrict"];
-		const subdistrict = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListSubDistrict(subdistrict);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataSubDistrict.push({
+					value: res.subdistrict,
+					label: res.subdistrict,
+					postal_code: res.postal_code,
+				});
+			});
+		setListSubDistrict(dataSubDistrict);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -778,32 +816,20 @@ export const FormCreateEmploye = ({
 										)}
 									</div>
 									<div className='w-full'>
-										<InputSelect
+										<InputSelectSearch
+											datas={listProvince}
 											id='province'
 											name='province'
 											placeholder='Province'
 											label='Province'
-											value={values.province}
-											onChange={handleChange}
+											onChange={(e: any) => {
+												getCity(e.value);
+												setFieldValue("province", e.value);
+											}}
 											required={true}
 											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose Province
-											</option>
-											{listProvince.length === 0 ? (
-												<option value=''>No Data Province</option>
-											) : (
-												listProvince.map((res: any, i: number) => {
-													return (
-														<option value={res.province} key={i}>
-															{res.province}
-														</option>
-													);
-												})
-											)}
-										</InputSelect>
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
 										{touched.province && errors.province && (
 											<span className='mt-2 text-xs text-red-500 font-semibold'>
 												{errors.province}
@@ -813,32 +839,20 @@ export const FormCreateEmploye = ({
 								</Section>
 								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
-										<InputSelect
+										<InputSelectSearch
+											datas={listCity}
 											id='city'
 											name='city'
 											placeholder='City'
 											label='City'
-											value={values.city}
-											onChange={handleChange}
+											onChange={(e: any) => {
+												getDistrict(e.value);
+												setFieldValue("city", e.value);
+											}}
 											required={true}
 											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose City
-											</option>
-											{listCity.length === 0 ? (
-												<option>No Data City</option>
-											) : (
-												listCity.map((res: any, i: number) => {
-													return (
-														<option value={res.city} key={i}>
-															{res.city}
-														</option>
-													);
-												})
-											)}
-										</InputSelect>
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
 										{touched.city && errors.city && (
 											<span className='mt-2 text-xs text-red-500 font-semibold'>
 												{errors.city}
@@ -846,32 +860,20 @@ export const FormCreateEmploye = ({
 										)}
 									</div>
 									<div className='w-full'>
-										<InputSelect
+										<InputSelectSearch
+											datas={listDistrict}
 											id='districts'
 											name='districts'
 											placeholder='District'
-											label='Districts'
-											value={values.districts}
-											onChange={handleChange}
+											label='District'
+											onChange={(e: any) => {
+												getSubDistrict(e.value);
+												setFieldValue("districts", e.value);
+											}}
 											required={true}
 											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose District
-											</option>
-											{listDistrict.length === 0 ? (
-												<option>No Data District</option>
-											) : (
-												listDistrict.map((res: any, i: number) => {
-													return (
-														<option value={res.district} key={i}>
-															{res.district}
-														</option>
-													);
-												})
-											)}
-										</InputSelect>
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
 										{touched.districts && errors.districts && (
 											<span className='mt-2 text-xs text-red-500 font-semibold'>
 												{errors.districts}
@@ -879,32 +881,20 @@ export const FormCreateEmploye = ({
 										)}
 									</div>
 									<div className='w-full'>
-										<InputSelect
+										<InputSelectSearch
+											datas={listSubDistrict}
 											id='sub_districts'
 											name='sub_districts'
 											placeholder='Sub District'
 											label='Sub District'
-											value={values.sub_districts}
-											onChange={handleChange}
+											onChange={(e: any) => {
+												setFieldValue("sub_districts", e.value);
+												setFieldValue("ec_postalcode", parseInt(e.postal_code));
+											}}
 											required={true}
 											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose Sub District
-											</option>
-											{listSubDistrict.length === 0 ? (
-												<option>No Data Sub District</option>
-											) : (
-												listSubDistrict.map((res: any, i: number) => {
-													return (
-														<option value={res.subdistrict} key={i}>
-															{res.subdistrict}
-														</option>
-													);
-												})
-											)}
-										</InputSelect>
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
 										{touched.sub_districts && errors.sub_districts && (
 											<span className='mt-2 text-xs text-red-500 font-semibold'>
 												{errors.sub_districts}

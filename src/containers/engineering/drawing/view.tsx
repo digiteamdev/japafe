@@ -68,10 +68,10 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[10%]pl-2 border border-gray-200 text-center'>
+										<th className='w-[10%]pl-2 border border-black text-center'>
 											No
 										</th>
-										<th className='w-[10%]pl-2 border border-gray-200 text-center'>
+										<th className='w-[10%]pl-2 border border-black text-center'>
 											File
 										</th>
 									</tr>
@@ -80,10 +80,10 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 									{dataSelected.file_drawing.map((res: any, i: number) => {
 										return (
 											<tr key={i}>
-												<td className='w-[10%]pl-2 border border-gray-200 text-center'>
+												<td className='w-[10%]pl-2 border border-black text-center'>
 													{i + 1}
 												</td>
-												<td className='w-[90%] pl-2 border border-gray-200 text-center p-3'>
+												<td className='w-[90%] pl-2 border border-black text-center p-3'>
 													<a
 														href={res.file_upload}
 														target='_blank'

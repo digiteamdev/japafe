@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputWithIcon,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
@@ -22,7 +23,7 @@ interface data {
 	cities: string;
 	districts: string;
 	sub_districts: string;
-	ec_postalcode: number | null;
+	ec_postalcode: any;
 	office_email: string;
 	NPWP: string;
 	ppn: string;
@@ -63,7 +64,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 		cities: "",
 		districts: "",
 		sub_districts: "",
-		ec_postalcode: null,
+		ec_postalcode: "",
 		office_email: "",
 		NPWP: "",
 		ppn: "",
@@ -93,64 +94,100 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 
 	const getProvince = () => {
 		const keys = ["province"];
+		const dataProvince: any = [];
 		const filtered = json.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
 		);
-		const provinces = filtered.filter((res: any) => {
-			return res.province !== "province";
-		});
-		setListProvince(provinces);
+		filtered
+			.filter((res: any) => {
+				return res.province !== "province";
+			})
+			.map((prov: any) => {
+				dataProvince.push({
+					type: "province",
+					value: prov.province,
+					label: prov.province,
+				});
+			});
+
+		setListProvince(dataProvince);
 		setListCity([]);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getCity = (province: string) => {
+		let dataCity: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.province === province;
 		});
 		const keys = ["city"];
-		const city = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListCity(city);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataCity.push({
+					value: res.city,
+					label: res.city,
+				});
+			});
+
+		setListCity(dataCity);
 		setListDistrict([]);
 		setListSubDistrict([]);
 	};
 
 	const getDistrict = (city: string) => {
+		let dataDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.city === city;
 		});
 		const keys = ["district"];
-		const district = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListDistrict(district);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataDistrict.push({
+					value: res.district,
+					label: res.district,
+				});
+			});
+		setListDistrict(dataDistrict);
 		setListSubDistrict([]);
 	};
 
 	const getSubDistrict = (district: string) => {
+		let dataSubDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.district === district;
 		});
 		const keys = ["subdistrict"];
-		const subdistrict = filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		);
-		setListSubDistrict(subdistrict);
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataSubDistrict.push({
+					value: res.subdistrict,
+					label: res.subdistrict,
+					postal_code: res.postal_code,
+				});
+			});
+		setListSubDistrict(dataSubDistrict);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -168,7 +205,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 		let bankEmpty: boolean = false;
 		payload.SupplierBank.map((res: any) => {
 			if (res.account_name === "") {
-				bankEmpty = true
+				bankEmpty = true;
 				toast.warning("Bank Account Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -181,9 +218,9 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 				});
 			}
 		});
-		payload.SupplierContact.map( (res: any) => {
-			if(res.contact_person === ''){
-				bankEmpty = true
+		payload.SupplierContact.map((res: any) => {
+			if (res.contact_person === "") {
+				bankEmpty = true;
 				toast.warning("Contact Person Not Empty", {
 					position: "top-center",
 					autoClose: 5000,
@@ -195,12 +232,12 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 					theme: "colored",
 				});
 			}
-		})
-		if(!bankEmpty){
+		});
+		if (!bankEmpty) {
 			try {
 				const response = await AddSupplier(payload);
 				if (response) {
-					toast.success('Add Supplier Success', {
+					toast.success("Add Supplier Success", {
 						position: "top-center",
 						autoClose: 5000,
 						hideProgressBar: true,
@@ -210,10 +247,10 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						progress: undefined,
 						theme: "colored",
 					});
-					showModal(false, content, true)
+					showModal(false, content, true);
 				}
 			} catch (error) {
-				toast.error('Add Supplier Failed', {
+				toast.error("Add Supplier Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -225,7 +262,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 				});
 			}
 		}
-		setIsLoading(false)
+		setIsLoading(false);
 	};
 
 	return (
@@ -238,7 +275,14 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold'>Supplier</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
@@ -360,17 +404,21 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						<h1 className='text-xl font-bold mt-3'>Address</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listProvince}
 									id='provinces'
 									name='provinces'
 									placeholder='Province'
 									label='Province'
-									onChange={handleChange}
+									onChange={(e: any) => {
+										getCity(e.value);
+										setFieldValue("provinces", e.value);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Province
 									</option>
 									{listProvince.length === 0 ? (
@@ -384,7 +432,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.provinces && touched.provinces ? (
 									<span className='text-red-500 text-xs'>
 										{errors.provinces}
@@ -392,17 +440,21 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 								) : null}
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listCity}
 									id='cities'
 									name='cities'
 									placeholder='City'
 									label='City'
-									onChange={handleChange}
+									onChange={(e: any) => {
+										getDistrict(e.value);
+										setFieldValue("cities", e.value);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose City
 									</option>
 									{listCity.length === 0 ? (
@@ -416,23 +468,27 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.cities && touched.cities ? (
 									<span className='text-red-500 text-xs'>{errors.cities}</span>
 								) : null}
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listDistrict}
 									id='districts'
 									name='districts'
 									placeholder='District'
 									label='District'
-									onChange={handleChange}
+									onChange={(e: any) => {
+										getSubDistrict(e.value);
+										setFieldValue("districts", e.value);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose District
 									</option>
 									{listDistrict.length === 0 ? (
@@ -446,7 +502,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.districts && touched.districts ? (
 									<span className='text-red-500 text-xs'>
 										{errors.districts}
@@ -456,17 +512,21 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listSubDistrict}
 									id='sub_districts'
 									name='sub_districts'
 									placeholder='Sub District'
 									label='Sub District'
-									onChange={handleChange}
+									onChange={(e: any) => {
+										setFieldValue("sub_districts", e.value);
+										setFieldValue("ec_postalcode", parseInt(e.postal_code));
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Sub District
 									</option>
 									{listSubDistrict.length === 0 ? (
@@ -480,7 +540,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.sub_districts && touched.sub_districts ? (
 									<span className='text-red-500 text-xs'>
 										{errors.sub_districts}
@@ -494,16 +554,17 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									placeholder='Postal Code'
 									label='Postal Code'
 									type='number'
+									value={values.ec_postalcode}
 									onChange={handleChange}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-								{errors.ec_postalcode && touched.ec_postalcode ? (
+								{/* {errors.ec_postalcode && touched.ec_postalcode ? (
 									<span className='text-red-500 text-xs'>
 										{errors.ec_postalcode}
 									</span>
-								) : null}
+								) : null} */}
 							</div>
 							<div className='w-full'>
 								<Input

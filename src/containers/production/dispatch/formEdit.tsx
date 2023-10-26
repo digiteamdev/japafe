@@ -89,14 +89,12 @@ export const FormEditDispatch = ({
 				lastEquipment = res.equipment.nama;
 			}
 		);
-		dataDispatch.srimg.srimgdetail.map(
-			(res: any, i: number) => {
-				if (i === 0) {
-					setStatus(res.choice);
-				}
-				part.push(res);
+		dataDispatch.srimg.srimgdetail.map((res: any, i: number) => {
+			if (i === 0) {
+				setStatus(res.choice);
 			}
-		);
+			part.push(res);
+		});
 		dataDispatch.dispatchDetail.map((res: any) => {
 			if (arrPart.length === 0) {
 				setPartName(res.part);
@@ -144,12 +142,14 @@ export const FormEditDispatch = ({
 				let equipment: any = [];
 				let part: any = [];
 				let lastEquipment: string = "";
-				data.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
-					if (lastEquipment !== res.equipment.nama) {
-						equipment.push(res.equipment.nama);
+				data.timeschedule.wor.customerPo.quotations.eqandpart.map(
+					(res: any) => {
+						if (lastEquipment !== res.equipment.nama) {
+							equipment.push(res.equipment.nama);
+						}
+						lastEquipment = res.equipment.nama;
 					}
-					lastEquipment = res.equipment.nama;
-				});
+				);
 				data.srimgdetail.map((res: any) => {
 					part.push(res);
 				});
@@ -859,11 +859,13 @@ export const FormEditDispatch = ({
 		setIsLoading(false);
 	};
 
-	const startDetail = async (id: string, so: boolean) => {
+	const startDetail = async (id: string, so: boolean, index: number) => {
 		let dataDetail = detail;
+		let operator_id = (document.getElementById(`operator_${index}`) as HTMLInputElement).value;
 		let dataBody = {
 			actual: new Date(),
-			so: so
+			so: so,
+			operatorID: operator_id
 		};
 		let arrDetail = dataDetail.filter((detail: any) => {
 			return detail.part === partName;
@@ -1310,7 +1312,7 @@ export const FormEditDispatch = ({
 											<div className='w-full'>
 												<InputSelect
 													id={`operator_${idx}`}
-													name='operator'
+													name={`operator_${idx}`}
 													placeholder='Operator'
 													label='Operator'
 													required={true}
@@ -1332,7 +1334,7 @@ export const FormEditDispatch = ({
 															.map((res: any, i: number) => {
 																return (
 																	<option
-																		value={JSON.stringify(res)}
+																		value={res.id}
 																		key={i}
 																		selected={res.id === dataDetail.operatorID}
 																	>
@@ -1346,7 +1348,7 @@ export const FormEditDispatch = ({
 											<div className='w-full p-5'>
 												{dataDetail.approvebyID === null ||
 												dataDetail.approvebyID === "" ? (
-													<div className="flex">
+													<div className='flex'>
 														<button
 															type='button'
 															className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent ${
@@ -1358,7 +1360,7 @@ export const FormEditDispatch = ({
 															onClick={() =>
 																dataDetail.actual === null ||
 																dataDetail.actual === ""
-																	? startDetail(dataDetail.id, false)
+																	? startDetail(dataDetail.id, false, idx)
 																	: finishDetail(dataDetail.id)
 															}
 														>
@@ -1367,19 +1369,20 @@ export const FormEditDispatch = ({
 																? "Start"
 																: "Finish"}
 														</button>
-														{ dataDetail.actual === null || dataDetail.actual === "" ? (
+														{dataDetail.actual === null ||
+														dataDetail.actual === "" ? (
 															<button
-															type='button'
-															className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent bg-blue-500 hover:bg-blue-400 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-															onClick={() =>
-																dataDetail.actual === null ||
-																dataDetail.actual === ""
-																	? startDetail(dataDetail.id, true)
-																	: finishDetail(dataDetail.id)
-															}
-														>
-															SO
-														</button>
+																type='button'
+																className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent bg-blue-500 hover:bg-blue-400 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+																onClick={() =>
+																	dataDetail.actual === null ||
+																	dataDetail.actual === ""
+																		? startDetail(dataDetail.id, true, idx)
+																		: finishDetail(dataDetail.id)
+																}
+															>
+																SO
+															</button>
 														) : null}
 													</div>
 												) : (

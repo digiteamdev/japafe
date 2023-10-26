@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+	InputDate,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import {
@@ -39,9 +45,9 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 		id_drawing: "",
 		file: [
 			{
-				file_upload: ""
-			}
-		]
+				file_upload: "",
+			},
+		],
 	});
 
 	useEffect(() => {
@@ -78,13 +84,22 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 	};
 
 	const getWor = async () => {
+		let datasWor: any = [];
 		try {
 			const response = await GetSchedulleDrawing();
 			if (response.data) {
-				setListWor(response.data.result);
+				response.data.result.map((res: any) => {
+					datasWor.push({
+						value: res,
+						label: `${
+							res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no
+						} - ${res.wor.customerPo.quotations.Customer.name}`,
+					});
+				});
+				setListWor(datasWor);
 			}
 		} catch (error) {
-			setListWor([]);
+			setListWor(datasWor);
 		}
 	};
 
@@ -95,9 +110,9 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 		formData.append("timeschId", payload.timeschId);
 		formData.append("date_drawing", payload.date_drawing);
 		formData.append("file_lenght", payload.file.length.toString());
-		payload.file.map( (res: any, i: number) => {
+		payload.file.map((res: any, i: number) => {
 			formData.append("file_upload", res.file_upload);
-		})
+		});
 		try {
 			const response = await AddDrawing(formData);
 			if (response.data) {
@@ -167,22 +182,28 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listWor}
 									id='timeschId'
 									name='timeschId'
 									placeholder='Job Number'
 									label='Job Number'
-									onChange={(event: any) => {
-										if (event.target.value !== "Choose Job Number WOR") {
-											let data = JSON.parse(event.target.value);
-											setFieldValue("timeschId", data.id);
-										}
+									onChange={(e: any) => {
+										setCustomerName(
+											e.value.wor.customerPo.quotations.Customer.name
+										);
+										setDateWor(moment(e.value.wor.date_wor).format("DD-MM-YYYY"));
+										setSubject(e.value.wor.subject);
+										setFieldValue("timeschId", e.value.id);
+										// if (event.target.value !== "Choose Job Number WOR") {
+										// 	let data = JSON.parse(event.target.value);
+										// }
 									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose Job Number WOR
 									</option>
 									{listWor.length === 0 ? (
@@ -196,7 +217,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelectSearch> */}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -257,59 +278,62 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<FieldArray 
-							name="file"
+						<FieldArray
+							name='file'
 							render={(arrayFile) => (
 								<>
-									{
-										values.file.map( (res: any, i: number) => (
-											<Section key={i} className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-												<div className='flex w-full'>
-													<div className='w-[75%]'>
-														<Input
-															id={`file.${i}.file_upload`}
-															name={`file.${i}.file_upload`}
-															placeholder='File'
-															label='File'
-															type='file'
-															accept='image/*, .pdf'
-															onChange={(value: any) =>
-																setFieldValue(`file.${i}.file_upload`, value.target.files[0])
-															}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='flex w-[25%]'>
-														{ i === values.file.length - 1 ? (
-															<a
-																className='inline-flex text-green-500 pt-12 pl-4 cursor-pointer'
-																onClick={() => {
-																	arrayFile.push({
-																		file_upload: ""
-																	});
-																}}
-															>
-																<Plus size={18} className='mr-1 mt-1' /> Add File
-															</a>
-														) : null }
-														{
-															values.file.length !== 1 ? (
-																<a
-																	className='inline-flex text-red-500 cursor-pointer pt-12 pl-4'
-																	onClick={() => {
-																		arrayFile.remove(i);
-																	}}
-																>
-																	<Trash2 size={18} className='mr-1 mt-1' /> Remove File
-																</a>
-															) : null
+									{values.file.map((res: any, i: number) => (
+										<Section
+											key={i}
+											className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
+										>
+											<div className='flex w-full'>
+												<div className='w-[75%]'>
+													<Input
+														id={`file.${i}.file_upload`}
+														name={`file.${i}.file_upload`}
+														placeholder='File'
+														label='File'
+														type='file'
+														accept='image/*, .pdf'
+														onChange={(value: any) =>
+															setFieldValue(
+																`file.${i}.file_upload`,
+																value.target.files[0]
+															)
 														}
-													</div>
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
 												</div>
-											</Section>
-										))
-									}
+												<div className='flex w-[25%]'>
+													{i === values.file.length - 1 ? (
+														<a
+															className='inline-flex text-green-500 pt-12 pl-4 cursor-pointer'
+															onClick={() => {
+																arrayFile.push({
+																	file_upload: "",
+																});
+															}}
+														>
+															<Plus size={18} className='mr-1 mt-1' /> Add File
+														</a>
+													) : null}
+													{values.file.length !== 1 ? (
+														<a
+															className='inline-flex text-red-500 cursor-pointer pt-12 pl-4'
+															onClick={() => {
+																arrayFile.remove(i);
+															}}
+														>
+															<Trash2 size={18} className='mr-1 mt-1' /> Remove
+															File
+														</a>
+													) : null}
+												</div>
+											</div>
+										</Section>
+									))}
 								</>
 							)}
 						/>
@@ -343,7 +367,9 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 											</svg>
 											Loading
 										</>
-									) : "Save" }
+									) : (
+										"Save"
+									)}
 								</button>
 							</div>
 						</div>

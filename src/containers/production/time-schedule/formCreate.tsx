@@ -1,5 +1,11 @@
 import { useState, useEffect, Fragment } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+	InputDate,
+} from "../../../components";
 import { Formik, Form } from "formik";
 import {
 	GetAllWorSchedule,
@@ -116,25 +122,93 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	}, []);
 
 	const getWor = async () => {
+		let datasWor: any = [];
 		try {
 			const response = await GetAllWorSchedule();
 			if (response.data) {
-				setListWor(response.data.result);
+				response.data.result.map((res: any) => {
+					datasWor.push({
+						value: res,
+						label: `${res.job_operational ? res.job_mr : res.job_no } - ${res.customerPo.quotations.Customer.name}`,
+					});
+				});
+				setListWor(datasWor);
 			}
 		} catch (error: any) {
-			setListWor([]);
+			setListWor(datasWor);
 		}
 	};
 
 	const getActivity = async () => {
+		let datasActivity: any = [];
 		try {
 			const response = await GetAllActivity();
 			if (response.data) {
-				setListActivity(response.data.result);
+				response.data.result.map((res: any) => {
+					datasActivity.push({
+						value: res,
+						label: res.name,
+					});
+				});
+				setListActivity(datasActivity);
 			}
 		} catch (error: any) {
-			setListActivity([]);
+			setListActivity(datasActivity);
 		}
+	};
+
+	const selectWor = (data: any) => {
+		let listDates: any = [];
+		let countHoliday = 0;
+		let durationDay = countDay(data.date_of_order, data.delivery_date);
+		if (holiday === "yes") {
+			for (var i = 0; i < durationDay; i++) {
+				if (i === 0) {
+					let unixTime = Math.floor(new Date(activityStar).getTime() / 1000);
+					listDates.push(new Date(unixTime * 1000));
+				} else {
+					let unixTime = Math.floor(
+						new Date(activityStar).getTime() / 1000 + 86400 * i
+					);
+					listDates.push(new Date(unixTime * 1000));
+				}
+			}
+			for (var i = 0; i < listDates.length; i++) {
+				let holiday = checkHoliday(listDates[i], "duration");
+				countHoliday = countHoliday + parseInt(holiday.toString());
+			}
+		}
+		setCustomer(data.customerPo.quotations.Customer.name);
+		setSubject(data.subject);
+		setJobDesc(data.job_desk);
+		setNote(data.noted);
+		setStartDate(data.date_of_order);
+		setEndDate(data.delivery_date);
+		setActivityStar(new Date(data.date_of_order));
+		setActivityEnd(new Date(data.delivery_date));
+		setTask([
+			{
+				start: new Date(data.date_of_order),
+				end: new Date(data.delivery_date),
+				name: data.job_no,
+				id: "Task",
+				progress: 0,
+				duration: durationDay - countHoliday,
+				holiday: countHoliday,
+				color: "#facc15",
+				left: 0,
+				leftHoliday: 0,
+				width: 60 * durationDay,
+				widthHoliday: 60 * (durationDay - countHoliday),
+			},
+		]);
+		setNumMonth(
+			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
+		);
+		showMonth(
+			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
+		);
+		showDate(data.date_of_order, data.delivery_date);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -228,7 +302,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				setIsShowGantt(false);
 			}
 		} else if (event.target.name === "activity") {
-			if (event.target.value !== "no data" && event.target.value !== 'create') {
+			if (event.target.value !== "no data" && event.target.value !== "create") {
 				let data = JSON.parse(event.target.value);
 				setActivity(data.name);
 				setActivityId(data.id);
@@ -828,9 +902,9 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	const showCreateActivity = (data: any) => {
-		setData(data)
-		setIsCreateActivity(true)
-	}
+		setData(data);
+		setIsCreateActivity(true);
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -968,22 +1042,21 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 									/>
 								</div>
 								<div className='w-full'>
-									<InputSelect
+									<InputSelectSearch
+										datas={listWor}
 										id='worId'
 										name='worId'
 										placeholder='Job No'
 										label='Job No'
-										onChange={(event: any) => {
-											if (event.target.value !== "no data") {
-												let data = JSON.parse(event.target.value);
-												setFieldValue("worId", data.id);
-											}
+										onChange={(e: any) => {
+											selectWor(e.value);
+											setFieldValue("worId", e.value.id);
 										}}
 										required={true}
 										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option value='no data' selected>
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									/>
+									{/* <option value='no data' selected>
 											Choose Job No WOR
 										</option>
 										{listWor.length === 0 ? (
@@ -998,7 +1071,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 												);
 											})
 										)}
-									</InputSelect>
+									</InputSelectSearch> */}
 								</div>
 								<div className='w-full'>
 									<Input
@@ -1106,21 +1179,24 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 								<>
 									<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 										<div className='w-full'>
-											<InputSelect
+											<InputSelectSearch
+												datas={listActivity}
 												id='activity'
 												name='activity'
 												placeholder='Activity'
 												label='Activity'
-												onChange={ (input: any) => {
-													if(input.target.value === 'create'){
-														showCreateActivity(values)
-													}
-												} }
+												onChange={(e: any) => {
+													setActivity(e.value.name);
+													setActivityId(e.value.id);
+													// if(input.target.value === 'create'){
+													// 	showCreateActivity(values)
+													// }
+												}}
 												required={true}
 												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											>
-												<option value='no data' selected>
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+											/>
+											{/* <option value='no data' selected>
 													Choose Activity
 												</option>
 												{listActivity.length === 0 ? (
@@ -1149,7 +1225,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 													})
 												)}
 												<option value='create'>Add Activity</option>
-											</InputSelect>
+											</InputSelectSearch> */}
 										</div>
 										<div className='w-full'>
 											<InputDate
@@ -1247,7 +1323,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 											</button>
 										</div>
 									) : (
-										<div >
+										<div>
 											<button
 												type='button'
 												className='flex text-white bg-blue-600 rounded-md p-1 hover:bg-blue-400'

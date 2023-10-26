@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
 import {
@@ -7,7 +12,7 @@ import {
 	GetBom,
 	AddMr,
 	AddMaterialStockOne,
-	GetAllMaterial
+	GetAllMaterial,
 } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
@@ -91,19 +96,19 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 
 	const getMaterial = async () => {
 		try {
-			let list_material: any = []
-			let list_material_stock: any = []
+			let list_material: any = [];
+			let list_material_stock: any = [];
 			const response = await GetAllMaterial();
 			if (response) {
-				response.data.result.map( (res: any) => {
+				response.data.result.map((res: any) => {
 					list_material.push({
 						id: res.id,
 						bomId: null,
 						satuan: res.satuan,
 						name: res.material_name,
 						grup_material: res.grup_material.material_name,
-					})
-					res.Material_Stock.map( (stock: any) => {
+					});
+					res.Material_Stock.map((stock: any) => {
 						list_material_stock.push({
 							material: res.id,
 							id: stock.id,
@@ -111,24 +116,36 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 							satuan: res.satuan,
 							name: stock.spesifikasi,
 						});
-					})
-				})
+					});
+				});
 			}
 			setBomId(null);
-			setListMaterialStock(list_material_stock)
+			setListMaterialStock(list_material_stock);
 			setListMaterial(list_material);
 		} catch (error) {}
 	};
 
 	const getBom = async () => {
+		let datasWor: any = [];
 		try {
 			const response = await GetBom();
 			if (response) {
-				setListWor(response.data.result);
+				response.data.result.map((res: any) => {
+					datasWor.push({
+						value: res,
+						label:
+							res.srimg === undefined
+								? res.job_no_mr
+								: res.srimg.timeschedule.wor.job_no,
+					});
+				});
+				setListWor(datasWor);
 			}
-		} catch (error) {}
+		} catch (error) {
+			setListWor(datasWor);
+		}
 	};
-	
+
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "worId") {
 			if (event.target.value !== "no data") {
@@ -137,10 +154,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				let material: any = [];
 				let list_material_stock: any = [];
 				let materialStock: any = [];
-				if(data.srimg === undefined){
+				if (data.srimg === undefined) {
 					setWorID(data.id);
 					getMaterial();
-				}else{
+				} else {
 					data.bom_detail.map((res: any) => {
 						if (!material.includes(res.materialId)) {
 							material.push(res.materialId);
@@ -170,7 +187,11 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					setListMaterial(list_material);
 					setListMaterialStock(list_material_stock);
 				}
-				setJobNo( data.srimg === undefined ? data.job_no_mr : data.srimg.timeschedule.wor.job_no);
+				setJobNo(
+					data.srimg === undefined
+						? data.job_no_mr
+						: data.srimg.timeschedule.wor.job_no
+				);
 				setIsMaterial(true);
 			} else {
 				setListMaterial([]);
@@ -182,6 +203,52 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		}
 	};
 
+	const selectWor = (datas: any) => {
+		let list_material: any = [];
+		let material: any = [];
+		let list_material_stock: any = [];
+		let materialStock: any = [];
+		if (datas.srimg === undefined) {
+			setWorID(datas.id);
+			getMaterial();
+		} else {
+			datas.bom_detail.map((res: any) => {
+				if (!material.includes(res.materialId)) {
+					material.push(res.materialId);
+					list_material.push({
+						id: res.materialId,
+						bomId: res.id,
+						satuan: res.Material_master.satuan,
+						name: res.Material_master.material_name,
+						grup_material: res.Material_master.grup_material.material_name,
+					});
+				}
+				res.Material_master.Material_Stock.map((spec: any, i: number) => {
+					if (!materialStock.includes(spec.id)) {
+						materialStock.push(spec.id);
+						list_material_stock.push({
+							material: res.materialId,
+							id: spec.id,
+							bomId: res.id,
+							satuan: res.Material_master.satuan,
+							name: spec.spesifikasi,
+						});
+					}
+				});
+			});
+			setWorID(datas.srimg.timeschedule.wor.id);
+			setBomId(datas.id);
+			setListMaterial(list_material);
+			setListMaterialStock(list_material_stock);
+		}
+		setJobNo(
+			datas.srimg === undefined
+				? datas.job_no_mr
+				: datas.srimg.timeschedule.wor.job_no
+		);
+		setIsMaterial(true);
+	};
+
 	const addMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
@@ -190,7 +257,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				bomIdD: res.bomId,
 				materialStockId: res.materialStockId,
 				qty: parseInt(res.qty),
-				note: res.note
+				note: res.note,
 			});
 		});
 		let data = {
@@ -247,13 +314,12 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 
 	const addMaterialStock = async (payload: any) => {
 		setIsLoading(true);
-		let listDetail: any =
-			{
-				materialId: materialID,
-				spesifikasi: payload.spesifikasi,
-				jumlah_Stock: 0,
-				harga: 0,
-			}
+		let listDetail: any = {
+			materialId: materialID,
+			spesifikasi: payload.spesifikasi,
+			jumlah_Stock: 0,
+			harga: 0,
+		};
 		try {
 			const response = await AddMaterialStockOne(listDetail);
 			if (response.data) {
@@ -275,10 +341,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					id: response.data.results.id,
 					material: materialID,
 					name: payload.spesifikasi,
-					satuan: satuan
-				})
-				setListMaterialStock(newListMaterialStock)
-				setSatuan("")
+					satuan: satuan,
+				});
+				setListMaterialStock(newListMaterialStock);
+				setSatuan("");
 				setMaterialID("");
 				setIsFormAddSpesifikasi(false);
 			}
@@ -432,46 +498,20 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 										/>
 									</div>
 									<div className='w-full'>
-										<Input
-											id='user'
-											name='user'
-											placeholder='User'
-											label='User'
-											type='text'
-											value={user}
-											disabled={true}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-									<div className='w-full'>
-										<Input
-											id='date'
-											name='date'
-											placeholder='Date Request Material'
-											label='Date Request Material'
-											type='text'
-											value={moment(new Date()).format("DD-MMMM-YYYY")}
-											disabled={true}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<InputSelect
+										<InputSelectSearch
+											datas={listWor}
 											id='worId'
 											name='worId'
 											placeholder='Job No'
 											label='Job No'
+											onChange={ (e: any) => {
+												selectWor(e.value)
+											}}
 											required={true}
 											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option value='no data' selected>
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
+										{/* <option value='no data' selected>
 												Choose Job No WOR
 											</option>
 											{listWor.length === 0 ? (
@@ -491,7 +531,37 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 													);
 												})
 											)}
-										</InputSelect>
+										</InputSelectSea> */}
+									</div>
+								</Section>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<Input
+											id='date'
+											name='date'
+											placeholder='Date Request Material'
+											label='Date Request Material'
+											type='text'
+											value={moment(new Date()).format("DD-MMMM-YYYY")}
+											disabled={true}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='user'
+											name='user'
+											placeholder='User'
+											label='User'
+											type='text'
+											value={user}
+											disabled={true}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
 									</div>
 								</Section>
 								{isMaterial ? (

@@ -14,7 +14,7 @@ import { Grid, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateDispatch } from "./formCreate";
 import {
 	GetDispatch,
-	SearchDepartement,
+	SearchDispatch,
 	DeleteDispatch,
 } from "../../../services";
 import { toast } from "react-toastify";
@@ -95,14 +95,14 @@ export const Dispatch = () => {
 		setIsLoading(false);
 	};
 
-	const searchDepartement = async (
+	const searchDispatch = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchDepartement(page, limit, search);
+			const response = await SearchDispatch(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -166,7 +166,7 @@ export const Dispatch = () => {
 				title='Dispatch'
 				print={true}
 				showModal={showModal}
-				search={searchDepartement}
+				search={searchDispatch}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (

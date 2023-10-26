@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputSelectSearch,
 	InputWithIcon,
 	MultipleSelect,
 } from "../../../components";
@@ -27,12 +28,12 @@ interface data {
 export const FormCreateUser = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [data, setData] = useState<data>({
-		employeeId: '',
+		employeeId: "",
 		username: "",
 		hashed_password: "",
 		confirm_password: "",
 	});
-    const [employeID, setEmployeId] = useState<string>('');
+	const [employeID, setEmployeId] = useState<string>("");
 	const [userRole, setUserRole] = useState<any>([]);
 	const [dataEmploye, setDataEmploye] = useState<any>([]);
 	const [dataRole, setDataRole] = useState<any>([]);
@@ -64,13 +65,20 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 	};
 
 	const getEmploye = async () => {
+		let datasEmploye: any = [];
 		try {
 			const response = await GetAllEmploye();
 			if (response.data) {
-				setDataEmploye(response.data.result);
+				response.data.result.map((res: any) => {
+					datasEmploye.push({
+						value: res,
+						label: res.employee_name,
+					});
+				});
+				setDataEmploye(datasEmploye);
 			}
 		} catch (error) {
-			setDataEmploye([]);
+			setDataEmploye(datasEmploye);
 		}
 	};
 
@@ -85,22 +93,22 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 		}
 	};
 
-    const addUser = async (payload: any) => {
-        setIsLoading(true)
-        let role: any = []
-        userRole.map( (item: any) => {
-            role.push({roleId : item.id})
-        })
-        let dataPayload = {
-            username: payload.username,
-            hashed_password: payload.hashed_password,
-            employeeId: employeID,
-            userRole: role
-        }
-        try{
-            const response = await AddUser(dataPayload);
+	const addUser = async (payload: any) => {
+		setIsLoading(true);
+		let role: any = [];
+		userRole.map((item: any) => {
+			role.push({ roleId: item.id });
+		});
+		let dataPayload = {
+			username: payload.username,
+			hashed_password: payload.hashed_password,
+			employeeId: employeID,
+			userRole: role,
+		};
+		try {
+			const response = await AddUser(dataPayload);
 			if (response.data) {
-                toast.success("Add User Success", {
+				toast.success("Add User Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -110,7 +118,7 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-                showModal(false, "add", true);
+				showModal(false, "add", true);
 			}
 		} catch (error) {
 			toast.error("Add User Failed", {
@@ -124,18 +132,18 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 				theme: "colored",
 			});
 		}
-        setIsLoading(false)
-    }
+		setIsLoading(false);
+	};
 
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "employeeId") {
 			if (event.target.value !== "Choose a employe") {
-                let employe = JSON.parse(event.target.value)
+				let employe = JSON.parse(event.target.value);
 				setDepartement(employe.sub_depart.name);
-                setEmployeId(employe.id)
+				setEmployeId(employe.id);
 			} else {
 				setDepartement("");
-                setEmployeId("");
+				setEmployeId("");
 			}
 		}
 	};
@@ -158,21 +166,33 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form onChange={handleOnChanges}>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={dataEmploye}
 									id='employe'
 									name='employeeId'
 									placeholder='Full Name'
 									label='Full Name'
-									onChange={handleChange}
+									onChange={(e: any) => {
+										setFieldValue("employeeId", e.value.id);
+										setDepartement(e.value.sub_depart.name);
+										setEmployeId(e.value.id);
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
 										Choose a employe
 									</option>
 									{dataEmploye.map((res: any, i: number) => {
@@ -182,9 +202,11 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 											</option>
 										);
 									})}
-								</InputSelect>
+								</InputSelectSearch> */}
 								{errors.employeeId && touched.employeeId ? (
-									<span className='text-red-500 text-xs'>{errors.employeeId}</span>
+									<span className='text-red-500 text-xs'>
+										{errors.employeeId}
+									</span>
 								) : null}
 							</div>
 							<div className='w-full'>
@@ -228,7 +250,7 @@ export const FormCreateUser = ({ content, showModal }: props) => {
 									selectedValue={userRole}
 									onSelect={onSelect}
 									onRemove={onRemove}
-									displayValue="role_name"
+									displayValue='role_name'
 								/>
 							</div>
 						</Section>
