@@ -167,7 +167,7 @@ export const PdfDpr = ({
 										</div>
 										<div className='grid grid-cols-2 gap-2'>
 											<div className='w-full'>
-												<p>Note : </p>
+												<p>Note : {data.note}</p>
 											</div>
 										</div>
 										<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>

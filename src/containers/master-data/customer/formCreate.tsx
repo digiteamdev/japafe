@@ -21,7 +21,7 @@ interface props {
 
 interface data {
 	id_custom: string;
-	// customerType: string;
+	customerType: string;
 	name: string;
 	email: string;
 	ppn: string;
@@ -56,7 +56,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		id_custom: "",
 		name: "",
-		// customerType: "PT.",
+		customerType: "PT.",
 		email: "",
 		ppn: "",
 		pph: "",
@@ -223,8 +223,17 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 		});
 		
 		if (!dataEmpty) {
+			let dataBody : any = {
+				id_custom: "",
+				name: payload.customerType !== "" ? `${payload.customerType} ${payload.name}` : payload.name,
+				email: payload.email,
+				ppn: payload.ppn,
+				pph: payload.pph,
+				address: payload.address,
+				contact: payload.contact
+			}
 			try {
-				const response = await AddCustomer(payload);
+				const response = await AddCustomer(dataBody);
 				if (response) {
 					toast.success("Add Customer Success", {
 						position: "top-center",
@@ -270,7 +279,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<div className='flex w-full'>
-									{/* <div className='w-[30%]'>
+									<div className='w-[20%]'>
 										<InputSelect
 											id='customerType'
 											name='customerType'
@@ -281,14 +290,11 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										>
-											<option defaultValue='PT.' selected>
+											<option defaultValue='PT' selected>
 												PT
 											</option>
-											<option value='CV.'>
+											<option value='CV'>
 												CV
-											</option>
-											<option value='Persero'>
-												Persero
 											</option>
 											<option value='Koperasi'>
 												Koperasi
@@ -297,8 +303,8 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 												Other
 											</option>
 										</InputSelect>
-									</div> */}
-									<div className='w-full'>
+									</div>
+									<div className='w-[80%] ml-2'>
 										<Input
 											id='name'
 											name='name'
@@ -441,7 +447,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 															label='Sub District'
 															onChange={ (e: any) => {
 																setFieldValue(`address.${i}.sub_districts`, e.value)
-																setFieldValue(`address.${i}.ec_postalcode`, e.postal_code)
+																setFieldValue(`address.${i}.ec_postalcode`, parseInt(e.postal_code))
 															}}
 															required={true}
 															withLabel={true}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
@@ -21,6 +21,7 @@ interface props {
 interface data {
 	dateOfPurchase: any;
 	idPurchase: string;
+	note: string;
 	detailMr: any;
 }
 
@@ -34,6 +35,7 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		dateOfPurchase: new Date(),
 		idPurchase: "",
+		note: "",
 		detailMr: [],
 	});
 
@@ -78,6 +80,7 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 				setData({
 					dateOfPurchase: new Date(),
 					idPurchase: generateIdNum(),
+					note: "",
 					detailMr: detail,
 				});
 				setListMr(response.data.result);
@@ -143,6 +146,7 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 		let data = {
 			dateOfPurchase: payload.dateOfPurchase,
 			idPurchase: payload.idPurchase,
+			note: payload.note,
 			srDetail: listDetail,
 		};
 		try {
@@ -218,6 +222,23 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 									type='text'
 									value={moment(new Date()).format("DD-MMMM-YYYY")}
 									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputArea
+									id='note'
+									name='note'
+									placeholder='Note'
+									label='Note'
+									type='text'
+									value={values.note}
+									onChange={handleChange}
+									disabled={false}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

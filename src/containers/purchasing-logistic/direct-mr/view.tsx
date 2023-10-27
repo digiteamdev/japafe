@@ -232,6 +232,14 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Note
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{dataSelected.note}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>

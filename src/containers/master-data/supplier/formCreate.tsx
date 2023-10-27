@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 
 interface data {
 	type_supplier: string;
+	customerType: string;
 	id_sup: string;
 	supplier_name: string;
 	addresses_sup: string;
@@ -58,6 +59,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 	const [data, setData] = useState<data>({
 		type_supplier: "",
 		id_sup: "",
+		customerType: "PT.",
 		supplier_name: "",
 		addresses_sup: "",
 		provinces: "",
@@ -234,8 +236,27 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 			}
 		});
 		if (!bankEmpty) {
+			let dataBody: any = {
+				type_supplier: payload.type_supplier,
+				id_sup: payload.id_sup,
+				supplier_name: payload.customerType !== ""
+				? `${payload.customerType} ${payload.supplier_name}`
+				: payload.supplier_name,
+				addresses_sup: payload.addresses_sup,
+				provinces: payload.provinces,
+				cities: payload.cities,
+				districts: payload.districts,
+				sub_districts: payload.sub_districts,
+				ec_postalcode: payload.ec_postalcode,
+				office_email: payload.office_email,
+				NPWP: payload.NPWP,
+				ppn: payload.ppn,
+				pph: payload.pph,
+				SupplierContact: payload.SupplierContact,
+				SupplierBank: payload.SupplierBank
+			};
 			try {
-				const response = await AddSupplier(payload);
+				const response = await AddSupplier(dataBody);
 				if (response) {
 					toast.success("Add Supplier Success", {
 						position: "top-center",
@@ -287,18 +308,42 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						<h1 className='text-xl font-bold'>Supplier</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<Input
-									id='supplier_name'
-									name='supplier_name'
-									placeholder='Name'
-									label='Supplier Name'
-									type='text'
-									value={values.supplier_name}
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
+								<div className="flex w-full">
+
+									<div className='w-[20%]'>
+										<InputSelect
+											id='customerType'
+											name='customerType'
+											placeholder='Customer type'
+											label='type'
+											onChange={handleChange}
+											required={true}
+											withLabel={false}
+											className='bg-white mt-7 border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option defaultValue='PT' selected>
+												PT
+											</option>
+											<option value='CV'>CV</option>
+											<option value='Koperasi'>Koperasi</option>
+											<option value=''>Other</option>
+										</InputSelect>
+									</div>
+									<div className='w-[80%] ml-2'>
+										<Input
+											id='supplier_name'
+											name='supplier_name'
+											placeholder='Name'
+											label='Supplier Name'
+											type='text'
+											value={values.supplier_name}
+											onChange={handleChange}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</div>
 								{errors.supplier_name && touched.supplier_name ? (
 									<span className='text-red-500 text-xs'>
 										{errors.supplier_name}

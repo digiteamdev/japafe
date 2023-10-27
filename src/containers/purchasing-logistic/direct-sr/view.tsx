@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { ApprovalPrMr } from "../../../services";
 import { Section } from "../../../components";
@@ -104,10 +104,20 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 		}
 	};
 
-	const grandTotal = (suplier: string) => {
+	const jumlahTax = (suplier: string, ppn: number, pph: number) => {
 		let totalBayar: any = Total(suplier);
-		let totalPPN: any = Ppn(suplier, "total");
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+		if (ppn !== 0) {
+			let totalPPN: any = (parseInt(totalBayar) * ppn) / 100;
+			return Math.ceil(totalPPN).toString();
+		} else {
+			let totalPPH: any = (parseInt(totalBayar) * pph) / 100;
+			return Math.ceil(totalPPH).toString();
+		}
+	};
+
+	const grandTotal = (suplier: string, ppn: any, pph: any) => {
+		let totalBayar: any = Total(suplier);
+		let total: any = parseInt(totalBayar) + parseInt(ppn) + parseInt(pph);
 		return formatRupiah(total.toString());
 	};
 
@@ -258,6 +268,14 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Note
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{dataSelected.note}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
@@ -305,71 +323,152 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 												<tbody>
 													{dataSelected.SrDetail.filter((fil: any) => {
 														return fil.supplier.supplier_name === res;
-													}).map((result: any, idx: number) => {
+													}).map((result: any, idx: number, data: any) => {
 														return (
-															<tr key={idx}>
-																<td className='border border-black text-center'>
-																	{result.sr.wor.job_operational
-																		? result.sr.wor.job_no_mr
-																		: result.sr.wor.job_no}
-																</td>
-																<td className='border border-black text-center'>
-																	{result.part}
-																</td>
-																<td className='border border-black text-center'>
-																	{result.workCenter.name}
-																</td>
-																<td className='border border-black text-center'>
-																	{result.qtyAppr}
-																</td>
-																<td className='border border-black text-center'>
-																	{result.note}
-																</td>
-																<td className='border border-black text-center'>
-																	{formatRupiah(result.price.toString())}
-																</td>
-																<td className='border border-black text-center'>
-																	{formatRupiah(result.disc.toString())}
-																</td>
-																<td className='border border-black text-center'>
-																	{formatRupiah(result.total.toString())}
-																</td>
-															</tr>
+															<React.Fragment key={idx}>
+																<tr>
+																	<td className='border border-black text-center'>
+																		{result.sr.wor.job_operational
+																			? result.sr.wor.job_no_mr
+																			: result.sr.wor.job_no}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{result.part}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{result.workCenter.name}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{result.qtyAppr}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{result.note}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(result.price.toString())}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(result.disc.toString())}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(result.total.toString())}
+																	</td>
+																</tr>
+																{idx === data.length - 1 ? (
+																	<>
+																		<tr>
+																			<td
+																				className='border border-black text-right pr-4'
+																				colSpan={7}
+																			>
+																				Total
+																			</td>
+																			<td className='border border-black text-center'>
+																				{formatRupiah(Total(res))}
+																			</td>
+																		</tr>
+																		{result.taxPsrDmr === "ppn" ? (
+																			<tr>
+																				<td
+																					className='border border-black text-right pr-4'
+																					colSpan={7}
+																				>
+																					PPN {result.supplier.ppn}%
+																				</td>
+																				<td className='border border-black text-center'>
+																					{formatRupiah(
+																						jumlahTax(
+																							result.supplier.supplier_name,
+																							result.supplier.ppn,
+																							0
+																						)
+																					)}
+																				</td>
+																			</tr>
+																		) : result.taxPsrDmr === "pph" ? (
+																			<tr>
+																				<td
+																					className='border border-black text-right pr-4'
+																					colSpan={7}
+																				>
+																					PPH {result.supplier.pph}%
+																				</td>
+																				<td className='border border-black text-center'>
+																					{formatRupiah(
+																						jumlahTax(
+																							result.supplier.supplier_name,
+																							0,
+																							result.supplier.pph
+																						)
+																					)}
+																				</td>
+																			</tr>
+																		) : result.taxPsrDmr === "ppn_and_pph" ? (
+																			<>
+																				<tr>
+																					<td
+																						className='border border-black text-right pr-4'
+																						colSpan={7}
+																					>
+																						PPN {result.supplier.ppn}%
+																					</td>
+																					<td className='border border-black text-center'>
+																						{formatRupiah(
+																							jumlahTax(
+																								result.supplier.supplier_name,
+																								result.supplier.ppn,
+																								0
+																							)
+																						)}
+																					</td>
+																				</tr>
+																				<tr>
+																					<td
+																						className='border border-black text-right pr-4'
+																						colSpan={7}
+																					>
+																						PPH {result.supplier.pph}%
+																					</td>
+																					<td className='border border-black text-center'>
+																						{formatRupiah(
+																							jumlahTax(
+																								result.supplier.supplier_name,
+																								0,
+																								result.supplier.pph
+																							)
+																						)}
+																					</td>
+																				</tr>
+																			</>
+																		) : null}
+																		<tr>
+																			<td
+																				className='border border-black text-right pr-4'
+																				colSpan={7}
+																			>
+																				Grand Total
+																			</td>
+																			<td className='border border-black text-center'>
+																				{grandTotal(
+																					result.supplier.supplier_name,
+																					jumlahTax(
+																						result.supplier.supplier_name,
+																						result.supplier.ppn,
+																						0
+																					),
+																					jumlahTax(
+																						result.supplier.supplier_name,
+																						0,
+																						result.supplier.pph
+																					)
+																				)}
+																			</td>
+																		</tr>
+																	</>
+																) : null}
+															</React.Fragment>
 														);
 													})}
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={7}
-														>
-															Total
-														</td>
-														<td className='border border-black text-center'>
-															{formatRupiah(Total(res))}
-														</td>
-													</tr>
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={7}
-														>
-															{Ppn(res, "ppn")}
-														</td>
-														<td className='border border-black text-center'>
-															{formatRupiah(Ppn(res, "total"))}
-														</td>
-													</tr>
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={7}
-														>
-															Grand Total
-														</td>
-														<td className='border border-black text-center'>
-															{grandTotal(res)}
-														</td>
-													</tr>
 												</tbody>
 											</table>
 										</div>

@@ -179,7 +179,7 @@ export const DirectSR = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.idPurchase }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'></td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.note }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
