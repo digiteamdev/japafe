@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { ApprovalPrMr } from "../../../services";
+import { ApprovalPrMr, ApprovalPoSo } from "../../../services";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { formatRupiah } from "../../../utils";
@@ -22,6 +22,7 @@ export const FormEditApproval = ({
 	const [dataSuplier, setDataSuplier] = useState<any>([]);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
+	const [PoSo, setPoSo] = useState<boolean>(true);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [data, setData] = useState<any>({
 		detailMr: [],
@@ -74,7 +75,11 @@ export const FormEditApproval = ({
 				status_manager_director: "reject",
 			},
 		};
-		approveDirector(dataPayload, "Reject");
+		if(PoSo){
+			approvePoSoDirector(dataPayload, "Reject")
+		}else{
+			approveDirector(dataPayload, "Reject");
+		}
 	};
 
 	const approve = () => {
@@ -83,7 +88,11 @@ export const FormEditApproval = ({
 				status_manager_director: "approve",
 			},
 		};
-		approveDirector(dataPayload, "Approve");
+		if(dataSelected.idPurchase){
+			approveDirector(dataPayload, "Approve");
+		}else{
+			approvePoSoDirector(dataPayload, "Approve")
+		}
 	};
 
 	const revisi = (payload: any) => {
@@ -108,13 +117,60 @@ export const FormEditApproval = ({
 			revision: dataRevisi,
 			revision_sr: dataRevisiSr
 		};
-		approveDirector(dataPayload, "Revisi");
+		if(PoSo){
+			approvePoSoDirector(dataPayload, "Revisi")
+		}else{
+			approveDirector(dataPayload, "Revisi");
+		}
 	};
 
 	const approveDirector = async (payload: any, status: string) => {
 		setIsLoading(true);
 		try {
 			const response = await ApprovalPrMr(dataSelected.id, payload);
+			if (response.status === 201) {
+				toast.success(`${status} Success`, {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			} else {
+				toast.error(`${status} Failed`, {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error(`${status} Failed`, {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+		setIsLoading(false);
+	};
+
+	const approvePoSoDirector = async (payload: any, status: string) => {
+		setIsLoading(true);
+		try {
+			const response = await ApprovalPoSo(dataSelected.id, payload);
 			if (response.status === 201) {
 				toast.success(`${status} Success`, {
 					position: "top-center",
