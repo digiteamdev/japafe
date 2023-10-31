@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,7 +7,7 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseSr } from "./formCreate";
@@ -19,7 +19,6 @@ import { removeToken } from "../../../configs/session";
 import moment from "moment";
 
 export const PurchaseSO = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -29,18 +28,18 @@ export const PurchaseSO = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "PO Number" },
 		{ name: "Date PO" },
 		{ name: "Suplier" },
 		{ name: "Contact" },
-        { name: "Action" }
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage, 'SO');
+		getPurchaseMR(page, perPage, "SO");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -51,23 +50,23 @@ export const PurchaseSO = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage, 'SO');
+			getPurchaseMR(page, perPage, "SO");
 		}
 	};
 
-	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
+	const getPurchaseMR = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
 			const response = await GetPoMr(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				// removeToken();
 				// router.push('/');
 			}
@@ -82,7 +81,7 @@ export const PurchaseSO = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPoMR(page, limit, search, 'SO');
+			const response = await SearchPoMR(page, limit, search, "SO");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -95,7 +94,7 @@ export const PurchaseSO = () => {
 	const deletePurchaseMR = async (id: string) => {
 		try {
 			const response = await DeletePurchaseMR(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Purchase Order Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -106,7 +105,7 @@ export const PurchaseSO = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10, 'PR');
+				getPurchaseMR(1, 10, "PR");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Order Request Failed", {
@@ -178,10 +177,18 @@ export const PurchaseSO = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.id_so }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_prepared).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.SrDetail[0].supplier.supplier_name }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.SrDetail[0].supplier.SupplierContact[0].contact_person }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.id_so}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{moment(res.date_prepared).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.SrDetail[0].supplier.supplier_name}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.SrDetail[0].supplier.SupplierContact[0].contact_person}
+									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -193,17 +200,27 @@ export const PurchaseSO = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.status_manager ? null : (
+											{res.status_manager_director === "revision" ? (
 												<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											) }
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "edit", false);
+													}}
+												>
+													<Edit color='white' />
+												</Button>
+											) : res.status_manager ? null : (
+												<Button
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "edit", false);
+													}}
+												>
+													<Edit color='white' />
+												</Button>
+											)}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
@@ -220,20 +237,18 @@ export const PurchaseSO = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={11} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getPurchaseMR(value, perPage, 'SO');
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={11}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getPurchaseMR(value, perPage, "SO");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -251,12 +266,19 @@ export const PurchaseSO = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewSoSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+						<ViewSoSR
+							dataSelected={dataSelected}
+							showModal={showModal}
+							content={modalContent}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreatePurchaseSr content={modalContent} showModal={showModal} />
+						<FormCreatePurchaseSr
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : (
-                        <></>
-                        // <FormEditPurchaseMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<></>
+						// <FormEditPurchaseMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

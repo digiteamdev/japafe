@@ -72,13 +72,17 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 											Introduction Image
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											<Image
-												src={dataSelected.inimg}
-												width={70}
-												height={70}
-												alt='Picture part'
-												className='mr-2'
-											/>
+											{
+												dataSelected.inimg ? (
+													<Image
+														src={dataSelected.inimg}
+														width={70}
+														height={70}
+														alt='Picture part'
+														className='mr-2'
+													/>
+												) : "-"
+											}
 										</td>
 									</tr>
 								</tbody>

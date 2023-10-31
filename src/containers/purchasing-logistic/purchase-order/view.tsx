@@ -224,6 +224,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										{ dataSelected.status_manager ? "Valid" : "Unvalid" }
 									</td>
 								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Valid director
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{ dataSelected.status_manager_director }
+									</td>
+								</tr>
 							</table>
 						</div>
 					</Section>
