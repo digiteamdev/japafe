@@ -193,7 +193,7 @@ export const SideNav = ({ isSidebar, innerRef, showSidebar }: props) => {
 			</div>
 			<div className='mx-[24px] my-5 text-center'>
 				<p className='text-xs text-black'>
-					© {new Date().getFullYear()} Digi Techno Indonesia
+					© {new Date().getFullYear()} Digi Tekno Indonesia
 				</p>
 				<p className='text-xs text-black'>All Rights Reserved.</p>
 			</div>

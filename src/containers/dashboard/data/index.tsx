@@ -17,7 +17,7 @@ export const DataOverview = [
     },
     {
         id: 'supplier',
-        name: 'Total Supplier',
+        name: 'Total Suplier',
         total: '10',
         percentage: '+10',
         icon:( <Truck size={28} /> )
