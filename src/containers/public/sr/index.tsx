@@ -13,7 +13,7 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSr } from "./formCreate";
 import { ViewSR } from "./view";
 import { FormEditSr } from "./formEdit";
-import { GetSr, SearchCustomer, DeleteSr } from "../../../services";
+import { GetSr, SearchSr, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -83,7 +83,7 @@ export const Sr = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchSr(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}

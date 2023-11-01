@@ -13,7 +13,7 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMr } from "./formCreate";
 import { ViewMR } from "./view";
 import { FormEditMr } from "./formEdit";
-import { GetMr, SearchCustomer, DeleteMR } from "../../../services";
+import { GetMr, SearchMr, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -83,7 +83,7 @@ export const Mr = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchMr(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}

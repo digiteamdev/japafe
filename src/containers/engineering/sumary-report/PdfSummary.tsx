@@ -137,13 +137,15 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																		Introduction Image
 																	</td>
 																	<td className='w-[50%] pl-2 border border-gray-200'>
-																		<Image
-																			src={data.inimg}
-																			width={70}
-																			height={70}
-																			alt='Picture part'
-																			className='mr-2'
-																		/>
+																		{ data.inimg === null ? null : (
+																			<Image
+																				src={data.inimg}
+																				width={70}
+																				height={70}
+																				alt='Picture part'
+																				className='mr-2'
+																			/>
+																		) }
 																	</td>
 																</tr>
 															</tbody>
