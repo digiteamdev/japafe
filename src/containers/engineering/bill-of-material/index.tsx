@@ -6,7 +6,7 @@ import { File, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateBillOfMaterial } from "./formCreate";
 import { ViewBillOfMaterial } from "./view";
 import { FormEditBillOfMaterial } from "./formEdit";
-import { GetBillOfMaterial, SearchPo, DeleteBillOfMaterial  } from "../../../services";
+import { GetBillOfMaterial, SearchBillOfMaterial, DeleteBillOfMaterial  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
 
@@ -70,7 +70,7 @@ export const BillOfMaterial = () => {
 	const searchPo = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search);
+			const response = await SearchBillOfMaterial(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}

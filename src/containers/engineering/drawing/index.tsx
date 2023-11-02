@@ -6,7 +6,7 @@ import { File, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateDrawing } from "./formCreate";
 import { ViewDrawing } from "./view";
 import { FormEditDrawing } from "./formEdit";
-import { GetDrawing, SearchPo, DeleteSummary  } from "../../../services";
+import { GetDrawing, SearchDrawing, DeleteSummary  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
 
@@ -70,7 +70,7 @@ export const Drawing = () => {
 	const searchPo = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search);
+			const response = await SearchDrawing(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}

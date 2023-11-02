@@ -34,6 +34,7 @@ interface props {
 }
 
 interface data {
+	photo: any;
 	NIP: string;
 	NIK: string;
 	employee_name: string;
@@ -60,7 +61,7 @@ interface data {
 	spouse_name: any;
 	gender_spouse: any;
 	spouse_birth_place: any;
-	spouse_birth_date: Date | null;
+	spouse_birth_date: any;
 	Employee_Child: [
 		{
 			name: string | null;
@@ -110,6 +111,7 @@ export const FormCreateEmploye = ({
 	const [listProvince, setListProvince] = useState<any>([]);
 	const [files, setFiles] = useState<any>([]);
 	const [data, setData] = useState<data>({
+		photo: null,
 		NIP: "",
 		NIK: "",
 		employee_name: "",
@@ -134,15 +136,15 @@ export const FormCreateEmploye = ({
 		employee_status: "Contract",
 		email: "",
 		spouse_name: null,
-		gender_spouse: null,
-		spouse_birth_date: null,
+		gender_spouse: "Male",
+		spouse_birth_date: new Date(),
 		spouse_birth_place: null,
 		Employee_Child: [
 			{
 				name: null,
-				gender_child: null,
+				gender_child: "Male",
 				child_birth_place: null,
-				child_birth_date: null,
+				child_birth_date: new Date(),
 			},
 		],
 	});
@@ -294,16 +296,43 @@ export const FormCreateEmploye = ({
 
 	const addEmploye = async (payload: data) => {
 		setIsLoading(true);
-		let dataPayload: any = payload;
-		if (
-			payload.Employee_Child.length === 1 &&
-			payload.Employee_Child[0].name === null
-		) {
-			const { Employee_Child, ...newObj } = payload;
-			dataPayload = newObj;
+		const form = new FormData();
+		form.append("photo", payload.photo);
+		form.append("NIK", payload.NIK);
+		form.append("NIP", payload.NIP);
+		form.append("NPWP", payload.NPWP);
+		form.append("address", payload.address);
+		form.append("birth_date", payload.birth_date.toDateString());
+		form.append("birth_place", payload.birth_place);
+		form.append("city", payload.city);
+		form.append("districts", payload.districts);
+		form.append("ec_postalcode", payload.ec_postalcode);
+		form.append("email", payload.email);
+		form.append("employee_name", payload.employee_name);
+		form.append("employee_status", payload.employee_status);
+		form.append("gender", payload.gender);
+		form.append("id_card", payload.id_card);
+		form.append("marital_status", payload.marital_status);
+		form.append("nick_name", payload.nick_name);
+		form.append("phone_number", payload.phone_number);
+		form.append("position", payload.position);
+		form.append("province", payload.province);
+		form.append("remaining_days_of", payload.remaining_days_of);
+		form.append("spouse_birth_date", payload.spouse_name === null ? "" : payload.spouse_birth_date.toDateString());
+		form.append("spouse_birth_place", payload.spouse_birth_place === null ? "" : payload.spouse_birth_place );
+		form.append("spouse_name", payload.spouse_name === null ? "" : payload.spouse_name );
+		form.append("gender_spouse", payload.spouse_name === null ? "" : payload.gender_spouse);
+		form.append("start_join", payload.start_join.toDateString());
+		form.append("sub_districts", payload.sub_districts);
+		form.append("subdepartId", payload.subdepartId);
+		if (payload.Employee_Child[0].name !== null) {
+			form.append("Employee_Child", JSON.stringify(payload.Employee_Child));
+			// const { Employee_Child, ...newObj } = payload;
+			// dataPayload = newObj;
 		}
+
 		try {
-			const response = await AddEmploye(dataPayload);
+			const response = await AddEmploye(form);
 			if (response.data) {
 				toast.success("Add Employe Success", {
 					position: "top-center",
@@ -450,6 +479,22 @@ export const FormCreateEmploye = ({
 								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
+											id='photo'
+											name='photo'
+											placeholder='Image'
+											label='Photo Employe'
+											type='file'
+											accept='image/*'
+											onChange={ (e: any) => {
+												setFieldValue('photo', e.target.files[0])
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
 											id='nik'
 											name='NIK'
 											placeholder='nik'
@@ -486,6 +531,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='employee_name'
@@ -505,8 +552,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='nick_name'
@@ -549,6 +594,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='idCard'
@@ -568,8 +615,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputSelect
 											id='subdepartId'
@@ -628,6 +673,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='email'
@@ -647,8 +694,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputWithIcon
 											id='phone_number'
@@ -689,6 +734,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<Input
 											id='birth_place'
@@ -708,8 +755,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputDate
 											id='birthDate'
@@ -752,6 +797,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='employeStatus'
@@ -776,8 +823,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<Input
 											id='NPWP'
@@ -815,6 +860,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelectSearch
 											datas={listProvince}
@@ -836,8 +883,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 									<div className='w-full'>
 										<InputSelectSearch
 											datas={listCity}
@@ -880,6 +925,8 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<InputSelectSearch
 											datas={listSubDistrict}
@@ -901,8 +948,6 @@ export const FormCreateEmploye = ({
 											</span>
 										)}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-3'>
 									<div className='w-full'>
 										<Input
 											id='ec_postalcode'
@@ -1092,9 +1137,9 @@ export const FormCreateEmploye = ({
 															onClick={() => {
 																arrayHelpers.push({
 																	name: null,
-																	gender_child: null,
+																	gender_child: "Male",
 																	child_birth_place: null,
-																	child_birth_date: null,
+																	child_birth_date: new Date(),
 																});
 															}}
 														>

@@ -12,7 +12,7 @@ import {
 import { Tool} from "react-feather";
 import { FormCreateMaterialStok } from "./formCreate";
 import { ViewMaterial } from "./view";
-import { GetMaterialStock } from "../../../services";
+import { GetMaterialStock, SearchMaterialStock } from "../../../services";
 import { removeToken } from "../../../configs/session";
 import { formatRupiah } from '../../../utils/index'
 
@@ -78,14 +78,14 @@ export const MaterialStok = () => {
 		search: string
 	) => {
 		setIsLoading(true);
-		// try {
-		// 	const response = await SearchCustomer(page, limit, search);
-		// 	if (response.data) {
-		// 		setData(response.data.result);
-		// 	}
-		// } catch (error) {
-		// 	setData([]);
-		// }
+		try {
+			const response = await SearchMaterialStock(page, limit, search);
+			if (response.data) {
+				setData(response.data.result);
+			}
+		} catch (error) {
+			setData([]);
+		}
 		setIsLoading(false);
 	};
 
