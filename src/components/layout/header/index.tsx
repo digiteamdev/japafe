@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, Search } from 'react-feather';
 import { Dropdown } from '../menu';
-import { getUsername } from '../../../configs/session';
+import { getUsername, getImage } from '../../../configs/session';
 
 interface props {
 	isSidebar?: boolean;
@@ -11,13 +11,18 @@ interface props {
 export const Header = ({ isSidebar, showSidebar }: props) => {
 
 	const [username, setUsername] = useState<any>();
+	const [image, setImage] = useState<any>(null);
 
 	useEffect( () => {
+		let photo = getImage()
 		let user = getUsername()
 		if (user === undefined) {
 			setUsername("")
 		}else{
 			setUsername(user)
+		}
+		if (image !== undefined) {
+			setImage(photo)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])

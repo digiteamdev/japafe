@@ -7,10 +7,20 @@ export const token = (data: any) => {
     Cookies.set('id', data.employee.id);
     Cookies.set('position', data.employee.position);
     Cookies.set('id_user', data.id);
+    Cookies.set('image', data.employee.photo);
+}
+
+export const setImage = (data: any) => {
+    Cookies.set('image', data);
 }
 
 export const getToken = () => {
     let token = Cookies.get('token');
+    return token
+}
+
+export const getImage = () => {
+    let token = Cookies.get('image');
     return token
 }
 

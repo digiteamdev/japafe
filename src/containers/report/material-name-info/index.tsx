@@ -15,7 +15,7 @@ import { Tool, Edit, Eye, Trash2 } from "react-feather";
 // import { FormEditCustomer } from "./fromEdit";
 import {
 	GetMaterialStock,
-	SearchCustomer,
+	SearchMaterial,
 	DeleteCustomer,
 	GetMaterial,
 } from "../../../services";
@@ -84,7 +84,7 @@ export const MaterialNameInfo = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchMaterial(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
