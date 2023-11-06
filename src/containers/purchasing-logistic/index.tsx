@@ -6,3 +6,4 @@ export * from './direct-mr';
 export * from './direct-sr';
 export * from './purchase-order';
 export * from './service-order';
+export * from './purchase-receive';

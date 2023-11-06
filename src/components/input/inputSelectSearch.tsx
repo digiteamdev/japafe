@@ -6,7 +6,7 @@ interface props {
 	type?: string;
 	placeholder?: string;
 	label?: string;
-	value?: string;
+	value?: any;
 	name?: string;
 	disabled?: boolean;
 	required?: boolean;
@@ -48,6 +48,7 @@ export const InputSelectSearch = ({
 				required={required}
 				onChange={onChange}
 				options={datas}
+				maxMenuHeight={150}
 			/>
 		</div>
 	);
