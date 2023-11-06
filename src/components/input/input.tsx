@@ -5,7 +5,7 @@ interface props {
 	placeholder?: string;
 	label?: string;
 	value?: string;
-	max?: string;
+	max?: any;
 	name?: string;
 	accept?: string;
 	disabled?: boolean;
