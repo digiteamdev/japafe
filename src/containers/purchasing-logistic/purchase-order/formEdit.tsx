@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import {
-	GetAllSupplier,
-	GetAllPoMr,
-	GetAllCoa,
-	AddPoMr,
-} from "../../../services";
+import { GetAllPoMr, EditPoMr, DeletePoMr } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
@@ -15,6 +10,7 @@ import { Disclosure } from "@headlessui/react";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
+	dataSelected: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
@@ -30,7 +26,11 @@ interface data {
 	detailMr: any;
 }
 
-export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
+export const FormEditPurchaseMr = ({
+	dataSelected,
+	content,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
 	const [listDataSuplier, setListDataSupplier] = useState<any>([]);
@@ -46,6 +46,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 	const [tax, setTax] = useState<string>("");
 	const [countTax, setCountTax] = useState<string>("0");
 	const [grandTotal, setGrandTotal] = useState<string>("");
+	const [listRemoveTerm, setListRemoveTerm] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		dateOfPO: new Date(),
 		idPO: "",
@@ -59,56 +60,109 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 
 	useEffect(() => {
 		let idUser = getIdUser();
-		setData({
-			dateOfPO: new Date(),
-			idPO: generateIdNum(),
-			ref: "",
-			supplierId: "",
-			note: "",
-			dp: 0,
-			termOfPayment: [],
-			detailMr: [],
-		});
 		if (idUser !== undefined) {
 			setUserId(idUser);
 		}
+		settingData();
 		setIdPR(generateIdNum());
-		getSrPo();
+		getMrPo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getSrPo = async () => {
+	const settingData = () => {
+		let detail: any = [];
+		let termOfPayment: any = [];
+		let total: number = 0;
+		let totalTax: number = 0;
+		let tax: boolean = false;
+		dataSelected.term_of_pay_po_so.map((res: any) => {
+			termOfPayment.push({
+				id: res.id,
+				limitpay: res.limitpay,
+				percent: res.percent,
+				price: formatRupiah(res.price.toString()),
+				invoice: res.invoice,
+			});
+		});
+		dataSelected.detailMr.map((result: any) => {
+			detail.push({
+				id: result.id,
+				no_mr: result.mr.no_mr,
+				user: result.mr.user.employee.employee_name,
+				supId: result.supId,
+				taxpr: result.taxpr,
+				akunId: result.akunId,
+				disc: result.disc,
+				currency: result.currency,
+				total: result.total,
+				material: result.Material_Stock.spesifikasi,
+				qty: result.qtyAppr,
+				note: result.note,
+				price: result.price,
+				job_no: result.mr.wor.job_operational
+					? result.mr.wor.job_no_mr
+					: result.mr.wor.job_no,
+			});
+			total = total + result.total;
+			setCurrency(result.currency);
+			if (result.taxpr === "ppn") {
+				tax = true;
+			}
+		});
+		if (tax) {
+			totalTax = (total * dataSelected.supplier.ppn) / 100;
+			setCountTax(dataSelected.supplier.ppn);
+			setTax(formatRupiah(totalTax.toString()));
+		}
+		let grandTotal: number = total + totalTax;
+		setTotal(formatRupiah(total.toString()));
+		setGrandTotal(formatRupiah(grandTotal.toString()));
+		setData({
+			dateOfPO: dataSelected.date_prepared,
+			idPO: dataSelected.id_so,
+			ref: dataSelected.your_reff,
+			supplierId: dataSelected.supplier.supplier_name,
+			note: dataSelected.note,
+			dp: dataSelected.DP,
+			termOfPayment: termOfPayment,
+			detailMr: detail,
+		});
+		setContact(dataSelected.supplier.SupplierContact[0].contact_person);
+		setPhone(`+62${dataSelected.supplier.SupplierContact[0].phone}`);
+		setAddress(dataSelected.supplier.addresses_sup);
+	};
+
+	const getMrPo = async () => {
 		try {
-			const response = await GetAllPoMr("PSR");
+			const response = await GetAllPoMr("PR");
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];
 				let dataSuplier: any = [];
 
 				response.data.result.map((res: any) => {
-                    res.SrDetail.map((result: any) => {
-                        if (!suplier.includes(result.supplier.supplier_name)) {
+					res.detailMr.map((result: any) => {
+						if (!suplier.includes(result.supplier.supplier_name)) {
 							suplier.push(result.supplier.supplier_name);
 							dataSuplier.push(result.supplier);
 						}
 						detail.push({
 							id: result.id,
-							no_mr: result.sr.no_sr,
-							user: result.sr.user.employee.employee_name,
+							no_mr: result.mr.no_mr,
+							user: result.mr.user.employee.employee_name,
 							supId: result.supId,
-							taxpr: result.taxPsrDmr,
+							taxpr: result.taxpr,
 							akunId: result.akunId,
 							disc: result.disc,
 							currency: result.currency,
 							total: result.total,
-							service: result.workCenter.name,
-                            part: result.part,
+							material: result.Material_Stock.spesifikasi,
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,
-							job_no: result.sr.wor.job_operational
-								? result.sr.wor.job_no_mr
-								: result.sr.wor.job_no,
+							job_no: result.mr.wor.job_operational
+								? result.mr.wor.job_no_mr
+								: result.mr.wor.job_no,
 						});
 					});
 				});
@@ -126,47 +180,47 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
 		var year = dateObj.getUTCFullYear();
 		const id =
-			"SO" +
+			"PO" +
 			year.toString() +
 			month.toString() +
 			Math.floor(Math.random() * 1000);
 		return id;
 	};
 
-	const AddPurchaseOrder = async (payload: data) => {
+	const editPurchaseOrder = async (payload: data) => {
 		setIsLoading(true);
-		let detail: any = [];
 		let termOfPay: any = [];
-		payload.detailMr.map((res: any) => {
-			detail.push({
-				id: res.id,
-			});
-		});
 		payload.termOfPayment.map((res: any) => {
 			let prices: any = res.price.replace(/[$.]/g, "");
 			termOfPay.push({
+				id: res.id ? res.id : "",
+				poandsoId: dataSelected.id,
 				limitpay: res.limitpay,
-				percent: parseInt(res.percent),
 				price: parseInt(prices),
+				percent: res.percent,
 				invoice: res.invoice,
 			});
 		});
 		let data = {
-			id_so: payload.idPO,
-			date_prepared: payload.dateOfPO,
+			id: dataSelected.id,
 			your_reff: payload.ref,
-			supplierId: suplierId,
 			note: payload.note,
 			DP: payload.dp,
 			term_of_pay_po_so: termOfPay,
-			detailMrID: null,
-			detailSrID: detail,
 		};
 
 		try {
-			const response = await AddPoMr(data);
+			const response = await EditPoMr(data);
 			if (response.data) {
-				toast.success("Purchase Order Material Request Success", {
+				if (listRemoveTerm.length > 0) {
+					let termOfPayRemove: any = 
+						{
+							termOfPayRemove: listRemoveTerm,
+						}
+					;
+					await DeletePoMr(termOfPayRemove);
+				}
+				toast.success("Edit Purchase Order Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -179,7 +233,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Purchase Order Material Request Failed", {
+			toast.error("Edit Purchase Order Material Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -202,7 +256,6 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 						let total: number = 0;
 						let totalTax: number = 0;
 						let tax: boolean = false;
-                        let taxSo: string = "";
 						let termOfPayment: any = [
 							{
 								limitpay: "Normal",
@@ -216,23 +269,14 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 								detail.push(mr);
 								setCurrency(mr.currency);
 								total = total + mr.total;
-                                if (mr.taxpr === "ppn" || mr.taxpr === "pph" || mr.taxpr === "ppn_and_pph" ) {
+								if (mr.taxpr === "ppn") {
 									tax = true;
-                                    taxSo = mr.taxpr
 								}
 							}
 						});
-						if (tax && taxSo === 'ppn') {
+						if (tax) {
 							totalTax = (total * res.ppn) / 100;
-							setCountTax(`PPN ${res.ppn}`);
-							setTax(formatRupiah(totalTax.toString()));
-						}else if (tax && taxSo === 'pph') {
-							totalTax = (total * res.pph) / 100;
-							setCountTax(`PPH ${res.pph}`);
-							setTax(formatRupiah(totalTax.toString()));
-						}else if (tax && taxSo === 'ppn_and_pph') {
-							totalTax = (total * (res.ppn + res.pph)) / 100;
-							setCountTax(`PPN and PPH ${res.ppn + res.pph}`);
+							setCountTax(res.ppn);
 							setTax(formatRupiah(totalTax.toString()));
 						}
 						let grandTotal: number = total + totalTax;
@@ -282,13 +326,19 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 		return formatRupiah(total.toString());
 	};
 
+	const removeTerm = (id: string) => {
+		let dataRemove: any = listRemoveTerm;
+		dataRemove.push({ id: id });
+		setListRemoveTerm(dataRemove);
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					AddPurchaseOrder(values);
+					editPurchaseOrder(values);
 				}}
 				enableReinitialize
 			>
@@ -309,7 +359,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 									placeholder='ID Purchase'
 									label='ID Purchase'
 									type='text'
-									value={idPR}
+									value={values.idPO}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -323,7 +373,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 									placeholder='Date Of Purchase'
 									label='Date Of Purchase'
 									type='text'
-									value={moment(new Date()).format("DD-MMMM-YYYY")}
+									value={moment(values.dateOfPO).format("DD-MMMM-YYYY")}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -331,30 +381,18 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<Input
 									id='suplier'
 									name='suplier'
 									placeholder='Suplier'
 									label='Suplier'
+									type='text'
+									value={values.supplierId}
+									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose Suplier
-									</option>
-									{listSupplier.length === 0 ? (
-										<option value='no data'>No data</option>
-									) : (
-										listSupplier.map((res: any, i: number) => {
-											return (
-												<option value={res} key={i}>
-													{res}
-												</option>
-											);
-										})
-									)}
-								</InputSelect>
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -470,16 +508,54 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 												>
-													<option value='Normal' selected>
+													<option
+														value='Normal'
+														selected={res.limitpay === "Normal"}
+													>
 														Normal
 													</option>
-													<option value='Down_Payment'>Down Payment</option>
-													<option value='Termin_I'>Termin I</option>
-													<option value='Termin_II'>Termin II</option>
-													<option value='Termin_III'>Termin III</option>
-													<option value='Termin_IV'>Termin IV</option>
-													<option value='Termin_V'>Termin V</option>
-													<option value='Repayment'>Repayment</option>
+													<option
+														value='Down_Payment'
+														selected={res.limitpay === "Down_Payment"}
+													>
+														Down Payment
+													</option>
+													<option
+														value='Termin_I'
+														selected={res.limitpay === "Termin_I"}
+													>
+														Termin I
+													</option>
+													<option
+														value='Termin_II'
+														selected={res.limitpay === "Termin_II"}
+													>
+														Termin II
+													</option>
+													<option
+														value='Termin_III'
+														selected={res.limitpay === "Termin_III"}
+													>
+														Termin III
+													</option>
+													<option
+														value='Termin_IV'
+														selected={res.limitpay === "Termin_IV"}
+													>
+														Termin IV
+													</option>
+													<option
+														value='Termin_V'
+														selected={res.limitpay === "Termin_V"}
+													>
+														Termin V
+													</option>
+													<option
+														value='Repayment'
+														selected={res.limitpay === "Repayment"}
+													>
+														Repayment
+													</option>
 												</InputSelect>
 											</div>
 											<div className='w-full'>
@@ -492,7 +568,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													onChange={(e: any) => {
 														setFieldValue(
 															`termOfPayment.${i}.percent`,
-															e.target.value
+															parseInt(e.target.value)
 														);
 														setFieldValue(
 															`termOfPayment.${i}.price`,
@@ -523,7 +599,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													name={`termOfPayment.${i}.invoice`}
 													placeholder='Refrence'
 													type='text'
-													value={res.ref}
+													value={res.invoice}
 													onChange={(e: any) => {
 														setFieldValue(
 															`termOfPayment.${i}.invoice`,
@@ -544,7 +620,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 																limitPay: "normal",
 																percent: 0,
 																total: 0,
-																invoice: "",
+																Invoice: "",
 															});
 														}}
 													>
@@ -556,6 +632,9 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 														className='inline-flex text-red-500 cursor-pointer text-xl mt-5'
 														onClick={() => {
 															arrayPayment.remove(i);
+															if (res.id !== "") {
+																removeTerm(res.id);
+															}
 														}}
 													>
 														<Trash2 size={22} className='mr-1 mt-1' /> Remove
@@ -570,7 +649,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 						{values.detailMr.map((result: any, i: number) => {
 							return (
 								<Section
-									className='grid md:grid-cols-7 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'
+									className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'
 									key={i}
 								>
 									<div className='w-full'>
@@ -578,7 +657,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 											id='job_no'
 											name='job_no'
 											placeholder='Job No'
-											label='Job No / No SR'
+											label='Job No / No MR'
 											type='text'
 											value={`${result.job_no} / ${result.no_mr}`}
 											disabled={true}
@@ -587,28 +666,14 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-                                    <div className='w-full'>
-										<Input
-											id='part'
-											name='part'
-											placeholder='Part/item'
-											label='Part/item'
-											type='text'
-											value={result.part}
-											disabled={true}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
 									<div className='w-full'>
 										<Input
-											id='service'
-											name='service'
-											placeholder='Service'
-											label='Service'
+											id='material'
+											name='material'
+											placeholder='Material'
+											label='Material'
 											type='text'
-											value={result.service}
+											value={result.material}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -704,7 +769,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>{countTax}%</p>
+										<p className='text-xl mt-4 text-end'>PPN {countTax}%</p>
 									</div>
 									<div className='w-full'>
 										<Input

@@ -12,7 +12,7 @@ import {
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseSr } from "./formCreate";
 import { ViewSoSR } from "./view";
-// import { FormEditPurchaseMr } from "./formEdit";
+import { FormEditPurchaseSr } from "./formEdit";
 import { GetPoMr, SearchPoMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
@@ -277,8 +277,7 @@ export const PurchaseSO = () => {
 							showModal={showModal}
 						/>
 					) : (
-						<></>
-						// <FormEditPurchaseMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditPurchaseSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

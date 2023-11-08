@@ -508,14 +508,14 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											</div>
 											<div className='w-full'>
 												<Input
-													id={`termOfPayment.${i}.ref`}
-													name={`termOfPayment.${i}.ref`}
+													id={`termOfPayment.${i}.invoice`}
+													name={`termOfPayment.${i}.invoice`}
 													placeholder='Refrence'
 													type='text'
 													value={res.ref}
 													onChange={(e: any) => {
 														setFieldValue(
-															`termOfPayment.${i}.ref`,
+															`termOfPayment.${i}.invoice`,
 															e.target.value
 														);
 													}}
@@ -533,7 +533,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																limitPay: "normal",
 																percent: 0,
 																total: 0,
-																Invoice: "",
+																invoice: "",
 															});
 														}}
 													>
