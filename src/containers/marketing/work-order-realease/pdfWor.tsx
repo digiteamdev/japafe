@@ -18,11 +18,11 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			const width = pdf.internal.pageSize.getWidth();
-			const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0, width, height);
-			// window.open(pdf.output("bloburl"), "_blank");
-			pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
+			// const width = pdf.internal.pageSize.getWidth();
+			// const height = pdf.internal.pageSize.getHeight();
+			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
+			window.open(pdf.output("bloburl"), "_blank");
+			// pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
 		});
 	};
 
@@ -91,7 +91,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 										</button>
 									</div>
 									<div
-										className='my-4 mx-40 px-20 border border-black'
+										className='my-4 mx-40 px-20 pb-4'
 										id='divToPrint'
 									>
 										<h1 className='font-bold text-center text-xl my-4'>
@@ -211,16 +211,16 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 										<table className='w-full mb-2'>
 											<thead>
 												<tr>
-													<th className='border border-black border-collapse text-center w-[5%] p-1'>
+													<th className='border border-black border-collapse text-center w-[5%] p-2'>
 														No
 													</th>
-													<th className='border border-black text-center w-[55%] p-1'>
+													<th className='border border-black text-center w-[55%] p-2'>
 														Description
 													</th>
-													<th className='border border-black text-center w-[20%] p-1'>
+													<th className='border border-black text-center w-[20%] p-2'>
 														Qty
 													</th>
-													<th className='border border-black text-center w-[20%] p-1'>
+													<th className='border border-black text-center w-[20%] p-2'>
 														Unit
 													</th>
 												</tr>
@@ -229,16 +229,16 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												{data.customerPo.quotations.Quotations_Detail.map(
 													(res: any, i: number) => (
 														<tr key={i}>
-															<td className='border border-black text-center p-1'>
+															<td className='border border-black text-center p-2'>
 																{i + 1}
 															</td>
-															<td className='border border-black p-1'>
+															<td className='border border-black p-2'>
 																{res.item_of_work}
 															</td>
-															<td className='border border-black text-center p-1'>
+															<td className='border border-black text-center p-2'>
 																{res.volume}
 															</td>
-															<td className='border border-black text-center p-1'>
+															<td className='border border-black text-center p-2'>
 																{res.unit}
 															</td>
 														</tr>
@@ -258,22 +258,22 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 										<table className='w-full mb-2'>
 											<thead>
 												<tr>
-													<th className='border border-black text-center p-1'>
+													<th className='border border-black text-center p-2'>
 														Prepared By
 													</th>
-													<th className='border border-black text-center p-1'>
+													<th className='border border-black text-center p-2'>
 														Check By
 													</th>
-													<th className='border border-black text-center p-1'>
+													<th className='border border-black text-center p-2'>
 														Approved By
 													</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr>
-													<td className='border border-black py-6'></td>
-													<td className='border border-black py-6'></td>
-													<td className='border border-black py-6'></td>
+													<td className='border border-black py-8'></td>
+													<td className='border border-black py-8'></td>
+													<td className='border border-black py-8'></td>
 												</tr>
 											</tbody>
 										</table>

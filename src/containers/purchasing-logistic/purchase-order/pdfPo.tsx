@@ -20,7 +20,8 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			pdf.addImage(imgData, "JPEG", 0, 0);
+			const width = pdf.internal.pageSize.getWidth();
+			pdf.addImage(imgData, "JPEG", 0, 0, width, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Purchase_Order_${data.id_so}.pdf`);
 		});

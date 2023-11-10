@@ -25,9 +25,9 @@ export const PdfDispatch = ({
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", [145, 250]);
-			// const width = pdf.internal.pageSize.getWidth();
+			const width = pdf.internal.pageSize.getWidth();
 			// const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0);
+			pdf.addImage(imgData, "JPEG", 0, 0, width, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Dispatch_${dataDispatch.id_dispatch}.pdf`);
 		});
@@ -107,7 +107,7 @@ export const PdfDispatch = ({
 										</button>
 									</div>
 									<div
-										className='my-4 mx-[270px] px-4 py-4 border border-black'
+										className='my-4 mx-[270px] px-4 py-4'
 										id='divToPrint'
 									>
 										{dataDetail ? (
@@ -195,7 +195,7 @@ export const PdfDispatch = ({
 														</tr>
 													</tbody>
 												</table>
-												<table className='w-full mt-4'>
+												<table className='w-full mt-4 mr-28'>
 													<thead>
 														<tr>
 															<th className='border border-collapse border-black w-[20%] text-center text-sm pb-2'>

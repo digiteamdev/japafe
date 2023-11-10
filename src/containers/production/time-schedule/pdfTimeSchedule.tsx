@@ -35,9 +35,9 @@ export const PdfTimeSchedule = ({
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			const width = pdf.internal.pageSize.getWidth();
-			const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 10, width, 0);
+			// const width = pdf.internal.pageSize.getWidth();
+			// const height = pdf.internal.pageSize.getHeight();
+			pdf.addImage(imgData, "JPEG", 0, 10, 0, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Time_schedulle_${dataSelected.wor.job_no}.pdf`);
 		});

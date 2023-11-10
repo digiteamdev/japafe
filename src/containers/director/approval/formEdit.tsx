@@ -38,6 +38,11 @@ export const FormEditApproval = ({
 			setPosition(positionAkun);
 		}
 		if (dataSelected) {
+			if(dataSelected.idPurchase){
+				setPoSo(false)
+			}else{
+				setPoSo(true)
+			}
 			dataSelected.detailMr.map((res: any) => {
 				if (!dataSuplier.includes(res.supplier.supplier_name)) {
 					dataSuplier.push(res.supplier.supplier_name);

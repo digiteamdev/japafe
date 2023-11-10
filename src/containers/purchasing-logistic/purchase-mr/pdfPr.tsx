@@ -27,7 +27,8 @@ export const PdfPr = ({
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			pdf.addImage(imgData, "JPEG", 0, 0);
+			const width = pdf.internal.pageSize.getWidth();
+			pdf.addImage(imgData, "JPEG", 0, 0, width, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Work_Order_Release_${data.idPurchase}.pdf`);
 		});

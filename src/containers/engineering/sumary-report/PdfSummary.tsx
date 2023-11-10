@@ -19,9 +19,9 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			const width = pdf.internal.pageSize.getWidth();
-			const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0, width, height);
+			// const width = pdf.internal.pageSize.getWidth();
+			// const height = pdf.internal.pageSize.getHeight();
+			pdf.addImage(imgData, "JPEG", 0, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Summary_report_${data.timeschedule.wor.job_no}.pdf`);
 		});
@@ -92,7 +92,7 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 										</button>
 									</div>
 									<div
-										className='my-4 mx-48 px-32 border border-black'
+										className='my-4 mx-48 px-32'
 										id='divToPrint'
 									>
 										{data ? (
@@ -104,10 +104,10 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 															<thead></thead>
 															<tbody>
 																<tr>
-																	<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+																	<td className='w-[50%] bg-gray-300 p-2 border border-gray-200'>
 																		No Job
 																	</td>
-																	<td className='w-[50%] pl-2 border border-gray-200'>
+																	<td className='w-[50%] p-2 border border-gray-200'>
 																		{data.timeschedule.wor.job_no} (
 																		{
 																			data.timeschedule.wor.customerPo.quotations.Customer
@@ -117,7 +117,7 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																	</td>
 																</tr>
 																<tr>
-																	<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+																	<td className='w-[50%] bg-gray-300 p-2 border border-gray-200'>
 																		Description
 																	</td>
 																	<td className='w-[50%] pl-2 border border-gray-200'>
@@ -125,7 +125,7 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																	</td>
 																</tr>
 																<tr>
-																	<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+																	<td className='w-[50%] bg-gray-300 p-2 border border-gray-200'>
 																		Introduction
 																	</td>
 																	<td className='w-[50%] pl-2 border border-gray-200'>
@@ -133,10 +133,10 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 																	</td>
 																</tr>
 																<tr>
-																	<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+																	<td className='w-[50%] bg-gray-300 p-2 border border-gray-200'>
 																		Introduction Image
 																	</td>
-																	<td className='w-[50%] pl-2 border border-gray-200'>
+																	<td className='w-[50%] p-2 border border-gray-200'>
 																		{ data.inimg === null ? null : (
 																			<Image
 																				src={data.inimg}
@@ -159,11 +159,11 @@ export const PdfSummary = ({ isModal, data, showModalPdf }: props) => {
 															? data.srimgdetail.map((res: any, i: number) => {
 																	return (
 																		<div key={i}>
-																			<h1 className='font-bold text-lg'>
+																			<h1 className='font-bold text-lg p-2'>
 																				{i + 1}. {res.name_part}
 																			</h1>
 																			<div className='ml-5'>
-																				<div className='flex w-full mt-2'>
+																				<div className='flex w-full mt-2 p-2'>
 																					{res.imgSummary.length > 0
 																						? res.imgSummary.map(
 																								(resImg: any) => {
