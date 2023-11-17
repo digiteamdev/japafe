@@ -723,7 +723,7 @@ export const FormEditSchedule = ({
 			month.toString() +
 			"/" +
 			"TS-DW/" +
-			Math.floor(Math.random() * 100) +
+			Math.floor(Math.random() * 10000) +
 			1;
 		setIdAutoNum(id);
 	};

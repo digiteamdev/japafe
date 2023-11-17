@@ -99,7 +99,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		var month = dateObj.getUTCMonth() + 1;
 		var year = dateObj.getUTCFullYear();
 		const id =
-			year.toString() + month.toString() + Math.floor(Math.random() * 100) + 1;
+			year.toString() + month.toString() + Math.floor(Math.random() * 10000) + 1;
 		setIdAutoNum(`QU${id}`);
 	};
 

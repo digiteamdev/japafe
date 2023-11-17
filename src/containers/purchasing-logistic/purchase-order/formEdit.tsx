@@ -183,7 +183,7 @@ export const FormEditPurchaseMr = ({
 			"PO" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 1000);
+			Math.floor(Math.random() * 10000);
 		return id;
 	};
 

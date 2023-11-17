@@ -114,7 +114,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			"PR" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 1000);
+			Math.floor(Math.random() * 10000);
 		return id;
 	};
 

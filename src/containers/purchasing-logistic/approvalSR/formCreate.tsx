@@ -101,7 +101,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 			"SA" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 100);
+			Math.floor(Math.random() * 10000);
 		return id;
 	};
 

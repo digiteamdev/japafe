@@ -129,7 +129,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 			"SO" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 1000);
+			Math.floor(Math.random() * 10000);
 		return id;
 	};
 
@@ -509,7 +509,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													id={`termOfPayment.${i}.price`}
 													name={`termOfPayment.${i}.price`}
 													placeholder='total'
-													type='number'
+													type='text'
 													value={res.price}
 													disabled={true}
 													required={true}
@@ -541,7 +541,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 														className='inline-flex text-green-500 mr-6 mt-5 text-xl cursor-pointer'
 														onClick={() => {
 															arrayPayment.push({
-																limitPay: "normal",
+																limitpay: "Normal",
 																percent: 0,
 																total: 0,
 																invoice: "",

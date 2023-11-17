@@ -7,9 +7,11 @@ import {
 	InputSelect,
 } from "../../../components";
 import { Formik, Form } from "formik";
-import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
-import { GetPurchaseReceive } from "../../../services";
+import { kontraBonSchema } from "../../../schema/finance-accounting/kontra-bon/kontrabonSchema";
+import { GetReceive, AddKontraBon } from "../../../services";
 import { toast } from "react-toastify";
+import moment from "moment";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -17,29 +19,161 @@ interface props {
 }
 
 interface data {
-	name: string;
+	termId: string;
+	poandsoId: string;
+	id_kontrabon: string;
+	account_name: string;
+	tax_prepered: any;
+	due_date: any;
+	invoice: string;
+	DO: string;
+	grandtotal: number;
+	tax_invoice: boolean;
 }
 
 export const FormCreateKontraBon = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [dataPurchase, setDataPurchase] = useState<any>([]);
+	const [dataAccBank, setDataAccBank] = useState<any>([]);
+	const [idKontraBon, setIdKontraBon] = useState<string>("");
+	const [suplier, setSuplier] = useState<string>("");
+	const [termOfPayment, setTermOfPayment] = useState<string>("");
+	const [billAmount, setBillAmount] = useState<number>(0);
+	const [billPaid, setBillPaid] = useState<number>(0);
+	const [percent, setPercent] = useState<number>(0);
+	const [tax, setTax] = useState<string>("");
+	const [ppn, setPpn] = useState<number>(0);
+	const [pph, setPph] = useState<number>(0);
+	const [disc, setDisc] = useState<number>(0);
+	const [payTax, setPayTax] = useState<boolean>(true);
+	const [cashAdv, setCashAdv] = useState<string>("");
+	const [bankName, setBankName] = useState<string>("");
+	const [accName, setAccName] = useState<string>("");
+	const [accNo, setAccNo] = useState<string>("");
+	const [totalAmount, setTotalAmount] = useState<number>(0);
 	const [data, setData] = useState<data>({
-		name: "",
+		termId: "",
+		poandsoId: "",
+		id_kontrabon: "",
+		account_name: "",
+		tax_prepered: new Date(),
+		due_date: new Date(),
+		invoice: "",
+		DO: "",
+		grandtotal: 0,
+		tax_invoice: true,
 	});
 
 	useEffect(() => {
 		getPurchase();
+		generateIdNum();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id =
+			"KB" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 10000);
+		setIdKontraBon(id);
+	};
+
 	const getPurchase = async () => {
 		setIsLoading(true);
+		let data: any = [];
 		try {
-			const response = await GetPurchaseReceive();
+			const response = await GetReceive();
 			if (response.data) {
-				console.log(response.data);
+				response.data.result.map((res: any) => {
+					data.push({
+						label: res.id_so,
+						value: res,
+					});
+				});
+				setDataPurchase(data);
 			}
 		} catch (error: any) {
-			// setData([]);
+			setDataPurchase(data);
+		}
+		setIsLoading(false);
+	};
+
+	const selectPO = (data: any) => {
+		let disc: number = 0;
+		let ppn: number = 0;
+		let pph: number = 0;
+		let bill: number = 0;
+		let dataAcc: any = [];
+		let hasTax: boolean = false;
+		let taxType: string = "";
+		data.detailMr.map((res: any) => {
+			disc = disc + res.disc;
+			bill = bill + res.total;
+			if (!hasTax) {
+				if (res.taxpr !== "non_tax") {
+					hasTax = true;
+					taxType = res.taxpr;
+				}
+			}
+		});
+		data.supplier?.SupplierBank.map((bank: any) => {
+			dataAcc.push({
+				label: `${bank.account_name} - ${bank.bank_name}`,
+				value: bank,
+			});
+		});
+		if (taxType === "ppn") {
+			ppn = (bill * data.supplier.ppn) / 100;
+			setTotalAmount(data.term_of_pay_po_so[0].price + ppn);
+		} else {
+			setTotalAmount(data.term_of_pay_po_so[0].price);
+		}
+		setTax(taxType);
+		setPayTax(true);
+		setPpn(ppn);
+		setDataAccBank(dataAcc);
+		setBillAmount(bill);
+		setDisc(disc);
+		setSuplier(data.supplier.supplier_name);
+		setBillPaid(data.term_of_pay_po_so[0].price);
+		setPercent(data.term_of_pay_po_so[0].percent);
+		setTermOfPayment(
+			`${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
+		);
+	};
+
+	const addKontraBon = async (payload: any) => {
+		setIsLoading(true);
+		try {
+			const response = await AddKontraBon(payload);
+			if (response) {
+				toast.success("Add Kontra Bon Success", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			}
+		} catch (error) {
+			toast.error("Add Kontra Bon Failed", {
+				position: "top-center",
+				autoClose: 1000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
 		}
 		setIsLoading(false);
 	};
@@ -48,34 +182,37 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
-				validationSchema={activitySchema}
+				// validationSchema={kontraBonSchema}
 				onSubmit={(values) => {
-					console.log(values);
+					addKontraBon(values);
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({
+					handleChange,
+					setFieldValue,
+					handleSubmit,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
-									id='name'
-									name='name'
-									placeholder='Id'
-									label='Id'
+									id='id'
+									name='id'
+									placeholder='Id Kontra Bon'
+									label='Id Kontra Bon'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={idKontraBon}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-								{errors.name && touched.name ? (
-									<span className='text-red-500 text-xs'>{errors.name}</span>
-								) : null}
 							</div>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='name'
 									name='name'
@@ -83,34 +220,31 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Date'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={moment(new Date()).format('DD-MMMM-YYYY')}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-								{errors.name && touched.name ? (
-									<span className='text-red-500 text-xs'>{errors.name}</span>
-								) : null}
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
-									datas={[]}
+									datas={dataPurchase}
 									id='job_no'
 									name='job_no'
 									placeholder='Job No'
 									label='Job No'
 									onChange={(e: any) => {
-										// getCity(e.value);
-										// setFieldValue("province", e.value);
+										console.log(e.value)
+										selectPO(e.value);
+										setFieldValue("id_kontrabon", idKontraBon);
+										setFieldValue("poandsoId", e.value.id);
+										setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='suplier'
@@ -119,13 +253,14 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Suplier/Vendor'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={suplier}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='invoice'
@@ -136,28 +271,26 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={isLoading}
 									withLabel={true}
-									value={values.name}
+									value={values.invoice}
 									onChange={handleChange}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
 							<div className='w-full'>
 								<Input
-									id='do'
-									name='do'
+									id='DO'
+									name='DO'
 									placeholder='DO'
 									label='DO'
 									type='text'
 									required={true}
 									disabled={isLoading}
 									withLabel={true}
-									value={values.name}
+									value={values.DO}
 									onChange={handleChange}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='term'
@@ -166,10 +299,25 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Term Of Condition'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={termOfPayment}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='billPaid'
+									name='billPaid'
+									placeholder='Bill Paid'
+									label={`Bill Paid ${percent}%`}
+									type='text'
+									required={true}
+									disabled={true}
+									withLabel={true}
+									value={formatRupiah(billPaid.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -177,14 +325,43 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								<Input
 									id='bill'
 									name='bill'
-									placeholder='Bill Amount'
-									label='Bill Amount'
+									placeholder='Total Bill Amount'
+									label='Total Bill Amount'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={formatRupiah(billAmount.toString())}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='PPN'
+									name='PPN'
+									placeholder='PPN'
+									label='PPN'
+									type='text'
+									required={true}
+									disabled={true}
+									withLabel={true}
+									value={formatRupiah(ppn.toString())}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='PPH'
+									name='PPH'
+									placeholder='PPH'
+									label='PPH'
+									type='text'
+									required={true}
+									disabled={true}
+									withLabel={true}
+									value={formatRupiah(pph.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -196,63 +373,27 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Discount'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={formatRupiah(disc.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputDate
+									id='dueDate'
+									label='Pay Date'
+									value={values.due_date}
+									minDate={new Date()}
+									onChange={(value: any) => setFieldValue("due_date", value)}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='PPN'
-									name='PPN'
-									placeholder='PPN'
-									label='PPN'
-									type='text'
-									required={true}
-									disabled={isLoading}
-									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='PPH'
-									name='PPH'
-									placeholder='PPH'
-									label='PPH'
-									type='text'
-									required={true}
-									disabled={isLoading}
-									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='Installment'
-									name='Installment'
-									placeholder='Installment'
-									label='Installment'
-									type='text'
-									required={true}
-									disabled={isLoading}
-									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='cash ADV'
 									name='cash ADV'
@@ -260,41 +401,78 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Cash ADV'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
 									value={values.name}
-									onChange={handleChange}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='payDate'
-									label='PayDate'
-									value={new Date()}
-									// onChange={(value: any) => setFieldValue("birth_date", value)}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelect
 									id='tax'
 									name='tax'
 									placeholder='Pay Tax'
 									label='Pay Tax'
-									// value={values.gender}
-									onChange={handleChange}
+									onChange={(e: any) => {
+										if (e.target.value === "yes") {
+											setFieldValue("tax_invoice", true);
+											setPayTax(true);
+											if (tax === "ppn") {
+												setTotalAmount(billPaid + ppn);
+												setFieldValue("grandtotal", billPaid + ppn);
+											} else {
+												setTotalAmount(billPaid);
+												setFieldValue("grandtotal", billPaid);
+											}
+										} else {
+											setPayTax(false);
+											setTotalAmount(billPaid);
+											setFieldValue("tax_invoice", false);
+											setFieldValue("grandtotal", billPaid);
+										}
+									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option defaultValue='yes' selected>
+									<option value='yes' selected>
 										Pay With Tax
 									</option>
 									<option value='no'>Pay No Tax</option>
 								</InputSelect>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='totalAmount'
+									name='totalAmount'
+									placeholder='Total Amount'
+									label='Total Amount'
+									type='text'
+									required={true}
+									disabled={true}
+									withLabel={true}
+									value={formatRupiah(totalAmount.toString())}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={dataAccBank}
+									id='account_namec'
+									name='account_name'
+									placeholder='Acc Name'
+									label='Acc Name'
+									onChange={(e: any) => {
+										setFieldValue("account_name", e.value.id);
+										setFieldValue("grandtotal", totalAmount);
+										setBankName(e.value.bank_name);
+										setAccName(e.value.account_name);
+										setAccNo(e.value.rekening);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
@@ -306,10 +484,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Bank Name'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={bankName}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -321,10 +498,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Account Name'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={accName}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -336,43 +512,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='Account Number'
 									type='text'
 									required={true}
-									disabled={isLoading}
+									disabled={true}
 									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelectSearch
-									datas={[]}
-									id='acc'
-									name='acc'
-									placeholder='Acc Name'
-									label='Acc Name'
-									onChange={(e: any) => {
-										// getCity(e.value);
-										// setFieldValue("province", e.value);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='totalAmount'
-									name='totalAmount'
-									placeholder='Total Amount'
-									label='Total Amount'
-									type='text'
-									required={true}
-									disabled={isLoading}
-									withLabel={true}
-									value={values.name}
-									onChange={handleChange}
+									value={accNo}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>

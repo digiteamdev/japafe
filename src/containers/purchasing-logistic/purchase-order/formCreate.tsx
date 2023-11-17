@@ -128,7 +128,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			"PO" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 1000);
+			Math.floor(Math.random() * 10000);
 		return id;
 	};
 
@@ -439,6 +439,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							name='termOfPayment'
 							render={(arrayPayment) => {
 								return values.termOfPayment.map((res: any, i: number) => {
+									console.log(res)
 									return (
 										<Section
 											className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'
@@ -498,7 +499,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													id={`termOfPayment.${i}.price`}
 													name={`termOfPayment.${i}.price`}
 													placeholder='total'
-													type='number'
+													type='text'
 													value={res.price}
 													disabled={true}
 													required={true}
@@ -530,7 +531,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														className='inline-flex text-green-500 mr-6 mt-5 text-xl cursor-pointer'
 														onClick={() => {
 															arrayPayment.push({
-																limitPay: "normal",
+																limitpay: "Normal",
 																percent: 0,
 																total: 0,
 																invoice: "",

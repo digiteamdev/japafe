@@ -3,7 +3,6 @@ import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
-	GetAllMRPo,
 	GetAllCoa,
 	EditPrMr,
 } from "../../../services";
@@ -47,7 +46,6 @@ export const FormEditPurchaseMr = ({
 		if (idUser !== undefined) {
 			setUserId(idUser);
 		}
-		setIdPR(generateIdNum());
 		getSupplier();
 		// getMrPo();
 		getCoa();
@@ -85,41 +83,6 @@ export const FormEditPurchaseMr = ({
 		});
 	};
 
-	const getMrPo = async () => {
-		try {
-			const response = await GetAllMRPo("PO");
-			if (response) {
-				let detail: any = [];
-				response.data.result.map((res: any, i: number) => {
-					detail.push({
-						id: res.id,
-						supId: res.supId,
-						taxpr: res.taxpr,
-						akunId: res.akunId,
-						disc: res.disc,
-						currency: "IDR",
-						total: res.Material_Stock.harga * res.qtyAppr,
-						material: res.Material_Stock.spesifikasi,
-						qty: res.qtyAppr,
-						note: res.note,
-						price: res.Material_Stock.harga,
-						job_no: res.mr.wor.job_operational
-							? res.mr.wor.job_no_mr
-							: res.mr.wor.job_no,
-					});
-				});
-				setData({
-					dateOfPurchase: new Date(),
-					idPurchase: generateIdNum(),
-					detailMr: detail,
-				});
-				setListMr(response.data.result);
-			}
-		} catch (error) {
-			setListMr([]);
-		}
-	};
-
 	const getCoa = async () => {
 		try {
 			const response = await GetAllCoa();
@@ -138,18 +101,6 @@ export const FormEditPurchaseMr = ({
 				setListSupplier(response.data.result);
 			}
 		} catch (error) {}
-	};
-
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"PR" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 1000);
-		return id;
 	};
 
 	const totalHarga = (harga: number, qty: number, disc: number) => {

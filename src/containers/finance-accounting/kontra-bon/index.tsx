@@ -13,28 +13,22 @@ import {
 import { Tag, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateKontraBon } from "./formCreate";
 import {
-	GetActivity,
+	GetKontraBon,
 	DeleteActivity,
 	SearchActivity
 } from "../../../services";
 import { toast } from "react-toastify";
-// import { ViewActivity } from './view';
+import moment from "moment";
+import { formatRupiah } from "@/src/utils";
+import { ViewKontraBon } from './view';
 // import { FormEditActivity } from "./formEdit";
-
-interface data {
-	id: string;
-	name: string;
-	createdAt: string;
-	updatedAt: string;
-	deleted: string;
-}
 
 export const KontraBon = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
-	const [data, setData] = useState<data[]>([]);
+	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [page, setPage] = useState<number>(1);
@@ -42,13 +36,17 @@ export const KontraBon = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
-		{ name: "Activity Name" },
+		{ name: "ID" },
+		{ name: "Purchase ID" },
+		{ name: "Pay Date" },
+		{ name: "Description" },
+		{ name: "Recipient" },
+		{ name: "Value" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getActivity(page, perPage);
+		getKontraBon(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -59,14 +57,14 @@ export const KontraBon = () => {
 			setDataSelected(false)
 		}
 		if(reload){
-			getActivity(page, perPage);
+			getKontraBon(page, perPage);
 		}
 	};
 
-	const getActivity = async (page: number, limit: number) => {
+	const getKontraBon = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetActivity(page, limit);
+			const response = await GetKontraBon(page, limit);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -115,7 +113,7 @@ export const KontraBon = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getActivity(1, 10);
+				getKontraBon(1, 10);
 			} else {
 				toast.error("Delete Worker Center Failed", {
 					position: "top-center",
@@ -192,46 +190,57 @@ export const KontraBon = () => {
 							</td>
 						</tr>
 					) : (
-						data.map((res, i) => {
+						data.map((res:any, i: number) => {
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4 w-[5%]'>
-								// 		{i + 1}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4 w-[80%]'>
-								// 		{res.name}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
-								// 		<div>
-								// 			<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 			onClick={ () => {
-								// 				setDataSelected(res);
-								// 				showModal(true,'view', false);
-								// 			}}>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 			<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-								// 			onClick={ () => {
-								// 				setDataSelected(res);
-								// 				showModal(true,'edit', false);
-								// 			}}>
-								// 				<Edit color='white' />
-								// 			</Button>
-								// 			<Button 
-								// 				className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-								// 				onClick={ () => {
-								// 					setDataSelected(res);
-								// 					showModal(true,'delete', false);
-								// 				}}>
-								// 				<Trash2 color='white' />
-								// 			</Button>
-								// 		</div>
-								// 	</td>
-								// </tr>
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.id_kontrabon}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.term_of_pay_po_so.poandso.id_so}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{moment(res.due_date).format('DD-MMM-YYYY')}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.term_of_pay_po_so.poandso.note}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.term_of_pay_po_so.poandso.supplier.supplier_name}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{formatRupiah(res.grandtotal.toString())}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										<div>
+											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											onClick={ () => {
+												setDataSelected(res);
+												showModal(true,'view', false);
+											}}>
+												<Eye color='white' />
+											</Button>
+											{/* <Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+											onClick={ () => {
+												setDataSelected(res);
+												showModal(true,'edit', false);
+											}}>
+												<Edit color='white' />
+											</Button>
+											<Button 
+												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												onClick={ () => {
+													setDataSelected(res);
+													showModal(true,'delete', false);
+												}}>
+												<Trash2 color='white' />
+											</Button> */}
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -245,7 +254,7 @@ export const KontraBon = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getActivity(value, perPage);
+								getKontraBon(value, perPage);
 							}}
 						/>
 					) : null
@@ -268,8 +277,7 @@ export const KontraBon = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-                            <></>
-							// <ViewActivity dataSelected={dataSelected} />
+							<ViewKontraBon dataSelected={dataSelected} />
 						) :  modalContent === 'edit' ? (
 							<></>
                             // <FormEditActivity content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

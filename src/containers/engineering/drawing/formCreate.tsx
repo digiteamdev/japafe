@@ -63,7 +63,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 			"DRW" +
 			year.toString() +
 			month.toString() +
-			Math.floor(Math.random() * 100) +
+			Math.floor(Math.random() * 10000) +
 			1;
 		return id;
 	};
