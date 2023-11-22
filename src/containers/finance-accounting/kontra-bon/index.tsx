@@ -14,14 +14,14 @@ import { Tag, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateKontraBon } from "./formCreate";
 import {
 	GetKontraBon,
-	DeleteActivity,
-	SearchActivity
+	DeleteKontraBon,
+	SearchKontraBon
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
 import { ViewKontraBon } from './view';
-// import { FormEditActivity } from "./formEdit";
+import { FormEditKontraBon } from "./formEdit";
 
 export const KontraBon = () => {
 	const router = useRouter();
@@ -81,14 +81,14 @@ export const KontraBon = () => {
 		setIsLoading(false);
 	};
 
-	const searchActivity = async (
+	const searchKontraBon = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchActivity(page, limit, search);
+			const response = await SearchKontraBon(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -99,9 +99,9 @@ export const KontraBon = () => {
 		}
 	};
 
-	const deleteActivity = async (id: string) => {
+	const deleteKontraBon = async (id: string) => {
 		try {
-			const response = await DeleteActivity(id);
+			const response = await DeleteKontraBon(id);
 			if (response.status === 201) {
 				toast.success("Delete Worker Center Success", {
 					position: "top-center",
@@ -152,7 +152,7 @@ export const KontraBon = () => {
 				title='Kontra Bon'
 				print={true}
 				showModal={showModal}
-				search={searchActivity}
+				search={searchKontraBon}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -223,21 +223,25 @@ export const KontraBon = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											{/* <Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'edit', false);
-											}}>
-												<Edit color='white' />
-											</Button>
-											<Button 
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={ () => {
-													setDataSelected(res);
-													showModal(true,'delete', false);
-												}}>
-												<Trash2 color='white' />
-											</Button> */}
+											{ res.status_valid ? null : (
+												<>
+													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={ () => {
+														setDataSelected(res);
+														showModal(true,'edit', false);
+													}}>
+														<Edit color='white' />
+													</Button>
+													<Button 
+														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+														onClick={ () => {
+															setDataSelected(res);
+															showModal(true,'delete', false);
+														}}>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) }
 										</div>
 									</td>
 								</tr>
@@ -267,7 +271,7 @@ export const KontraBon = () => {
 						isModal={isModal}
 						content={modalContent}
 						showModal={showModal}
-						onDelete={deleteActivity}
+						onDelete={deleteKontraBon}
 					/>
 				) : (
 					<Modal
@@ -277,10 +281,9 @@ export const KontraBon = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<ViewKontraBon dataSelected={dataSelected} />
+							<ViewKontraBon dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 						) :  modalContent === 'edit' ? (
-							<></>
-                            // <FormEditActivity content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                            <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						) : (
 							<FormCreateKontraBon content={modalContent} showModal={showModal}/>
 						)}

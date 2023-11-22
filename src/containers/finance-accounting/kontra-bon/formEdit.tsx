@@ -8,13 +8,14 @@ import {
 } from "../../../components";
 import { Formik, Form } from "formik";
 import { kontraBonSchema } from "../../../schema/finance-accounting/kontra-bon/kontrabonSchema";
-import { GetReceive, AddKontraBon } from "../../../services";
+import { GetReceive, EditKontraBon } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
+	dataSelected: any;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
@@ -29,12 +30,20 @@ interface data {
 	DO: string;
 	grandtotal: number;
 	tax_invoice: boolean;
+	suplier: string;
+	termOfPay: string;
+	billpaid: number;
 }
 
-export const FormCreateKontraBon = ({ content, showModal }: props) => {
+export const FormEditKontraBon = ({
+	dataSelected,
+	content,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [dataPurchase, setDataPurchase] = useState<any>([]);
 	const [dataAccBank, setDataAccBank] = useState<any>([]);
+	const [bankSelected, setBankSelected] = useState<any>([]);
 	const [idKontraBon, setIdKontraBon] = useState<string>("");
 	const [suplier, setSuplier] = useState<string>("");
 	const [termOfPayment, setTermOfPayment] = useState<string>("");
@@ -62,13 +71,83 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		DO: "",
 		grandtotal: 0,
 		tax_invoice: true,
+		suplier: "",
+		termOfPay: "",
+		billpaid: 0,
 	});
 
 	useEffect(() => {
 		getPurchase();
 		generateIdNum();
+		settingData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const settingData = () => {
+		let disc: number = 0;
+		let ppn: number = 0;
+		let pph: number = 0;
+		let bill: number = 0;
+		let dataAcc: any = [];
+		let hasTax: boolean = false;
+		let taxType: string = "";
+		dataSelected.term_of_pay_po_so.poandso.detailMr.map((res: any) => {
+			disc = disc + res.disc;
+			bill = bill + res.total;
+			if (!hasTax) {
+				if (res.taxpr !== "non_tax") {
+					hasTax = true;
+					taxType = res.taxpr;
+				}
+			}
+		});
+		dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
+			(bank: any) => {
+				dataAcc.push({
+					label: `${bank.account_name} - ${bank.bank_name}`,
+					value: bank,
+				});
+			}
+		);
+		if (taxType === "ppn") {
+			if (dataSelected.term_of_pay_po_so.tax_invoice) {
+				ppn =
+					(bill * dataSelected.term_of_pay_po_so.poandso.supplier.ppn) / 100;
+				setTotalAmount(dataSelected.term_of_pay_po_so.price + ppn);
+			} else {
+				setTotalAmount(dataSelected.term_of_pay_po_so.price);
+			}
+		} else {
+			setTotalAmount(dataSelected.term_of_pay_po_so.price);
+		}
+		setBankSelected({
+			label: `${dataSelected.SupplierBank.account_name} - ${dataSelected.SupplierBank.bank_name}`,
+			value: dataSelected.SupplierBank,
+		});
+		setPercent(dataSelected.term_of_pay_po_so.percent);
+		setBillAmount(bill);
+		setDisc(disc);
+		setPpn(ppn);
+		setDataAccBank(dataAcc);
+		setBankName(dataSelected.SupplierBank.bank_name);
+		setAccName(dataSelected.SupplierBank.account_name);
+		setAccNo(dataSelected.SupplierBank.rekening);
+		setData({
+			termId: dataSelected.termId,
+			poandsoId: dataSelected.term_of_pay_po_so.poandso.id_so,
+			suplier: dataSelected.term_of_pay_po_so.poandso.supplier.supplier_name,
+			termOfPay: `${dataSelected.term_of_pay_po_so.limitpay} (${dataSelected.term_of_pay_po_so.percent}%)`,
+			billpaid: dataSelected.term_of_pay_po_so.price,
+			id_kontrabon: dataSelected.id_kontrabon,
+			account_name: dataSelected.account_name,
+			tax_prepered: dataSelected.tax_prepered,
+			due_date: dataSelected.due_date,
+			invoice: dataSelected.invoice,
+			DO: dataSelected.DO,
+			grandtotal: dataSelected.grandtotal,
+			tax_invoice: dataSelected.tax_invoice,
+		});
+	};
 
 	const generateIdNum = () => {
 		var dateObj = new Date();
@@ -102,60 +181,18 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-	const selectPO = (data: any) => {
-		let disc: number = 0;
-		let ppn: number = 0;
-		let pph: number = 0;
-		let bill: number = 0;
-		let dataAcc: any = [];
-		let hasTax: boolean = false;
-		let taxType: string = "";
-		data.detailMr.map((res: any) => {
-			disc = disc + res.disc;
-			bill = bill + res.total;
-			if (!hasTax) {
-				if (res.taxpr !== "non_tax") {
-					hasTax = true;
-					taxType = res.taxpr;
-				}
-			}
-		});
-		data.supplier?.SupplierBank.map((bank: any) => {
-			dataAcc.push({
-				label: `${bank.account_name} - ${bank.bank_name}`,
-				value: bank,
-			});
-		});
-		if (taxType === "ppn") {
-			ppn = (bill * data.supplier.ppn) / 100;
-			if(data.term_of_pay_po_so[0].tax_invoice){
-				setTotalAmount(data.term_of_pay_po_so[0].price);
-			}else{
-				setTotalAmount(data.term_of_pay_po_so[0].price + ppn);
-			}
-		} else {
-			setTotalAmount(data.term_of_pay_po_so[0].price);
-		}
-		
-		setTax(taxType);
-		setPpn(ppn);
-		setDataAccBank(dataAcc);
-		setBillAmount(bill);
-		setDisc(disc);
-		setSuplier(data.supplier.supplier_name);
-		setBillPaid(data.term_of_pay_po_so[0].price);
-		setPercent(data.term_of_pay_po_so[0].percent);
-		setTermOfPayment(
-			`${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
-		);
-	};
-
-	const addKontraBon = async (payload: any) => {
+	const editKontraBon = async (payload: any) => {
 		setIsLoading(true);
+		const body = {
+			account_name: payload.account_name,
+			due_date: payload.due_date,
+			invoice: payload.invoice,
+			DO: payload.DO,
+		};
 		try {
-			const response = await AddKontraBon(payload);
+			const response = await EditKontraBon(dataSelected.id,body);
 			if (response) {
-				toast.success("Add Kontra Bon Success", {
+				toast.success("Edit Kontra Bon Success", {
 					position: "top-center",
 					autoClose: 1000,
 					hideProgressBar: true,
@@ -168,7 +205,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Kontra Bon Failed", {
+			toast.error("Edit Kontra Bon Failed", {
 				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: true,
@@ -181,14 +218,14 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-	console.log(payTax)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
 				initialValues={data}
 				// validationSchema={kontraBonSchema}
 				onSubmit={(values) => {
-					addKontraBon(values);
+					editKontraBon(values);
 				}}
 				enableReinitialize
 			>
@@ -212,25 +249,25 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={idKontraBon}
+									value={values.id_kontrabon}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							{/* <div className='w-full'>
+							<div className='w-full'>
 								<Input
-									id='name'
-									name='name'
-									placeholder='Date'
-									label='Date'
+									id='Id Purchase'
+									name='Id Purchase'
+									placeholder='Id Purchase'
+									label='Id Purchase'
 									type='text'
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={moment(new Date()).format('DD-MMMM-YYYY')}
+									value={values.poandsoId}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div> */}
-							<div className='w-full'>
+							</div>
+							{/* <div className='w-full'>
 								<InputSelectSearch
 									datas={dataPurchase}
 									id='job_no'
@@ -238,19 +275,8 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									placeholder='Job No'
 									label='Job No'
 									onChange={(e: any) => {
+										console.log(e.value);
 										selectPO(e.value);
-										if(e.value.term_of_pay_po_so[0].tax_invoice){
-											setFieldValue("tax_invoice", false);
-											setPayTax(true)
-										}else{
-											if(e.value.term_of_pay_po_so[0].status){
-												setFieldValue("tax_invoice", true);
-												setPayTax(true)
-											}else{
-												setFieldValue("tax_invoice", true);
-												setPayTax(false)
-											}
-										}
 										setFieldValue("id_kontrabon", idKontraBon);
 										setFieldValue("poandsoId", e.value.id);
 										setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
@@ -259,7 +285,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<Input
 									id='suplier'
@@ -270,7 +296,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={suplier}
+									value={values.suplier}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -316,7 +342,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={termOfPayment}
+									value={values.termOfPay}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -332,7 +358,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(billPaid.toString())}
+									value={formatRupiah(values.billpaid.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -360,7 +386,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={ values.tax_invoice ? formatRupiah(ppn.toString()) : '0'}
+									value={formatRupiah(ppn.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -407,7 +433,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							{/* <div className='w-full'>
 								<Input
 									id='cash ADV'
@@ -422,7 +448,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div> */}
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<InputSelect
 									id='tax'
 									name='tax'
@@ -431,6 +457,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									onChange={(e: any) => {
 										if (e.target.value === "yes") {
 											setFieldValue("tax_invoice", true);
+											setPayTax(true);
 											if (tax === "ppn") {
 												setTotalAmount(billPaid + ppn);
 												setFieldValue("grandtotal", billPaid + ppn);
@@ -439,22 +466,22 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 												setFieldValue("grandtotal", billPaid);
 											}
 										} else {
+											setPayTax(false);
 											setTotalAmount(billPaid);
 											setFieldValue("tax_invoice", false);
 											setFieldValue("grandtotal", billPaid);
 										}
 									}}
-									disabled={payTax}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option value='yes' selected={values.tax_invoice}>
+									<option value='yes' selected>
 										Pay With Tax
 									</option>
-									<option value='no' selected={!values.tax_invoice}>Pay No Tax</option>
+									<option value='no'>Pay No Tax</option>
 								</InputSelect>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<Input
 									id='totalAmount'
@@ -482,7 +509,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 										setBankName(e.value.bank_name);
 										setAccName(e.value.account_name);
 										setAccNo(e.value.rekening);
+										setBankSelected(e);
 									}}
+									value={bankSelected}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
