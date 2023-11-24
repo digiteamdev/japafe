@@ -276,21 +276,23 @@ export const PdfPr = ({
 																				</p>
 																			</td>
 																		</tr>
-																		<tr>
-																			<td
-																				className='border-black border-t border-l  text-right pr-4 mb-1'
-																				colSpan={7}
-																			>
-																				<p className='mb-1'>
-																					{Ppn(res, "ppn")}
-																				</p>
-																			</td>
-																			<td className='border-black border-t border-l border-r text-center mb-1'>
-																				<p className='mb-1'>
-																					{formatRupiah(Ppn(res, "total"))}
-																				</p>
-																			</td>
-																		</tr>
+																		{ data.taxPsrDmr === 'ppn' ? (
+																			<tr>
+																				<td
+																					className='border-black border-t border-l  text-right pr-4 mb-1'
+																					colSpan={7}
+																				>
+																					<p className='mb-1'>
+																						{Ppn(res, "ppn")}
+																					</p>
+																				</td>
+																				<td className='border-black border-t border-l border-r text-center mb-1'>
+																					<p className='mb-1'>
+																						{formatRupiah(Ppn(res, "total"))}
+																					</p>
+																				</td>
+																			</tr>
+																		) : null }
 																		<tr>
 																			<td
 																				className='border-black border-t border-l border-b text-right pr-4 mb-1'

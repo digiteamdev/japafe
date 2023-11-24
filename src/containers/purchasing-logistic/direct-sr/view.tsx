@@ -13,8 +13,8 @@ interface props {
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
-
 export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
+	
 	const [dataSuplier, setDataSuplier] = useState<any>([]);
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataPPN, setDataPPN] = useState<any>([]);
@@ -55,55 +55,6 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 		return jumlahTotal.toString();
 	};
 
-	const price = (total: number, disc: number) => {
-		let priceSr: number = total + disc;
-		return priceSr.toString();
-	};
-
-	const Ppn = (suplier: string, type: string) => {
-		let supplierTaxPercen: number = 0;
-		let supplierTax: string = "";
-		let totalBayar: any = Total(suplier);
-		if (type !== "total") {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					if (fil.tax === "ppn") {
-						supplierTaxPercen = fil.ppn;
-					} else if (fil.tax === "pph") {
-						supplierTaxPercen = fil.pph;
-					} else {
-						supplierTaxPercen = fil.ppn + fil.pph;
-					}
-					supplierTax = fil.tax;
-				}
-			});
-			if (supplierTax === "nontax") {
-				return "Non Tax";
-			} else {
-				return `${supplierTax} ${supplierTaxPercen} %`;
-			}
-		} else {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					if (fil.tax === "ppn") {
-						supplierTaxPercen = fil.ppn;
-					} else if (fil.tax === "pph") {
-						supplierTaxPercen = fil.pph;
-					} else {
-						supplierTaxPercen = fil.ppn + fil.pph;
-					}
-					supplierTax = fil.tax;
-				}
-			});
-			if (supplierTax === "nontax") {
-				return "0";
-			} else {
-				let totalPPN: any = (totalBayar * supplierTaxPercen) / 100;
-				return Math.ceil(totalPPN).toString();
-			}
-		}
-	};
-
 	const jumlahTax = (suplier: string, ppn: number, pph: number) => {
 		let totalBayar: any = Total(suplier);
 		if (ppn !== 0) {
@@ -117,8 +68,19 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 
 	const grandTotal = (suplier: string, ppn: any, pph: any) => {
 		let totalBayar: any = Total(suplier);
-		let total: any = parseInt(totalBayar) + parseInt(ppn) + parseInt(pph);
-		return formatRupiah(total.toString());
+		if(dataSelected.taxPsrDmr === 'ppn'){
+			let total: any = parseInt(totalBayar) + parseInt(ppn);
+			return formatRupiah(total.toString());
+		}else if(dataSelected.taxPsrDmr === 'pph'){
+			let total: any = parseInt(totalBayar) + parseInt(pph);
+			return formatRupiah(total.toString());
+		}else if(dataSelected.taxPsrDmr === 'ppn_and_pph'){
+			let total: any = parseInt(totalBayar) + parseInt(ppn) + parseInt(pph);
+			return formatRupiah(total.toString());
+		}else{
+			let total: any = parseInt(totalBayar);
+			return formatRupiah(total.toString());
+		}
 	};
 
 	const approve = async (status: boolean) => {
@@ -361,13 +323,13 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																				className='border border-black text-right pr-4'
 																				colSpan={7}
 																			>
-																				Total
+																				Total ({dataSelected.currency})
 																			</td>
 																			<td className='border border-black text-center'>
 																				{formatRupiah(Total(res))}
 																			</td>
 																		</tr>
-																		{result.taxPsrDmr === "ppn" ? (
+																		{dataSelected.taxPsrDmr === "ppn" ? (
 																			<tr>
 																				<td
 																					className='border border-black text-right pr-4'
@@ -385,7 +347,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																					)}
 																				</td>
 																			</tr>
-																		) : result.taxPsrDmr === "pph" ? (
+																		) : dataSelected.taxPsrDmr === "pph" ? (
 																			<tr>
 																				<td
 																					className='border border-black text-right pr-4'
@@ -403,7 +365,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																					)}
 																				</td>
 																			</tr>
-																		) : result.taxPsrDmr === "ppn_and_pph" ? (
+																		) : dataSelected.taxPsrDmr === "ppn_and_pph" ? (
 																			<>
 																				<tr>
 																					<td

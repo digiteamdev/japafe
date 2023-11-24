@@ -143,7 +143,7 @@ export const PdfKontraBon = ({
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Amount Of The Bill</div>
+														<div className='w-full'>Amount Of The Bill ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
 															:{" "}
 															{formatRupiah(
@@ -152,25 +152,25 @@ export const PdfKontraBon = ({
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Discount</div>
+														<div className='w-full'>Discount ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
 															: {formatRupiah(discount().toString())}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>PPN</div>
+														<div className='w-full'>PPN {data.term_of_pay_po_so.poandso.supplier.ppn}% ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
 															: {formatRupiah(ppn().toString())}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Total</div>
+														<div className='w-full'>Total ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
 															: {formatRupiah(data.grandtotal.toString())}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Cash Advant</div>
+														<div className='w-full'>Cash Advant ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>: </div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>

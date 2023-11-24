@@ -49,22 +49,13 @@ export const PdfDpr = ({
 	const Ppn = (suplier: string, type: string) => {
 		let supplierPPN: number = 0;
 		let totalBayar: any = Total(suplier);
-		if (type === "ppn") {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			return `PPN ${supplierPPN} %`;
-		} else {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			let totalPPN: any = (totalBayar * supplierPPN) / 100;
-			return totalPPN.toString();
-		}
+		dataPPN.filter((fil: any) => {
+			if (fil.supplier === suplier) {
+				supplierPPN = fil.ppn;
+			}
+		});
+		let totalPPN: any = (totalBayar * supplierPPN) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = (suplier: string) => {
@@ -283,7 +274,7 @@ export const PdfDpr = ({
 																				className='border-black border-t border-l  text-right pr-4 mb-1'
 																				colSpan={7}
 																			>
-																				<p className='mb-1'>Total</p>
+																				<p className='mb-1'>Total ({data.currency})</p>
 																			</td>
 																			<td className='border-black border-t border-l border-r text-center mb-1'>
 																				<p className='mb-1'>
@@ -291,27 +282,29 @@ export const PdfDpr = ({
 																				</p>
 																			</td>
 																		</tr>
-																		<tr>
-																			<td
-																				className='border-black border-t border-l  text-right pr-4 mb-1'
-																				colSpan={7}
-																			>
-																				<p className='mb-1'>
-																					{Ppn(res, "ppn")}
-																				</p>
-																			</td>
-																			<td className='border-black border-t border-l border-r text-center mb-1'>
-																				<p className='mb-1'>
-																					{formatRupiah(Ppn(res, "total"))}
-																				</p>
-																			</td>
-																		</tr>
+																		{ data.taxPsrDmr === 'ppn' ? (
+																			<tr>
+																				<td
+																					className='border-black border-t border-l  text-right pr-4 mb-1'
+																					colSpan={7}
+																				>
+																					<p className='mb-1'>
+																						{`PPN ${data.detailMr[0].supplier.ppn}% (${data.currency})`}
+																					</p>
+																				</td>
+																				<td className='border-black border-t border-l border-r text-center mb-1'>
+																					<p className='mb-1'>
+																						{formatRupiah(Ppn(res, "total"))}
+																					</p>
+																				</td>
+																			</tr>
+																		) : null }
 																		<tr>
 																			<td
 																				className='border-black border-t border-l border-b text-right pr-4 mb-1'
 																				colSpan={7}
 																			>
-																				<p className='mb-1'>Grand Total</p>
+																				<p className='mb-1'>Grand Total ({data.currency})</p>
 																			</td>
 																			<td className='border-black border-t border-l border-r border-b text-center'>
 																				<p className='mb-1'>

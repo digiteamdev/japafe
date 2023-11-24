@@ -17,7 +17,7 @@ interface props {
 export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [position, setPosition] = useState<any>([]);
-
+	console.log(dataSelected)
 	useEffect(() => {
 		let positionAkun = getPosition();
 		if (positionAkun !== undefined) {
@@ -49,9 +49,23 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
-		let totalPPN: any = Ppn();
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return total;
+		if(dataSelected.taxPsrDmr === 'ppn'){
+			let totalPPN: any = Ppn();
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return total;
+		}else if(dataSelected.taxPsrDmr === 'pph'){
+			let totalPPH: any = Pph();
+			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
+			return total;
+		}else if(dataSelected.taxPsrDmr === 'ppn_and_pph'){
+			let totalPPH: any = Pph();
+			let totalPPN: any = Ppn();
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
+			return total;
+		}else {
+			let total: any = parseInt(totalBayar);
+			return total;
+		}
 	};
 
 	const approve = async () => {
@@ -296,44 +310,44 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										colSpan={7}
 										className='border border-black text-right pr-4'
 									>
-										Total
+										Total ({dataSelected.currency})
 									</td>
 									<td className='border border-black text-center'>
 										{formatRupiah(Total())}
 									</td>
 								</tr>
-								{dataSelected.SrDetail[0].taxPsrDmr === "ppn" ? (
+								{dataSelected.taxPsrDmr === "ppn" ? (
 									<tr>
 										<td
 											colSpan={7}
 											className='border border-black text-right pr-4'
 										>
-											{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+											{`PPN ${dataSelected.SrDetail[0].supplier.ppn}% (${dataSelected.currency})`}
 										</td>
 										<td className='border border-black text-center'>
 											{formatRupiah(Ppn())}
 										</td>
 									</tr>
-								) : dataSelected.SrDetail[0].taxPsrDmr === "pph" ? (
+								) : dataSelected.taxPsrDmr === "pph" ? (
 									<tr>
 										<td
 											colSpan={7}
 											className='border border-black text-right pr-4'
 										>
-											{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+											{`PPH ${dataSelected.SrDetail[0].supplier.pph}% (${dataSelected.currency})`}
 										</td>
 										<td className='border border-black text-center'>
 											{formatRupiah(Pph())}
 										</td>
 									</tr>
-								) : dataSelected.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? (
+								) : dataSelected.taxPsrDmr === "ppn_and_pph" ? (
 									<>
 										<tr>
 											<td
 												colSpan={7}
 												className='border border-black text-right pr-4'
 											>
-												{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+												{`PPN ${dataSelected.SrDetail[0].supplier.ppn}% (${dataSelected.currency})`}
 											</td>
 											<td className='border border-black text-center'>
 												{formatRupiah(Ppn())}
@@ -344,7 +358,7 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 												colSpan={7}
 												className='border border-black text-right pr-4'
 											>
-												{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+												{`PPH ${dataSelected.SrDetail[0].supplier.pph}% (${dataSelected.currency})`}
 											</td>
 											<td className='border border-black text-center'>
 												{formatRupiah(Pph())}
@@ -357,7 +371,7 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 										colSpan={7}
 										className='border border-black text-right pr-4'
 									>
-										Grand Total
+										Grand Total ({dataSelected.currency})
 									</td>
 									<td className='border border-black text-center'>
 										{formatRupiah(grandTotal().toString())}

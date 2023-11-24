@@ -37,19 +37,20 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		if (data.detailMr[0].taxpr === "ppn") {
-			let totalPPN: any = (totalBayar * data.detailMr[0].supplier.ppn) / 100;
-			return totalPPN.toString();
-		} else {
-			return "0";
-		}
+		let totalPPN: any = (totalBayar * data.detailMr[0].supplier.ppn) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
-		let totalPPN: any = Ppn();
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return total;
+		if(data.taxPsrDmr === 'ppn'){
+			let totalPPN: any = Ppn();
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return total;
+		}else{
+			let total: any = parseInt(totalBayar);
+			return total;
+		}
 	};
 
 	return (
@@ -116,10 +117,7 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 										</button>
 									</div>
-									<div
-										className='my-4 mx-40 px-20'
-										id='divToPrint'
-									>
+									<div className='my-4 mx-40 px-20' id='divToPrint'>
 										<h1 className='font-bold text-center text-xl my-4'>
 											PURCHASE ORDER
 										</h1>
@@ -303,31 +301,31 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 															colSpan={5}
 															className='border border-l-black border-r-0 border-t-0 border-b-0 text-center p-2'
 														>
-															Total
+															Total ({data.currency})
 														</td>
 														<td className='border border-t-0 border-b-0 border-l-black border-r-black text-center p-2'>
 															{formatRupiah(Total())}
 														</td>
 													</tr>
-													<tr>
-														<td
-															colSpan={5}
-															className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
-														>
-															{data.detailMr[0].taxpr === "ppn"
-																? `PPN ${data.detailMr[0].supplier.ppn}%`
-																: "PPN 0%"}
-														</td>
-														<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
-															{formatRupiah(Ppn())}
-														</td>
-													</tr>
+													{data.taxPsrDmr === "ppn" ? (
+														<tr>
+															<td
+																colSpan={5}
+																className='border border-l-black border-r-0 border-t-black border-b-black text-center p-2'
+															>
+																{`PPN ${data.supplier.ppn}% (${data.currency})`}
+															</td>
+															<td className='border border-black text-center'>
+																{formatRupiah(Ppn())}
+															</td>
+														</tr>
+													) : null}
 													<tr>
 														<td
 															colSpan={5}
 															className='border border-l-black border-r-0 border-t-black border-b-black text-center p-2'
 														>
-															Grand Total
+															Grand Total ({data.currency})
 														</td>
 														<td className='border border-t-black border-b-black border-l-black border-r-black text-center p-2'>
 															{formatRupiah(grandTotal().toString())}
@@ -347,40 +345,41 @@ export const PdfPo = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 											<div className='w-full'>
 												<p>
-													Down Payment :{" "}
-													<span>
-														{ formatRupiah(data.DP.toString()) }
-													</span>
+													Term And Condition : <span>{data.note}</span>
 												</p>
 											</div>
 											<div className='w-full'>
-												<p>
-													Payment Schedule :{" "}
-													<span className='font-bold'>
-													</span>
-												</p>
-											</div>
-											<div className='w-full'>
-												<p>
-													Term And Condition :{" "}
-													<span>
-														{ data.note }
-													</span>
-												</p>
+												{data.term_of_pay_po_so.map(
+													(res: any, i: number) => {
+														return (
+															<div className='flex w-full' key={i}>
+																<p className='pr-4'>{res.limitpay}</p>
+																<p className='pr-4'>{res.percent}%</p>
+																<p className='pr-4'>
+																	({formatRupiah(res.price.toString())})
+																</p>
+																<p className='pr-4'>Invoice : {res.invoice}</p>
+															</div>
+														);
+													}
+												)}
 											</div>
 										</Section>
 										<div className='flex w-full'>
-											<div className="w-[20%]">
-
-											</div>
-											<div className="w-[80%]">
-												<Section className="grid grid-cols-2">
-													<div className="w-full">
-														<p className="pb-28">Approved By</p>
+											<div className='w-[20%]'></div>
+											<div className='w-[80%]'>
+												<Section className='grid grid-cols-2'>
+													<div className='w-full'>
+														<p className='pb-28'>Approved By</p>
 													</div>
-													<div className="w-full">
-														<p className="m-0">Bandung, { moment(new Date()).format('DD-MMM-YYYY') }</p>
-														<p className="m-0 pb-28">PT. Dwitama Mulya Persada</p>
+													<div className='w-full'>
+														<p className='m-0'>
+															Bandung,{" "}
+															{moment(new Date()).format("DD-MMM-YYYY")}
+														</p>
+														<p className='m-0 pb-28'>
+															PT. Dwitama Mulya Persada
+														</p>
 													</div>
 												</Section>
 											</div>

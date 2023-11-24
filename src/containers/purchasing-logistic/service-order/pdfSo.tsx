@@ -51,13 +51,13 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 		let totalBayar: any = Total();
 		let totalPPN: any = Ppn();
 		let totalPPH: any = Pph();
-		if(data.SrDetail[0].taxPsrDmr === 'ppn'){
+		if(data.taxPsrDmr === 'ppn'){
 			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
 			return total;
-		}else if (data.SrDetail[0].taxPsrDmr === 'pph'){
+		}else if (data.taxPsrDmr === 'pph'){
 			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
 			return total;
-		}else if(data.SrDetail[0].taxPsrDmr === 'ppn_and_pph'){
+		}else if(data.taxPsrDmr === 'ppn_and_pph'){
 			let total: any = parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
 			return total;
 		}else{
@@ -317,13 +317,13 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 															colSpan={5}
 															className='border border-l-black border-r-0 border-t-0 border-b-0 text-center p-2'
 														>
-															Total
+															Total ({data.currency})
 														</td>
 														<td className='border border-t-0 border-b-0 border-l-black border-r-black text-center p-2'>
 															{formatRupiah(Total())}
 														</td>
 													</tr>
-													{ data.SrDetail[0].taxPsrDmr === "ppn" ? (
+													{ data.taxPsrDmr === "ppn" ? (
 														<tr>
 															<td
 																colSpan={5}
@@ -335,7 +335,7 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 																{formatRupiah(Ppn())}
 															</td>
 														</tr>
-													) : data.SrDetail[0].taxPsrDmr === "pph" ? (
+													) : data.taxPsrDmr === "pph" ? (
 														<tr>
 															<td
 																colSpan={5}
@@ -347,7 +347,7 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 																{formatRupiah(Pph())}
 															</td>
 														</tr>
-													) : data.SrDetail[0].taxPsrDmr === "ppn_and_pph" ? (
+													) : data.taxPsrDmr === "ppn_and_pph" ? (
 														<>
 															<tr>
 																<td

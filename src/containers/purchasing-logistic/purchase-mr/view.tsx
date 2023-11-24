@@ -19,7 +19,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
-
+console.log(dataSelected)
 	useEffect(() => {
 		let dataSuplier: any = [];
 		let dataPPN: any = [];
@@ -322,17 +322,19 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 															{formatRupiah(Total(res))}
 														</td>
 													</tr>
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={6}
-														>
-															{Ppn(res, "ppn")}
-														</td>
-														<td className='border border-black text-center'>
-															{formatRupiah(Ppn(res, "total"))}
-														</td>
-													</tr>
+													{ dataSelected.taxPsrDmr === 'ppn' ? (
+														<tr>
+															<td
+																className='border border-black text-right pr-4'
+																colSpan={6}
+															>
+																{Ppn(res, "ppn")}
+															</td>
+															<td className='border border-black text-center'>
+																{formatRupiah(Ppn(res, "total"))}
+															</td>
+														</tr>
+													) : null }
 													<tr>
 														<td
 															className='border border-black text-right pr-4'

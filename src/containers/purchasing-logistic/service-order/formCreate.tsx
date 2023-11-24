@@ -25,6 +25,8 @@ interface data {
 	ref: string;
 	note: string;
 	supplierId: string;
+	taxPsrDmr: string;
+	currency: string;
 	dp: any;
 	termOfPayment: any;
 	detailMr: any;
@@ -44,6 +46,11 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 	const [idPR, setIdPR] = useState<string>("");
 	const [total, setTotal] = useState<string>("");
 	const [tax, setTax] = useState<string>("");
+	const [typeTax, setTypeTax] = useState<string>("non_tax");
+	const [ppn, setPpn] = useState<string>("0");
+	const [pph, setPph] = useState<string>("0");
+	const [ppnPercent, setPpnPercent] = useState<number>(0);
+	const [pphPercent, setPphPercent] = useState<number>(0);
 	const [countTax, setCountTax] = useState<string>("0");
 	const [grandTotal, setGrandTotal] = useState<string>("");
 	const [data, setData] = useState<data>({
@@ -53,6 +60,8 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 		supplierId: "",
 		dp: 0,
 		note: "",
+		taxPsrDmr: "",
+		currency: "IDR",
 		termOfPayment: [],
 		detailMr: [],
 	});
@@ -65,6 +74,8 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 			ref: "",
 			supplierId: "",
 			note: "",
+			taxPsrDmr: "non_tax",
+			currency: "IDR",
 			dp: 0,
 			termOfPayment: [],
 			detailMr: [],
@@ -86,8 +97,8 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 				let dataSuplier: any = [];
 
 				response.data.result.map((res: any) => {
-                    res.SrDetail.map((result: any) => {
-                        if (!suplier.includes(result.supplier.supplier_name)) {
+					res.SrDetail.map((result: any) => {
+						if (!suplier.includes(result.supplier.supplier_name)) {
 							suplier.push(result.supplier.supplier_name);
 							dataSuplier.push(result.supplier);
 						}
@@ -96,13 +107,13 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 							no_mr: result.sr.no_sr,
 							user: result.sr.user.employee.employee_name,
 							supId: result.supId,
-							taxpr: result.taxPsrDmr,
+							taxpr: res.taxPsrDmr,
 							akunId: result.akunId,
 							disc: result.disc,
-							currency: result.currency,
+							currency: res.currency,
 							total: result.total,
 							service: result.workCenter.name,
-                            part: result.part,
+							part: result.part,
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,
@@ -137,13 +148,15 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		let detail: any = [];
 		let termOfPay: any = [];
+		let termOfPayPercent: number = 0;
 		payload.detailMr.map((res: any) => {
 			detail.push({
 				id: res.id,
 			});
 		});
 		payload.termOfPayment.map((res: any) => {
-			let prices: any = res.price.replace(/[$.]/g, "");
+			let prices: any = res.price.toString().replace(/[$.]/g, "");
+			termOfPayPercent = termOfPayPercent + parseInt(res.percent);
 			termOfPay.push({
 				limitpay: res.limitpay,
 				percent: parseInt(res.percent),
@@ -157,16 +170,31 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 			your_reff: payload.ref,
 			supplierId: suplierId,
 			note: payload.note,
+			currency: currency,
+			taxPsrDmr: typeTax,
 			DP: payload.dp,
 			term_of_pay_po_so: termOfPay,
 			detailMrID: null,
 			detailSrID: detail,
 		};
-
-		try {
-			const response = await AddPoMr(data);
-			if (response.data) {
-				toast.success("Purchase Order Material Request Success", {
+		if (termOfPayPercent === 100) {
+			try {
+				const response = await AddPoMr(data);
+				if (response.data) {
+					toast.success("Purchase Order Material Request Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Purchase Order Material Request Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -176,10 +204,20 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				showModal(false, content, true);
 			}
-		} catch (error) {
-			toast.error("Purchase Order Material Request Failed", {
+		}else if(termOfPayPercent > 100){
+			toast.warning("Term Of Pay exceed 100%", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}else if(termOfPayPercent < 100){
+			toast.warning("Term Of Pay not yet 100%", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -202,7 +240,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 						let total: number = 0;
 						let totalTax: number = 0;
 						let tax: boolean = false;
-                        let taxSo: string = "";
+						let taxSo: string = "";
 						let termOfPayment: any = [
 							{
 								limitpay: "Normal",
@@ -215,29 +253,38 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 							if (mr.supId === res.id) {
 								detail.push(mr);
 								setCurrency(mr.currency);
+								setTypeTax(mr.taxpr);
 								total = total + mr.total;
-                                if (mr.taxpr === "ppn" || mr.taxpr === "pph" || mr.taxpr === "ppn_and_pph" ) {
+								if (
+									mr.taxpr === "ppn" ||
+									mr.taxpr === "pph" ||
+									mr.taxpr === "ppn_and_pph"
+								) {
 									tax = true;
-                                    taxSo = mr.taxpr
+									taxSo = mr.taxpr;
 								}
 							}
 						});
-						if (tax && taxSo === 'ppn') {
-							totalTax = (total * res.ppn) / 100;
-							setCountTax(`PPN ${res.ppn}`);
-							setTax(formatRupiah(totalTax.toString()));
-						}else if (tax && taxSo === 'pph') {
-							totalTax = (total * res.pph) / 100;
-							setCountTax(`PPH ${res.pph}`);
-							setTax(formatRupiah(totalTax.toString()));
-						}else if (tax && taxSo === 'ppn_and_pph') {
-							totalTax = (total * (res.ppn + res.pph)) / 100;
-							setCountTax(`PPN and PPH ${res.ppn + res.pph}`);
-							setTax(formatRupiah(totalTax.toString()));
+						let totalTaxPpn = (total * res.ppn) / 100;
+						let totalTaxPph = (total * res.pph) / 100;
+						setPpnPercent(res.ppn);
+						setPphPercent(res.pph);
+						setPpn(formatRupiah(totalTaxPpn.toString()));
+						setPph(formatRupiah(totalTaxPph.toString()));
+						if (tax && taxSo === "ppn") {
+							let grandTotal: number = total + totalTaxPpn;
+							setGrandTotal(formatRupiah(grandTotal.toString()));
+						} else if (tax && taxSo === "pph") {
+							let grandTotal: number = total + totalTaxPph;
+							setGrandTotal(formatRupiah(grandTotal.toString()));
+						} else if (tax && taxSo === "ppn_and_pph") {
+							let grandTotal: number = total + totalTaxPpn + totalTaxPph;
+							setGrandTotal(formatRupiah(grandTotal.toString()));
+						} else {
+							setGrandTotal(formatRupiah(total.toString()));
 						}
-						let grandTotal: number = total + totalTax;
+
 						setTotal(formatRupiah(total.toString()));
-						setGrandTotal(formatRupiah(grandTotal.toString()));
 						setContact(res.SupplierContact[0].contact_person);
 						setPhone(`+62${res.SupplierContact[0].phone}`);
 						setAddress(res.addresses_sup);
@@ -248,6 +295,8 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 							ref: "",
 							note: "",
 							supplierId: "",
+							taxPsrDmr: event.taxpr,
+							currency: event.currency,
 							dp: 0,
 							termOfPayment: termOfPayment,
 							detailMr: detail,
@@ -261,6 +310,8 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 					ref: "",
 					note: "",
 					supplierId: "",
+					taxPsrDmr: "",
+					currency: "",
 					dp: 0,
 					termOfPayment: [],
 					detailMr: [],
@@ -587,7 +638,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-                                    <div className='w-full'>
+									<div className='w-full'>
 										<Input
 											id='part'
 											name='part'
@@ -682,7 +733,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>Total</p>
+										<p className='text-xl mt-4 text-end'>Total ({currency})</p>
 									</div>
 									<div className='w-full'>
 										<Input
@@ -698,35 +749,117 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 										/>
 									</div>
 								</Section>
+								{typeTax === "ppn" ? (
+									<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'>
+											<p className='text-xl mt-4 text-end'>
+												PPN {ppnPercent}% {currency}
+											</p>
+										</div>
+										<div className='w-full'>
+											<Input
+												id='total'
+												name='total'
+												placeholder='PPN'
+												type='text'
+												value={ppn}
+												disabled={true}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</div>
+									</Section>
+								) : typeTax === "pph" ? (
+									<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'></div>
+										<div className='w-full'>
+											<p className='text-xl mt-4 text-end'>
+												PPH {pphPercent}% {currency}
+											</p>
+										</div>
+										<div className='w-full'>
+											<Input
+												id='total'
+												name='total'
+												placeholder='PPH'
+												type='text'
+												value={pph}
+												disabled={true}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</div>
+									</Section>
+								) : typeTax === "ppn_and_pph" ? (
+									<>
+										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'>
+												<p className='text-xl mt-4 text-end'>
+													PPN {ppnPercent}% {currency}
+												</p>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='total'
+													name='total'
+													placeholder='PPH'
+													type='text'
+													value={ppn}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+										</Section>
+										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'></div>
+											<div className='w-full'>
+												<p className='text-xl mt-4 text-end'>
+													PPH {pphPercent}% {currency}
+												</p>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='total'
+													name='total'
+													placeholder='PPH'
+													type='text'
+													value={pph}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+										</Section>
+									</>
+								) : null}
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>{countTax}%</p>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='total'
-											name='total'
-											placeholder='PPN'
-											type='text'
-											value={tax}
-											disabled={true}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section>
-								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>Grand Total</p>
+										<p className='text-xl mt-4 text-end'>
+											Grand Total ({currency})
+										</p>
 									</div>
 									<div className='w-full'>
 										<Input

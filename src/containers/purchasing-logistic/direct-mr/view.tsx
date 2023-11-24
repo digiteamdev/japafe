@@ -58,22 +58,13 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 	const Ppn = (suplier: string, type: string) => {
 		let supplierPPN: number = 0;
 		let totalBayar: any = Total(suplier);
-		if (type === "ppn") {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			return `PPN ${supplierPPN} %`;
-		} else {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			let totalPPN: any = (totalBayar * supplierPPN) / 100;
-			return totalPPN.toString();
-		}
+		dataPPN.filter((fil: any) => {
+			if (fil.supplier === suplier) {
+				supplierPPN = fil.ppn;
+			}
+		});
+		let totalPPN: any = (totalBayar * supplierPPN) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = (suplier: string) => {
@@ -324,23 +315,25 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 															className='border border-black text-right pr-4'
 															colSpan={6}
 														>
-															Total
+															Total ({dataSelected.currency})
 														</td>
 														<td className='border border-black text-center'>
 															{formatRupiah(Total(res))}
 														</td>
 													</tr>
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={6}
-														>
-															{Ppn(res, "ppn")}
-														</td>
-														<td className='border border-black text-center'>
-															{formatRupiah(Ppn(res, "total"))}
-														</td>
-													</tr>
+													{ dataSelected.taxPsrDmr === 'ppn' ? (
+														<tr>
+															<td
+																className='border border-black text-right pr-4'
+																colSpan={6}
+															>
+																{`PPN ${dataSelected.detailMr[0].supplier.ppn}% (${dataSelected.currency})`}
+															</td>
+															<td className='border border-black text-center'>
+																{formatRupiah(Ppn(res, "total"))}
+															</td>
+														</tr>
+													) : null }
 													<tr>
 														<td
 															className='border border-black text-right pr-4'

@@ -36,20 +36,21 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		if (dataSelected.detailMr[0].taxpr === "ppn") {
-			let totalPPN: any =
-				(totalBayar * dataSelected.detailMr[0].supplier.ppn) / 100;
-			return totalPPN.toString();
-		} else {
-			return "0";
-		}
+		let totalPPN: any =
+			(totalBayar * dataSelected.supplier.ppn) / 100;
+		return totalPPN.toString();
 	};
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
-		let totalPPN: any = Ppn();
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return total;
+		if(dataSelected.taxPsrDmr === 'ppn'){
+			let totalPPN: any = Ppn();
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return total;
+		}else{
+			let total: any = parseInt(totalBayar);
+			return total;
+		}
 	};
 
 	const approve = async () => {
@@ -291,31 +292,31 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										colSpan={7}
 										className='border border-black text-right pr-4'
 									>
-										Total
+										Total ({dataSelected.currency})
 									</td>
 									<td className='border border-black text-center'>
 										{formatRupiah(Total())}
 									</td>
 								</tr>
+								{ dataSelected.taxPsrDmr === 'ppn' ? (
+									<tr>
+										<td
+											colSpan={7}
+											className='border border-black text-right pr-4'
+										>
+											{`PPN ${dataSelected.supplier.ppn}% (${dataSelected.currency})`}
+										</td>
+										<td className='border border-black text-center'>
+											{formatRupiah(Ppn())}
+										</td>
+									</tr>
+								) : null }
 								<tr>
 									<td
 										colSpan={7}
 										className='border border-black text-right pr-4'
 									>
-										{dataSelected.detailMr[0].taxpr === "ppn"
-											? `PPN ${dataSelected.detailMr[0].supplier.ppn}%`
-											: "PPN 0%"}
-									</td>
-									<td className='border border-black text-center'>
-										{formatRupiah(Ppn())}
-									</td>
-								</tr>
-								<tr>
-									<td
-										colSpan={7}
-										className='border border-black text-right pr-4'
-									>
-										Grand Total
+										Grand Total ({dataSelected.currency})
 									</td>
 									<td className='border border-black text-center'>
 										{formatRupiah(grandTotal().toString())}

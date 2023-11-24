@@ -66,7 +66,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 				no_mr: "",
 				job_no: "",
 				stock: "",
-				user: ""
+				user: "",
 			},
 		],
 	});
@@ -104,7 +104,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 							? res.mr.wor.job_no_mr
 							: res.mr.wor.job_no,
 						stock: res.Material_Stock.jumlah_Stock,
-						user: res.mr.user.employee.employee_name
+						user: res.mr.user.employee.employee_name,
 					});
 				});
 				setIdApproval(idAppr);
@@ -277,12 +277,191 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Disclosure defaultOpen>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.no_mr`}
+														name={`detailMr.${i}.no_mr`}
+														placeholder='No MR'
+														label='No MR'
+														type='string'
+														disabled={true}
+														value={result.no_mr}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.mrappr`}
+														name={`detailMr.${i}.mrappr`}
+														placeholder='Type'
+														label='Type'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.mrappr`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option defaultValue='no data' selected>
+															Choose Type
+														</option>
+														<option value='PO'>PO</option>
+														<option value='DP'>DP</option>
+														<option value='Stock'>Stock</option>
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.supId`}
+														name={`detailMr.${i}.supId`}
+														placeholder='Suplier'
+														label='Suplier'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.supId`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option value='no data' selected>
+															Choose Suplier
+														</option>
+														{listSupplier.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+															listSupplier.map((res: any, i: number) => {
+																return (
+																	<option
+																		value={res.id}
+																		key={i}
+																		// selected={res.id === result.material}
+																	>
+																		{res.supplier_name}
+																	</option>
+																);
+															})
+														)}
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.material`}
+														name={`detailMr.${i}.material`}
+														placeholder='Material Name'
+														label='Material Name'
+														type='text'
+														value={result.material}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.user`}
+														name={`detailMr.${i}.user`}
+														placeholder='Request By'
+														label='Request By'
+														type='string'
+														value={result.user}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b border-b-gray-500 pb-2'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.qty`}
+														name={`detailMr.${i}.qty`}
+														placeholder='Qty'
+														label='Qty'
+														type='number'
+														value={result.qty}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.stock`}
+														name={`detailMr.${i}.stock`}
+														placeholder='Stock'
+														label='Stock'
+														type='number'
+														disabled={true}
+														value={result.stock}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.qtyAppr`}
+														name={`detailMr.${i}.qtyAppr`}
+														placeholder='Qty Approval'
+														label='Qty Approval'
+														type='number'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.qtyAppr`,
+																e.target.value
+															);
+														}}
+														value={result.qtyAppr}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={result.note}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													{values.detailMr.length === 1 ? null : (
+														<a
+															className='inline-flex text-red-500 cursor-pointer mt-10'
+															onClick={() => {
+																arrayMr.remove(i);
+															}}
+														>
+															<Trash2 size={18} className='mr-1 mt-1' /> Remove
+															Material Request
+														</a>
+													)}
+												</div>
+											</Section>
+											{/* <Disclosure defaultOpen>
 												{({ open }) => (
 													<div>
 														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
 															<h4 className='text-lg font-bold'>
-																Job No : {result.job_no}
+																No MR : {result.no_mr}
 															</h4>
 															<h4 className='text-lg font-bold'>
 																{open ? <ChevronDown /> : <ChevronUp />}
@@ -473,7 +652,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 														</Disclosure.Panel>
 													</div>
 												)}
-											</Disclosure>
+											</Disclosure> */}
 										</div>
 									);
 								})

@@ -82,6 +82,7 @@ export const FormEditKontraBon = ({
 		settingData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	console.log(dataSelected)
 
 	const settingData = () => {
 		let disc: number = 0;
@@ -94,12 +95,12 @@ export const FormEditKontraBon = ({
 		dataSelected.term_of_pay_po_so.poandso.detailMr.map((res: any) => {
 			disc = disc + res.disc;
 			bill = bill + res.total;
-			if (!hasTax) {
-				if (res.taxpr !== "non_tax") {
-					hasTax = true;
-					taxType = res.taxpr;
-				}
-			}
+			// if (!hasTax) {
+			// 	if (res.taxpr !== "non_tax") {
+			// 		hasTax = true;
+			// 		taxType = res.taxpr;
+			// 	}
+			// }
 		});
 		dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
 			(bank: any) => {
@@ -109,7 +110,7 @@ export const FormEditKontraBon = ({
 				});
 			}
 		);
-		if (taxType === "ppn") {
+		if (dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn") {
 			if (dataSelected.term_of_pay_po_so.tax_invoice) {
 				ppn =
 					(bill * dataSelected.term_of_pay_po_so.poandso.supplier.ppn) / 100;
@@ -124,10 +125,10 @@ export const FormEditKontraBon = ({
 			label: `${dataSelected.SupplierBank.account_name} - ${dataSelected.SupplierBank.bank_name}`,
 			value: dataSelected.SupplierBank,
 		});
+		setPpn(ppn);
 		setPercent(dataSelected.term_of_pay_po_so.percent);
 		setBillAmount(bill);
 		setDisc(disc);
-		setPpn(ppn);
 		setDataAccBank(dataAcc);
 		setBankName(dataSelected.SupplierBank.bank_name);
 		setAccName(dataSelected.SupplierBank.account_name);

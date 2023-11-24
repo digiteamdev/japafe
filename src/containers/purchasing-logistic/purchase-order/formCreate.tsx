@@ -45,6 +45,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	const [total, setTotal] = useState<string>("");
 	const [tax, setTax] = useState<string>("");
 	const [countTax, setCountTax] = useState<string>("0");
+	const [amountPercent, setAmountPercent] = useState<number>(100);
 	const [grandTotal, setGrandTotal] = useState<string>("");
 	const [data, setData] = useState<data>({
 		dateOfPO: new Date(),
@@ -96,10 +97,10 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							no_mr: result.mr.no_mr,
 							user: result.mr.user.employee.employee_name,
 							supId: result.supId,
-							taxpr: result.taxpr,
+							taxpr: res.taxPsrDmr,
 							akunId: result.akunId,
 							disc: result.disc,
-							currency: result.currency,
+							currency: res.currency,
 							total: result.total,
 							material: result.Material_Stock.spesifikasi,
 							qty: result.qtyAppr,
@@ -135,14 +136,19 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	const AddPurchaseOrder = async (payload: data) => {
 		setIsLoading(true);
 		let detail: any = [];
+		let currency: string = "";
+		let tax: string = "non_tax";
 		let termOfPay: any = [];
+		let totalPercent: number = 0
 		payload.detailMr.map((res: any) => {
+			(currency = res.currency), (tax = res.taxpr);
 			detail.push({
 				id: res.id,
 			});
 		});
 		payload.termOfPayment.map((res: any) => {
 			let prices: any = res.price.replace(/[$.]/g, "");
+			totalPercent = totalPercent + parseInt(res.percent)
 			termOfPay.push({
 				limitpay: res.limitpay,
 				percent: parseInt(res.percent),
@@ -158,14 +164,29 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			note: payload.note,
 			DP: payload.dp,
 			term_of_pay_po_so: termOfPay,
+			taxPsrDmr: tax,
+			currency: currency,
 			detailMrID: detail,
 			detailSrID: null,
 		};
-
-		try {
-			const response = await AddPoMr(data);
-			if (response.data) {
-				toast.success("Purchase Order Material Request Success", {
+		if(totalPercent === 100){
+			try {
+				const response = await AddPoMr(data);
+				if (response.data) {
+					toast.success("Purchase Order Material Request Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Purchase Order Material Request Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -175,10 +196,20 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				showModal(false, content, true);
 			}
-		} catch (error) {
-			toast.error("Purchase Order Material Request Failed", {
+		}else if(totalPercent < 100){
+			toast.warning("Term Of Pay not yet 100%", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}else{
+			toast.warning("Term Of Pay exceed 100%", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -439,7 +470,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							name='termOfPayment'
 							render={(arrayPayment) => {
 								return values.termOfPayment.map((res: any, i: number) => {
-									console.log(res)
 									return (
 										<Section
 											className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'

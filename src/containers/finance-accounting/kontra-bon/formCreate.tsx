@@ -113,12 +113,12 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		data.detailMr.map((res: any) => {
 			disc = disc + res.disc;
 			bill = bill + res.total;
-			if (!hasTax) {
-				if (res.taxpr !== "non_tax") {
-					hasTax = true;
-					taxType = res.taxpr;
-				}
-			}
+			// if (!hasTax) {
+			// 	if (res.taxpr !== "non_tax") {
+			// 		hasTax = true;
+			// 		taxType = res.taxpr;
+			// 	}
+			// }
 		});
 		data.supplier?.SupplierBank.map((bank: any) => {
 			dataAcc.push({
@@ -126,7 +126,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				value: bank,
 			});
 		});
-		if (taxType === "ppn") {
+		if (data.taxPsrDmr === "ppn") {
 			ppn = (bill * data.supplier.ppn) / 100;
 			if(data.term_of_pay_po_so[0].tax_invoice){
 				setTotalAmount(data.term_of_pay_po_so[0].price);
@@ -136,9 +136,10 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		} else {
 			setTotalAmount(data.term_of_pay_po_so[0].price);
 		}
-		
+		if(!data.term_of_pay_po_so[0].tax_invoice){
+			setPpn(ppn);
+		}
 		setTax(taxType);
-		setPpn(ppn);
 		setDataAccBank(dataAcc);
 		setBillAmount(bill);
 		setDisc(disc);
@@ -181,7 +182,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-	console.log(payTax)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -235,8 +236,8 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									datas={dataPurchase}
 									id='job_no'
 									name='job_no'
-									placeholder='Job No'
-									label='Job No'
+									placeholder='ID Purchase'
+									label='ID Purchase'
 									onChange={(e: any) => {
 										selectPO(e.value);
 										if(e.value.term_of_pay_po_so[0].tax_invoice){

@@ -4,7 +4,7 @@ import { Section } from "../../../components";
 import { formatRupiah } from "../../../utils/index";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
-import { PdfKontraBon } from './pdfKontraBon';
+import { PdfKontraBon } from "./pdfKontraBon";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -167,7 +167,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-
+	console.log(dataSelected);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<PdfKontraBon
@@ -255,7 +255,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Bill Amount
+											Bill Amount ({dataSelected.term_of_pay_po_so.poandso.currency})
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{formatRupiah(
@@ -265,20 +265,22 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Discount
+											Discount ({dataSelected.term_of_pay_po_so.poandso.currency})
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{formatRupiah(discount().toString())}
 										</td>
 									</tr>
+									{ dataSelected.term_of_pay_po_so.tax_invoice ? (
 										<tr>
 											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-												PPN
+												PPN  {dataSelected.term_of_pay_po_so.poandso.supplier.ppn}% ({dataSelected.term_of_pay_po_so.poandso.currency})
 											</td>
 											<td className='w-[50%] pl-2 border border-gray-200'>
-												{dataSelected.term_of_pay_po_so.tax_invoice ? formatRupiah(ppn().toString()) : 0}
+												{formatRupiah(ppn().toString())}
 											</td>
 										</tr>
+									) : null }
 									{/* <tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											PPH
@@ -289,13 +291,13 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 									</tr> */}
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Cash Advant
+											Cash Advant ({dataSelected.term_of_pay_po_so.poandso.currency})
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>{0}</td>
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Total Amount
+											Total Amount ({dataSelected.term_of_pay_po_so.poandso.currency})
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{formatRupiah(dataSelected.grandtotal.toString())}
@@ -315,7 +317,9 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Paid To
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{ dataSelected.SupplierBank.bank_name }, {dataSelected.SupplierBank.rekening} ({ dataSelected.SupplierBank.account_name })
+											{dataSelected.SupplierBank.bank_name},{" "}
+											{dataSelected.SupplierBank.rekening} (
+											{dataSelected.SupplierBank.account_name})
 										</td>
 									</tr>
 									<tr>

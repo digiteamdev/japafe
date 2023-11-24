@@ -44,32 +44,32 @@ export const PdfDpsr = ({
 		return jumlahTotal.toString();
 	};
 
-	const Ppn = (suplier: string, type: string) => {
-		let supplierPPN: number = 0;
+	const jumlahTax = (suplier: string, ppn: number, pph: number) => {
 		let totalBayar: any = Total(suplier);
-		if (type === "ppn") {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			return `PPN ${supplierPPN} %`;
+		if (ppn !== 0) {
+			let totalPPN: any = (parseInt(totalBayar) * ppn) / 100;
+			return Math.ceil(totalPPN).toString();
 		} else {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					supplierPPN = fil.ppn;
-				}
-			});
-			let totalPPN: any = (totalBayar * supplierPPN) / 100;
-			return totalPPN.toString();
+			let totalPPH: any = (parseInt(totalBayar) * pph) / 100;
+			return Math.ceil(totalPPH).toString();
 		}
 	};
 
-	const grandTotal = (suplier: string) => {
+	const grandTotal = (suplier: string, ppn: any, pph: any) => {
 		let totalBayar: any = Total(suplier);
-		let totalPPN: any = Ppn(suplier, "total");
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return formatRupiah(total.toString());
+		if (data.taxPsrDmr === "ppn") {
+			let total: any = parseInt(totalBayar) + parseInt(ppn);
+			return formatRupiah(total.toString());
+		} else if (data.taxPsrDmr === "pph") {
+			let total: any = parseInt(totalBayar) + parseInt(pph);
+			return formatRupiah(total.toString());
+		} else if (data.taxPsrDmr === "ppn_and_pph") {
+			let total: any = parseInt(totalBayar) + parseInt(ppn) + parseInt(pph);
+			return formatRupiah(total.toString());
+		} else {
+			let total: any = parseInt(totalBayar);
+			return formatRupiah(total.toString());
+		}
 	};
 
 	return (
@@ -159,14 +159,12 @@ export const PdfDpsr = ({
 												<p>Cash Advance ID :</p>
 											</div>
 											<div className='w-full'>
-												<p>
-													Total Cash Adv :
-												</p>
+												<p>Total Cash Adv :</p>
 											</div>
 										</div>
 										<div className='grid grid-cols-2 gap-2'>
 											<div className='w-full'>
-												<p>Note : { data.note }</p>
+												<p>Note : {data.note}</p>
 											</div>
 										</div>
 										<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -188,9 +186,7 @@ export const PdfDpsr = ({
 																				<p className='mb-1'>Akun</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
-																				<p className='mb-1'>
-																					Description
-																				</p>
+																				<p className='mb-1'>Description</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
 																				<p className='mb-1'>Qty</p>
@@ -209,101 +205,202 @@ export const PdfDpsr = ({
 																	<tbody>
 																		{data.SrDetail.filter((fil: any) => {
 																			return fil.supplier.supplier_name === res;
-																		}).map((result: any, idx: number) => {
+																		}).map((result: any, idx: number, datas: any) => {
 																			return (
-																				<tr key={idx}>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.sr.no_sr}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l  text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.sr.wor.job_operational
-																								? result.sr.wor.job_no_mr
-																								: result.sr.wor.job_no}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.coa.coa_code}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.workCenter.name}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{result.qtyAppr}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.price.toString()
-																							)}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.disc.toString()
-																							)}
-																						</p>
-																					</td>
-																					<td className='border-black border-t border-l border-r text-center mb-1'>
-																						<p className='mb-1'>
-																							{formatRupiah(
-																								result.total.toString()
-																							)}
-																						</p>
-																					</td>
-																				</tr>
+																				<>
+																					<tr key={idx}>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.sr.no_sr}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l  text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.sr.wor.job_operational
+																									? result.sr.wor.job_no_mr
+																									: result.sr.wor.job_no}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.coa.coa_code}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.workCenter.name}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{result.qtyAppr}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.price.toString()
+																								)}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.disc.toString()
+																								)}
+																							</p>
+																						</td>
+																						<td className='border-black border-t border-l border-r text-center mb-1'>
+																							<p className='mb-1'>
+																								{formatRupiah(
+																									result.total.toString()
+																								)}
+																							</p>
+																						</td>
+																					</tr>
+																					{ idx === datas.length - 1 ? (
+																						<>
+																							<tr>
+																								<td
+																									className='border-black border-t border-l  text-right pr-4 mb-1'
+																									colSpan={7}
+																								>
+																									<p className='mb-1'>
+																										Total ({data.currency})
+																									</p>
+																								</td>
+																								<td className='border-black border-t border-l border-r text-center mb-1'>
+																									<p className='mb-1'>
+																										{formatRupiah(Total(res))}
+																									</p>
+																								</td>
+																							</tr>
+																							{data.taxPsrDmr === "ppn" ? (
+																								<tr>
+																									<td
+																										className='border-black border-t border-l  text-right pr-4 mb-1'
+																										colSpan={7}
+																									>
+																										<p className='mb-1'>
+																											PPN {result.supplier.ppn}% (
+																											{data.currency})
+																										</p>
+																									</td>
+																									<td className='border-black border-t border-l border-r text-center mb-1'>
+																										<p className='mb-1'>
+																											{formatRupiah(
+																												jumlahTax(
+																													result.supplier.supplier_name,
+																													result.supplier.ppn,
+																													0
+																												)
+																											)}
+																										</p>
+																									</td>
+																								</tr>
+																							) : data.taxPsrDmr === "pph" ? (
+																								<tr>
+																									<td
+																										className='border-black border-t border-l  text-right pr-4 mb-1'
+																										colSpan={7}
+																									>
+																										<p className='mb-1'>
+																											PPH {result.supplier.pph}% (
+																											{data.currency})
+																										</p>
+																									</td>
+																									<td className='border-black border-t border-l border-r text-center mb-1'>
+																										<p className='mb-1'>
+																											{formatRupiah(
+																												jumlahTax(
+																													result.supplier.supplier_name,
+																													result.supplier.pph,
+																													0
+																												)
+																											)}
+																										</p>
+																									</td>
+																								</tr>
+																							) : data.taxPsrDmr === "ppn_and_pph" ? (
+																								<>
+																									<tr>
+																										<td
+																											className='border-black border-t border-l  text-right pr-4 mb-1'
+																											colSpan={7}
+																										>
+																											<p className='mb-1'>
+																												PPN {result.supplier.ppn}% (
+																												{data.currency})
+																											</p>
+																										</td>
+																										<td className='border-black border-t border-l border-r text-center mb-1'>
+																											<p className='mb-1'>
+																												{formatRupiah(
+																													jumlahTax(
+																														result.supplier.supplier_name,
+																														result.supplier.ppn,
+																														0
+																													)
+																												)}
+																											</p>
+																										</td>
+																									</tr>
+																									<tr>
+																										<td
+																											className='border-black border-t border-l  text-right pr-4 mb-1'
+																											colSpan={7}
+																										>
+																											<p className='mb-1'>
+																												PPH {result.supplier.pph}% (
+																												{data.currency})
+																											</p>
+																										</td>
+																										<td className='border-black border-t border-l border-r text-center mb-1'>
+																											<p className='mb-1'>
+																												{formatRupiah(
+																													jumlahTax(
+																														result.supplier.supplier_name,
+																														result.supplier.pph,
+																														0
+																													)
+																												)}
+																											</p>
+																										</td>
+																									</tr>
+																								</>
+																							) : null}
+																							<tr>
+																								<td
+																									className='border-black border-t border-l border-b text-right pr-4 mb-1'
+																									colSpan={7}
+																								>
+																									<p className='mb-1'>
+																										Grand Total ({data.currency})
+																									</p>
+																								</td>
+																								<td className='border-black border-t border-l border-r border-b text-center'>
+																									<p className='mb-1'>
+																										{grandTotal(
+																											result.supplier.supplier_name,
+																											jumlahTax(
+																												result.supplier.supplier_name,
+																												result.supplier.ppn,
+																												0
+																											),
+																											jumlahTax(
+																												result.supplier.supplier_name,
+																												0,
+																												result.supplier.pph
+																											)
+																										)}
+																									</p>
+																								</td>
+																							</tr>
+																						</>
+																					) : null }
+																				</>
 																			);
 																		})}
-																		<tr>
-																			<td
-																				className='border-black border-t border-l  text-right pr-4 mb-1'
-																				colSpan={7}
-																			>
-																				<p className='mb-1'>Total</p>
-																			</td>
-																			<td className='border-black border-t border-l border-r text-center mb-1'>
-																				<p className='mb-1'>
-																					{formatRupiah(Total(res))}
-																				</p>
-																			</td>
-																		</tr>
-																		<tr>
-																			<td
-																				className='border-black border-t border-l  text-right pr-4 mb-1'
-																				colSpan={7}
-																			>
-																				<p className='mb-1'>
-																					{Ppn(res, "ppn")}
-																				</p>
-																			</td>
-																			<td className='border-black border-t border-l border-r text-center mb-1'>
-																				<p className='mb-1'>
-																					{formatRupiah(Ppn(res, "total"))}
-																				</p>
-																			</td>
-																		</tr>
-																		<tr>
-																			<td
-																				className='border-black border-t border-l border-b text-right pr-4 mb-1'
-																				colSpan={7}
-																			>
-																				<p className='mb-1'>Grand Total</p>
-																			</td>
-																			<td className='border-black border-t border-l border-r border-b text-center'>
-																				<p className='mb-1'>
-																					{grandTotal(res)}
-																				</p>
-																			</td>
-																		</tr>
 																	</tbody>
 																</table>
 															</div>

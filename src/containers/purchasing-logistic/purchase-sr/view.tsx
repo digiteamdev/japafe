@@ -19,7 +19,7 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
-
+	
 	useEffect(() => {
 		let dataSuplier: any = [];
 		let dataPPN: any = [];
@@ -61,54 +61,47 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const Ppn = (suplier: string, type: string) => {
-		let supplierTaxPercen: number = 0;
-		let supplierTax: string = "";
 		let totalBayar: any = Total(suplier);
-		if (type !== "total") {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					if (fil.tax === "ppn") {
-						supplierTaxPercen = fil.ppn;
-					} else if (fil.tax === "pph") {
-						supplierTaxPercen = fil.pph;
-					} else {
-						supplierTaxPercen = fil.ppn + fil.pph;
-					}
-					supplierTax = fil.tax;
-				}
-			});
-			if (supplierTax === "nontax") {
-				return "Non Tax";
-			} else {
-				return `${supplierTax} ${supplierTaxPercen} %`;
+		let supplierTaxPercenPpn: number = 0;
+		dataPPN.filter((fil: any) => {
+			if (fil.supplier === suplier) {
+				supplierTaxPercenPpn = fil.ppn;
 			}
-		} else {
-			dataPPN.filter((fil: any) => {
-				if (fil.supplier === suplier) {
-					if (fil.tax === "ppn") {
-						supplierTaxPercen = fil.ppn;
-					} else if (fil.tax === "pph") {
-						supplierTaxPercen = fil.pph;
-					} else {
-						supplierTaxPercen = fil.ppn + fil.pph;
-					}
-					supplierTax = fil.tax;
-				}
-			});
-			if (supplierTax === "nontax") {
-				return "0";
-			} else {
-				let totalPPN: any = (totalBayar * supplierTaxPercen) / 100;
-				return Math.ceil(totalPPN).toString();
+		});
+		let totalPPN: any = (totalBayar * supplierTaxPercenPpn) / 100;
+		return Math.ceil(totalPPN).toString();
+	};
+
+	const Pph = (suplier: string, type: string) => {
+		let totalBayar: any = Total(suplier);
+		let supplierTaxPercenPph: number = 0;
+		dataPPN.filter((fil: any) => {
+			if (fil.supplier === suplier) {
+				supplierTaxPercenPph = fil.pph;
 			}
-		}
+		});
+		let totalPPN: any = (totalBayar * supplierTaxPercenPph) / 100;
+		return Math.ceil(totalPPN).toString();
 	};
 
 	const grandTotal = (suplier: string) => {
 		let totalBayar: any = Total(suplier);
 		let totalPPN: any = Ppn(suplier, "total");
-		let total: any = parseInt(totalBayar) + parseInt(totalPPN);
-		return formatRupiah(total.toString());
+		let totalPPH: any = Pph(suplier, "total");
+		
+		if(dataSelected.taxPsrDmr === 'ppn'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return formatRupiah(total.toString());
+		}else if(dataSelected.taxPsrDmr === 'pph'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
+			return formatRupiah(total.toString());
+		}else if(dataSelected.taxPsrDmr === 'ppn_and_pph'){
+			let total: any = parseInt(totalBayar) + parseInt(totalPPH) + parseInt(totalPPN);
+			return formatRupiah(total.toString());
+		}else{
+			let total: any = parseInt(totalBayar);
+			return formatRupiah(total.toString());
+		}
 	};
 
 	const approve = async (status: boolean) => {
@@ -342,29 +335,68 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 															className='border border-black text-right pr-4'
 															colSpan={7}
 														>
-															Total
+															Total ({dataSelected.currency})
 														</td>
 														<td className='border border-black text-center'>
 															{formatRupiah(Total(res))}
 														</td>
 													</tr>
+													{dataSelected.taxPsrDmr === "ppn" ? (
+														<tr>
+															<td
+																className='border border-black text-right pr-4'
+																colSpan={7}
+															>
+																{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+															</td>
+															<td className='border border-black text-center'>
+																{formatRupiah(Ppn(res, "total"))}
+															</td>
+														</tr>
+													) : dataSelected.taxPsrDmr === "pph" ? (
+														<tr>
+															<td
+																className='border border-black text-right pr-4'
+																colSpan={7}
+															>
+																{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+															</td>
+															<td className='border border-black text-center'>
+																{formatRupiah(Pph(res, "total"))}
+															</td>
+														</tr>
+													) : dataSelected.taxPsrDmr === "ppn_and_pph" ? (
+														<>
+															<tr>
+																<td
+																	className='border border-black text-right pr-4'
+																	colSpan={7}
+																>
+																	{`PPN ${dataSelected.SrDetail[0].supplier.ppn}%`}
+																</td>
+																<td className='border border-black text-center'>
+																	{formatRupiah(Ppn(res, "total"))}
+																</td>
+															</tr>
+															<tr>
+																<td
+																	className='border border-black text-right pr-4'
+																	colSpan={7}
+																>
+																	{`PPH ${dataSelected.SrDetail[0].supplier.pph}%`}
+																</td>
+																<td className='border border-black text-center'>
+																	{formatRupiah(Pph(res, "total"))}
+																</td>
+															</tr>
+														</>
+													) : null}
 													<tr>
 														<td
 															className='border border-black text-right pr-4'
 															colSpan={7}
 														>
-															{Ppn(res, "ppn")}
-														</td>
-														<td className='border border-black text-center'>
-															{formatRupiah(Ppn(res, "total"))}
-														</td>
-													</tr>
-													<tr>
-														<td
-															className='border border-black text-right pr-4'
-															colSpan={7}
-														>
-															Grand Total
+															Grand Total ({dataSelected.currency})
 														</td>
 														<td className='border border-black text-center'>
 															{grandTotal(res)}
