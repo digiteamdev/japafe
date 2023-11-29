@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputArea } from "../../../components";
-import { Formik, Form, FieldArray } from "formik";
 import {
-	GetAllSupplier,
-	GetAllMRPo,
-	GetAllCoa,
-	AddPrMr,
-} from "../../../services";
+	Section,
+	Input,
+	InputSelect,
+	InputArea,
+	InputSelectSearch,
+} from "../../../components";
+import { Formik, Form, FieldArray } from "formik";
+import { GetAllMRPo, GetAllCoa, AddPrMr } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
@@ -21,6 +22,7 @@ interface props {
 interface data {
 	dateOfPurchase: any;
 	idPurchase: string;
+	supId: string;
 	currency: string;
 	taxPsrDmr: string;
 	note: string;
@@ -30,6 +32,7 @@ interface data {
 export const FormCreateDirectMr = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
+	const [listRequest, setListRequest] = useState<any>([]);
 	const [listMr, setListMr] = useState<any>([]);
 	const [listCoa, setListCoa] = useState<any>([]);
 	const [userId, setUserId] = useState<string>("");
@@ -39,6 +42,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 		idPurchase: "",
 		currency: "IDR",
 		taxPsrDmr: "ppn",
+		supId: "",
 		note: "",
 		detailMr: [],
 	});
@@ -49,7 +53,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 			setUserId(idUser);
 		}
 		setIdPR(generateIdNum());
-		getSupplier();
 		getMrPo();
 		getCoa();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,7 +63,9 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 			const response = await GetAllMRPo("DP");
 			if (response) {
 				let detail: any = [];
-				response.data.result.map((res: any, i: number) => {
+				let suplier: any = [];
+				let dataSuplier: any = [];
+				response.data.result.map((res: any) => {
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
@@ -79,20 +84,40 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 							? res.mr.wor.job_no_mr
 							: res.mr.wor.job_no,
 					});
+					if (!suplier.includes(res.supplier.supplier_name)) {
+						suplier.push(res.supplier.supplier_name);
+						dataSuplier.push({
+							label: res.supplier.supplier_name,
+							value: res.supplier,
+						});
+					}
 				});
+				setListSupplier(dataSuplier);
+				setListRequest(detail);
 				setData({
 					dateOfPurchase: new Date(),
 					idPurchase: generateIdNum(),
-					currency: 'IDR',
-					taxPsrDmr: 'ppn',
+					currency: "IDR",
+					taxPsrDmr: "ppn",
+					supId: "",
 					note: "",
-					detailMr: detail,
+					detailMr: [],
 				});
 				setListMr(response.data.result);
 			}
 		} catch (error) {
 			setListMr([]);
 		}
+	};
+
+	const selectSuplier = (id: string) => {
+		let detail: any = [];
+		listRequest.map((res: any) => {
+			if (id === res.supId) {
+				detail.push(res);
+			}
+		});
+		return detail;
 	};
 
 	const getCoa = async () => {
@@ -104,15 +129,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 		} catch (error) {
 			setListCoa([]);
 		}
-	};
-
-	const getSupplier = async () => {
-		try {
-			const response = await GetAllSupplier();
-			if (response) {
-				setListSupplier(response.data.result);
-			}
-		} catch (error) {}
 	};
 
 	const generateIdNum = () => {
@@ -152,6 +168,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 			dateOfPurchase: payload.dateOfPurchase,
 			idPurchase: payload.idPurchase,
 			currency: payload.currency,
+			supId: payload.supId,
 			taxPsrDmr: payload.taxPsrDmr,
 			note: payload.note,
 			detailMr: listDetail,
@@ -205,7 +222,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 					values,
 				}) => (
 					<Form>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='idPurchase'
@@ -234,23 +251,24 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
-									id='taxPsrDmr'
-									name='taxPsrDmr'
-									placeholder='Tax'
-									label='Tax'
-									onChange={handleChange}
+								<InputSelectSearch
+									datas={listSupplier}
+									id='suplier'
+									name='suplier'
+									placeholder='Suplier'
+									label='Suplier'
+									onChange={(e: any) => {
+										setFieldValue("supId", e.value.id);
+										setFieldValue("detailMr", selectSuplier(e.value.id));
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='ppn'>PPN</option>
-									<option value='non_ppn'>Non PPN</option>
-								</InputSelect>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputSelect
 									id='currency'
@@ -271,8 +289,21 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 									<option value='YEN'>YEN</option>
 								</InputSelect>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputSelect
+									id='taxPsrDmr'
+									name='taxPsrDmr'
+									placeholder='Tax'
+									label='Tax'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='ppn'>PPN</option>
+									<option value='non_ppn'>Non PPN</option>
+								</InputSelect>
+							</div>
 							<div className='w-full'>
 								<InputArea
 									id='note'
@@ -295,266 +326,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											{/* <Disclosure defaultOpen>
-												{({ open }) => (
-													<div>
-														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-															<h4 className='text-lg font-bold'>
-																Job No : {result.job_no}
-															</h4>
-															<h4 className='text-lg font-bold'>
-																{open ? <ChevronDown /> : <ChevronUp />}
-															</h4>
-														</Disclosure.Button>
-														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.no_mr`}
-																		name={`detailMr.${i}.no_mr`}
-																		placeholder='No MR'
-																		label='No MR'
-																		type='text'
-																		value={result.no_mr}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.supId`}
-																		name={`detailMr.${i}.supId`}
-																		placeholder='Suplier'
-																		label='Suplier'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.supId`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Suplier
-																		</option>
-																		{listSupplier.length === 0 ? (
-																			<option value='no data'>No data</option>
-																		) : (
-																			listSupplier.map(
-																				(res: any, i: number) => {
-																					return (
-																						<option
-																							value={res.id}
-																							key={i}
-																							selected={res.id === result.supId}
-																						>
-																							{res.supplier_name}
-																						</option>
-																					);
-																				}
-																			)
-																		)}
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.akunId`}
-																		name={`detailMr.${i}.akunId`}
-																		placeholder='Akun'
-																		label='Akun'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.akunId`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Akun
-																		</option>
-																		{listCoa.length === 0 ? (
-																			<option value='no data'>No data</option>
-																		) : (
-																			listCoa.map((res: any, i: number) => {
-																				return (
-																					<option
-																						value={res.id}
-																						key={i}
-																						// selected={res.id === result.material}
-																					>
-																						{res.coa_name}
-																					</option>
-																				);
-																			})
-																		)}
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.material`}
-																		name={`detailMr.${i}.material`}
-																		placeholder='Material Name'
-																		label='Material Name'
-																		type='text'
-																		value={result.material}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.qty`}
-																		name={`detailMr.${i}.qty`}
-																		placeholder='Qty'
-																		label='Qty'
-																		type='number'
-																		value={result.qty}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					result.price,
-																					e.target.value,
-																					result.disc
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.qty`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-															</Section>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.note`}
-																		name={`detailMr.${i}.note`}
-																		placeholder='Note'
-																		label='Note'
-																		type='text'
-																		value={result.note}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.price`}
-																		name={`detailMr.${i}.price`}
-																		placeholder='Price'
-																		label='Price'
-																		type='number'
-																		value={result.price}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					e.target.value,
-																					result.qty,
-																					result.disc
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.price`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.disc`}
-																		name={`detailMr.${i}.disc`}
-																		placeholder='Discount'
-																		label='Discount'
-																		type='number'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					result.price,
-																					result.qty,
-																					e.target.value
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.disc`,
-																				e.target.value
-																			);
-																		}}
-																		value={result.disc}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.total`}
-																		name={`detailMr.${i}.total`}
-																		placeholder='Total Price'
-																		label='Total Price'
-																		type='number'
-																		value={result.total}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.user`}
-																		name={`detailMr.${i}.user`}
-																		placeholder='Request By'
-																		label='Request By'
-																		type='text'
-																		value={result.user}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-															</Section>
-															<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500 mt-2'>
-																<div className='w-full'>
-																	{values.detailMr.length === 1 ? null : (
-																		<a
-																			className='inline-flex text-red-500 cursor-pointer mt-2'
-																			onClick={() => {
-																				arrayMr.remove(i);
-																			}}
-																		>
-																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
-																			Remove Material Request
-																		</a>
-																	)}
-																</div>
-															</Section>
-														</Disclosure.Panel>
-													</div>
-												)}
-											</Disclosure> */}
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 												<div className='w-full'>
 													<Input
@@ -569,42 +340,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`detailMr.${i}.supId`}
-														name={`detailMr.${i}.supId`}
-														placeholder='Suplier'
-														label='Suplier'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailMr.${i}.supId`,
-																e.target.value
-															);
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Suplier
-														</option>
-														{listSupplier.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listSupplier.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		selected={res.id === result.supId}
-																	>
-																		{res.supplier_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
 												</div>
 												<div className='w-full'>
 													<InputSelect
@@ -683,8 +418,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-											</Section>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.note`}
@@ -699,6 +432,8 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
+											</Section>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b border-b-gray-500 pb-2'>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.price`}
@@ -781,18 +516,15 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-											</Section>
-											<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500 mt-2'>
 												<div className='w-full'>
 													{values.detailMr.length === 1 ? null : (
 														<a
-															className='inline-flex text-red-500 cursor-pointer mt-2'
+															className='inline-flex text-red-500 cursor-pointer mt-10'
 															onClick={() => {
 																arrayMr.remove(i);
 															}}
 														>
 															<Trash2 size={18} className='mr-1 mt-1' /> Remove
-															Material Request
 														</a>
 													)}
 												</div>

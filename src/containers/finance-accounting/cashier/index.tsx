@@ -10,8 +10,8 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Tag, Eye, Edit, Trash2 } from "react-feather";
-import { FormCreateKontraBon } from "./formCreate";
+import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
+import { FormCreateCashier } from "./formCreate";
 import {
 	GetKontraBon,
 	DeleteKontraBon,
@@ -20,10 +20,10 @@ import {
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
-import { ViewKontraBon } from './view';
-import { FormEditKontraBon } from "./formEdit";
+// import { ViewKontraBon } from './view';
+// import { FormEditKontraBon } from "./formEdit";
 
-export const KontraBon = () => {
+export const Cashier = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -144,12 +144,12 @@ export const KontraBon = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Kontra Bon'
+				title='Cashier'
 				total={countData}
-				icon={<Tag className='w-[36px] h-[36px]' />}
+				icon={<DollarSign className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Kontra Bon'
+				title='Cashier'
 				print={true}
 				showModal={showModal}
 				search={searchKontraBon}
@@ -192,59 +192,60 @@ export const KontraBon = () => {
 					) : (
 						data.map((res:any, i: number) => {
 							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.id_kontrabon}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase.idPurchase}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{moment(res.due_date).format('DD-MMM-YYYY')}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase.note}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.supplier.supplier_name : res.purchase.supplier.supplier_name }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{formatRupiah(res.grandtotal.toString())}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'view', false);
-											}}>
-												<Eye color='white' />
-											</Button>
-											{ res.status_valid ? null : (
-												<>
-													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-													onClick={ () => {
-														setDataSelected(res);
-														showModal(true,'edit', false);
-													}}>
-														<Edit color='white' />
-													</Button>
-													<Button 
-														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-														onClick={ () => {
-															setDataSelected(res);
-															showModal(true,'delete', false);
-														}}>
-														<Trash2 color='white' />
-													</Button>
-												</>
-											) }
-										</div>
-									</td>
-								</tr>
+                                <></>
+								// <tr
+								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+								// 	key={i}
+								// >
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{res.id_kontrabon}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{res.term_of_pay_po_so.poandso.id_so}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{moment(res.due_date).format('DD-MMM-YYYY')}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{res.term_of_pay_po_so.poandso.note}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{res.term_of_pay_po_so.poandso.supplier.supplier_name}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		{formatRupiah(res.grandtotal.toString())}
+								// 	</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>
+								// 		<div>
+								// 			<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+								// 			onClick={ () => {
+								// 				setDataSelected(res);
+								// 				showModal(true,'view', false);
+								// 			}}>
+								// 				<Eye color='white' />
+								// 			</Button>
+								// 			{ res.status_valid ? null : (
+								// 				<>
+								// 					<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+								// 					onClick={ () => {
+								// 						setDataSelected(res);
+								// 						showModal(true,'edit', false);
+								// 					}}>
+								// 						<Edit color='white' />
+								// 					</Button>
+								// 					<Button 
+								// 						className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+								// 						onClick={ () => {
+								// 							setDataSelected(res);
+								// 							showModal(true,'delete', false);
+								// 						}}>
+								// 						<Trash2 color='white' />
+								// 					</Button>
+								// 				</>
+								// 			) }
+								// 		</div>
+								// 	</td>
+								// </tr>
 							);
 						})
 					)}
@@ -275,17 +276,19 @@ export const KontraBon = () => {
 					/>
 				) : (
 					<Modal
-						title='Kontra Bon'
+						title='Cashier'
 						isModal={isModal}
 						content={modalContent}
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-							<ViewKontraBon dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+                            <></>
+							// <ViewKontraBon dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 						) :  modalContent === 'edit' ? (
-                            <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                            <></>
+                            // <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						) : (
-							<FormCreateKontraBon content={modalContent} showModal={showModal}/>
+							<FormCreateCashier content={modalContent} showModal={showModal}/>
 						)}
 					</Modal>
 				)

@@ -19,13 +19,14 @@ interface props {
 }
 
 interface data {
-	termId: string;
-	poandsoId: string;
+	termId: string | null;
+	poandsoId: string | null;
 	id_kontrabon: string;
 	account_name: string;
 	tax_prepered: any;
 	due_date: any;
 	invoice: string;
+	purchaseID: string | null;
 	DO: string;
 	grandtotal: number;
 	tax_invoice: boolean;
@@ -52,10 +53,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 	const [accNo, setAccNo] = useState<string>("");
 	const [totalAmount, setTotalAmount] = useState<number>(0);
 	const [data, setData] = useState<data>({
-		termId: "",
-		poandsoId: "",
+		termId: null,
+		poandsoId: null,
 		id_kontrabon: "",
 		account_name: "",
+		purchaseID: null,
 		tax_prepered: new Date(),
 		due_date: new Date(),
 		invoice: "",
@@ -90,7 +92,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					data.push({
-						label: res.id_so,
+						label: res.id_so ? res.id_so : res.idPurchase,
 						value: res,
 					});
 				});
@@ -102,23 +104,27 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
+	const taxAmount = (total: number, percent: number) => {
+		let ppn = (total * percent) / 100;
+		return ppn;
+	};
+
 	const selectPO = (data: any) => {
 		let disc: number = 0;
 		let ppn: number = 0;
 		let pph: number = 0;
 		let bill: number = 0;
+		let billPaid: number = 0;
 		let dataAcc: any = [];
 		let hasTax: boolean = false;
 		let taxType: string = "";
 		data.detailMr.map((res: any) => {
 			disc = disc + res.disc;
 			bill = bill + res.total;
-			// if (!hasTax) {
-			// 	if (res.taxpr !== "non_tax") {
-			// 		hasTax = true;
-			// 		taxType = res.taxpr;
-			// 	}
-			// }
+		});
+		data.SrDetail.map((res: any) => {
+			disc = disc + res.disc;
+			bill = bill + res.total;
 		});
 		data.supplier?.SupplierBank.map((bank: any) => {
 			dataAcc.push({
@@ -127,27 +133,87 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			});
 		});
 		if (data.taxPsrDmr === "ppn") {
-			ppn = (bill * data.supplier.ppn) / 100;
-			if(data.term_of_pay_po_so[0].tax_invoice){
-				setTotalAmount(data.term_of_pay_po_so[0].price);
-			}else{
-				setTotalAmount(data.term_of_pay_po_so[0].price + ppn);
+			ppn = taxAmount(bill, data.supplier.ppn);
+			billPaid = taxAmount(
+				bill,
+				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+			);
+			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+				setTotalAmount(billPaid - disc);
+			} else {
+				setTotalAmount(billPaid - disc + ppn);
+			}
+		} else if (data.taxPsrDmr === "pph") {
+			billPaid = taxAmount(
+				bill,
+				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+			);
+			pph = taxAmount(bill, data.supplier.pph);
+			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+				setTotalAmount(billPaid - disc);
+			} else {
+				setTotalAmount(billPaid - disc + pph);
+			}
+		} else if (data.taxPsrDmr === "ppn_and_pph") {
+			ppn = taxAmount(bill, data.supplier.ppn);
+			pph = taxAmount(bill, data.supplier.pph);
+			billPaid = taxAmount(
+				bill,
+				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+			);
+			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+				setTotalAmount(billPaid - disc);
+			} else {
+				setTotalAmount(billPaid - disc + ppn + pph);
 			}
 		} else {
-			setTotalAmount(data.term_of_pay_po_so[0].price);
+			billPaid = taxAmount(
+				bill,
+				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+			);
+			setTotalAmount(billPaid - disc);
 		}
-		if(!data.term_of_pay_po_so[0].tax_invoice){
+		if (
+			(data.term_of_pay_po_so &&
+				!data.term_of_pay_po_so[0].tax_invoice &&
+				data.taxPsrDmr === "ppn") ||
+			(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn")
+		) {
 			setPpn(ppn);
+			setPph(0);
+		} else if (
+			(data.term_of_pay_po_so &&
+				!data.term_of_pay_po_so[0].tax_invoice &&
+				data.taxPsrDmr === "pph") ||
+			(!data.term_of_pay_po_so && data.taxPsrDmr === "pph")
+		) {
+			setPph(pph);
+			setPpn(0);
+		} else if (
+			(data.term_of_pay_po_so &&
+				!data.term_of_pay_po_so[0].tax_invoice &&
+				data.taxPsrDmr === "ppn_and_pph") ||
+			(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn_and_pph")
+		) {
+			setPph(pph);
+			setPpn(ppn);
+		} else {
+			setPph(0);
+			setPpn(0);
 		}
 		setTax(taxType);
 		setDataAccBank(dataAcc);
 		setBillAmount(bill);
+		setBillPaid(billPaid);
 		setDisc(disc);
 		setSuplier(data.supplier.supplier_name);
-		setBillPaid(data.term_of_pay_po_so[0].price);
-		setPercent(data.term_of_pay_po_so[0].percent);
+		setPercent(
+			data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+		);
 		setTermOfPayment(
-			`${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
+			data.term_of_pay_po_so
+				? `${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
+				: `${data.note}`
 		);
 	};
 
@@ -217,20 +283,6 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							{/* <div className='w-full'>
-								<Input
-									id='name'
-									name='name'
-									placeholder='Date'
-									label='Date'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={moment(new Date()).format('DD-MMMM-YYYY')}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={dataPurchase}
@@ -239,22 +291,45 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									placeholder='ID Purchase'
 									label='ID Purchase'
 									onChange={(e: any) => {
+										console.log(e.value)
 										selectPO(e.value);
-										if(e.value.term_of_pay_po_so[0].tax_invoice){
+										if (
+											e.value.term_of_pay_po_so &&
+											e.value.term_of_pay_po_so[0].tax_invoice
+										) {
+											setFieldValue("purchaseID", null);
+											setFieldValue("poandsoId", e.value.id);
+											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", false);
-											setPayTax(true)
-										}else{
-											if(e.value.term_of_pay_po_so[0].status){
-												setFieldValue("tax_invoice", true);
-												setPayTax(true)
+											setPayTax(true);
+										} else if (
+											e.value.term_of_pay_po_so &&
+											e.value.term_of_pay_po_so[0].status
+										) {
+											setFieldValue("purchaseID", null);
+											setFieldValue("poandsoId", e.value.id);
+											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
+											setFieldValue("tax_invoice", true);
+											setPayTax(true);
+										} else if (!e.value.term_of_pay_po_so) {
+											setFieldValue("poandsoId", null);
+											setFieldValue("termId", null);
+											setFieldValue("purchaseID", e.value.id);
+											setFieldValue("tax_invoice", true);
+											setPayTax(true);
+											if(e.value.taxPsrDmr === 'nontax'){
+												setFieldValue("tax_invoice",false);
 											}else{
-												setFieldValue("tax_invoice", true);
-												setPayTax(false)
+												setFieldValue("tax_invoice",true);
 											}
+										} else {
+											setFieldValue("purchaseID", null);
+											setFieldValue("poandsoId", e.value.id);
+											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
+											setFieldValue("tax_invoice", true);
+											setPayTax(false);
 										}
 										setFieldValue("id_kontrabon", idKontraBon);
-										setFieldValue("poandsoId", e.value.id);
-										setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 									}}
 									required={true}
 									withLabel={true}
@@ -361,7 +436,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={ values.tax_invoice ? formatRupiah(ppn.toString()) : '0'}
+									value={
+										values.tax_invoice ? formatRupiah(ppn.toString()) : "0"
+									}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -409,20 +486,6 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-							{/* <div className='w-full'>
-								<Input
-									id='cash ADV'
-									name='cash ADV'
-									placeholder='Cash ADV'
-									label='Cash ADV'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={values.name}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelect
 									id='tax'
@@ -453,7 +516,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									<option value='yes' selected={values.tax_invoice}>
 										Pay With Tax
 									</option>
-									<option value='no' selected={!values.tax_invoice}>Pay No Tax</option>
+									<option value='no' selected={!values.tax_invoice}>
+										Pay No Tax
+									</option>
 								</InputSelect>
 							</div>
 							<div className='w-full'>

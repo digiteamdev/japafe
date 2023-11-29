@@ -13,6 +13,8 @@ interface props {
 	data?: any;
 	discount: () => any;
 	ppn: () => any;
+	pph: () => any;
+	total: () => any;
 	showModalPdf: (val: boolean) => void;
 }
 
@@ -21,6 +23,8 @@ export const PdfKontraBon = ({
 	data,
 	discount,
 	ppn,
+	pph,
+	total,
 	showModalPdf,
 }: props) => {
 	const printDocument = () => {
@@ -33,6 +37,99 @@ export const PdfKontraBon = ({
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Kontra_Bon_${data.id_kontrabon}.pdf`);
 		});
+	};
+
+	const showTax = () => {
+		if (data.purchase) {
+			if (data.purchase.taxPsrDmr === "ppn") {
+				return (
+					<div className='grid grid-cols-2 w-full'>
+						<div className='w-full'>
+							PPN {data.purchase.supplier.ppn}% ({data.purchase.currency})
+						</div>
+						<div className='w-full'>: {formatRupiah(ppn().toString())}</div>
+					</div>
+				);
+			} else if (data.purchase.taxPsrDmr === "pph") {
+				return (
+					<div className='grid grid-cols-2 w-full'>
+						<div className='w-full'>
+							PPH {data.purchase.supplier.pph}% ({data.purchase.currency})
+						</div>
+						<div className='w-full'>: {formatRupiah(pph().toString())}</div>
+					</div>
+				);
+			} else if (data.purchase.taxPsrDmr === "ppn_and_pph") {
+				return (
+					<>
+						<div className='grid grid-cols-2 w-full'>
+							<div className='w-full'>
+								PPN {data.purchase.supplier.ppn}% ({data.purchase.currency})
+							</div>
+							<div className='w-full'>: {formatRupiah(ppn().toString())}</div>
+						</div>
+						<div className='grid grid-cols-2 w-full'>
+							<div className='w-full'>
+								PPH {data.purchase.supplier.pph}% ({data.purchase.currency})
+							</div>
+							<div className='w-full'>: {formatRupiah(pph().toString())}</div>
+						</div>
+					</>
+				);
+			} else {
+				return false;
+			}
+		} else {
+			if (
+				data.term_of_pay_po_so.tax_invoice &&
+				data.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
+			) {
+				return (
+					<div className='grid grid-cols-2 w-full'>
+						<div className='w-full'>
+							PPN {data.term_of_pay_po_so.poandso.supplier.ppn}% (
+							{data.term_of_pay_po_so.poandso.currency})
+						</div>
+						<div className='w-full'>: {formatRupiah(ppn().toString())}</div>
+					</div>
+				);
+			} else if (
+				data.term_of_pay_po_so.tax_invoice &&
+				data.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
+			) {
+				return (
+					<div className='grid grid-cols-2 w-full'>
+						<div className='w-full'>
+							PPH {data.term_of_pay_po_so.poandso.supplier.pph}% (
+							{data.term_of_pay_po_so.poandso.currency})
+						</div>
+						<div className='w-full'>: {formatRupiah(pph().toString())}</div>
+					</div>
+				);
+			} else if (
+				data.term_of_pay_po_so.tax_invoice &&
+				data.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
+			) {
+				return (
+					<>
+						<div className='grid grid-cols-2 w-full'>
+							<div className='w-full'>
+								PPN {data.term_of_pay_po_so.poandso.supplier.ppn}% (
+								{data.term_of_pay_po_so.poandso.currency})
+							</div>
+							<div className='w-full'>: {formatRupiah(ppn().toString())}</div>
+						</div>
+						<div className='grid grid-cols-2 w-full'>
+							<div className='w-full'>
+								PPH {data.term_of_pay_po_so.poandso.supplier.pph}% (
+								{data.term_of_pay_po_so.poandso.currency})
+							</div>
+							<div className='w-full'>: {formatRupiah(pph().toString())}</div>
+						</div>
+					</>
+				);
+			}
+		}
 	};
 
 	return (
@@ -118,9 +215,15 @@ export const PdfKontraBon = ({
 													<div className='grid grid-cols-2 w-full'>
 														<div className='w-full'>Refrence Number</div>
 														<div className='w-full'>
-															: {data.term_of_pay_po_so.poandso.id_so},{" "}
+															:{" "}
+															{data.term_of_pay_po_so
+																? data.term_of_pay_po_so.poandso.id_so
+																: data.purchase.idPurchase}
+															,{" "}
 															{moment(
-																data.term_of_pay_po_so.poandso.date_prepared
+																data.term_of_pay_po_so
+																	? data.term_of_pay_po_so.poandso.date_prepared
+																	: data.purchase.date_prepared
 															).format("DD-MMM-YYYY")}
 														</div>
 													</div>
@@ -136,41 +239,55 @@ export const PdfKontraBon = ({
 														<div className='w-full'>Suplier / Vendor</div>
 														<div className='w-full'>
 															:{" "}
-															{
-																data.term_of_pay_po_so.poandso.supplier
-																	.supplier_name
-															}
+															{data.term_of_pay_po_so
+																? data.term_of_pay_po_so.poandso.supplier
+																		.supplier_name
+																: data.purchase.supplier.supplier_name}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Amount Of The Bill ({data.term_of_pay_po_so.poandso.currency})</div>
+														<div className='w-full'>
+															Amount Of The Bill (
+															{data.term_of_pay_po_so
+																? data.term_of_pay_po_so.poandso.currency
+																: data.purchase.currency}
+															)
+														</div>
 														<div className='w-full'>
 															:{" "}
 															{formatRupiah(
-																data.term_of_pay_po_so.price.toString()
+																data.term_of_pay_po_so
+																	? data.term_of_pay_po_so.price.toString()
+																	: total().toString()
 															)}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Discount ({data.term_of_pay_po_so.poandso.currency})</div>
+														<div className='w-full'>
+															Discount (
+															{data.term_of_pay_po_so
+																? data.term_of_pay_po_so.poandso.currency
+																: data.purchase.currency}
+															)
+														</div>
 														<div className='w-full'>
 															: {formatRupiah(discount().toString())}
 														</div>
 													</div>
+													{showTax()}
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>PPN {data.term_of_pay_po_so.poandso.supplier.ppn}% ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
-															: {formatRupiah(ppn().toString())}
+															Total ({data.term_of_pay_po_so ? data.term_of_pay_po_so.poandso.currency : data.purchase.currency})
 														</div>
-													</div>
-													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Total ({data.term_of_pay_po_so.poandso.currency})</div>
 														<div className='w-full'>
 															: {formatRupiah(data.grandtotal.toString())}
 														</div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>
-														<div className='w-full'>Cash Advant ({data.term_of_pay_po_so.poandso.currency})</div>
+														<div className='w-full'>
+															Cash Advant (
+															{data.term_of_pay_po_so ? data.term_of_pay_po_so.poandso.currency : data.purchase.currency})
+														</div>
 														<div className='w-full'>: </div>
 													</div>
 													<div className='grid grid-cols-2 w-full'>

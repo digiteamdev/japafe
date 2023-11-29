@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
 import { Section, Input, InputSelect } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import {
-	GetAllSupplier,
-	GetAllCoa,
-	EditPrMr,
-} from "../../../services";
+import { GetAllSupplier, GetAllCoa, EditPrMr } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
@@ -21,6 +17,8 @@ interface props {
 interface data {
 	dateOfPurchase: any;
 	idPurchase: string;
+	taxPsrDmr: string;
+	currency: string;
 	detailMr: any;
 }
 
@@ -38,6 +36,8 @@ export const FormEditPurchaseMr = ({
 	const [data, setData] = useState<data>({
 		dateOfPurchase: new Date(),
 		idPurchase: "",
+		taxPsrDmr: "",
+		currency: "",
 		detailMr: [],
 	});
 
@@ -79,6 +79,8 @@ export const FormEditPurchaseMr = ({
 		setData({
 			dateOfPurchase: dataSelected.dateOfPurchase,
 			idPurchase: dataSelected.idPurchase,
+			taxPsrDmr: dataSelected.taxPsrDmr,
+			currency: dataSelected.currency,
 			detailMr: detail,
 		});
 	};
@@ -125,8 +127,11 @@ export const FormEditPurchaseMr = ({
 			});
 		});
 		let data = {
+			currency: payload.currency,
+			taxPsrDmr: payload.taxPsrDmr,
 			detailMr: listDetail,
 		};
+		console.log(data)
 		try {
 			const response = await EditPrMr(data);
 			if (response.data) {
@@ -176,7 +181,7 @@ export const FormEditPurchaseMr = ({
 					values,
 				}) => (
 					<Form>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='idPurchase'
@@ -205,6 +210,43 @@ export const FormEditPurchaseMr = ({
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='taxPsrDmr'
+									name='taxPsrDmr'
+									placeholder='Tax'
+									label='Tax'
+									value={values.taxPsrDmr}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='ppn'>PPN</option>
+									<option value='non_tax'>Non Tax</option>
+								</InputSelect>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='currency'
+									name='currency'
+									placeholder='Currency'
+									label='Currency'
+									value={values.taxPsrDmr}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='IDR' selected>
+										IDR
+									</option>
+									<option value='EUR'>EUR</option>
+									<option value='SGD'>SGD</option>
+									<option value='USD'>USD</option>
+									<option value='YEN'>YEN</option>
+								</InputSelect>
+							</div>
 						</Section>
 						<FieldArray
 							name='detailMr'
@@ -212,7 +254,7 @@ export const FormEditPurchaseMr = ({
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Disclosure defaultOpen>
+											{/* <Disclosure defaultOpen>
 												{({ open }) => (
 													<div>
 														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
@@ -528,7 +570,266 @@ export const FormEditPurchaseMr = ({
 																		/>
 																	</div>
 																) : null}
-																{/* <div className='w-full'>
+																<div className='w-full'>
+																	{values.detailMr.length === 1 ? null : (
+																		<a
+																			className='inline-flex text-red-500 cursor-pointer mt-10'
+																			onClick={() => {
+																				arrayMr.remove(i);
+																			}}
+																		>
+																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
+																			Remove Material Request
+																		</a>
+																	)}
+																</div>
+															</Section>
+														</Disclosure.Panel>
+													</div>
+												)}
+											</Disclosure> */}
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.no_mr`}
+														name={`detailMr.${i}.no_mr`}
+														placeholder='No MR'
+														label='No MR'
+														type='text'
+														value={result.no_mr}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.supId`}
+														name={`detailMr.${i}.supId`}
+														placeholder='Suplier'
+														label='Suplier'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.supId`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														<option value='no data' selected>
+															Choose Suplier
+														</option>
+														{listSupplier.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+															listSupplier.map((res: any, i: number) => {
+																return (
+																	<option
+																		value={res.id}
+																		key={i}
+																		selected={res.id === result.supId}
+																	>
+																		{res.supplier_name}
+																	</option>
+																);
+															})
+														)}
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<InputSelect
+														id={`detailMr.${i}.akunId`}
+														name={`detailMr.${i}.akunId`}
+														placeholder='Akun'
+														label='Akun'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.akunId`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													>
+														{listCoa.length === 0 ? (
+															<option value='no data'>No data</option>
+														) : (
+															listCoa.map((res: any, i: number) => {
+																return (
+																	<option
+																		value={res.id}
+																		key={i}
+																		selected={res.id === result.akunId}
+																	>
+																		{res.coa_name}
+																	</option>
+																);
+															})
+														)}
+													</InputSelect>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.material`}
+														name={`detailMr.${i}.material`}
+														placeholder='Material Name'
+														label='Material Name'
+														type='text'
+														value={result.material}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.qty`}
+														name={`detailMr.${i}.qty`}
+														placeholder='Qty'
+														label='Qty'
+														type='number'
+														value={result.qty}
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.total`,
+																totalHarga(
+																	result.price,
+																	e.target.value,
+																	result.disc
+																)
+															);
+															setFieldValue(
+																`detailMr.${i}.qty`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={result.note}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.price`}
+														name={`detailMr.${i}.price`}
+														placeholder='Price'
+														label='Price'
+														type='number'
+														value={result.price}
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.total`,
+																totalHarga(
+																	e.target.value,
+																	result.qty,
+																	result.disc
+																)
+															);
+															setFieldValue(
+																`detailMr.${i}.price`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.disc`}
+														name={`detailMr.${i}.disc`}
+														placeholder='Discount'
+														label='Discount'
+														type='number'
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.total`,
+																totalHarga(
+																	result.price,
+																	result.qty,
+																	e.target.value
+																)
+															);
+															setFieldValue(
+																`detailMr.${i}.disc`,
+																e.target.value
+															);
+														}}
+														value={result.disc}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.total`}
+														name={`detailMr.${i}.total`}
+														placeholder='Total Price'
+														label='Total Price'
+														type='number'
+														value={result.total}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.user`}
+														name={`detailMr.${i}.user`}
+														placeholder='Request By'
+														label='Request By'
+														type='text'
+														value={result.user}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 pb-2 border-b border-b-gray-500'>
+												{result.note_revision !== null ? (
+													<div className='w-full'>
+														<Input
+															id={`detailMr.${i}.note_revision`}
+															name={`detailMr.${i}.note_revision`}
+															placeholder='Note Revision'
+															label='Note Revision'
+															type='text'
+															value={result.note_revision}
+															disabled={true}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												) : null}
+												{/* <div className='w-full'>
 																	{values.detailMr.length === 1 ? null : (
 																		<a
 																			className='inline-flex text-red-500 cursor-pointer mt-10'
@@ -541,11 +842,7 @@ export const FormEditPurchaseMr = ({
 																		</a>
 																	)}
 																</div> */}
-															</Section>
-														</Disclosure.Panel>
-													</div>
-												)}
-											</Disclosure>
+											</Section>
 										</div>
 									);
 								})

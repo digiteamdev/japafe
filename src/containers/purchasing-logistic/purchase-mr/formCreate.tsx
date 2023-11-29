@@ -547,7 +547,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													/>
 												</div>
 											</Section>
-											<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500'>
+											<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500 pb-2'>
 												<div className='w-full'>
 													{values.detailMr.length === 1 ? null : (
 														<a

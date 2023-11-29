@@ -6,6 +6,7 @@ interface props {
 	type?: string;
 	placeholder?: string;
 	label?: string;
+	menuPlacement?: any;
 	value?: any;
 	name?: string;
 	disabled?: boolean;
@@ -22,6 +23,7 @@ export const InputSelectSearch = ({
 	value,
 	name,
 	className,
+	menuPlacement,
 	disabled,
 	required,
 	withLabel,
@@ -40,6 +42,7 @@ export const InputSelectSearch = ({
 			) : null}
 			<Select
 				// disabled={disabled}
+				menuPlacement={menuPlacement}
 				name={name}
 				id={id}
 				placeholder={placeholder}
