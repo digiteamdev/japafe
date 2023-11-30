@@ -8,11 +8,11 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { cashierSchema } from "../../../schema/finance-accounting/cashier/cashierSchema";
-import { GetCashier, AddKontraBon, GetAllCoa } from "../../../services";
+import { GetCashier, AddCashier, GetAllCoa } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
-import { Plus,Trash2 } from "react-feather";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -32,7 +32,7 @@ interface data {
 export const FormCreateCashier = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [dataPurchase, setDataPurchase] = useState<any>([]);
-    const [dataCoa, setDataCoa] = useState<any>([]);
+	const [dataCoa, setDataCoa] = useState<any>([]);
 	const [idCashier, setIdCashier] = useState<string>("");
 	const [suplier, setSuplier] = useState<string>("");
 	const [currency, setCurrency] = useState<string>("");
@@ -46,7 +46,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const [accName, setAccName] = useState<string>("");
 	const [data, setData] = useState<data>({
 		id_cashier: "",
-		status_payment: "",
+		status_payment: "Transfer",
 		kontrabonId: "",
 		date_cashier: new Date(),
 		note: "",
@@ -54,8 +54,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		journal_cashier: [
 			{
 				coa_id: "",
-                coa_name: "",
-				status_transaction: "",
+				coa_name: "",
+				status_transaction: "Debet",
 				grandtotal: 0,
 			},
 		],
@@ -63,7 +63,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 
 	useEffect(() => {
 		getCashier();
-        getCoa();
+		getCoa();
 		generateIdNum();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -88,7 +88,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					data.push({
-						label: `${res.id_kontrabon} - ${res.term_of_pay_po_so.poandso.id_so}`,
+						label: `${res.id_kontrabon} - ${res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase.idPurchase}`,
 						value: res,
 					});
 				});
@@ -100,7 +100,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-    const getCoa = async () => {
+	const getCoa = async () => {
 		setIsLoading(true);
 		let dataCoa: any = [];
 		try {
@@ -151,25 +151,34 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		setDisc(discTotal);
 	};
 
-	const addKontraBon = async (payload: any) => {
+	const addCashier = async (payload: any) => {
 		setIsLoading(true);
-		try {
-			const response = await AddKontraBon(payload);
-			if (response) {
-				toast.success("Add Kontra Bon Success", {
-					position: "top-center",
-					autoClose: 1000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				showModal(false, content, true);
+		let totalDebet: number = 0;
+		let totalKredit: number = 0;
+		let jurnal: any = [];
+		payload.journal_cashier.map((res: any) => {
+			jurnal.push({
+				coa_id: res.coa_id,
+				status_transaction: res.status_transaction,
+				grandtotal: res.grandtotal,
+			});
+			if (res.status_transaction === "Debet") {
+				totalDebet = totalDebet + res.grandtotal;
+			} else {
+				totalKredit = totalKredit + res.grandtotal;
 			}
-		} catch (error) {
-			toast.error("Add Kontra Bon Failed", {
+		});
+		let data = {
+			id_cashier: idCashier,
+			status_payment: payload.status_payment,
+			kontrabonId: payload.kontrabonId,
+			date_cashier: payload.date_cashier,
+			note: payload.note,
+			total: payload.total,
+			journal_cashier: jurnal
+		};
+		if (totalDebet === 0 || totalKredit === 0) {
+			toast.warning("Journal total has not been filled in", {
 				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: true,
@@ -179,6 +188,46 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 				progress: undefined,
 				theme: "colored",
 			});
+		} else if (totalDebet !== totalKredit) {
+			toast.warning("debits and credits are not balanced", {
+				position: "top-center",
+				autoClose: 1000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		} else if (totalDebet === totalKredit) {
+			try {
+				const response = await AddCashier(data);
+				if (response) {
+					toast.success("Add Cashier Success", {
+						position: "top-center",
+						autoClose: 1000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Add Cashier Failed", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} else {
 		}
 		setIsLoading(false);
 	};
@@ -189,7 +238,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 				initialValues={data}
 				// validationSchema={kontraBonSchema}
 				onSubmit={(values) => {
-					addKontraBon(values);
+					addCashier(values);
 				}}
 				enableReinitialize
 			>
@@ -217,20 +266,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							{/* <div className='w-full'>
-								<Input
-									id='name'
-									name='name'
-									placeholder='Date'
-									label='Date'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={moment(new Date()).format('DD-MMMM-YYYY')}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={dataPurchase}
@@ -239,42 +274,91 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
-										console.log(e.value);
 										setSuplier(
-											e.value.term_of_pay_po_so.poandso.supplier.supplier_name
+											e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.poandso.supplier.supplier_name : e.value.purchase.supplier.supplier_name
 										);
-										setCurrency(e.value.term_of_pay_po_so.poandso.currency);
-										setTotal(e.value.term_of_pay_po_so.price);
-										discAmount(e.value.term_of_pay_po_so.poandso);
+										setCurrency(e.value.term_of_pay_po_so ?e.value.term_of_pay_po_so.poandso.currency : e.value.purchase.currency);
+										setTotal(e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.price : totalPaid(e.value.purchase) );
+										discAmount(e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.poandso : e.value.purchase);
 										setTotalAmount(e.value.grandtotal);
 										setBankName(e.value.SupplierBank.bank_name);
 										setAccName(e.value.SupplierBank.account_name);
 										setAccNumber(e.value.SupplierBank.rekening);
 										setFieldValue(
 											"note",
-											`${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}`
+											e.value.term_of_pay_po_so ? `${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}` : `${e.value.purchase.note}`
 										);
-										if (
-											e.value.term_of_pay_po_so.tax_invoice &&
-											e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
-										) {
-											taxAmount(
-												totalPaid(e.value.term_of_pay_po_so.poandso),
-												e.value.term_of_pay_po_so.poandso.supplier.ppn,
-												"ppn"
-											);
-										} else if (
-											e.value.term_of_pay_po_so.tax_invoice &&
-											e.value.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
-										) {
-											taxAmount(
-												totalPaid(e.value.term_of_pay_po_so.poandso),
-												e.value.term_of_pay_po_so.poandso.supplier.pph,
-												"pph"
-											);
-										} else {
-											setPpn(0);
-											setPph(0);
+										setFieldValue(
+											"kontrabonId", e.value.id
+										);
+										setFieldValue(
+											"total", e.value.grandtotal
+										);
+										if(e.value.term_of_pay_po_so){
+											if (
+												e.value.term_of_pay_po_so.tax_invoice &&
+												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
+											) {
+												taxAmount(
+													totalPaid(e.value.term_of_pay_po_so.poandso),
+													e.value.term_of_pay_po_so.poandso.supplier.ppn,
+													"ppn"
+												);
+											} else if (
+												e.value.term_of_pay_po_so.tax_invoice &&
+												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
+											) {
+												taxAmount(
+													totalPaid(e.value.term_of_pay_po_so.poandso),
+													e.value.term_of_pay_po_so.poandso.supplier.pph,
+													"pph"
+												);
+											} else if (
+												e.value.term_of_pay_po_so.tax_invoice &&
+												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
+											) {
+												taxAmount(
+													totalPaid(e.value.term_of_pay_po_so.poandso),
+													e.value.term_of_pay_po_so.poandso.supplier.ppn,
+													"ppn"
+												);
+												taxAmount(
+													totalPaid(e.value.term_of_pay_po_so.poandso),
+													e.value.term_of_pay_po_so.poandso.supplier.pph,
+													"pph"
+												);
+											} else {
+												setPpn(0);
+												setPph(0);
+											}
+										}else{
+											if(e.value.purchase.taxPsrDmr === 'ppn'){
+												taxAmount(
+													totalPaid(e.value.purchase),
+													e.value.purchase.supplier.ppn,
+													"ppn"
+												);
+											}else if(e.value.purchase.taxPsrDmr === 'pph'){
+												taxAmount(
+													totalPaid(e.value.purchase),
+													e.value.purchase.supplier.pph,
+													"pph"
+												);
+											}else if(e.value.purchase.taxPsrDmr === 'ppn_and_pph'){
+												taxAmount(
+													totalPaid(e.value.purchase),
+													e.value.purchase.supplier.ppn,
+													"ppn"
+												);
+												taxAmount(
+													totalPaid(e.value.purchase),
+													e.value.purchase.supplier.ppn,
+													"pph"
+												);
+											}else{
+												setPpn(0);
+												setPph(0);
+											}
 										}
 									}}
 									required={true}
@@ -393,10 +477,9 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									type='text'
 									required={true}
 									withLabel={true}
-									value={idCashier}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option value='transfer'>Transfer</option>
+									<option value='Transfer'>Transfer</option>
 								</InputSelect>
 							</div>
 							<div className='w-full col-span-2'>
@@ -468,13 +551,19 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												<div className='w-full'>
 													<InputSelectSearch
 														datas={dataCoa}
-                                                        menuPlacement="top"
+														menuPlacement='top'
 														id={`journal_cashier.${i}.coa_id`}
 														name={`journal_cashier.${i}.coa_id`}
 														label='Coa'
 														onChange={(e: any) => {
-                                                            console.log(e)
-															setFieldValue(`journal_cashier.${i}.coa_name`, e.value.coa_name)
+															setFieldValue(
+																`journal_cashier.${i}.coa_name`,
+																e.value.coa_name
+															);
+															setFieldValue(
+																`journal_cashier.${i}.coa_id`,
+																e.value.id
+															);
 														}}
 														required={true}
 														withLabel={false}
@@ -501,14 +590,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														name={`journal_cashier.${i}.status_transaction`}
 														label='Status'
 														type='text'
-                                                        onChange={handleChange}
+														onChange={handleChange}
 														required={true}
 														withLabel={false}
 														value={result.status_transaction}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													>
-														<option value='debit'>Debit</option>
-														<option value='kredit'>Kredit</option>
+														<option value='Debet'>Debet</option>
+														<option value='Kredit'>Kredit</option>
 													</InputSelect>
 												</div>
 												<div className='w-full'>
@@ -518,15 +607,15 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														placeholder='total'
 														label='total'
 														type='number'
-                                                        onChange={handleChange}
+														onChange={handleChange}
 														required={true}
 														withLabel={false}
 														value={result.grandtotal}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-												<div className="w-full">
-												{i === values.journal_cashier.length - 1 ? (
+												<div className='w-full'>
+													{i === values.journal_cashier.length - 1 ? (
 														<a
 															className='inline-flex text-green-500 mr-6 mt-1 cursor-pointer'
 															onClick={() => {

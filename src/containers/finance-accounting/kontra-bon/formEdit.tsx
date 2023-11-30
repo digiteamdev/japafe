@@ -28,6 +28,7 @@ interface data {
 	due_date: any;
 	invoice: string;
 	DO: string;
+	purchaseID: string;
 	grandtotal: number;
 	tax_invoice: boolean;
 	suplier: string;
@@ -65,6 +66,7 @@ export const FormEditKontraBon = ({
 		poandsoId: "",
 		id_kontrabon: "",
 		account_name: "",
+		purchaseID: "",
 		tax_prepered: new Date(),
 		due_date: new Date(),
 		invoice: "",
@@ -82,7 +84,6 @@ export const FormEditKontraBon = ({
 		settingData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	console.log(dataSelected)
 
 	const settingData = () => {
 		let disc: number = 0;
@@ -90,43 +91,104 @@ export const FormEditKontraBon = ({
 		let pph: number = 0;
 		let bill: number = 0;
 		let dataAcc: any = [];
+		let datas: any = [];
 		let hasTax: boolean = false;
-		let taxType: string = "";
-		dataSelected.term_of_pay_po_so.poandso.detailMr.map((res: any) => {
-			disc = disc + res.disc;
-			bill = bill + res.total;
-			// if (!hasTax) {
-			// 	if (res.taxpr !== "non_tax") {
-			// 		hasTax = true;
-			// 		taxType = res.taxpr;
-			// 	}
-			// }
-		});
-		dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
-			(bank: any) => {
+		let typeTax: string = "";
+		let typePurchase: string = "";
+
+		if (dataSelected.term_of_pay_po_so) {
+			datas = dataSelected.term_of_pay_po_so;
+			typePurchase = "purchase"
+			typeTax = dataSelected.term_of_pay_po_so.poandso.taxPsrDmr
+			dataSelected.term_of_pay_po_so.poandso.detailMr.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
+			});
+			dataSelected.term_of_pay_po_so.poandso.SrDetail.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
+			});
+			dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
+				(bank: any) => {
+					dataAcc.push({
+						label: `${bank.account_name} - ${bank.bank_name}`,
+						value: bank,
+					});
+				}
+			);
+		} else {
+			datas = dataSelected.purchase;
+			typePurchase = "dirrect"
+			typeTax = dataSelected.purchase.taxPsrDmr
+			dataSelected.purchase.detailMr.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
+			});
+			dataSelected.purchase.SrDetail.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
+			});
+			dataSelected.purchase.supplier.SupplierBank.map((bank: any) => {
 				dataAcc.push({
 					label: `${bank.account_name} - ${bank.bank_name}`,
 					value: bank,
 				});
-			}
-		);
-		if (dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn") {
-			if (dataSelected.term_of_pay_po_so.tax_invoice) {
-				ppn =
-					(bill * dataSelected.term_of_pay_po_so.poandso.supplier.ppn) / 100;
-				setTotalAmount(dataSelected.term_of_pay_po_so.price + ppn);
+			});
+		}
+
+		if (typeTax === "ppn") {
+			if (typePurchase === "purchase") {
+				if (datas.tax_invoice) {
+					ppn = (bill * datas.poandso.supplier.ppn) / 100;
+					setTotalAmount(datas.price - disc + ppn);
+				} else {
+					setTotalAmount(datas.price - disc);
+				}
 			} else {
-				setTotalAmount(dataSelected.term_of_pay_po_so.price);
+				ppn = (bill * datas.supplier.ppn) / 100;
+				setTotalAmount(bill - disc + ppn);
 			}
-		} else {
-			setTotalAmount(dataSelected.term_of_pay_po_so.price);
+		} else if (typeTax === "pph") {
+			if (typePurchase === "purchase") {
+				if (datas.tax_invoice) {
+					pph = (bill * datas.poandso.supplier.pph) / 100;
+					setTotalAmount(datas.price - disc + pph);
+				} else {
+					setTotalAmount(datas.price - disc);
+				}
+			} else {
+				pph = (bill * datas.supplier.pph) / 100;
+				setTotalAmount(bill - disc + pph);
+			}
+		} else if (typeTax === "ppn_and_pph") {
+			if (typePurchase === "purchase") {
+				if (datas.tax_invoice) {
+					ppn = (bill * datas.poandso.supplier.ppn) / 100;
+					pph = (bill * datas.poandso.supplier.pph) / 100;
+					setTotalAmount(datas.price - disc + ppn + pph);
+				} else {
+					setTotalAmount(datas.price - disc);
+				}
+			} else {
+				ppn = (bill * datas.supplier.ppn) / 100;
+				pph = (bill * datas.supplier.pph) / 100;
+				setTotalAmount(bill - disc + ppn + pph);
+			}
+		}else {
+			if(typePurchase === "purchase"){
+				setTotalAmount(datas.price - disc);
+			}else{
+				setTotalAmount(bill - disc)
+			}
 		}
 		setBankSelected({
 			label: `${dataSelected.SupplierBank.account_name} - ${dataSelected.SupplierBank.bank_name}`,
 			value: dataSelected.SupplierBank,
 		});
+
 		setPpn(ppn);
-		setPercent(dataSelected.term_of_pay_po_so.percent);
+		setPph(pph);
+		setPercent(datas.percent ? datas.percent : 100 );
 		setBillAmount(bill);
 		setDisc(disc);
 		setDataAccBank(dataAcc);
@@ -135,10 +197,11 @@ export const FormEditKontraBon = ({
 		setAccNo(dataSelected.SupplierBank.rekening);
 		setData({
 			termId: dataSelected.termId,
-			poandsoId: dataSelected.term_of_pay_po_so.poandso.id_so,
-			suplier: dataSelected.term_of_pay_po_so.poandso.supplier.supplier_name,
-			termOfPay: `${dataSelected.term_of_pay_po_so.limitpay} (${dataSelected.term_of_pay_po_so.percent}%)`,
-			billpaid: dataSelected.term_of_pay_po_so.price,
+			poandsoId: dataSelected.term_of_pay_po_so ? dataSelected.term_of_pay_po_so.poandso.id_so : null,
+			purchaseID: dataSelected.term_of_pay_po_so ? null : dataSelected.purchase.idPurchase,
+			suplier: dataSelected.term_of_pay_po_so ? dataSelected.term_of_pay_po_so.poandso.supplier.supplier_name : dataSelected.purchase.supplier.supplier_name,
+			termOfPay: dataSelected.term_of_pay_po_so ? `${dataSelected.term_of_pay_po_so.limitpay} (${dataSelected.term_of_pay_po_so.percent}%)` : dataSelected.purchase.note,
+			billpaid: dataSelected.term_of_pay_po_so ? dataSelected.term_of_pay_po_so.price : bill,
 			id_kontrabon: dataSelected.id_kontrabon,
 			account_name: dataSelected.account_name,
 			tax_prepered: dataSelected.tax_prepered,
@@ -191,7 +254,7 @@ export const FormEditKontraBon = ({
 			DO: payload.DO,
 		};
 		try {
-			const response = await EditKontraBon(dataSelected.id,body);
+			const response = await EditKontraBon(dataSelected.id, body);
 			if (response) {
 				toast.success("Edit Kontra Bon Success", {
 					position: "top-center",
@@ -264,7 +327,7 @@ export const FormEditKontraBon = ({
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={values.poandsoId}
+									value={ values.poandsoId === null ? values.purchaseID : values.poandsoId}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>

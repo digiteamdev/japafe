@@ -13,14 +13,14 @@ import {
 import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateCashier } from "./formCreate";
 import {
-	GetKontraBon,
-	DeleteKontraBon,
-	SearchKontraBon
+	GetAllCashier,
+	DeleteCashier,
+	SearchCashier
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
-// import { ViewKontraBon } from './view';
+import { ViewCashier } from './view';
 // import { FormEditKontraBon } from "./formEdit";
 
 export const Cashier = () => {
@@ -37,16 +37,15 @@ export const Cashier = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "ID" },
-		{ name: "Purchase ID" },
-		{ name: "Pay Date" },
+		{ name: "Refrence" },
 		{ name: "Description" },
-		{ name: "Recipient" },
-		{ name: "Value" },
+		{ name: "Total" },
+		{ name: "Receive By" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getKontraBon(page, perPage);
+		getCashier(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -57,14 +56,14 @@ export const Cashier = () => {
 			setDataSelected(false)
 		}
 		if(reload){
-			getKontraBon(page, perPage);
+			getCashier(page, perPage);
 		}
 	};
 
-	const getKontraBon = async (page: number, limit: number) => {
+	const getCashier = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetKontraBon(page, limit);
+			const response = await GetAllCashier(page, limit);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -81,14 +80,14 @@ export const Cashier = () => {
 		setIsLoading(false);
 	};
 
-	const searchKontraBon = async (
+	const searchCashier = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchKontraBon(page, limit, search);
+			const response = await SearchCashier(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -99,11 +98,11 @@ export const Cashier = () => {
 		}
 	};
 
-	const deleteKontraBon = async (id: string) => {
+	const deleteCashier = async (id: string) => {
 		try {
-			const response = await DeleteKontraBon(id);
+			const response = await DeleteCashier(id);
 			if (response.status === 201) {
-				toast.success("Delete Worker Center Success", {
+				toast.success("Delete Cashier Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -113,9 +112,9 @@ export const Cashier = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getKontraBon(1, 10);
+				getCashier(1, 10);
 			} else {
-				toast.error("Delete Worker Center Failed", {
+				toast.error("Delete Cashier Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -127,7 +126,7 @@ export const Cashier = () => {
 				});
 			}
 		} catch (error) {
-			toast.error("Delete Worker Center Failed", {
+			toast.error("Delete Cashier Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -152,7 +151,7 @@ export const Cashier = () => {
 				title='Cashier'
 				print={true}
 				showModal={showModal}
-				search={searchKontraBon}
+				search={searchCashier}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -192,60 +191,56 @@ export const Cashier = () => {
 					) : (
 						data.map((res:any, i: number) => {
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{res.id_kontrabon}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{res.term_of_pay_po_so.poandso.id_so}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{moment(res.due_date).format('DD-MMM-YYYY')}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{res.term_of_pay_po_so.poandso.note}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{res.term_of_pay_po_so.poandso.supplier.supplier_name}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{formatRupiah(res.grandtotal.toString())}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		<div>
-								// 			<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 			onClick={ () => {
-								// 				setDataSelected(res);
-								// 				showModal(true,'view', false);
-								// 			}}>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 			{ res.status_valid ? null : (
-								// 				<>
-								// 					<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-								// 					onClick={ () => {
-								// 						setDataSelected(res);
-								// 						showModal(true,'edit', false);
-								// 					}}>
-								// 						<Edit color='white' />
-								// 					</Button>
-								// 					<Button 
-								// 						className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-								// 						onClick={ () => {
-								// 							setDataSelected(res);
-								// 							showModal(true,'delete', false);
-								// 						}}>
-								// 						<Trash2 color='white' />
-								// 					</Button>
-								// 				</>
-								// 			) }
-								// 		</div>
-								// 	</td>
-								// </tr>
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.id_cashier}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.kontrabon.id_kontrabon}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.note}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{formatRupiah(res.total.toString())}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.kontrabon.purchase === null ? res.kontrabon.term_of_pay_po_so.poandso.supplier.supplier_name : res.kontrabon.purchase.supplier.supplier_name}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<div>
+											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											onClick={ () => {
+												setDataSelected(res);
+												showModal(true,'view', false);
+											}}>
+												<Eye color='white' />
+											</Button>
+											{ res.status_valid ? null : (
+												<>
+													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={ () => {
+														setDataSelected(res);
+														showModal(true,'edit', false);
+													}}>
+														<Edit color='white' />
+													</Button>
+													<Button 
+														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+														onClick={ () => {
+															setDataSelected(res);
+															showModal(true,'delete', false);
+														}}>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) }
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -259,7 +254,7 @@ export const Cashier = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getKontraBon(value, perPage);
+								getCashier(value, perPage);
 							}}
 						/>
 					) : null
@@ -272,7 +267,7 @@ export const Cashier = () => {
 						isModal={isModal}
 						content={modalContent}
 						showModal={showModal}
-						onDelete={deleteKontraBon}
+						onDelete={deleteCashier}
 					/>
 				) : (
 					<Modal
@@ -282,8 +277,7 @@ export const Cashier = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-                            <></>
-							// <ViewKontraBon dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+							<ViewCashier dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 						) :  modalContent === 'edit' ? (
                             <></>
                             // <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

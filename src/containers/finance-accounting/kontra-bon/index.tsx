@@ -214,7 +214,7 @@ export const KontraBon = () => {
 									<td className='whitespace-nowrap px-6 py-4'>
 										{formatRupiah(res.grandtotal.toString())}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										<div>
 											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {
