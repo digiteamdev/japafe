@@ -6,3 +6,4 @@ export const GetAllCashier = (page: number, perpage: number) => Axios.get(proces
 export const SearchCashier = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/cashier?page=${page}&limit=${perpage}&search=${search}`);
 export const DeleteCashier = (id: string) => Axios.delete(process.env.BASE_URL+`/cashier/${id}`);
 export const ApprovalCashier = (id: any) => Axios.put(process.env.BASE_URL+`/cashierValid/${id}`);
+export const EditCashier = (id: string, data: any) => Axios.put(process.env.BASE_URL+`/cashier/${id}`, data);

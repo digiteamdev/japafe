@@ -4,7 +4,7 @@ import { Section } from "../../../components";
 import { formatRupiah } from "../../../utils/index";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
-// import { PdfKontraBon } from "./pdfKontraBon";
+import { PdfCashier } from "./pdfCashier";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -308,15 +308,11 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			{/* <PdfKontraBon
+			<PdfCashier
 				isModal={isModal}
 				data={dataSelected}
-				discount={discount}
-				ppn={ppn}
-				pph={pph}
-				total={total}
 				showModalPdf={showModalPdf}
-			/> */}
+			/>
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>

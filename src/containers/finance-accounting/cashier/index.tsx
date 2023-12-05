@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
 import { ViewCashier } from './view';
-// import { FormEditKontraBon } from "./formEdit";
+import { FormEditCashier } from "./formEdit";
 
 export const Cashier = () => {
 	const router = useRouter();
@@ -279,8 +279,7 @@ export const Cashier = () => {
 						{ modalContent === 'view' ? (
 							<ViewCashier dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 						) :  modalContent === 'edit' ? (
-                            <></>
-                            // <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                            <FormEditCashier content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						) : (
 							<FormCreateCashier content={modalContent} showModal={showModal}/>
 						)}
