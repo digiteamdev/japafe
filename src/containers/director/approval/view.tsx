@@ -29,7 +29,7 @@ export const ViewApprovalDirector = ({
 		if (positionAkun !== undefined) {
 			setPosition(positionAkun);
 		}
-		if (dataSelected) {
+		if (dataSelected.id_cash_advance === undefined) {
 			dataSelected.detailMr.map((res: any) => {
 				if (!dataSuplier.includes(res.supplier.supplier_name)) {
 					dataSuplier.push(res.supplier.supplier_name);
@@ -107,321 +107,415 @@ export const ViewApprovalDirector = ({
 	};
 
 	const title = () => {
-		if(dataSelected.idPurchase){
-			if(dataSelected.idPurchase.startsWith("PSR")){
-				return "Purchase Service Request"
-			}else if(dataSelected.idPurchase.startsWith("DSR")){
-				return "Direct Service Purchase"
-			}else if(dataSelected.idPurchase.startsWith("PR")){
-				return "Purchase Material Request"
-			}else{
-				return "Direct Material Request"
+		if (dataSelected.id_cash_advance) {
+			return "Cash Advance";
+		} else if (dataSelected.idPurchase) {
+			if (dataSelected.idPurchase.startsWith("PSR")) {
+				return "Purchase Service Request";
+			} else if (dataSelected.idPurchase.startsWith("DSR")) {
+				return "Direct Service Purchase";
+			} else if (dataSelected.idPurchase.startsWith("PR")) {
+				return "Purchase Material Request";
+			} else {
+				return "Direct Material Request";
 			}
-		}else{
-			if(dataSelected.id_so.startsWith("PO")){
-				return "Purchase Order Material"
-			}else{
-				return "Purchase Order Service"
+		} else {
+			if (dataSelected.id_so.startsWith("PO")) {
+				return "Purchase Order Material";
+			} else {
+				return "Purchase Order Service";
 			}
 		}
-	}
+	};
 
 	const titleID = () => {
-		if(dataSelected.idPurchase){
-			if(dataSelected.idPurchase.startsWith("PSR")){
-				return "ID Purchase Service Request"
-			}else if(dataSelected.idPurchase.startsWith("DSR")){
-				return "ID Direct Service Purchase"
-			}else if(dataSelected.idPurchase.startsWith("PR")){
-				return "ID Purchase Material Request"
-			}else{
-				return "ID Direct Material Request"
+		if (dataSelected.id_cash_advance) {
+			return "ID Cash Advance";
+		} else if (dataSelected.idPurchase) {
+			if (dataSelected.idPurchase.startsWith("PSR")) {
+				return "ID Purchase Service Request";
+			} else if (dataSelected.idPurchase.startsWith("DSR")) {
+				return "ID Direct Service Purchase";
+			} else if (dataSelected.idPurchase.startsWith("PR")) {
+				return "ID Purchase Material Request";
+			} else {
+				return "ID Direct Material Request";
 			}
-		}else{
-			if(dataSelected.id_so.startsWith("PO")){
-				return "ID Purchase Order Material"
-			}else{
-				return "ID Purchase Order Service"
+		} else {
+			if (dataSelected.id_so.startsWith("PO")) {
+				return "ID Purchase Order Material";
+			} else {
+				return "ID Purchase Order Service";
 			}
 		}
-	}
+	};
 
 	const titleDate = () => {
-		if(dataSelected.idPurchase){
-			if(dataSelected.idPurchase.startsWith("PSR")){
-				return "Date Purchase Service Request"
-			}else if(dataSelected.idPurchase.startsWith("DSR")){
-				return "Date Direct Service Purchase"
-			}else if(dataSelected.idPurchase.startsWith("PR")){
-				return "Date Purchase Material Request"
-			}else{
-				return "Date Direct Material Request"
+		if (dataSelected.id_cash_advance) {
+			return "Date Cash Advance";
+		} else if (dataSelected.idPurchase) {
+			if (dataSelected.idPurchase.startsWith("PSR")) {
+				return "Date Purchase Service Request";
+			} else if (dataSelected.idPurchase.startsWith("DSR")) {
+				return "Date Direct Service Purchase";
+			} else if (dataSelected.idPurchase.startsWith("PR")) {
+				return "Date Purchase Material Request";
+			} else {
+				return "Date Direct Material Request";
 			}
-		}else{
-			if(dataSelected.id_so.startsWith("PO")){
-				return "Date Purchase Order Material"
-			}else{
-				return "Date Purchase Order Service"
+		} else {
+			if (dataSelected.id_so.startsWith("PO")) {
+				return "Date Purchase Order Material";
+			} else {
+				return "Date Purchase Order Service";
 			}
 		}
-	}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
 				<>
-					<h1 className='font-bold text-xl'>
-						{ title() }
-					</h1>
+					<h1 className='font-bold text-xl'>{title()}</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										{ titleID() }
+										{titleID()}
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.idPurchase ? dataSelected.idPurchase : dataSelected.id_so}
+										{dataSelected.id_cash_advance
+											? dataSelected.id_cash_advance
+											: dataSelected.idPurchase
+											? dataSelected.idPurchase
+											: dataSelected.id_so}
 									</td>
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										{ titleDate() }
+										{titleDate()}
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.dateOfPurchase ? moment(dataSelected.dateOfPurchase).format("DD-MMMM-YYYY") : moment(dataSelected.date_prepared).format("DD-MMMM-YYYY") }
+										{dataSelected.id_cash_advance
+											? moment(dataSelected.date_cash_advance).format(
+													"DD-MMMM-YYYY"
+											  )
+											: dataSelected.dateOfPurchase
+											? moment(dataSelected.dateOfPurchase).format(
+													"DD-MMMM-YYYY"
+											  )
+											: moment(dataSelected.date_prepared).format(
+													"DD-MMMM-YYYY"
+											  )}
 									</td>
 								</tr>
+								{dataSelected.id_cash_advance ? (
+									<>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Request By
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.employee.employee_name}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Job No
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.wor.job_operational
+													? dataSelected.wor.job_no_mr
+													: dataSelected.wor.job_no}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Customer
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.wor.customerPo.quotations.Customer.name}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Subject
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.wor.subject}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Description
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.description}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Value
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{formatRupiah(dataSelected.total.toString())}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Payment Type
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.status_payment}
+											</td>
+										</tr>
+										<tr>
+											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												Note
+											</td>
+											<td className='w-[50%] pl-2 border border-gray-200'>
+												{dataSelected.note}
+											</td>
+										</tr>
+									</>
+								) : null}
 							</table>
 						</div>
 					</Section>
-					{dataSelected.detailMr.length > 0 ? (
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							{dataSuplier.length > 0
-								? dataSuplier.map((res: any, i: number) => {
-										return (
-											<div key={i}>
-												<h5>Suplier : {res}</h5>
-												<table className='w-full mt-2'>
-													<thead>
-														<tr>
-															<th className='border border-black text-center'>
-																Akun / Job no
-															</th>
-															<th className='border border-black text-center'>
-																Material / Material Spesifikasi
-															</th>
-															<th className='border border-black text-center'>
-																Qty
-															</th>
-															<th className='border border-black text-center'>
-																Note
-															</th>
-															<th className='border border-black text-center'>
-																Price
-															</th>
-															<th className='border border-black text-center'>
-																Discount
-															</th>
-															<th className='border border-black text-center'>
-																Total
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														{dataSelected.detailMr
-															.filter((fil: any) => {
-																return fil.supplier.supplier_name === res;
-															})
-															.map((result: any, idx: number) => {
-																return (
-																	<tr key={idx}>
-																		<td className='border border-black text-center'>
-																			{result.mr.wor.job_operational
-																				? result.mr.wor.job_no_mr
-																				: result.mr.wor.job_no}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{
-																				result.Material_Stock.Material_master
-																					.material_name
-																			}{" "}
-																			/ {result.Material_Stock.spesifikasi}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{result.qtyAppr}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{result.note}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{formatRupiah(
-																				result.Material_Stock.harga.toString()
-																			)}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{formatRupiah(result.disc.toString())}
-																		</td>
-																		<td className='border border-black text-center'>
-																			{formatRupiah(result.total.toString())}
-																		</td>
-																	</tr>
-																);
-															})}
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={6}
-															>
-																Total
-															</td>
-															<td className='border border-black text-center'>
-																{formatRupiah(Total(res))}
-															</td>
-														</tr>
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={6}
-															>
-																{Ppn(res, "ppn")}
-															</td>
-															<td className='border border-black text-center'>
-																{formatRupiah(Ppn(res, "total"))}
-															</td>
-														</tr>
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={6}
-															>
-																Grand Total
-															</td>
-															<td className='border border-black text-center'>
-																{grandTotal(res)}
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										);
-								  })
-								: null}
-						</Section>
-					) : null}
-					{dataSelected.SrDetail.length > 0 ? (
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							{dataSuplier.length > 0
-								? dataSuplier.map((res: any, i: number) => {
-										return (
-											<div key={i}>
-												<h5>Suplier : {res}</h5>
-												<table className='w-full mt-2'>
-													<thead>
-														<tr>
-															<th className='border border-black text-center'>
-																Akun / Job no
-															</th>
-															<th className='border border-black text-center'>
-																Part / Item
-															</th>
-															<th className='border border-black text-center'>
-																Service Description
-															</th>
-															<th className='border border-black text-center'>
-																Qty
-															</th>
-															<th className='border border-black text-center'>
-																Note
-															</th>
-															<th className='border border-black text-center'>
-																Price
-															</th>
-															<th className='border border-black text-center'>
-																Discount
-															</th>
-															<th className='border border-black text-center'>
-																Total
-															</th>
-														</tr>
-													</thead>
-													<tbody>
-														{dataSelected.SrDetail.filter((fil: any) => {
-															return fil.supplier.supplier_name === res;
-														}).map((result: any, idx: number) => {
-															return (
-																<tr key={idx}>
-																	<td className='border border-black text-center'>
-																		{result.sr.wor.job_operational
-																			? result.sr.wor.job_no_mr
-																			: result.sr.wor.job_no}
+					{dataSelected.id_cash_advance === undefined ? (
+						<>
+							{dataSelected.detailMr.length > 0 ? (
+								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+									{dataSuplier.length > 0
+										? dataSuplier.map((res: any, i: number) => {
+												return (
+													<div key={i}>
+														<h5>Suplier : {res}</h5>
+														<table className='w-full mt-2'>
+															<thead>
+																<tr>
+																	<th className='border border-black text-center'>
+																		Akun / Job no
+																	</th>
+																	<th className='border border-black text-center'>
+																		Material / Material Spesifikasi
+																	</th>
+																	<th className='border border-black text-center'>
+																		Qty
+																	</th>
+																	<th className='border border-black text-center'>
+																		Note
+																	</th>
+																	<th className='border border-black text-center'>
+																		Price
+																	</th>
+																	<th className='border border-black text-center'>
+																		Discount
+																	</th>
+																	<th className='border border-black text-center'>
+																		Total
+																	</th>
+																</tr>
+															</thead>
+															<tbody>
+																{dataSelected.detailMr
+																	.filter((fil: any) => {
+																		return fil.supplier.supplier_name === res;
+																	})
+																	.map((result: any, idx: number) => {
+																		return (
+																			<tr key={idx}>
+																				<td className='border border-black text-center'>
+																					{result.mr.wor.job_operational
+																						? result.mr.wor.job_no_mr
+																						: result.mr.wor.job_no}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{
+																						result.Material_Stock
+																							.Material_master.material_name
+																					}{" "}
+																					/ {result.Material_Stock.spesifikasi}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{result.qtyAppr}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{result.note}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{formatRupiah(
+																						result.Material_Stock.harga.toString()
+																					)}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{formatRupiah(result.disc.toString())}
+																				</td>
+																				<td className='border border-black text-center'>
+																					{formatRupiah(
+																						result.total.toString()
+																					)}
+																				</td>
+																			</tr>
+																		);
+																	})}
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={6}
+																	>
+																		Total
 																	</td>
 																	<td className='border border-black text-center'>
-																		{result.part}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{result.workCenter.name}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{result.qty}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{result.note}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{formatRupiah(
-																			price(result.total, result.disc)
-																		)}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{formatRupiah(result.disc.toString())}
-																	</td>
-																	<td className='border border-black text-center'>
-																		{formatRupiah(result.total.toString())}
+																		{formatRupiah(Total(res))}
 																	</td>
 																</tr>
-															);
-														})}
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={7}
-															>
-																Total
-															</td>
-															<td className='border border-black text-center'>
-																{formatRupiah(Total(res))}
-															</td>
-														</tr>
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={7}
-															>
-																{Ppn(res, "ppn")}
-															</td>
-															<td className='border border-black text-center'>
-																{formatRupiah(Ppn(res, "total"))}
-															</td>
-														</tr>
-														<tr>
-															<td
-																className='border border-black text-right pr-4'
-																colSpan={7}
-															>
-																Grand Total
-															</td>
-															<td className='border border-black text-center'>
-																{grandTotal(res)}
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
-										);
-								  })
-								: null}
-						</Section>
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={6}
+																	>
+																		{Ppn(res, "ppn")}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(Ppn(res, "total"))}
+																	</td>
+																</tr>
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={6}
+																	>
+																		Grand Total
+																	</td>
+																	<td className='border border-black text-center'>
+																		{grandTotal(res)}
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												);
+										  })
+										: null}
+								</Section>
+							) : null}
+							{dataSelected.SrDetail.length > 0 ? (
+								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+									{dataSuplier.length > 0
+										? dataSuplier.map((res: any, i: number) => {
+												return (
+													<div key={i}>
+														<h5>Suplier : {res}</h5>
+														<table className='w-full mt-2'>
+															<thead>
+																<tr>
+																	<th className='border border-black text-center'>
+																		Akun / Job no
+																	</th>
+																	<th className='border border-black text-center'>
+																		Part / Item
+																	</th>
+																	<th className='border border-black text-center'>
+																		Service Description
+																	</th>
+																	<th className='border border-black text-center'>
+																		Qty
+																	</th>
+																	<th className='border border-black text-center'>
+																		Note
+																	</th>
+																	<th className='border border-black text-center'>
+																		Price
+																	</th>
+																	<th className='border border-black text-center'>
+																		Discount
+																	</th>
+																	<th className='border border-black text-center'>
+																		Total
+																	</th>
+																</tr>
+															</thead>
+															<tbody>
+																{dataSelected.SrDetail.filter((fil: any) => {
+																	return fil.supplier.supplier_name === res;
+																}).map((result: any, idx: number) => {
+																	return (
+																		<tr key={idx}>
+																			<td className='border border-black text-center'>
+																				{result.sr.wor.job_operational
+																					? result.sr.wor.job_no_mr
+																					: result.sr.wor.job_no}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{result.part}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{result.workCenter.name}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{result.qty}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{result.note}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{formatRupiah(
+																					price(result.total, result.disc)
+																				)}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{formatRupiah(result.disc.toString())}
+																			</td>
+																			<td className='border border-black text-center'>
+																				{formatRupiah(result.total.toString())}
+																			</td>
+																		</tr>
+																	);
+																})}
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={7}
+																	>
+																		Total
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(Total(res))}
+																	</td>
+																</tr>
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={7}
+																	>
+																		{Ppn(res, "ppn")}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(Ppn(res, "total"))}
+																	</td>
+																</tr>
+																<tr>
+																	<td
+																		className='border border-black text-right pr-4'
+																		colSpan={7}
+																	>
+																		Grand Total
+																	</td>
+																	<td className='border border-black text-center'>
+																		{grandTotal(res)}
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												);
+										  })
+										: null}
+								</Section>
+							) : null}
+						</>
 					) : null}
 				</>
 			) : null}
