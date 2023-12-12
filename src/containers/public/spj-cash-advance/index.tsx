@@ -10,8 +10,8 @@ import {
 	Pagination
 } from "../../../components";
 import { DollarSign, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateCashAdvance } from "./formCreate";
-import { ViewCashAdvance } from "./view";
+import { FormCreateSPJCashAdvance } from "./formCreate";
+// import { ViewCashAdvance } from "./view";
 // import { FormEditMr } from "./formEdit";
 import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
@@ -20,7 +20,7 @@ import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 import { formatRupiah } from "@/src/utils";
 
-export const CashAdvance = () => {
+export const SpjCashAdvance = () => {
 
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -35,10 +35,10 @@ export const CashAdvance = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Id" },
-        { name: "Request By" },
+        { name: "Reference" },
+        { name: "PIC" },
 		{ name: "Description" },
-        { name: "Paid" },
-		{ name: "Created" },
+		{ name: "Value" },
         { name: "Action" }
 	];
 
@@ -129,12 +129,12 @@ export const CashAdvance = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Cash Advance'
+				title='SPJ Cash Advance'
 				total={countData}
 				icon={<DollarSign className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Cash Advance'
+				title='SPJ Cash Advance'
 				print={true}
 				showModal={showModal}
 				search={searchCashAdvance}
@@ -176,30 +176,32 @@ export const CashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-									key={i}
-								>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                    <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
-									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-										</div>
-									</td>
-								</tr>
+                                <></>
+								// <tr
+								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+								// 	key={i}
+								// >
+								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
+								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
+                                //     <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
+								// 	<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+								// 		<div>
+								// 			<Button
+								// 				className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+								// 				onClick={() => {
+								// 					setDataSelected(res);
+								// 					showModal(true, "view", false);
+								// 				}}
+								// 			>
+								// 				<Eye color='white' />
+								// 			</Button>
+								// 		</div>
+								// 	</td>
+								// </tr>
 							);
 						})
 					)}
@@ -229,15 +231,16 @@ export const CashAdvance = () => {
 				/>
 			) : (
 				<Modal
-					title='Cash Advance'
+					title='SPJ Cash Advance'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+                        <></>
+						// <ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : modalContent === "add" ? (
-                        <FormCreateCashAdvance content={modalContent} showModal={showModal} />
+                        <FormCreateSPJCashAdvance content={modalContent} showModal={showModal} />
 					) : (
                         <></>
                         // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
