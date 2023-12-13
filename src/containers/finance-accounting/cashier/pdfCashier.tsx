@@ -108,14 +108,19 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 													<div className='flex flex-row w-full'>
 														<div className='w-1/4'>Refrence</div>
 														<div className='w-full'>
-															: {data.kontrabon.id_kontrabon}
+															:{" "}
+															{data.kontrabonId === null
+																? data.cash_advance.id_cash_advance
+																: data.kontrabon.id_kontrabon}
 														</div>
 													</div>
 													<div className='flex flex-row w-full'>
 														<div className='w-1/4'>Pay To</div>
 														<div className='w-full'>
 															:{" "}
-															{data.kontrabon.term_of_pay_po_so === null
+															{data.kontrabonId === null
+																? data.cash_advance.employee.employee_name
+																: data.kontrabon.term_of_pay_po_so === null
 																? data.kontrabon.purchase.supplier.supplier_name
 																: data.kontrabon.term_of_pay_po_so.poandso
 																		.supplier.supplier_name}
@@ -125,17 +130,18 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 														<div className='w-1/4'>Pay For</div>
 														<div className='w-full'>
 															:{" "}
-															{data.kontrabon.term_of_pay_po_so === null
-																? data.kontrabon.purchase.idPurchase
-																: data.kontrabon.term_of_pay_po_so.poandso
-																		.id_so}
+															{data.kontrabonId === null
+																? data.note
+																: data.kontrabon.purchase === null
+																? `${data.kontrabon.term_of_pay_po_so.limitpay}, ${data.kontrabon.term_of_pay_po_so.poandso.note}`
+																: data.kontrabon.purchase.note}
 														</div>
 													</div>
 													<div className='flex flex-row w-full'>
 														<div className='w-1/4'>Amount</div>
 														<div className='w-full'>
 															:{" "}
-															{data.kontrabon.term_of_pay_po_so === null
+															{data.kontrabonId === null ? 'IDR' : data.kontrabon.term_of_pay_po_so === null
 																? data.kontrabon.purchase.currency
 																: data.kontrabon.term_of_pay_po_so.poandso
 																		.currency}{" "}
@@ -147,7 +153,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 														<div className='w-1/4'>Payment Info</div>
 														<div className='w-full'>
 															:{" "}
-															{`${data.kontrabon.SupplierBank.bank_name}, ${data.kontrabon.SupplierBank.account_name}, ${data.kontrabon.SupplierBank.rekening}`}
+															{data.kontrabonId === null ? `Cash To ${data.cash_advance.employee.employee_name}` : `${data.kontrabon.SupplierBank.bank_name}, ${data.kontrabon.SupplierBank.account_name}, ${data.kontrabon.SupplierBank.rekening}`}
 														</div>
 													</div>
 												</Section>
@@ -236,23 +242,15 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 																	Validation
 																</td>
 															</tr>
-                                                            <tr>
-																<td className='border border-black border-r-0 border-b-0 text-center text-sm py-10'>
-																	
-																</td>
-																<td className='border border-black border-r-0 border-b-0 text-center text-sm py-10'>
-																</td>
-																<td className='border border-black border-b-0 text-center text-sm py-10'>
-																</td>
+															<tr>
+																<td className='border border-black border-r-0 border-b-0 text-center text-sm py-10'></td>
+																<td className='border border-black border-r-0 border-b-0 text-center text-sm py-10'></td>
+																<td className='border border-black border-b-0 text-center text-sm py-10'></td>
 															</tr>
-                                                            <tr>
-																<td className='border border-black border-r-0 text-center text-sm py-3'>
-																	
-																</td>
-																<td className='border border-black border-r-0 text-center text-sm py-3'>
-																</td>
-																<td className='border border-black text-center text-sm py-3'>
-																</td>
+															<tr>
+																<td className='border border-black border-r-0 text-center text-sm py-3'></td>
+																<td className='border border-black border-r-0 text-center text-sm py-3'></td>
+																<td className='border border-black text-center text-sm py-3'></td>
 															</tr>
 														</tbody>
 													</table>

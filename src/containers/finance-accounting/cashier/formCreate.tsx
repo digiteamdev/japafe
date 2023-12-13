@@ -22,6 +22,7 @@ interface props {
 interface data {
 	id_cashier: string;
 	status_payment: string;
+	id_cash_advance: string;
 	kontrabonId: string;
 	date_cashier: Date;
 	note: string;
@@ -48,6 +49,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		id_cashier: "",
 		status_payment: "Transfer",
 		kontrabonId: "",
+		id_cash_advance: "",
 		date_cashier: new Date(),
 		note: "",
 		total: 0,
@@ -87,10 +89,21 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			const response = await GetCashier();
 			if (response.data) {
 				response.data.result.map((res: any) => {
-					data.push({
-						label: `${res.id_kontrabon} - ${res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase.idPurchase}`,
-						value: res,
-					});
+					if (res.id_kontrabon) {
+						data.push({
+							label: `${res.id_kontrabon} - ${
+								res.term_of_pay_po_so
+									? res.term_of_pay_po_so.poandso.id_so
+									: res.purchase.idPurchase
+							}`,
+							value: res,
+						});
+					} else {
+						data.push({
+							label: res.id_cash_advance,
+							value: res,
+						});
+					}
 				});
 				setDataPurchase(data);
 			}
@@ -172,10 +185,11 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			id_cashier: idCashier,
 			status_payment: payload.status_payment,
 			kontrabonId: payload.kontrabonId,
+			cdvId: payload.id_cash_advance,
 			date_cashier: payload.date_cashier,
 			note: payload.note,
 			total: payload.total,
-			journal_cashier: jurnal
+			journal_cashier: jurnal,
 		};
 		if (totalDebet === 0 || totalKredit === 0) {
 			toast.warning("Journal total has not been filled in", {
@@ -275,26 +289,81 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									label='Reference'
 									onChange={(e: any) => {
 										setSuplier(
-											e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.poandso.supplier.supplier_name : e.value.purchase.supplier.supplier_name
+											e.value.id_kontrabon === undefined
+												? e.value.employee.employee_name
+												: e.value.term_of_pay_po_so
+												? e.value.term_of_pay_po_so.poandso.supplier
+														.supplier_name
+												: e.value.purchase.supplier.supplier_name
 										);
-										setCurrency(e.value.term_of_pay_po_so ?e.value.term_of_pay_po_so.poandso.currency : e.value.purchase.currency);
-										setTotal(e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.price : totalPaid(e.value.purchase) );
-										discAmount(e.value.term_of_pay_po_so ? e.value.term_of_pay_po_so.poandso : e.value.purchase);
-										setTotalAmount(e.value.grandtotal);
-										setBankName(e.value.SupplierBank.bank_name);
-										setAccName(e.value.SupplierBank.account_name);
-										setAccNumber(e.value.SupplierBank.rekening);
+										setCurrency(
+											e.value.id_kontrabon === undefined
+												? "IDR"
+												: e.value.term_of_pay_po_so
+												? e.value.term_of_pay_po_so.poandso.currency
+												: e.value.purchase.currency
+										);
+										setTotal(
+											e.value.id_kontrabon === undefined
+												? e.value.total
+												: e.value.term_of_pay_po_so
+												? e.value.term_of_pay_po_so.price
+												: totalPaid(e.value.purchase)
+										);
+										setTotalAmount(
+											e.value.id_kontrabon === undefined
+												? e.value.total
+												: e.value.grandtotal
+										);
+										setBankName(
+											e.value.id_kontrabon === undefined
+												? ""
+												: e.value.SupplierBank.bank_name
+										);
+										setAccName(
+											e.value.id_kontrabon === undefined
+												? ""
+												: e.value.SupplierBank.account_name
+										);
+										setAccNumber(
+											e.value.id_kontrabon === undefined
+												? ""
+												: e.value.SupplierBank.rekening
+										);
 										setFieldValue(
 											"note",
-											e.value.term_of_pay_po_so ? `${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}` : `${e.value.purchase.note}`
+											e.value.id_kontrabon === undefined
+												? e.value.note
+												: e.value.term_of_pay_po_so
+												? `${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}`
+												: `${e.value.purchase.note}`
 										);
 										setFieldValue(
-											"kontrabonId", e.value.id
+											"kontrabonId",
+											e.value.id_kontrabon === undefined ? null : e.value.id
 										);
 										setFieldValue(
-											"total", e.value.grandtotal
+											"id_cash_advance",
+											e.value.id_kontrabon === undefined ? e.value.id : null
 										);
-										if(e.value.term_of_pay_po_so){
+										setFieldValue(
+											"total",
+											e.value.id_kontrabon === undefined
+												? e.value.total
+												: e.value.grandtotal
+										);
+										setFieldValue(
+											"status_payment", "Transfer"
+										);
+										if (e.value.id_cash_advance) {
+											setDisc(0);
+											setPpn(0);
+											setPph(0);
+											setFieldValue(
+												"status_payment", "Cash"
+											);
+										} else if (e.value.term_of_pay_po_so) {
+											discAmount(e.value.term_of_pay_po_so.poandso);
 											if (
 												e.value.term_of_pay_po_so.tax_invoice &&
 												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
@@ -315,7 +384,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												);
 											} else if (
 												e.value.term_of_pay_po_so.tax_invoice &&
-												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
+												e.value.term_of_pay_po_so.poandso.taxPsrDmr ===
+													"ppn_and_pph"
 											) {
 												taxAmount(
 													totalPaid(e.value.term_of_pay_po_so.poandso),
@@ -331,20 +401,21 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												setPpn(0);
 												setPph(0);
 											}
-										}else{
-											if(e.value.purchase.taxPsrDmr === 'ppn'){
+										} else {
+											discAmount(e.value.purchase);
+											if (e.value.purchase.taxPsrDmr === "ppn") {
 												taxAmount(
 													totalPaid(e.value.purchase),
 													e.value.purchase.supplier.ppn,
 													"ppn"
 												);
-											}else if(e.value.purchase.taxPsrDmr === 'pph'){
+											} else if (e.value.purchase.taxPsrDmr === "pph") {
 												taxAmount(
 													totalPaid(e.value.purchase),
 													e.value.purchase.supplier.pph,
 													"pph"
 												);
-											}else if(e.value.purchase.taxPsrDmr === 'ppn_and_pph'){
+											} else if (e.value.purchase.taxPsrDmr === "ppn_and_pph") {
 												taxAmount(
 													totalPaid(e.value.purchase),
 													e.value.purchase.supplier.ppn,
@@ -355,7 +426,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													e.value.purchase.supplier.ppn,
 													"pph"
 												);
-											}else{
+											} else {
 												setPpn(0);
 												setPph(0);
 											}
@@ -475,11 +546,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Pay With'
 									label='Pay With'
 									type='text'
+									value={values.status_payment}
+									onChange={handleChange}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
 									<option value='Transfer'>Transfer</option>
+									<option value='Cash'>Cash</option>
 								</InputSelect>
 							</div>
 							<div className='w-full col-span-2'>

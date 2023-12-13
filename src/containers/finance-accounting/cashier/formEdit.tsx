@@ -24,6 +24,7 @@ interface data {
 	id_cashier: string;
 	status_payment: string;
 	kontrabonId: string;
+	cdvId: string;
 	reference: string;
 	suplier: string;
 	currency: string;
@@ -64,6 +65,7 @@ export const FormEditCashier = ({
 		id_cashier: "",
 		status_payment: "Transfer",
 		kontrabonId: "",
+		cdvId: "",
 		reference: "",
 		suplier: "",
 		currency: "",
@@ -109,7 +111,9 @@ export const FormEditCashier = ({
 
 	const settingData = () => {
 		let jurnal: any = [];
-		if (dataSelected.kontrabon.term_of_pay_po_so === null) {
+		if(dataSelected.kontrabonId === null){
+			setTax('nonetax')
+		}else if (dataSelected.kontrabon.term_of_pay_po_so === null) {
 			setTax(dataSelected.kontrabon.purchase.taxPsrDmr);
 		} else {
 			setTax(dataSelected.kontrabon.term_of_pay_po_so.poandso.taxPsrDmr);
@@ -131,27 +135,28 @@ export const FormEditCashier = ({
 		setData({
 			id_cashier: dataSelected.id_cashier,
 			status_payment: dataSelected.status_payment,
+			cdvId: dataSelected.cdvId,
 			kontrabonId: dataSelected.kontrabonId,
 			date_cashier: dataSelected.date_cashier,
-			reference: `${dataSelected.kontrabon.id_kontrabon} - ${
+			reference: dataSelected.kontrabonId === null ? dataSelected.cash_advance.id_cash_advance : `${dataSelected.kontrabon.id_kontrabon} - ${
 				dataSelected.kontrabon.term_of_pay_po_so === null
 					? dataSelected.kontrabon.purchase.idPurchase
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.id_so
 			}`,
 			suplier:
-				dataSelected.kontrabon.term_of_pay_po_so === null
+			dataSelected.kontrabonId === null ? dataSelected.cash_advance.employee.employee_name : dataSelected.kontrabon.term_of_pay_po_so === null
 					? dataSelected.kontrabon.purchase.supplier.supplier_name
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.supplier
 							.supplier_name,
 			currency:
-				dataSelected.kontrabon.term_of_pay_po_so === null
+			dataSelected.kontrabonId === null ? "IDR" : dataSelected.kontrabon.term_of_pay_po_so === null
 					? dataSelected.kontrabon.purchase.currency
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.currency,
 			disc:
-				dataSelected.kontrabon.term_of_pay_po_so === null
+			dataSelected.kontrabonId === null ? 0 : dataSelected.kontrabon.term_of_pay_po_so === null
 					? discAmount(dataSelected.kontrabon.purchase)
 					: discAmount(dataSelected.kontrabon.term_of_pay_po_so.poandso),
-			ppn: taxAmount(
+			ppn: dataSelected.kontrabonId === null ? 0 : taxAmount(
 				dataSelected.kontrabon.term_of_pay_po_so === null
 					? totalPaid(dataSelected.kontrabon.purchase)
 					: totalPaid(dataSelected.kontrabon.term_of_pay_po_so.poandso),
@@ -159,7 +164,7 @@ export const FormEditCashier = ({
 					? dataSelected.kontrabon.purchase.supplier.ppn
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.supplier.ppn
 			),
-			pph: taxAmount(
+			pph: dataSelected.kontrabonId === null ? 0 : taxAmount(
 				dataSelected.kontrabon.term_of_pay_po_so === null
 					? totalPaid(dataSelected.kontrabon.purchase)
 					: totalPaid(dataSelected.kontrabon.term_of_pay_po_so.poandso),
@@ -168,14 +173,14 @@ export const FormEditCashier = ({
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.supplier.pph
 			),
 			totalPay:
-				dataSelected.kontrabon.term_of_pay_po_so === null
+			dataSelected.kontrabonId === null ? dataSelected.total : dataSelected.kontrabon.term_of_pay_po_so === null
 					? totalPaid(dataSelected.kontrabon.purchase)
 					: dataSelected.kontrabon.term_of_pay_po_so.price,
 			note: dataSelected.note,
 			total: dataSelected.total,
-			bank_name: dataSelected.kontrabon.SupplierBank.bank_name,
-			acc_name: dataSelected.kontrabon.SupplierBank.account_name,
-			acc_number: dataSelected.kontrabon.SupplierBank.rekening,
+			bank_name: dataSelected.kontrabonId === null ? "" : dataSelected.kontrabon.SupplierBank.bank_name,
+			acc_name: dataSelected.kontrabonId === null ? "" : dataSelected.kontrabon.SupplierBank.account_name,
+			acc_number: dataSelected.kontrabonId === null ? "" : dataSelected.kontrabon.SupplierBank.rekening,
 			journal_cashier: jurnal,
 		});
 	};
@@ -592,11 +597,13 @@ export const FormEditCashier = ({
 									placeholder='Pay With'
 									label='Pay With'
 									type='text'
+									value={values.status_payment}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
 									<option value='Transfer'>Transfer</option>
+									<option value='Cash'>Cash</option>
 								</InputSelect>
 							</div>
 							<div className='w-full col-span-2'>

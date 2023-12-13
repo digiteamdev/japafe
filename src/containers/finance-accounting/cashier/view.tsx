@@ -189,6 +189,8 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 			return "Dirrect Purchase Order";
 		} else if (data.startsWith("DSR")) {
 			return "Dirrect Service Order";
+		} else {
+			return "Cash Advance";
 		}
 	};
 
@@ -197,7 +199,9 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const showTax = () => {
-		if (dataSelected.kontrabon.purchase) {
+		if(dataSelected.kontrabonId === null){
+			return false
+		}else if (dataSelected.kontrabon.purchase) {
 			if (dataSelected.kontrabon.purchase.taxPsrDmr === "ppn") {
 				return (
 					<tr>
@@ -348,12 +352,16 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{`${typePurchase(
-												dataSelected.kontrabon.term_of_pay_po_so
+												dataSelected.kontrabonId === null
+													? dataSelected.cash_advance.id_cash_advance
+													: dataSelected.kontrabon.term_of_pay_po_so
 													? dataSelected.kontrabon.term_of_pay_po_so.poandso
 															.id_so
 													: dataSelected.kontrabon.purchase.idPurchase
 											)} / ${
-												dataSelected.kontrabon.term_of_pay_po_so
+												dataSelected.kontrabonId === null
+													? dataSelected.cash_advance.id_cash_advance
+													: dataSelected.kontrabon.term_of_pay_po_so
 													? dataSelected.kontrabon.term_of_pay_po_so.poandso
 															.id_so
 													: dataSelected.kontrabon.purchase.idPurchase
@@ -365,7 +373,9 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Pay To
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null
+												? dataSelected.cash_advance.employee.employee_name
+												: dataSelected.kontrabon.purchase === null
 												? dataSelected.kontrabon.term_of_pay_po_so.poandso
 														.supplier.supplier_name
 												: dataSelected.kontrabon.purchase.supplier
@@ -377,7 +387,9 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Pay For
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null
+												? dataSelected.note
+												: dataSelected.kontrabon.purchase === null
 												? `${dataSelected.kontrabon.term_of_pay_po_so.limitpay}, ${dataSelected.kontrabon.term_of_pay_po_so.poandso.note}`
 												: dataSelected.kontrabon.purchase.note}
 										</td>
@@ -387,7 +399,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Total Pay
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null ? formatRupiah(dataSelected.total.toString()) : dataSelected.kontrabon.purchase === null
 												? formatRupiah(
 														dataSelected.kontrabon.term_of_pay_po_so.price.toString()
 												  )
@@ -401,7 +413,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Discount
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null ? 0 : dataSelected.kontrabon.purchase === null
 												? formatRupiah(
 														discount(
 															dataSelected.kontrabon.term_of_pay_po_so.poandso
@@ -434,85 +446,9 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Transfer Info
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{`${dataSelected.kontrabon.SupplierBank.bank_name}, ${dataSelected.kontrabon.SupplierBank.rekening}, ${dataSelected.kontrabon.SupplierBank.account_name}`}
+											{dataSelected.kontrabonId === null ? `Cash To ${dataSelected.cash_advance.employee.employee_name}` : `${dataSelected.kontrabon.SupplierBank.bank_name}, ${dataSelected.kontrabon.SupplierBank.rekening}, ${dataSelected.kontrabon.SupplierBank.account_name}`}
 										</td>
 									</tr>
-									{/* <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Bill Amount (
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
-											)
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{formatRupiah(
-												dataSelected.term_of_pay_po_so
-													? dataSelected.term_of_pay_po_so.price.toString()
-													: total().toString()
-											)}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Discount (
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
-											)
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{formatRupiah(discount().toString())}
-										</td>
-									</tr>
-									{showTax()}
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Cash Advant (
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
-											)
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>{0}</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Total Amount (
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
-											)
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{formatRupiah(dataSelected.grandtotal.toString())}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Term & Conditions
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.limitpay
-												: dataSelected.purchase.note}{" "}
-											(
-											{dataSelected.term_of_pay_po_so
-												? dataSelected.term_of_pay_po_so.percent
-												: 100}
-											%)
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Paid To
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.SupplierBank.bank_name},{" "}
-											{dataSelected.SupplierBank.rekening} (
-											{dataSelected.SupplierBank.account_name})
-										</td>
-									</tr> */}
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Status
