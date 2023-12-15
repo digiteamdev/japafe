@@ -289,13 +289,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "service-receive",
-				link: "/purchasing-logistic/service-receive",
-				title: "Service Receive",
+			// {
+			// 	id: "service-receive",
+			// 	link: "/purchasing-logistic/service-receive",
+			// 	title: "Service Receive",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "outgoing-material",
 				link: "/purchasing-logistic/outgoing-material",
