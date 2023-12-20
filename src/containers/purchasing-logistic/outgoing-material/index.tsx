@@ -10,10 +10,10 @@ import {
 	Pagination
 } from "../../../components";
 import { Database, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateCashAdvance } from "./formCreate";
-// import { ViewCashAdvance } from "./view";
+import { FormCreateOutgoingMaterial } from "./formCreate";
+import { ViewOutgoingMaterial } from "./view";
 // import { FormEditMr } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { GetOutgoingMaterial, SearchOutgoingMaterial, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -42,7 +42,7 @@ export const OutgoingMaterial = () => {
 	];
 
 	useEffect(() => {
-		getCashAdvance(page, perPage);
+		getOutgoingMaterial(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,14 +53,14 @@ export const OutgoingMaterial = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCashAdvance(page, perPage);
+			getOutgoingMaterial(page, perPage);
 		}
 	};
 
-	const getCashAdvance = async (page: number, perpage: number) => {
+	const getOutgoingMaterial = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCashAdvance(page, perpage);
+			const response = await GetOutgoingMaterial(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -77,14 +77,14 @@ export const OutgoingMaterial = () => {
 		setIsLoading(false);
 	};
 
-	const searchCashAdvance = async (
+	const searchOutgoingMaterial = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCashAdvance(page, limit, search);
+			const response = await SearchOutgoingMaterial(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -108,7 +108,7 @@ export const OutgoingMaterial = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getCashAdvance(1, 10);
+				getOutgoingMaterial(1, 10);
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -136,7 +136,7 @@ export const OutgoingMaterial = () => {
 				title='Outgoing Material'
 				print={true}
 				showModal={showModal}
-				search={searchCashAdvance}
+				search={searchOutgoingMaterial}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -176,30 +176,28 @@ export const OutgoingMaterial = () => {
 					) : (
 						data.map((res: any, i: number) => {
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                //     <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
-								// 	<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
-								// 		<div>
-								// 			<Button
-								// 				className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 				onClick={() => {
-								// 					setDataSelected(res);
-								// 					showModal(true, "view", false);
-								// 				}}
-								// 			>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 		</div>
-								// 	</td>
-								// </tr>
+                                <tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.id_outgoing_material }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ moment(res.date_outgoing_material).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.stock_outgoing_material[0].poandsoId === null ? '-' : res.stock_outgoing_material[0].poandso.id_receive }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.stock_outgoing_material[0].poandsoId === null ? 'Dirrect' : 'Purchase Request' }</td>
+									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+										<div>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
+												<Eye color='white' />
+											</Button>
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -213,7 +211,7 @@ export const OutgoingMaterial = () => {
 							totalCount={11} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getCashAdvance(value, perPage);
+								getOutgoingMaterial(value, perPage);
 							}}
 						/>
 					) : null
@@ -229,17 +227,15 @@ export const OutgoingMaterial = () => {
 				/>
 			) : (
 				<Modal
-					title='SPJ Purchase'
+					title='Outgoing Material'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewOutgoingMaterial dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateCashAdvance content={modalContent} showModal={showModal} />
+                        <FormCreateOutgoingMaterial content={modalContent} showModal={showModal} />
 					) : (
                         <></>
                         // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

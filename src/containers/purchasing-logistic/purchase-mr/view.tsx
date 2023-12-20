@@ -19,7 +19,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataPPN, setDataPPN] = useState<any>([]);
 	const [position, setPosition] = useState<any>([]);
-console.log(dataSelected)
+
 	useEffect(() => {
 		let dataSuplier: any = [];
 		let dataPPN: any = [];
