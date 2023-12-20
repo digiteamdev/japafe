@@ -57,7 +57,7 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 							<tbody>
 								{ dataSelected.stock_outgoing_material.map((res: any, i: number) => {
 									return(
-										<tr>
+										<tr key={i}>
 											<td className="text-center border border-black">{res.Material_Stock === null ? res.poandso.detailMr[0].Material_Stock.spesifikasi : res.Material_Stock.spesifikasi }</td>
 											<td className="text-center border border-black">{res.poandsoId === null ? "-" : res.poandso.detailMr[0].mr.wor.wor_job_job_operational ? res.poandso.detailMr[0].mr.wor.wor_job_no_mr : res.poandso.detailMr[0].mr.wor.wor_job_no }</td>
 											<td className="text-center border border-black">{res.qty_out }</td>
