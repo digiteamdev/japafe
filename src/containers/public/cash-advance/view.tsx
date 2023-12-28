@@ -31,6 +31,14 @@ export const ViewCashAdvance = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const total = (data:any) => {
+		let total: number = 0
+		data.map((res:any) => {
+			total = total + res.total
+		})
+		return formatRupiah(total.toString())
+	}
+
 	const approve = async (val: string) => {
 		try {
 			if (val === "Supervisor") {
@@ -201,6 +209,7 @@ export const ViewCashAdvance = ({
 			<PdfCashAdvance
 				isModal={isModal}
 				dataSelected={dataSelected}
+				total={total(dataSelected.cdv_detail)}
 				showModalPdf={showModalPdf}
 			/>
 			{dataSelected ? (
@@ -268,22 +277,6 @@ export const ViewCashAdvance = ({
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Description
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.description}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Value
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{formatRupiah(dataSelected.total.toString())}
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Payment Type
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
@@ -300,6 +293,30 @@ export const ViewCashAdvance = ({
 								</tr>
 							</table>
 						</div>
+					</Section>
+					<Section className='grid grid-cols-1 gap-2 mt-2'>
+						<table className="w-full">
+							<thead>
+								<th className="border border-black text-center">Type</th>
+								<th className="border border-black text-center">Description</th>
+								<th className="border border-black text-center">Value</th>
+							</thead>
+							<tbody>
+								{ dataSelected.cdv_detail.map( (res: any, i: number) => {
+									return(
+										<tr key={i}>
+											<td className="border border-black text-center">{ res.type_cdv }</td>
+											<td className="border border-black text-center">{ res.description }</td>
+											<td className="border border-black text-center">{ formatRupiah(res.total.toString()) }</td>
+										</tr>
+									)
+								}) }
+								<tr>
+									<td className="border border-black text-right pr-5" colSpan={2}>Total</td>
+									<td className="border border-black text-center">{ total(dataSelected.cdv_detail) }</td>
+								</tr>
+							</tbody>
+						</table>
 					</Section>
 				</>
 			) : null}

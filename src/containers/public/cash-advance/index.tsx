@@ -36,7 +36,6 @@ export const CashAdvance = () => {
 	const headerTabel = [
 		{ name: "Id" },
         { name: "Request By" },
-		{ name: "Description" },
         { name: "Paid" },
 		{ name: "Created" },
         { name: "Action" }
@@ -183,9 +182,8 @@ export const CashAdvance = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                    <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
+                                    <td className='whitespace-nowrap px-6 py-4'>{ moment(res.date_cash_advance).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
 										<div>
 											<Button

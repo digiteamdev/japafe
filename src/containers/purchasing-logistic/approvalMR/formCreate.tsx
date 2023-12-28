@@ -23,21 +23,7 @@ interface data {
 	idMrAppr: string;
 	dateOfAppr: any;
 	approveById: string;
-	detailMr: [
-		{
-			id: string;
-			mrappr: string;
-			supId: string;
-			material: string;
-			qty: string;
-			note: string;
-			qtyAppr: number;
-			no_mr: string;
-			job_no: string;
-			stock: string;
-			user: string;
-		}
-	];
+	detailMr: any;
 }
 
 export const FormCreateApprovalMr = ({ content, showModal }: props) => {
@@ -54,21 +40,7 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 		idMrAppr: "",
 		dateOfAppr: "",
 		approveById: "",
-		detailMr: [
-			{
-				id: "",
-				mrappr: "",
-				supId: "",
-				material: "",
-				qty: "",
-				note: "",
-				qtyAppr: 0,
-				no_mr: "",
-				job_no: "",
-				stock: "",
-				user: "",
-			},
-		],
+		detailMr: [],
 	});
 
 	useEffect(() => {

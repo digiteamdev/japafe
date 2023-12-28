@@ -11,12 +11,14 @@ import { Section } from "@/src/components";
 interface props {
 	isModal?: boolean;
 	dataSelected?: any;
+	total?: string;
 	showModalPdf: (val: boolean) => void;
 }
 
 export const PdfCashAdvance = ({
 	isModal,
 	dataSelected,
+	total,
 	showModalPdf,
 }: props) => {
 	const printDocument = () => {
@@ -140,41 +142,67 @@ export const PdfCashAdvance = ({
 													{dataSelected.wor.customerPo.quotations.Customer.name}
 												</div>
 											</div>
-                                            <div className='flex flex-row w-full'>
+											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Subject</div>
 												<div className='w-full'>
-													:{" "}
-													{dataSelected.wor.subject}
+													: {dataSelected.wor.subject}
 												</div>
 											</div>
-                                            <div className='flex flex-row w-full'>
-												<div className='w-1/4'>Description</div>
-												<div className='w-full'>
-													:{" "}
-													{dataSelected.description}
-												</div>
-											</div>
-                                            <div className='flex flex-row w-full'>
-												<div className='w-1/4'>Value</div>
-												<div className='w-full'>
-													:{" "}
-													{formatRupiah(dataSelected.total.toString())}
-												</div>
-											</div>
-                                            <div className='flex flex-row w-full'>
+											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Payment Type</div>
 												<div className='w-full'>
-													:{" "}
-													{dataSelected.status_payment}
+													: {dataSelected.status_payment}
 												</div>
 											</div>
-                                            <div className='flex flex-row w-full'>
+											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Note</div>
-												<div className='w-full'>
-													:{" "}
-													{dataSelected.note}
-												</div>
+												<div className='w-full'>: {dataSelected.note}</div>
 											</div>
+										</Section>
+										<Section className='grid grid-cols-1 gap-2 mt-2'>
+											<table className='w-full'>
+												<thead>
+													<th className='border border-black text-center'>
+														Type
+													</th>
+													<th className='border border-black text-center'>
+														Description
+													</th>
+													<th className='border border-black text-center'>
+														Value
+													</th>
+												</thead>
+												<tbody>
+													{dataSelected.cdv_detail.map(
+														(res: any, i: number) => {
+															return (
+																<tr key={i}>
+																	<td className='border border-black text-center'>
+																		{res.type_cdv}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{res.description}
+																	</td>
+																	<td className='border border-black text-center'>
+																		{formatRupiah(res.total.toString())}
+																	</td>
+																</tr>
+															);
+														}
+													)}
+													<tr>
+														<td
+															className='border border-black text-right pr-5'
+															colSpan={2}
+														>
+															Total
+														</td>
+														<td className='border border-black text-center'>
+															{total}
+														</td>
+													</tr>
+												</tbody>
+											</table>
 										</Section>
 										<table className='mb-4 mx-auto mt-4'>
 											<tr>

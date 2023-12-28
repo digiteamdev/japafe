@@ -8,11 +8,7 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import {
-	AddCashAdvance,
-	GetEmployeCash,
-	GetWorCash,
-} from "../../../services";
+import { AddCashAdvance, GetEmployeCash, GetWorCash } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -30,6 +26,7 @@ interface data {
 	userId: string;
 	status_payment: string;
 	currency: string;
+	detail: any;
 	total: number;
 	description: string;
 	note: string;
@@ -49,12 +46,19 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		employeeId: "",
 		worId: "",
 		userId: "",
+		detail: [
+			{
+				type: "Consumable",
+				value: "",
+				description: "",
+			},
+		],
 		currency: "IDR",
 		status_payment: "Cash",
 		total: 0,
 		description: "",
 		note: "",
-		date_cash_advance: new Date()
+		date_cash_advance: new Date(),
 	});
 
 	useEffect(() => {
@@ -67,7 +71,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 
 	const getEmployeById = async () => {
 		const id = getIdUser();
-		if(id !== undefined){
+		if (id !== undefined) {
 			setUserId(id);
 		}
 	};
@@ -122,8 +126,28 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 
 	const addCashAdvance = async (payload: data) => {
 		setIsLoading(true);
+		let detail: any = [];
+		payload.detail.map((res: any) => {
+			if(res.value !== "" || res.description !== ""){
+				detail.push({
+					type_cdv: res.type,
+					total: parseInt(res.value),
+					description: res.description,
+				});
+			}
+		});
+		let data = {
+			id_cash_advance: payload.id_cash_advance,
+			employeeId: payload.employeeId,
+			worId: payload.worId,
+			userId: payload.userId,
+			status_payment: payload.status_payment,
+			note: payload.note,
+			date_cash_advance: payload.date_cash_advance,
+			cdv_detail : detail
+		};
 		try {
-			const response = await AddCashAdvance(payload);
+			const response = await AddCashAdvance(data);
 			if (response.data) {
 				toast.success("Add Cash Advance Success", {
 					position: "top-center",
@@ -172,7 +196,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				}) => (
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
-						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='id_cash_advance'
@@ -195,9 +219,9 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									placeholder='Request By'
 									label='Request By'
 									onChange={(e: any) => {
-										setFieldValue('employeeId', e.value.id)
-										setFieldValue('id_cash_advance', caID)
-										setFieldValue('userId', userId)
+										setFieldValue("employeeId", e.value.id);
+										setFieldValue("id_cash_advance", caID);
+										setFieldValue("userId", userId);
 									}}
 									required={true}
 									withLabel={true}
@@ -212,7 +236,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									placeholder='Job No'
 									label='Job No'
 									onChange={(e: any) => {
-										setFieldValue('worId', e.value.id)
+										setFieldValue("worId", e.value.id);
 										setSubject(e.value.subject);
 										setCustomer(e.value.customerPo.quotations.Customer.name);
 									}}
@@ -221,6 +245,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='customer'
@@ -235,9 +261,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='subject'
 									name='subject'
@@ -250,8 +274,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
-							<div className='w-full'>
+							</div> */}
+							{/* <div className='w-full'>
 								<Input
 									id='total'
 									name='total'
@@ -263,7 +287,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelect
 									id='status_payment'
@@ -298,7 +322,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 								</InputSelect>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						{/* <Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputArea
 									id='description'
@@ -325,7 +349,104 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
+						</Section> */}
+						<FieldArray
+							name='detail'
+							render={(arrayDetail) => (
+								<div>
+									{values.detail.map((res: any, i: number) => (
+										<Section
+											className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+											key={i}
+										>
+											<div className='w-full'>
+												<InputSelect
+													id={`detail.${i}.type`}
+													name={`detail.${i}.type`}
+													placeholder='Type'
+													label='Type'
+													onChange={(e: any) => {
+														setFieldValue(`detail.${i}.type`, e.target.value);
+													}}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												>
+													<option value='Consumable'>Consumable</option>
+													<option value='Investasi'>Investasi</option>
+													<option value='Service'>Service</option>
+													<option value='Operasional'>Operasional</option>
+													<option value='SDM'>SDM</option>
+												</InputSelect>
+											</div>
+											<div className='w-full'>
+												<Input
+													id={`detail.${i}.value`}
+													name={`detail.${i}.value`}
+													placeholder='Value'
+													label='Value'
+													type='number'
+													value={res.value}
+													onChange={(e: any) => {
+														setFieldValue(`detail.${i}.value`, e.target.value);
+													}}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<InputArea
+													id={`detail.${i}.description`}
+													name={`detail.${i}.description`}
+													placeholder='Decription'
+													label='Decription'
+													type='text'
+													value={res.description}
+													onChange={(e: any) => {
+														setFieldValue(
+															`detail.${i}.description`,
+															e.target.value
+														);
+													}}
+													disabled={false}
+													required={true}
+													row={1}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='flex w-full'>
+												{i + 1 === values.detail.length ? (
+													<a
+														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+														onClick={() =>
+															arrayDetail.push({
+																type: "",
+																value: "",
+																description: "",
+															})
+														}
+													>
+														<Plus size={23} className='mt-1' />
+														Add
+													</a>
+												) : null}
+												{i === 0 && values.detail.length === 1 ? null : (
+													<a
+														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+														onClick={() => arrayDetail.remove(i)}
+													>
+														<Trash2 size={22} className='mt-1 mr-1' />
+														Remove
+													</a>
+												)}
+											</div>
+										</Section>
+									))}
+								</div>
+							)}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
