@@ -197,7 +197,7 @@ export const ApprovalList = () => {
 										{ res.id_cash_advance ? moment(res.date_cash_advance).format("DD-MMMM-YYYY") : res.dateOfPurchase ? moment(res.dateOfPurchase).format("DD-MMMM-YYYY") : moment(res.date_prepared).format("DD-MMMM-YYYY") }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{ res.id_cash_advance ? formatRupiah(res.total.toString()) : total(
+										{ res.id_cash_advance ? total(res.cdv_detail) : total(
 											res.SrDetail.length > 0 ? res.SrDetail : res.detailMr
 										)}
 									</td>

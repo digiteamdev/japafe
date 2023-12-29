@@ -128,7 +128,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		let detail: any = [];
 		payload.detail.map((res: any) => {
-			if(res.value !== "" || res.description !== ""){
+			if (res.value !== "" || res.description !== "") {
 				detail.push({
 					type_cdv: res.type,
 					total: parseInt(res.value),
@@ -144,7 +144,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			status_payment: payload.status_payment,
 			note: payload.note,
 			date_cash_advance: payload.date_cash_advance,
-			cdv_detail : detail
+			cdv_detail: detail,
 		};
 		try {
 			const response = await AddCashAdvance(data);
@@ -196,7 +196,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				}) => (
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='id_cash_advance'
@@ -245,49 +245,6 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='customer'
-									name='customer'
-									placeholder='Customer / Vendor'
-									label='Customer / Vendor'
-									type='text'
-									value={customer}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							{/* <div className='w-full'>
-								<Input
-									id='subject'
-									name='subject'
-									placeholder='Subject'
-									label='Subject'
-									type='text'
-									value={subject}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
-							{/* <div className='w-full'>
-								<Input
-									id='total'
-									name='total'
-									placeholder='Value'
-									label='Value'
-									type='number'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelect
 									id='status_payment'
@@ -322,34 +279,6 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 								</InputSelect>
 							</div>
 						</Section>
-						{/* <Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputArea
-									id='description'
-									name='description'
-									placeholder='Decription'
-									label='Decription'
-									type='text'
-									onChange={handleChange}
-									disabled={false}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputArea
-									id='note'
-									name='note'
-									placeholder='Note'
-									label='Note'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section> */}
 						<FieldArray
 							name='detail'
 							render={(arrayDetail) => (

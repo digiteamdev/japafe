@@ -11,7 +11,7 @@ import {
 	Pagination
 } from "../../../components";
 import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
-// import { FormCreateKontraBon } from "./formCreate";
+import { FormCreateDuePayment } from "./formCreate";
 import {
 	GetKontraBon,
 	DeleteKontraBon,
@@ -288,8 +288,7 @@ export const DuePayment = () => {
                             <></>
                             // <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 						) : (
-                            <></>
-							// <FormCreateKontraBon content={modalContent} showModal={showModal}/>
+							<FormCreateDuePayment content={modalContent} showModal={showModal}/>
 						)}
 					</Modal>
 				)

@@ -281,6 +281,14 @@ export const FormEditApproval = ({
 		}
 	};
 
+	const total = (datas: any) => {
+		let totalHarga: number = 0;
+		datas.map((res: any) => {
+			totalHarga = totalHarga + res.total;
+		});
+		return formatRupiah(totalHarga.toString());
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -392,7 +400,7 @@ export const FormEditApproval = ({
 												Value
 											</td>
 											<td className='w-[50%] pl-2 border border-gray-200'>
-												{formatRupiah(dataSelected.total.toString())}
+												{total(dataSelected.cdv_detail)}
 											</td>
 										</tr>
 										<tr>
