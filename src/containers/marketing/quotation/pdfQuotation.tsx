@@ -94,7 +94,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 										className='my-4 mx-40 px-20 pb-4 pt-4'
 										id='divToPrint'
 									>
-                                        <div className="border border-black">
+                                        {/* <div className="border border-black">
                                             <div className="w-full p-2">
                                                 <h4 className="text-sm font-semibold">PT DWITAMA MULYA PERSADA</h4>
                                                 <p className="text-xs">Kawasan Industri De Prima Terra</p>
@@ -174,7 +174,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
                                                     <p>Sales & Marketing Dept</p>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> */}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
