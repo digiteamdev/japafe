@@ -7,7 +7,7 @@ import {
 	InputDate,
 	InputArea,
 } from "../../../components";
-import { Formik, Form, FieldArray } from "formik";
+import { Formik, Form } from "formik";
 import { worSchema } from "../../../schema/marketing/work-order-release/worSchema";
 import { AddWor, GetAllEmployeDepart, GetAllPo } from "../../../services";
 import { toast } from "react-toastify";
@@ -456,10 +456,10 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										Choose Priority Status
 									</option>
 									<option value='ST'>ST</option>
-									<option value='XT'>XT</option>
+									<option value='OT'>OT</option>
 									<option value='XXT'>XXT</option>
-									<option value='XTASREQ'>XT As Req</option>
-									<option value='XXTASREQ'>XXT As Req</option>
+									<option value='T&M'>T & M</option>
+									<option value='Q'>Q</option>
 								</InputSelect>
 								{errors.priority_status && touched.priority_status ? (
 									<span className='text-red-500 text-xs'>

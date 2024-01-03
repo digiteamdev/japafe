@@ -5,7 +5,6 @@ import { ValidateWor } from "../../../services";
 import { toast } from "react-toastify";
 import { PdfWor } from "./pdfWor";
 import { Printer } from "react-feather";
-import { position } from "html2canvas/dist/types/css/property-descriptors/position";
 
 interface props {
 	dataSelected: any;

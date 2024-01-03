@@ -4,7 +4,12 @@ import { X, FileText } from "react-feather";
 import moment from "moment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { Printer } from "react-feather";
+import Logo from "../../../assets/logo/logo-ISO-9001.png";
+import Logo2 from "../../../assets/logo/Logo-ISO-14001.png";
+import Logo3 from "../../../assets/logo/Logo-ISO-45001.png";
+import Logo4 from "../../../assets/logo/dwitama.png";
+import Image from "next/image";
+import { Printer, Square, CheckSquare } from "react-feather";
 
 interface props {
 	isModal?: boolean;
@@ -18,11 +23,11 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			// const width = pdf.internal.pageSize.getWidth();
+			const width = pdf.internal.pageSize.getWidth();
 			// const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
-			window.open(pdf.output("bloburl"), "_blank");
-			// pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
+			// window.open(pdf.output("bloburl"), "_blank");
+			pdf.save(`Work_Order_Release_${data.job_operational ? data.job_no_mr :  data.job_no}.pdf`);
 		});
 	};
 
@@ -90,242 +95,230 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 										</button>
 									</div>
-									<div
-										className='my-4 mx-40 px-20 pb-4'
-										id='divToPrint'
-									>
-										<h1 className='font-bold text-center text-xl my-4'>
-											WORK ORDER RELEASE
-										</h1>
-										<table className='w-full mb-2'>
-											<thead></thead>
-											<tbody>
-												<tr>
-													<td className='w-[35%]'>Job No</td>
-													<td className='w-[65%]'>: {data.job_no}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Customer</td>
-													<td className='w-[65%]'>
+									<div className='my-4 mx-40 px-20 pb-4' id='divToPrint'>
+										<div className="pt-4">
+											<div className='flex border border-black'>
+												<div className='w-[45%] p-2'>
+													<h4 className='text-xs font-semibold'>
+														PT DWITAMA MULYA PERSADA
+													</h4>
+													<p className='text-[9px]'>
+														Kawasan Industri De Prima Terra
+													</p>
+													<p className='text-[9px]'>
+														Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar
+														Bandung 40287
+													</p>
+													<p className='text-[9px]'>
+														Phone : +62 22 88881810, +62 22 87528469-60
+													</p>
+													<p className='text-[9px]'>
+														Email : sales@dwitama.co.id - www.dwitama.co.id
+													</p>
+												</div>
+												<div className='w-[55%]'>
+													<div className='flex ml-8 p-3'>
+														<Image
+															className='w-[35%] mx-1'
+															src={Logo4}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo2}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo3}
+															alt='logo'
+														/>
+													</div>
+												</div>
+											</div>
+											<div className='w-full grid grid-cols-6 grid-rows-2'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2'>
+													<h2 className='text-lg font-bold text-center pt-4'>
+														Work Order Release
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														No. Dokumen / Revisi
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>Level</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														{" "}
+														/ {data.refivision}
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>3</h2>
+												</div>
+											</div>
+											<div className='w-full mt-4 text-sm'>
+												<div className='grid grid-cols-5'>
+													<div className='w-full font-semibold'>Job No</div>
+													<div className='w-full font-semibold col-span-4'>
+														:{" "}
+														{data.job_operational ? data.job_no_mr : data.job_no}
+													</div>
+												</div>
+												<div className='grid grid-cols-5'>
+													<div className='w-full'>Customer</div>
+													<div className='w-full col-span-4'>
 														: {data.customerPo.quotations.Customer.name}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Subject</td>
-													<td className='w-[65%]'>: {data.subject}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Job Description</td>
-													<td className='w-[65%]'>: {data.job_desk}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>SPK No.</td>
-													<td className='w-[65%]'>: {data.contract_no_spk}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Sales Representative</td>
-													<td className='w-[65%]'>
-														: {data.employee.employee_name}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Contact Person</td>
-													<td className='w-[65%]'>
+													</div>
+												</div>
+												<div className='grid grid-cols-5'>
+													<div className='w-full'>Job Description</div>
+													<div className='w-full col-span-4'>
+														: {data.job_desk}
+													</div>
+												</div>
+											</div>
+											<div className='w-full grid grid-cols-2 gap-1 text-sm mt-2'>
+												<div className='grid grid-cols-7'>
+													<div className='w-full col-span-3'>Quantity</div>
+													<div className='w-full col-span-4'>: {data.qty}</div>
+												</div>
+												<div className='grid grid-cols-6'>
+													<div className='w-full col-span-2'>PO No</div>
+													<div className='w-full col-span-4'>
+														: {data.customerPo.po_num_auto}
+													</div>
+												</div>
+												<div className='grid grid-cols-7'>
+													<div className='w-full col-span-3'>Date Of Order</div>
+													<div className='w-full col-span-4'>
+														: {moment(data.date_of_order).format("DD MMMM YYYY")}
+													</div>
+												</div>
+												<div className='grid grid-cols-6'>
+													<div className='w-full col-span-2'>Contact Person</div>
+													<div className='w-full col-span-4'>
 														:{" "}
 														{
 															data.customerPo.quotations.CustomerContact
 																.contact_person
-														}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Email Address (Office)</td>
-													<td className='w-[65%]'>
-														: {data.customerPo.quotations.Customer.email}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Priority Status</td>
-													<td className='w-[65%]'>: {data.priority_status}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Quantity</td>
-													<td className='w-[65%]'>: {data.qty}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Date Of Order</td>
-													<td className='w-[65%]'>
-														:{" "}
-														{moment(data.date_of_order).format("DD-MMMM-YYYY")}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Delivery Schedule</td>
-													<td className='w-[65%]'>
-														:{" "}
-														{moment(data.delivery_date).format("DD-MMMM-YYYY")}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Shipping Address</td>
-													<td className='w-[65%]'>: {data.shipping_address}</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Equipment Name</td>
-													<td className='w-[65%]'>
-														:{" "}
-														{
-															data.customerPo.quotations.eqandpart[0].equipment
-																.nama
-														}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Estimate Man Hour</td>
-													<td className='w-[65%]'>
-														: {data.estimated_man_our}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Equipment Detail</td>
-													<td className='w-[65%]'>
-														: Mfg : {data.eq_mfg}{" "}
-														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rotation :{" "}
-														{data.eq_rotation}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'></td>
-													<td className='w-[65%]'>
-														: Model : {data.eq_model}{" "}
-														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Power :{" "}
-														{data.eq_power}
-													</td>
-												</tr>
-												<tr>
-													<td className='w-[35%]'>Scope Of Work</td>
-													<td className='w-[65%]'>: {data.scope_of_work}</td>
-												</tr>
-											</tbody>
-										</table>
-										<table className='w-full mb-2'>
-											<thead>
-												<tr>
-													<th className='border border-black border-collapse text-center w-[5%] p-2'>
-														No
-													</th>
-													<th className='border border-black text-center w-[55%] p-2'>
-														Description
-													</th>
-													<th className='border border-black text-center w-[20%] p-2'>
-														Qty
-													</th>
-													<th className='border border-black text-center w-[20%] p-2'>
-														Unit
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												{data.customerPo.quotations.Quotations_Detail.map(
-													(res: any, i: number) => (
-														<tr key={i}>
-															<td className='border border-black text-center p-2'>
+														}{" "}
+														(+62{data.customerPo.quotations.CustomerContact.phone}
+														)
+													</div>
+												</div>
+												<div className='grid grid-cols-7'>
+													<div className='w-full col-span-3'>
+														Delivery Schedule
+													</div>
+													<div className='w-full col-span-4'>
+														: {moment(data.delivery_date).format("DD MMMM YYYY")}
+													</div>
+												</div>
+												<div className='grid grid-cols-6'>
+													<div className='w-full col-span-2'>Sales</div>
+													<div className='w-full col-span-4'>
+														: {data.employee.employee_name}
+													</div>
+												</div>
+												<div className='grid grid-cols-7'>
+													<div className='w-full col-span-3'>
+														Shipping Address
+													</div>
+													<div className='w-full col-span-4'>
+														: {data.shipping_address}
+													</div>
+												</div>
+												<div className='grid grid-cols-6'>
+													<div className='w-full col-span-2'>Email Address</div>
+													<div className='w-full col-span-4'>
+														: {data.employee.email}
+													</div>
+												</div>
+											</div>
+											<div className='w-full grid grid-cols-5 gap-1 text-sm mt-2'>
+												<div className='w-full'>Equipment Detail</div>
+												<div className='grid grid-cols-2 col-span-4 gap-1'>
+													<div className='grid grid-cols-3'>
+														<div>: Mfg</div>
+														<div className='col-span-2'>: {data.eq_mfg}</div>
+													</div>
+													<div className='grid grid-cols-3'>
+														<div>Rotation</div>
+														<div className='col-span-2'>: {data.eq_rotation}</div>
+													</div>
+													<div className='grid grid-cols-3'>
+														<div>: Model</div>
+														<div className='col-span-2'>: {data.eq_model}</div>
+													</div>
+													<div className='grid grid-cols-3'>
+														<div>Power</div>
+														<div className='col-span-2'>: {data.eq_power}</div>
+													</div>
+												</div>
+											</div>
+											<div className='w-full grid grid-cols-2 gap-1 text-sm my-2'>
+												<div className='w-full'>
+													Priority Status : {data.priority_status}
+												</div>
+												<div className='w-full'>
+													Quote No. : {data.customerPo.quotations.quo_auto}
+												</div>
+											</div>
+											<div className='flex border border-black bg-purple-400'>
+												<div className='p-2 text-center w-[10%] font-semibold'>
+													No
+												</div>
+												<div className='p-2 text-center w-[30%] font-semibold'>
+													Qty Item
+												</div>
+												<div className='p-2 text-center w-[60%] font-semibold'>
+													Standar work scope item
+												</div>
+											</div>
+											{data.customerPo.quotations.Quotations_Detail.map(
+												(res: any, i: number) => {
+													return (
+														<div
+															className='flex border-b border-b-slate-400'
+															key={i}
+														>
+															<div className='p-2 text-center w-[10%]'>
 																{i + 1}
-															</td>
-															<td className='border border-black p-2'>
-																{res.item_of_work}
-															</td>
-															<td className='border border-black text-center p-2'>
+															</div>
+															<div className='p-2 text-center w-[30%]'>
 																{res.volume}
-															</td>
-															<td className='border border-black text-center p-2'>
-																{res.unit}
-															</td>
-														</tr>
-													)
-												)}
-											</tbody>
-										</table>
-										<table className='w-full mb-2'>
-											<thead></thead>
-											<tbody>
-												<tr>
-													<td className='w-[35%]'>Note</td>
-													<td className='w-[65%]'>: {data.noted}</td>
-												</tr>
-											</tbody>
-										</table>
-										<table className='w-full mb-2'>
-											<thead>
-												<tr>
-													<th className='border border-black text-center p-2'>
-														Prepared By
-													</th>
-													<th className='border border-black text-center p-2'>
-														Check By
-													</th>
-													<th className='border border-black text-center p-2'>
-														Approved By
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td className='border border-black py-8'></td>
-													<td className='border border-black py-8'></td>
-													<td className='border border-black py-8'></td>
-												</tr>
-											</tbody>
-										</table>
-										<p>Distributed To :</p>
-										<div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-1'>
-											<div>
-												<p>O. Dirut</p>
+															</div>
+															<div className='p-2 text-center w-[60%]'>
+																{res.item_of_work}
+															</div>
+														</div>
+													);
+												}
+											)}
+											<div className='flex w-full mt-2 bg-purple-400'>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Prepared by
+												</div>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Position
+												</div>
+												<div className='w-full border border-black pb-1 px-1 text-center font-semibold'>
+													Date & Signature
+												</div>
 											</div>
-											<div>
-												<p>O. Dir MKT</p>
-											</div>
-											<div>
-												<p>O. Mgr Eng</p>
-											</div>
-											<div>
-												<p>O. Accounting</p>
-											</div>
-										</div>
-										<div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-1'>
-											<div>
-												<p>O. Mgr Prod</p>
-											</div>
-											<div>
-												<p>O. Mgr PPIC</p>
-											</div>
-											<div>
-												<p>O. Mgr Purch</p>
-											</div>
-											<div>
-												<p>O. SPV Mechanic</p>
-											</div>
-										</div>
-										<div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-1'>
-											<div>
-												<p>O. SPV QC</p>
-											</div>
-											<div>
-												<p>O. Drafter</p>
-											</div>
-											<div>
-												<p>O. SPV Fs</p>
-											</div>
-											<div>
-												<p>O. SPV Machining</p>
-											</div>
-										</div>
-										<div className='grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-1 mb-4'>
-											<div>
-												<p>O. Mgr Field Svc</p>
-											</div>
-											<div>
-												<p>O. Mgr HSE</p>
+											<div className='flex w-full'>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-t-0 h-20'></div>
 											</div>
 										</div>
 									</div>
