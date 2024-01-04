@@ -3,8 +3,9 @@ import moment from "moment";
 import { Section } from "../../../components";
 import { ApproveSrSpv, ApproveSrManager } from "../../../services";
 import { getPosition } from "../../../configs/session";
-import { Check, X } from "react-feather";
+import { Check, X, Printer } from "react-feather";
 import { toast } from "react-toastify";
+import { PdfSr } from "./pdfSr";
 
 interface props {
 	dataSelected: any;
@@ -14,6 +15,7 @@ interface props {
 
 export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 	const [position, setPosition] = useState<any>([]);
+	const [isModal, setIsModal] = useState<boolean>(false);
 
 	useEffect(() => {
 		let positionAkun = getPosition();
@@ -92,6 +94,10 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 		}
 	};
 
+	const showModalPdf = (val: boolean) => {
+		setIsModal(val);
+	};
+
 	const showButtonValid = (data: any) => {
 		if (position === "Supervisor") {
 			if (data.status_spv === null || data.status_spv === "unvalid") {
@@ -144,10 +150,23 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
+			<PdfSr
+				isModal={isModal}
+				data={dataSelected}
+				showModalPdf={showModalPdf}
+			/>
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
 						<div className='text-right mr-6'>
+							<button
+								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+								onClick={() => showModalPdf(true)}
+							>
+								<div className='flex px-1 py-1'>
+									<Printer size={16} className='mr-1' /> Print
+								</div>
+							</button>
 							{showButtonValid(dataSelected)}
 						</div>
 					</div>

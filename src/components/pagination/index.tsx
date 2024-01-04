@@ -35,6 +35,7 @@ export const Pagination = ({
             onChangePage(currentPage - 1);
         }
     }
+
     return (
         <div className="w-full flex items-center justify-end px-4 py-3 sm:px-6">
             <div className="flex flex-1 justify-between sm:hidden">

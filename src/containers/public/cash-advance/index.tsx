@@ -216,7 +216,7 @@ export const CashAdvance = () => {
 							currentPage={currentPage} 
 							pageSize={perPage} 
 							siblingCount={1} 
-							totalCount={11} 
+							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
 								getCashAdvance(value, perPage);

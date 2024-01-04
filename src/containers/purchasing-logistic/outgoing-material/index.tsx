@@ -208,7 +208,7 @@ export const OutgoingMaterial = () => {
 							currentPage={currentPage} 
 							pageSize={perPage} 
 							siblingCount={1} 
-							totalCount={11} 
+							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
 								getOutgoingMaterial(value, perPage);

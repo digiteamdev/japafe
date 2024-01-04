@@ -191,7 +191,7 @@ export const MaterialStok = () => {
 							currentPage={currentPage} 
 							pageSize={perPage} 
 							siblingCount={1} 
-							totalCount={11} 
+							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
 								getMaterialStok(value, perPage);
