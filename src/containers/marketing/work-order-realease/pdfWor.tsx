@@ -157,8 +157,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
 													<h2 className='text-base text-center'>
-														{" "}
-														/ {data.refivision}
+														DMP/MKT/FRM-07 / 00
 													</h2>
 												</div>
 												<div className='w-full p-2 border border-black border-t-0'>
