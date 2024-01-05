@@ -189,11 +189,11 @@ console.log(data)
                                                 <div className="w-full col-span-4">: </div>
                                             </div>
                                             <div className="grid grid-cols-5">
-                                                <div className="w-full">End User's</div>
+                                                <div className="w-full">End Users</div>
                                                 <div className="w-full col-span-4">: </div>
                                             </div>
                                             <div className="grid grid-cols-5">
-                                                <div className="w-full">Maker's</div>
+                                                <div className="w-full">Makers</div>
                                                 <div className="w-full col-span-4">: </div>
                                             </div>
                                             <div className="grid grid-cols-5 mb-2">
