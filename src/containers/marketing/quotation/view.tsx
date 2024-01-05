@@ -24,7 +24,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 			/>
 			{dataSelected ? (
 				<>
-					{/* <div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
+					<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
 						<div>
 							<h1 className='font-bold text-xl'>Work Order Release</h1>
 						</div>
@@ -38,7 +38,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 								</div>
 							</button>
 						</div>
-					</div> */}
+					</div>
 					<h1 className='font-bold text-xl'>Quotation</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>

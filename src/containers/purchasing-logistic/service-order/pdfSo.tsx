@@ -7,6 +7,11 @@ import jsPDF from "jspdf";
 import { Printer } from "react-feather";
 import { formatRupiah, pembilang } from "../../../utils";
 import { Section } from "@/src/components";
+import Logo from "../../../assets/logo/logo-ISO-9001.png";
+import Logo2 from "../../../assets/logo/Logo-ISO-14001.png";
+import Logo3 from "../../../assets/logo/Logo-ISO-45001.png";
+import Logo4 from "../../../assets/logo/dwitama.png";
+import Image from "next/image";
 
 interface props {
 	isModal?: boolean;
@@ -51,16 +56,17 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 		let totalBayar: any = Total();
 		let totalPPN: any = Ppn();
 		let totalPPH: any = Pph();
-		if(data.taxPsrDmr === 'ppn'){
+		if (data.taxPsrDmr === "ppn") {
 			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
 			return total;
-		}else if (data.taxPsrDmr === 'pph'){
+		} else if (data.taxPsrDmr === "pph") {
 			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
 			return total;
-		}else if(data.taxPsrDmr === 'ppn_and_pph'){
-			let total: any = parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
+		} else if (data.taxPsrDmr === "ppn_and_pph") {
+			let total: any =
+				parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
 			return total;
-		}else{
+		} else {
 			let total: any = parseInt(totalBayar);
 			return total;
 		}
@@ -130,312 +136,310 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 										</button>
 									</div>
-									<div
-										className='my-4 mx-40 px-20'
-										id='divToPrint'
-									>
-										<h1 className='font-bold text-center text-xl my-4'>
-											PURCHASE ORDER
-										</h1>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>No</div>
-												<div className='w-[70%]'>: {data.id_so}</div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Date Prepare</div>
-												<div className='w-[65%]'>
-													: {moment(data.date_prepared).format("DD-MMMM-YYYY")}
+									<div className='my-4 mx-40 px-20' id='divToPrint'>
+										<div className='pt-4'>
+											<div className='flex border border-black'>
+												<div className='w-[45%] p-2'>
+													<h4 className='text-xs font-semibold'>
+														PT DWITAMA MULYA PERSADA
+													</h4>
+													<p className='text-[9px]'>
+														Kawasan Industri De Prima Terra
+													</p>
+													<p className='text-[9px]'>
+														Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar
+														Bandung 40287
+													</p>
+													<p className='text-[9px]'>
+														Phone : +62 22 88881810, +62 22 87528469-60
+													</p>
+													<p className='text-[9px]'>
+														Email : sales@dwitama.co.id - www.dwitama.co.id
+													</p>
+												</div>
+												<div className='w-[55%]'>
+													<div className='flex ml-8 p-3'>
+														<Image
+															className='w-[35%] mx-1'
+															src={Logo4}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo2}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo3}
+															alt='logo'
+														/>
+													</div>
 												</div>
 											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>To</div>
-												<div className='w-[70%]'>
-													: {data.supplier.supplier_name}
+											<div className='w-full grid grid-cols-6 grid-rows-2'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2'>
+													<h2 className='text-lg font-bold text-center pt-4'>
+														Service Order (SO)
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														No. Dokumen / Revisi
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>Level</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														DMP/PCH/FRM-02 / 00
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>3</h2>
 												</div>
 											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Ship To</div>
-												<div className='w-[65%]'>
-													: PT. Dwitama Mulya Persada
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Number</div>
+													<div className='w-[70%]'>: {data.id_so}</div>
 												</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>Address</div>
-												<div className='w-[70%]'>
-													: {data.supplier.addresses_sup} -{" "}
-													{data.supplier.cities} - {data.supplier.provinces}
+												<div className='flex w-full'>
+													<div className='w-[35%]'>Ship To</div>
+													<div className='w-[65%]'>
+														: PT. Dwitama Mulya Persada
+													</div>
 												</div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Address</div>
-												<div className='w-[65%]'>
-													: Kawasan Industri De Prima Terra, Tegalluar,
-													Kab.Bandung
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Date</div>
+													<div className='w-[70%]'>
+														:{" "}
+														{moment(data.date_prepared).format("DD MMMM YYYY")}
+													</div>
 												</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>Phone</div>
-												<div className='w-[70%]'>
-													: +62{data.supplier.SupplierContact[0].phone}
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Address</div>
+													<div className='w-[70%]'>
+														: {data.supplier.addresses_sup} -{" "}
+														{data.supplier.cities} - {data.supplier.provinces}
+													</div>
 												</div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Phone</div>
-												<div className='w-[65%]'>: -</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>Fax</div>
-												<div className='w-[70%]'>: </div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Fax</div>
-												<div className='w-[65%]'>: -</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>Contact</div>
-												<div className='w-[70%]'>
-													: {data.supplier.SupplierContact[0].contact_person}
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Vendor</div>
+													<div className='w-[70%]'>
+														: {data.supplier.supplier_name}
+													</div>
 												</div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Contact</div>
-												<div className='w-[65%]'>: -</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-											<div className='flex w-full'>
-												<div className='w-[30%]'>Refrensi</div>
-												<div className='w-[70%]'>: {data.your_reff}</div>
-											</div>
-											<div className='flex w-full'>
-												<div className='w-[35%]'>Currency</div>
-												<div className='w-[65%]'>
-													: {data.SrDetail[0].currency}
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Phone</div>
+													<div className='w-[70%]'>: 022-8888810</div>
 												</div>
-											</div>
-										</Section>
-										<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
-											<table className='w-full'>
-												<thead>
-													<tr>
-														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Job No
-														</th>
-														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Description
-														</th>
-														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Qty
-														</th>
-														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Price
-														</th>
-														<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
-															Disc
-														</th>
-														<th className='border border-t-black border-l-black border-r-black border-b-0 text-center p-2'>
-															Total
-														</th>
-													</tr>
-												</thead>
-												<tbody>
-													{data.SrDetail.map((res: any, i: number) => {
-														return (
-															<tr key={i}>
-																<td
-																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{res.sr.wor.job_operational
-																		? res.sr.wor.job_no_mr
-																		: res.sr.wor.job_no}
-																</td>
-																<td
-																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{ res.part} - { res.workCenter.name}
-																</td>
-																<td
-																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{res.qtyAppr}
-																</td>
-																<td
-																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{formatRupiah(res.price.toString())}
-																</td>
-																<td
-																	className={`border border-t-black border-l-black border-r-0 ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{formatRupiah(res.disc.toString())}
-																</td>
-																<td
-																	className={`border border-t-black border-l-black border-r-black ${
-																		i === data.SrDetail.length - 1
-																			? "border-b-black"
-																			: "border-b-0"
-																	} text-center p-2`}
-																>
-																	{formatRupiah(res.total.toString())}
-																</td>
-															</tr>
-														);
-													})}
-													<tr>
-														<td
-															colSpan={5}
-															className='border border-l-black border-r-0 border-t-0 border-b-0 text-center p-2'
-														>
-															Total ({data.currency})
-														</td>
-														<td className='border border-t-0 border-b-0 border-l-black border-r-black text-center p-2'>
-															{formatRupiah(Total())}
-														</td>
-													</tr>
-													{ data.taxPsrDmr === "ppn" ? (
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Address</div>
+													<div className='w-[70%]'>
+														: {data.supplier.addresses_sup} -{" "}
+														{data.supplier.cities} - {data.supplier.provinces}
+													</div>
+												</div>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Fax</div>
+													<div className='w-[70%]'>: 022-8888810</div>
+												</div>
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Phone</div>
+													<div className='w-[70%]'>
+														: +62{data.supplier.SupplierContact[0].phone}
+													</div>
+												</div>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Requestor</div>
+													<div className='w-[70%]'>
+														: {data.SrDetail[0].sr.user.employee.employee_name}
+													</div>
+												</div>
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Fax</div>
+													<div className='w-[70%]'>: -</div>
+												</div>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Job</div>
+													<div className='w-[70%]'>
+														:{" "}
+														{data.SrDetail[0].sr.wor.job_operational
+															? data.SrDetail[0].sr.wor.job_no_mr
+															: data.SrDetail[0].sr.wor.job_no}
+													</div>
+												</div>
+											</Section>
+											<Section className='grid grid-cols-2 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Contact</div>
+													<div className='w-[70%]'>
+														: {data.supplier.SupplierContact[0].contact_person}
+													</div>
+												</div>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Your Reff</div>
+													<div className='w-[70%]'>: {data.your_reff}</div>
+												</div>
+											</Section>
+											<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
+												<table className='w-full'>
+													<thead>
+														<tr>
+															<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
+																No
+															</th>
+															<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
+																Description
+															</th>
+															<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
+																Qty
+															</th>
+															<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
+																Price
+															</th>
+															<th className='border border-t-black border-l-black border-r-0 border-b-0 text-center p-2'>
+																Disc
+															</th>
+															<th className='border border-t-black border-l-black border-r-black border-b-0 text-center p-2'>
+																Total
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														{data.SrDetail.map((res: any, i: number) => {
+															return (
+																<tr key={i}>
+																	<td
+																		className={`border border-t-black border-l-black border-r-0 ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{i + 1}
+																	</td>
+																	<td
+																		className={`border border-t-black border-l-black border-r-0 ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{
+																			res.workCenter.name
+																		}{" "}
+																		- {res.part}
+																	</td>
+																	<td
+																		className={`border border-t-black border-l-black border-r-0 ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{res.qtyAppr}
+																	</td>
+																	<td
+																		className={`border border-t-black border-l-black border-r-0 ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{formatRupiah(res.price.toString())}
+																	</td>
+																	<td
+																		className={`border border-t-black border-l-black border-r-0 ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{formatRupiah(res.disc.toString())}
+																	</td>
+																	<td
+																		className={`border border-t-black border-l-black border-r-black ${
+																			i === data.SrDetail.length - 1
+																				? "border-b-black"
+																				: "border-b-0"
+																		} text-center p-2`}
+																	>
+																		{formatRupiah(res.total.toString())}
+																	</td>
+																</tr>
+															);
+														})}
 														<tr>
 															<td
 																colSpan={5}
-																className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+																className='border border-l-black border-r-0 border-t-0 border-b-0 text-center p-2'
 															>
-																{`PPN ${data.SrDetail[0].supplier.ppn}%`}
+																Total ({data.currency})
 															</td>
-															<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
-																{formatRupiah(Ppn())}
+															<td className='border border-t-0 border-b-0 border-l-black border-r-black text-center p-2'>
+																{formatRupiah(Total())}
 															</td>
 														</tr>
-													) : data.taxPsrDmr === "pph" ? (
-														<tr>
-															<td
-																colSpan={5}
-																className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
-															>
-																{`PPH ${data.SrDetail[0].supplier.pph}%`}
-															</td>
-															<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
-																{formatRupiah(Pph())}
-															</td>
-														</tr>
-													) : data.taxPsrDmr === "ppn_and_pph" ? (
-														<>
+														{data.taxPsrDmr === "ppn" ? (
 															<tr>
 																<td
 																	colSpan={5}
-																	className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
+																	className='border border-l-black border-r-0 border-t-black border-b-black text-center p-2'
 																>
-																	{`PPN ${data.SrDetail[0].supplier.ppn}%`}
+																	{`PPN ${data.supplier.ppn}% (${data.currency})`}
 																</td>
-																<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
+																<td className='border border-black text-center'>
 																	{formatRupiah(Ppn())}
 																</td>
 															</tr>
-															<tr>
-																<td
-																	colSpan={5}
-																	className='border border-l-black border-r-0 border-t-black border-b-0 text-center p-2'
-																>
-																	{`PPH ${data.SrDetail[0].supplier.pph}%`}
-																</td>
-																<td className='border border-t-black border-b-0 border-l-black border-r-black text-center p-2'>
-																	{formatRupiah(Pph())}
-																</td>
-															</tr>
-														</>
-													) : null }
-													<tr>
-														<td
-															colSpan={5}
-															className='border border-l-black border-r-0 border-t-black border-b-black text-center p-2'
-														>
-															Grand Total
-														</td>
-														<td className='border border-t-black border-b-black border-l-black border-r-black text-center p-2'>
-															{formatRupiah(grandTotal().toString())}
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</Section>
-										<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
-											<div className='w-full'>
-												<p>
-													Said :{" "}
-													<span className='font-bold'>
-														{pembilang(grandTotal())}
-													</span>
-												</p>
+														) : null}
+														<tr>
+															<td
+																colSpan={5}
+																className='border border-l-black border-r-0 border-t-black border-b-black text-center p-2'
+															>
+																Grand Total ({data.currency})
+															</td>
+															<td className='border border-t-black border-b-black border-l-black border-r-black text-center p-2'>
+																{formatRupiah(grandTotal().toString())}
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</Section>
+											<Section className='grid grid-cols-1 gap-2 mt-2 mb-2'>
+												<div className='flex w-full'>
+													<div className='w-[30%]'>Note</div>
+													<div className='w-[70%]'>: {data.note}</div>
+												</div>
+											</Section>
+											<div className='w-full text-center mt-8'>
+												Bandung, {moment(new Date()).format("DD/MMMM/YYYY")}
 											</div>
-											<div className='w-full'>
-												<p>
-													Down Payment :{" "}
-													<span>
-														{ formatRupiah(data.DP.toString()) }
-													</span>
-												</p>
-											</div>
-											<div className='w-full'>
-												<p>
-													Payment Schedule :{" "}
-													<span className='font-bold'>
-													</span>
-												</p>
-											</div>
-											<div className='w-full'>
-												<p>
-													Term And Condition :{" "}
-													<span>
-														{ data.note }
-													</span>
-												</p>
-											</div>
-										</Section>
-										<Section className='flex w-full'>
-											<div className="w-[30%]">
-
-											</div>
-											<div className="w-[70%]">
-												<Section className="grid grid-cols-2">
-													<div className="w-full">
-														<p className="pb-28">Approved By</p>
-													</div>
-													<div className="w-full">
-														<p className="m-0">Bandung, { moment(new Date()).format('DD-MMM-YYYY') }</p>
-														<p className="m-0 pb-28">PT. Dwitama Mulya Persada</p>
-													</div>
-												</Section>
-											</div>
-										</Section>
+											<Section className='grid grid-cols-3 gap-1 mt-24 text-center'>
+												<div className='mb-2'>President Director</div>
+												<div className='mb-2'>Procurement Manager</div>
+												<div className='mb-2'>Purchasing Staff</div>
+											</Section>
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

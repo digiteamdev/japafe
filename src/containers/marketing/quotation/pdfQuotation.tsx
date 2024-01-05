@@ -5,6 +5,11 @@ import moment from "moment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Printer } from "react-feather";
+import Logo from "../../../assets/logo/logo-ISO-9001.png";
+import Logo2 from "../../../assets/logo/Logo-ISO-14001.png";
+import Logo3 from "../../../assets/logo/Logo-ISO-45001.png";
+import Logo4 from "../../../assets/logo/dwitama.png";
+import Image from "next/image";
 
 interface props {
 	isModal?: boolean;
@@ -22,10 +27,10 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 			// const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
 			window.open(pdf.output("bloburl"), "_blank");
-			// pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
+			// pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
 	};
-
+console.log(data)
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>
@@ -94,36 +99,77 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 										className='my-4 mx-40 px-20 pb-4 pt-4'
 										id='divToPrint'
 									>
-                                        {/* <div className="border border-black">
-                                            <div className="w-full p-2">
-                                                <h4 className="text-sm font-semibold">PT DWITAMA MULYA PERSADA</h4>
-                                                <p className="text-xs">Kawasan Industri De Prima Terra</p>
-                                                <p className="text-xs">Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar Bandung 40287</p>
-                                                <p className="text-xs">Phone : +62 22 88881810, +62 22 87528469-60</p>
-                                                <p className="text-xs">Email : sales@dwitama.co.id - www.dwitama.co.id</p>
-                                            </div>
-                                        </div>
-                                        <div className="w-full grid grid-cols-6 grid-rows-2">
-                                            <div className=" w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2">
-                                                <h2 className="text-lg font-bold text-center pt-4">Quotation</h2>
-                                            </div>
-                                            <div className="w-full p-2 border border-black border-t-0 border-r-0 col-span-2">
-                                                <h2 className="text-base text-center">No. Dokumen / Revisi</h2>
-                                            </div>
-                                            <div className="w-full p-2 border border-black border-t-0">
-                                                <h2 className="text-base text-center">Level</h2>
-                                            </div>
-                                            <div className="w-full p-2 border border-black border-t-0 border-r-0 col-span-2">
-                                                <h2 className="text-base text-center">No. Dokumen / Revisi</h2>
-                                            </div>
-                                            <div className="w-full p-2 border border-black border-t-0">
-                                                <h2 className="text-base text-center">3</h2>
-                                            </div>
-                                        </div>
+                                        <div className='flex border border-black'>
+												<div className='w-[45%] p-2'>
+													<h4 className='text-xs font-semibold'>
+														PT DWITAMA MULYA PERSADA
+													</h4>
+													<p className='text-[9px]'>
+														Kawasan Industri De Prima Terra
+													</p>
+													<p className='text-[9px]'>
+														Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar
+														Bandung 40287
+													</p>
+													<p className='text-[9px]'>
+														Phone : +62 22 88881810, +62 22 87528469-60
+													</p>
+													<p className='text-[9px]'>
+														Email : sales@dwitama.co.id - www.dwitama.co.id
+													</p>
+												</div>
+												<div className='w-[55%]'>
+													<div className='flex ml-8 p-3'>
+														<Image
+															className='w-[35%] mx-1'
+															src={Logo4}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo2}
+															alt='logo'
+														/>
+														<Image
+															className='w-[15%] mx-1'
+															src={Logo3}
+															alt='logo'
+														/>
+													</div>
+												</div>
+											</div>
+											<div className='w-full grid grid-cols-6 grid-rows-2'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2'>
+													<h2 className='text-lg font-bold text-center pt-4'>
+														Quotation
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														No. Dokumen / Revisi
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>Level</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+													<h2 className='text-base text-center'>
+														DMP/PCH/FRM-04 / 00
+													</h2>
+												</div>
+												<div className='w-full p-2 border border-black border-t-0'>
+													<h2 className='text-base text-center'>3</h2>
+												</div>
+											</div>
                                         <div className="w-full mt-4">
                                             <div className="grid grid-cols-5">
                                                 <div className="w-full">Date</div>
-                                                <div className="w-full col-span-4">: </div>
+                                                <div className="w-full col-span-4">: { moment(data.date).format('DD MMMM YYYY') }</div>
                                             </div>
                                             <div className="grid grid-cols-5">
                                                 <div className="w-full">Quotation Ref</div>
@@ -131,7 +177,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
                                             </div>
                                             <div className="grid grid-cols-5 mb-2">
                                                 <div className="w-full">To</div>
-                                                <div className="w-full col-span-4">: </div>
+                                                <div className="w-full col-span-4">: { data.Customer.name }</div>
                                             </div>
                                             <div className="w-full divide-y p-1 bg-slate-400"></div>
                                             <div className="w-full grid grid-cols-5">
@@ -158,6 +204,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
                                         </div>
                                         <div className="w-full mt-2">
                                             <p className="text-center font-semibold">Description</p>
+											<p className="">{ data.deskription }</p>
                                         </div>
                                         <div className="w-full mt-2">
                                             <p className="text-sm">We hope that our proposal well meet to your requirement, thank you for kind attention and corporation.</p>
@@ -174,7 +221,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
                                                     <p>Sales & Marketing Dept</p>
                                                 </div>
                                             </div>
-                                        </div> */}
+                                        </div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
