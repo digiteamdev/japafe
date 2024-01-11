@@ -9,3 +9,5 @@ export const EditWor = (data: any, id: string) => Axios.put(process.env.BASE_URL
 export const DeleteWor = (id: string) => Axios.delete(process.env.BASE_URL+`/wor/${id}`);
 export const ValidateWor = (id: string) => Axios.put(process.env.BASE_URL+`/worStatus/${id}`);
 export const GetAllWorSchedule = () => Axios.get(process.env.BASE_URL+`/worTime`);
+export const GetWorJobStatus = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/jobStatus?page=${page}&limit=${perpage}`);
+export const SearchJobStatus = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/jobStatus?page=${page}&limit=${perpage}&search=${search}`);

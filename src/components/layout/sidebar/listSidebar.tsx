@@ -205,6 +205,18 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "job-status",
+				link: "/marketing/job-status",
+				title: "Job Status",
+				subMenu: null,
+			},,
+			{
+				id: "material-stok",
+				link: "/marketing/material-stok",
+				title: "Material Stok",
+				subMenu: null,
+			},
 		],
 	},
 	{
@@ -663,7 +675,6 @@ export const ListNav = [
 				id: "material-stok",
 				link: "/report/material-stok",
 				title: "Material Stok",
-
 				subMenu: null,
 			},
 			{

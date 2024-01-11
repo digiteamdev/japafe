@@ -29,6 +29,7 @@ export const MaterialStok = () => {
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [showCreate,setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
 		{ name: "Material Name" },
 		{ name: "Stock" },
@@ -38,6 +39,11 @@ export const MaterialStok = () => {
 
 	useEffect(() => {
 		getMaterialStok(page, perPage);
+		let route = router.pathname;
+		let arrayRouter = route.split("/");
+		if(arrayRouter[1] === 'marketing'){
+			setShowCreate(false)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -129,7 +135,7 @@ export const MaterialStok = () => {
 			/>
 			<Content
 				title='Material Stock'
-				print={true}
+				print={showCreate}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
@@ -170,7 +176,6 @@ export const MaterialStok = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
