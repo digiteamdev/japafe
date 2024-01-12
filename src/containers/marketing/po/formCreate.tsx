@@ -500,7 +500,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									<option defaultValue='' selected>
 										Choose tax
 									</option>
-									<option value=''>None</option>
+									<option value='nontax'>None</option>
 									<option value='ppn'>PPN</option>
 									<option value='pph'>PPH</option>
 									<option value='ppn_and_pph'>PPN And PPH</option>

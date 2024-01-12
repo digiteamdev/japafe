@@ -568,8 +568,8 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 											<tr>
 												<td>
 													<Input
-														id='quo_num'
-														name='quo_num'
+														id='id_po'
+														name='id_po'
 														placeholder='Po Number'
 														label='PO Number'
 														type='text'
