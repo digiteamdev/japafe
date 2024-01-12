@@ -210,7 +210,7 @@ export const Po = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.wor.length === 0 ? (
+											{/* { res.wor.length === 0 ? ( */}
 												<>
 													<Button
 														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
@@ -231,7 +231,7 @@ export const Po = () => {
 														<Trash2 color='white' />
 													</Button>
 												</>
-											) : null }
+											{/* ) : null } */}
 										</div>
 									</td>
 								</tr>
