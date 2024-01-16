@@ -25,6 +25,7 @@ interface data {
 	tax: string;
 	noted: string;
 	date_of_po: Date | null;
+	date_delivery: Date | null;
 	vat: string;
 	grand_tot: string;
 	total: string;
@@ -70,6 +71,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		grand_tot: "",
 		total: "",
 		date_of_po: new Date(),
+		date_delivery: new Date(),
 		Deskription_CusPo: [
 			{
 				description: "",
@@ -323,6 +325,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			tax: payload.tax,
 			noted: payload.noted,
 			date_of_po: payload.date_of_po,
+			date_delivery: payload.date_delivery,
 			Deskription_CusPo: desc,
 			term_of_pay: term,
 			vat: vattotal,
@@ -580,6 +583,19 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										values.date_of_po === null ? new Date() : values.date_of_po
 									}
 									onChange={(value: any) => setFieldValue("date_of_po", value)}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputDate
+									id='date_delivery'
+									label='Date_delivery'
+									value={
+										values.date_delivery === null ? new Date() : values.date_delivery
+									}
+									onChange={(value: any) => setFieldValue("date_delivery", value)}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'

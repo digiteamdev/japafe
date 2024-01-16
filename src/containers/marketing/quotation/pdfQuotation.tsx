@@ -144,7 +144,7 @@ console.log(data)
 												</div>
 											</div>
 											<div className='w-full grid grid-cols-6 grid-rows-2'>
-												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2 bg-green-500'>
 													<h2 className='text-lg font-bold text-center pt-4'>
 														Quotation
 													</h2>

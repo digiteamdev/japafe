@@ -33,7 +33,6 @@ export const Wor = () => {
 	const [position, setPosition] = useState<any>(null);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const headerTabel = [
-		{ name: "No" },
 		{ name: "Job No" },
 		{ name: "Date" },
 		{ name: "Customer" },
@@ -188,12 +187,9 @@ export const Wor = () => {
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
-										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-											{i + 1}
-										</td>
 										<td className='whitespace-nowrap px-6 py-4'>
-											{res.job_operational ? res.job_no_mr : res.job_no}{" "}
-											{res.refivision}
+											{res.job_no}{" "}
+											{res.refivision !== '0' ? res.refivision : ''}
 										</td>
 										<td className='whitespace-nowrap px-6 py-4'>
 											{moment(res.date_wor).format("DD-MMMM-YYYY")}

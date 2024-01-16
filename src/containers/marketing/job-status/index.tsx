@@ -136,7 +136,7 @@ export const JobStatus = () => {
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
 										<td className=' px-6 py-4'>
-											{res.job_operational ? res.job_no_mr : res.job_no}
+											{res.job_no}
 										</td>
 										<td className=' px-6 py-4'>
 											{moment(res.date_of_order).format("DD-MMMM-YYYY")} - {moment(res.delivery_date).format("DD-MMMM-YYYY")}

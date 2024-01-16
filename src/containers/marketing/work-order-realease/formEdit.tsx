@@ -283,9 +283,10 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 											placeholder='Rev'
 											label='Rev'
 											type='text'
-											value={values.refivision}
+											value={(parseInt(values.refivision) + 1).toString()}
 											onChange={handleChange}
 											required={true}
+											disabled={true}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>

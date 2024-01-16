@@ -24,7 +24,6 @@ export const Po = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
 		{ name: "ID PO" },
 		{ name: "PO Num" },
 		{ name: "Customer" },
@@ -184,9 +183,6 @@ export const Po = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
-									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.po_num_auto}
 									</td>

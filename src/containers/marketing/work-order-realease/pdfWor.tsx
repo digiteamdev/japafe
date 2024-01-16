@@ -142,7 +142,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='w-full grid grid-cols-6 grid-rows-2'>
-												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2 bg-green-500'>
 													<h2 className='text-lg font-bold text-center pt-4'>
 														Work Order Release
 													</h2>
@@ -169,7 +169,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 													<div className='w-full font-semibold'>Job No</div>
 													<div className='w-full font-semibold col-span-4'>
 														:{" "}
-														{data.job_operational ? data.job_no_mr : data.job_no}
+														{data.job_no}
 													</div>
 												</div>
 												<div className='grid grid-cols-5'>
@@ -306,6 +306,38 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 											<div className='flex w-full mt-2 bg-purple-400'>
 												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
 													Prepared by
+												</div>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Position
+												</div>
+												<div className='w-full border border-black pb-1 px-1 text-center font-semibold'>
+													Date & Signature
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-t-0 h-20'></div>
+											</div>
+											<div className='flex w-full bg-purple-400'>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Checked by
+												</div>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Position
+												</div>
+												<div className='w-full border border-black pb-1 px-1 text-center font-semibold'>
+													Date & Signature
+												</div>
+											</div>
+											<div className='flex w-full'>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
+												<div className='w-full border border-black border-t-0 h-20'></div>
+											</div>
+											<div className='flex w-full bg-purple-400'>
+												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
+													Approved by
 												</div>
 												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
 													Position

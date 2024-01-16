@@ -32,6 +32,7 @@ export const MaterialStok = () => {
 	const [showCreate,setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
 		{ name: "Material Name" },
+		{ name: "Spesifikasi / Dimension" },
 		{ name: "Stock" },
 		{ name: "Satuan" },
         { name: "Price" }
@@ -181,7 +182,8 @@ export const MaterialStok = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.Material_master.material_name } - { res.spesifikasi }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.material_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.spesifikasi }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.jumlah_Stock }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.Material_master.satuan }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ formatRupiah(res.harga.toString()) }</td>

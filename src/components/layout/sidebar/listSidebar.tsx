@@ -178,13 +178,6 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "work-order-release",
-				link: "/marketing/work-order-release",
-				title: "Work Order Release",
-
-				subMenu: null,
-			},
-			{
 				id: "customer-po",
 				link: "/marketing/customer-po",
 				title: "Customer PO",
@@ -192,19 +185,26 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "marketing-opurtunity",
-				link: "/marketing/marketing-opurtunity",
-				title: "Marketing Opurtunity",
+				id: "work-order-release",
+				link: "/marketing/work-order-release",
+				title: "Work Order Release",
 
 				subMenu: null,
 			},
-			{
-				id: "sales-performance",
-				link: "/marketing/sales-performance",
-				title: "Sales Performance",
+			// {
+			// 	id: "marketing-opurtunity",
+			// 	link: "/marketing/marketing-opurtunity",
+			// 	title: "Marketing Opurtunity",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "sales-performance",
+			// 	link: "/marketing/sales-performance",
+			// 	title: "Sales Performance",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "job-status",
 				link: "/marketing/job-status",

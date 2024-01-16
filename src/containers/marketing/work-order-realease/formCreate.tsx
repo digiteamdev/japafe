@@ -253,8 +253,8 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									<option defaultValue='' selected>
 										Choose Job Operational
 									</option>
-									<option value='false'>Yes</option>
-									<option value='true'>No</option>
+									<option value='B'>BUMN</option>
+									<option value='S'>Swasta</option>
 								</InputSelect>
 								{errors.job_operational && touched.job_operational ? (
 									<span className='text-red-500 text-xs'>

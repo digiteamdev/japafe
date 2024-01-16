@@ -25,7 +25,7 @@ export const Quotation = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
+		{ name: "Id" },
 		{ name: "Customer" },
 		{ name: "Contact" },
 		{ name: "Date" },
@@ -180,7 +180,7 @@ export const Quotation = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
+										{res.quo_auto}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.Customer.name}
