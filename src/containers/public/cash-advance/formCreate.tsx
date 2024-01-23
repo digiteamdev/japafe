@@ -351,7 +351,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 														onClick={() =>
 															arrayDetail.push({
-																type: "",
+																type: "Consumable",
 																value: "",
 																description: "",
 															})

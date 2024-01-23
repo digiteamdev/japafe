@@ -137,7 +137,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${res.idTs} - ${res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no }`,
+						label: `${res.idTs} - ${res.wor.job_no }`,
 					});
 				});
 				setListWor(datasWor);

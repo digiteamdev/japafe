@@ -11,14 +11,11 @@ import {
 } from "../../../components";
 import { DollarSign, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSPJCashAdvance } from "./formCreate";
-// import { ViewCashAdvance } from "./view";
+import { ViewSpjCashAdvance } from "./view";
 // import { FormEditMr } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { GetSpjCahsAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
-import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { formatRupiah } from "@/src/utils";
 
 export const SpjCashAdvance = () => {
 
@@ -38,7 +35,6 @@ export const SpjCashAdvance = () => {
         { name: "Reference" },
         { name: "PIC" },
 		{ name: "Description" },
-		{ name: "Value" },
         { name: "Action" }
 	];
 
@@ -61,7 +57,7 @@ export const SpjCashAdvance = () => {
 	const getCashAdvance = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCashAdvance(page, perpage);
+			const response = await GetSpjCahsAdvance(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -176,32 +172,29 @@ export const SpjCashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                //     <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
-								// 	<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
-								// 		<div>
-								// 			<Button
-								// 				className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 				onClick={() => {
-								// 					setDataSelected(res);
-								// 					showModal(true, "view", false);
-								// 				}}
-								// 			>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 		</div>
-								// 	</td>
-								// </tr>
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.id_spj }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.note }</td>
+									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+										<div>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
+												<Eye color='white' />
+											</Button>
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -237,8 +230,7 @@ export const SpjCashAdvance = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewSpjCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : modalContent === "add" ? (
                         <FormCreateSPJCashAdvance content={modalContent} showModal={showModal} />
 					) : (

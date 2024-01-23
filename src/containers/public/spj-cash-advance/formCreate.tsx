@@ -8,15 +8,12 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import {
-	AddCashAdvance,
-	GetEmployeCash,
-	GetWorCash,
-} from "../../../services";
+import { AddSpjCashAdvance, GetCashAdvances } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -25,52 +22,33 @@ interface props {
 
 interface data {
 	id_cash_advance: string;
-	employeeId: string;
-	worId: string;
-	userId: string;
+	id: string;
+	job_no: string;
+	pic: string;
 	status_payment: string;
-	currency: string;
-	total: number;
-	description: string;
-	note: string;
-	date_cash_advance: Date;
+	date_cash_advance: Date | null;
+	cdv_detail: any;
 }
 
 export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [caID, setCaID] = useState<string>("");
-	const [listEmploye, setListEmploye] = useState<any>([]);
-	const [subject, setSubject] = useState<string>("");
-	const [customer, setCustomer] = useState<string>("");
-	const [userId, setUserId] = useState<string>("");
-	const [listWor, setListWor] = useState<any>([]);
+	const [listCashAdvance, setListCashAdvance] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		id_cash_advance: "",
-		employeeId: "",
-		worId: "",
-		userId: "",
-		currency: "IDR",
-		status_payment: "Cash",
-		total: 0,
-		description: "",
-		note: "",
-		date_cash_advance: new Date()
+		id: "",
+		job_no: "",
+		pic: "",
+		status_payment: "",
+		date_cash_advance: null,
+		cdv_detail: [],
 	});
 
 	useEffect(() => {
-		getEmploye();
-		getEmployeById();
-		getWor();
+		getCashAdvance();
 		generateIdNum();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const getEmployeById = async () => {
-		const id = getIdUser();
-		if(id !== undefined){
-			setUserId(id);
-		}
-	};
 
 	const generateIdNum = () => {
 		var dateObj = new Date();
@@ -84,48 +62,51 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 		setCaID(id);
 	};
 
-	const getEmploye = async () => {
-		let listemploye: any = [];
+	const getCashAdvance = async () => {
+		let listCashAdvance: any = [];
 		try {
-			const response = await GetEmployeCash();
+			const response = await GetCashAdvances();
 			if (response) {
 				response.data.result.map((res: any) => {
-					listemploye.push({
-						label: res.employee_name,
+					listCashAdvance.push({
+						label: res.id_cash_advance,
 						value: res,
 					});
 				});
 			}
 		} catch (error) {
-			listemploye = [];
+			listCashAdvance = [];
 		}
-		setListEmploye(listemploye);
+		setListCashAdvance(listCashAdvance);
 	};
 
-	const getWor = async () => {
-		let datasWor: any = [];
-		try {
-			const response = await GetWorCash();
-			if (response) {
-				response.data.result.map((res: any) => {
-					datasWor.push({
-						value: res,
-						label: res.job_no === "" ? res.job_no_mr : res.job_no,
-					});
-				});
-				setListWor(datasWor);
-			}
-		} catch (error) {
-			setListWor(datasWor);
-		}
+	const totalBalances = (data: any) => {
+		let total: number = 0;
+		data.map((res: any) => {
+			total = total + res.balance;
+		});
+		return total;
 	};
 
-	const addCashAdvance = async (payload: data) => {
+	const addSpjCashAdvance = async (payload: data) => {
 		setIsLoading(true);
+		var listDetail: any = [];
+		payload.cdv_detail.map((res: any) => {
+			listDetail.push({
+				id: res.id,
+				actual: parseInt(res.actual),
+				balance: parseInt(res.balance),
+			});
+		});
+		let data = {
+			id_spj: caID,
+			grand_tot: totalBalances(payload.cdv_detail),
+			cdv_detail: listDetail,
+		};
 		try {
-			const response = await AddCashAdvance(payload);
+			const response = await AddSpjCashAdvance(payload.id, data);
 			if (response.data) {
-				toast.success("Add Cash Advance Success", {
+				toast.success("Add SPJ Cash Advance Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -138,7 +119,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Cash Advances Failed", {
+			toast.error("Add SPJ Cash Advances Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -158,7 +139,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					addCashAdvance(values);
+					addSpjCashAdvance(values);
 				}}
 				enableReinitialize
 			>
@@ -172,7 +153,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 				}) => (
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
-						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='id_cash_advance'
@@ -189,15 +170,21 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<InputSelectSearch
-									datas={listEmploye}
-									id='reference'
-									name='reference'
+									datas={listCashAdvance}
+									id='id_spj'
+									name='id_spj'
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
-										setFieldValue('employeeId', e.value.id)
-										setFieldValue('id_cash_advance', caID)
-										setFieldValue('userId', userId)
+										setFieldValue("id", e.value.id);
+										setFieldValue("job_no", e.value.wor.job_no);
+										setFieldValue("pic", e.value.user.employee.employee_name);
+										setFieldValue("status_payment", e.value.status_payment);
+										setFieldValue(
+											"date_cash_advance",
+											e.value.date_cash_advance
+										);
+										setFieldValue("cdv_detail", e.value.cdv_detail);
 									}}
 									required={true}
 									withLabel={true}
@@ -211,21 +198,11 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 									placeholder='Reference Date'
 									label='Reference Date'
 									type='text'
-									value={customer}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-                            <div className='w-full'>
-								<Input
-									id='customer'
-									name='customer'
-									placeholder='Job No'
-									label='Job No'
-									type='text'
-									value={customer}
+									value={
+										values.date_cash_advance === null
+											? ""
+											: moment(values.date_cash_advance).format("DD-MMMM-YYYY")
+									}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -233,7 +210,21 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='job_no'
+									name='job_no'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={values.job_no}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 							<div className='w-full'>
 								<Input
 									id='subject'
@@ -241,34 +232,8 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 									placeholder='PIC'
 									label='PIC'
 									type='text'
-									value={subject}
+									value={values.pic}
 									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-                            <div className='w-full'>
-								<Input
-									id='total'
-									name='total'
-									placeholder='Currency'
-									label='Currency'
-									type='text'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='total'
-									name='total'
-									placeholder='Value'
-									label='Value'
-									type='number'
-									onChange={handleChange}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -278,10 +243,10 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 								<Input
 									id='subject'
 									name='subject'
-									placeholder='Departemen'
-									label='Departemen'
+									placeholder='Status Payment'
+									label='Status Payment'
 									type='text'
-									value={subject}
+									value={values.status_payment}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -289,34 +254,180 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputArea
-									id='description'
-									name='description'
-									placeholder='Decription'
-									label='Decription'
-									type='text'
-									onChange={handleChange}
-									disabled={false}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputArea
-									id='note'
-									name='note'
-									placeholder='Note'
-									label='Note'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						<FieldArray
+							name='cdv_detail'
+							render={(arrayDetail) => (
+								<div className='mt-4'>
+									<table className='w-full'>
+										<thead>
+											<tr>
+												<th className='border border-black text-center'>
+													Type
+												</th>
+												<th className='border border-black text-center'>
+													Value
+												</th>
+												<th className='border border-black text-center'>
+													Description
+												</th>
+												<th className='border border-black text-center'>
+													Actual
+												</th>
+												<th className='border border-black text-center'>
+													Balance
+												</th>
+												<th className='border border-black text-center'></th>
+											</tr>
+										</thead>
+										<tbody>
+											{values.cdv_detail.map((res: any, i: number) => (
+												<tr key={i}>
+													<td className='border border-black'>
+														<InputSelect
+															id={`cdv_detail.${i}.type_cdv`}
+															name={`cdv_detail.${i}.type_cdv`}
+															placeholder='Type'
+															label='Type'
+															onChange={(e: any) => {
+																setFieldValue(
+																	`cdv_detail.${i}.type_cdv`,
+																	e.target.value
+																);
+															}}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option value='Consumable' selected={ res.type_cdv === 'Consumable' ? true : false }>Consumable</option>
+															<option value='Investasi' selected={ res.type_cdv === 'Investasi' ? true : false }>Investasi</option>
+															<option value='Service' selected={ res.type_cdv === 'Service' ? true : false }>Service</option>
+															<option value='Operasional' selected={ res.type_cdv === 'Operasional' ? true : false }>Operasional</option>
+															<option value='SDM' selected={ res.type_cdv === 'SDM' ? true : false }>SDM</option>
+														</InputSelect>
+													</td>
+													<td className='border border-black'>
+														<Input
+															id={`cdv_detail.${i}.total`}
+															name={`cdv_detail.${i}.total`}
+															placeholder='Value'
+															label='Value'
+															type='number'
+															value={res.total}
+															onChange={ (e: any) => {
+																setFieldValue(`cdv_detail.${i}.total`, e.target.value)
+															}}
+															disabled={false}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</td>
+													<td className='border border-black'>
+														<InputArea
+															id={`cdv_detail.${i}.description`}
+															name={`cdv_detail.${i}.description`}
+															placeholder='Decription'
+															label='Decription'
+															type='text'
+															value={res.description}
+															onChange={ (e: any) => {
+																setFieldValue(`cdv_detail.${i}.description`, e.target.value)
+															}}
+															disabled={false}
+															required={true}
+															row={1}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</td>
+													<td className='border border-black'>
+														<Input
+															id={`cdv_detail.${i}.actual`}
+															name={`cdv_detail.${i}.actual`}
+															placeholder='Actual'
+															label='Actual'
+															type='number'
+															value={res.actual}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`cdv_detail.${i}.actual`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`cdv_detail.${i}.balance`,
+																	parseInt(res.total) - e.target.value
+																);
+															}}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</td>
+													<td className='border border-black'>
+														<Input
+															id={`cdv_detail.${i}.balance`}
+															name={`cdv_detail.${i}.balance`}
+															placeholder='Balance'
+															label='Balance'
+															type='number'
+															value={res.balance}
+															disabled={true}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</td>
+													<td className='border border-black mx-auto'>
+														<div className='flex'>
+															{i + 1 === values.cdv_detail.length ? (
+																<a
+																	className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																	onClick={() =>
+																		arrayDetail.push({
+																			type_cdv: "Consumable",
+																			total: 0,
+																			description: "",
+																			actual: 0,
+																			balance: 0,
+																		})
+																	}
+																>
+																	<Plus size={23} className='mt-1' />
+																</a>
+															) : null}
+															{i === 0 &&
+															values.cdv_detail.length === 1 ? null : (
+																<a
+																	className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																	onClick={() => arrayDetail.remove(i)}
+																>
+																	<Trash2 size={22} className='mt-1 mr-1' />
+																</a>
+															)}
+														</div>
+													</td>
+												</tr>
+											))}
+											<tr>
+												<td
+													className='border border-black text-right'
+													colSpan={4}
+												>
+													Total Balance
+												</td>
+												<td className='border border-black pl-2'>
+													{formatRupiah(
+														totalBalances(values.cdv_detail).toString()
+													)}
+												</td>
+												<td className='border border-black'></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							)}
+						/>
+
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

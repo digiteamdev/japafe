@@ -180,9 +180,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 					datasSummary.push({
 						value: res,
 						label: `${res.id_summary} - ${
-							res.timeschedule.wor.job_operational
-								? res.timeschedule.wor.job_no_mr
-								: res.timeschedule.wor.job_no
+							res.timeschedule.wor.job_no
 						}`,
 					});
 				});

@@ -130,9 +130,7 @@ export const PdfCashAdvance = ({
 												<div className='w-1/4'>Job No</div>
 												<div className='w-full'>
 													:{" "}
-													{dataSelected.wor.job_operational
-														? dataSelected.wor.job_no_mr
-														: dataSelected.wor.job_no}
+													{dataSelected.wor.job_no}
 												</div>
 											</div>
 											<div className='flex flex-row w-full'>

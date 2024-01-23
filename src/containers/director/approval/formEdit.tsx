@@ -366,9 +366,7 @@ export const FormEditApproval = ({
 												Job No
 											</td>
 											<td className='w-[50%] pl-2 border border-gray-200'>
-												{dataSelected.wor.job_operational
-													? dataSelected.wor.job_no_mr
-													: dataSelected.wor.job_no}
+												{dataSelected.wor.job_no}
 											</td>
 										</tr>
 										<tr>

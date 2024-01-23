@@ -92,7 +92,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 					datasWor.push({
 						value: res,
 						label: `${
-							res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no
+							res.wor.job_no
 						} - ${res.wor.customerPo.quotations.Customer.name}`,
 					});
 				});

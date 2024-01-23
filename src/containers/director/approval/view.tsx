@@ -233,9 +233,7 @@ export const ViewApprovalDirector = ({
 												Job No
 											</td>
 											<td className='w-[50%] pl-2 border border-gray-200'>
-												{dataSelected.wor.job_operational
-													? dataSelected.wor.job_no_mr
-													: dataSelected.wor.job_no}
+												{dataSelected.wor.job_no}
 											</td>
 										</tr>
 										<tr>
@@ -319,9 +317,7 @@ export const ViewApprovalDirector = ({
 																		return (
 																			<tr key={idx}>
 																				<td className='border border-black text-center'>
-																					{result.mr.wor.job_operational
-																						? result.mr.wor.job_no_mr
-																						: result.mr.wor.job_no}
+																					{result.mr.wor.job_no}
 																				</td>
 																				<td className='border border-black text-center'>
 																					{
@@ -436,9 +432,7 @@ export const ViewApprovalDirector = ({
 																	return (
 																		<tr key={idx}>
 																			<td className='border border-black text-center'>
-																				{result.sr.wor.job_operational
-																					? result.sr.wor.job_no_mr
-																					: result.sr.wor.job_no}
+																				{result.sr.wor.job_no}
 																			</td>
 																			<td className='border border-black text-center'>
 																				{result.part}

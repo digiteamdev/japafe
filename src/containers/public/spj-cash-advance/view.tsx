@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { Section } from "../../../components";
 import { formatRupiah } from "@/src/utils";
-import { PdfCashAdvance } from "./pdfCashAdvance";
 import { Check, X, Printer } from "react-feather";
 import { getPosition } from "../../../configs/session";
 import { toast } from "react-toastify";
@@ -14,7 +13,7 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewCashAdvance = ({
+export const ViewSpjCashAdvance = ({
 	dataSelected,
 	content,
 	showModal,
@@ -107,125 +106,26 @@ export const ViewCashAdvance = ({
 			});
 		}
 	};
-
-	const showButtonValid = (data: any) => {
-		if (position === "Supervisor") {
-			if (!data.status_valid_spv) {
-				return (
-					<>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve("Supervisor")}
-						>
-							<div className='flex px-1 py-1'>
-								<Check size={16} className='mr-1' /> Valid SPV
-							</div>
-						</button>
-					</>
-				);
-			} else {
-				return (
-					<>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve("Supervisor")}
-						>
-							<div className='flex px-1 py-1'>
-								<X size={16} className='mr-1' /> Unvalid SPV
-							</div>
-						</button>
-					</>
-				);
-			}
-		} else if (position === "Manager") {
-			if (!data.status_valid_manager) {
-				return (
-					<>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve("Manager")}
-						>
-							<div className='flex px-1 py-1'>
-								<Check size={16} className='mr-1' /> Valid Manager
-							</div>
-						</button>
-					</>
-				);
-			} else {
-				return (
-					<>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve("Manager")}
-						>
-							<div className='flex px-1 py-1'>
-								<Check size={16} className='mr-1' /> Unvalid Manager
-							</div>
-						</button>
-					</>
-				);
-			}
-		}
-	};
-
-	const showModalPdf = (val: boolean) => {
-		setIsModal(val);
-	};
-
+    console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfCashAdvance
-				isModal={isModal}
-				dataSelected={dataSelected}
-				total={total(dataSelected.cdv_detail)}
-				showModalPdf={showModalPdf}
-			/>
 			{dataSelected ? (
 				<>
-					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
-						<div className='text-right mr-6'>
-							{showButtonValid(dataSelected)}
-						</div>
-					</div>
-					<h1 className='font-bold text-xl'>Cash Advance</h1>
+                <h1 className='font-bold text-xl'>SPJ Cash Advance</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										ID
+										ID Spj Cash Advance
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{dataSelected.id_spj}
+									</td>
+								</tr>
+                                <tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Reference
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.id_cash_advance}
@@ -298,6 +198,8 @@ export const ViewCashAdvance = ({
 								<th className="border border-black text-center">Type</th>
 								<th className="border border-black text-center">Description</th>
 								<th className="border border-black text-center">Value</th>
+                                <th className="border border-black text-center">Actual</th>
+								<th className="border border-black text-center">Balance</th>
 							</thead>
 							<tbody>
 								{ dataSelected.cdv_detail.map( (res: any, i: number) => {
@@ -306,12 +208,14 @@ export const ViewCashAdvance = ({
 											<td className="border border-black text-center">{ res.type_cdv }</td>
 											<td className="border border-black text-center">{ res.description }</td>
 											<td className="border border-black text-center">{ formatRupiah(res.total.toString()) }</td>
+                                            <td className="border border-black text-center">{ formatRupiah(res.actual.toString()) }</td>
+                                            <td className="border border-black text-center">{ formatRupiah(res.balance.toString()) }</td>
 										</tr>
 									)
 								}) }
 								<tr>
-									<td className="border border-black text-right pr-5" colSpan={2}>Total</td>
-									<td className="border border-black text-center">{ total(dataSelected.cdv_detail) }</td>
+									<td className="border border-black text-right pr-5" colSpan={4}>Total</td>
+									<td className="border border-black text-center">{ formatRupiah(dataSelected.grand_tot.toString()) }</td>
 								</tr>
 							</tbody>
 						</table>

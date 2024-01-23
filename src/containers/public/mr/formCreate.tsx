@@ -126,17 +126,29 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	};
 
 	const getBom = async () => {
-		let datasWor: any = [];
+		var dateObj = new Date();
+		var year = dateObj.getUTCFullYear();
+		let datasWor: any = [
+			{
+				value: [],
+				label: year.toString().substring(2,4) + "." + 200 + " - Adm & Office"
+			},
+			{
+				value: [],
+				label: year.toString().substring(2,4) + "." + 210 + " - Maintance"
+			},
+			{
+				value: [],
+				label: year.toString().substring(2,4) + "." + 220 + " - Trainning & Studying"
+			},
+		];
 		try {
 			const response = await GetBom();
 			if (response) {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label:
-							res.srimg === undefined
-								? res.job_no_mr
-								: res.srimg.timeschedule.wor.job_no,
+						label: res.srimg.timeschedule.wor.job_no,
 					});
 				});
 				setListWor(datasWor);

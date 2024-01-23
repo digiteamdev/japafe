@@ -129,7 +129,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${res.job_operational ? res.job_mr : res.job_no } - ${res.customerPo.quotations.Customer.name}`,
+						label: `${ res.job_no } - ${res.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
