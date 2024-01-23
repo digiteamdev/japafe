@@ -96,6 +96,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 				id: res.id,
 				actual: parseInt(res.actual),
 				balance: parseInt(res.balance),
+				cdvId: res.cdvId
 			});
 		});
 		let data = {
@@ -385,6 +386,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 																	onClick={() =>
 																		arrayDetail.push({
 																			type_cdv: "Consumable",
+																			cdvId: res.cdvId,
 																			total: 0,
 																			description: "",
 																			actual: 0,
