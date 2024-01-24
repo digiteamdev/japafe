@@ -84,8 +84,8 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
                 mrId: dataSelected.id
 			});
 		});
-		if(dataSelected.wor.job_operational){
-			setJobNo(dataSelected.wor.job_no_mr);
+		if(dataSelected.wor === null){
+			setJobNo(dataSelected.job_no);
 			getMaterial()
 		}else{
 			dataSelected.bom.bom_detail.map((res: any) => {
@@ -111,7 +111,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 			});
 			setListMaterial(list_material);
 			setListMaterialStock(list_material_stock);
-			setJobNo(dataSelected.wor.job_no);
+			setJobNo(dataSelected.job_no);
 		}
 		setData({
 			userId: dataSelected.userId,
@@ -209,7 +209,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				});
 				setListMaterial(list_material);
 				setListMaterialStock(list_material_stock);
-				setJobNo(data.srimg.timeschedule.wor.job_no);
+				setJobNo(data.job_no);
 			} else {
 				setListMaterial([]);
 				setListMaterialStock([]);

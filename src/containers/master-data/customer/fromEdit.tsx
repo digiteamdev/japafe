@@ -27,6 +27,10 @@ interface dataCustomer {
 	id_custom: string;
 	name: string;
 	email: string;
+	ppn: string;
+	pph: string;
+	phone: string;
+	fax: string;
 }
 
 interface dataContact {
@@ -75,6 +79,10 @@ export const FormEditCustomer = ({
 		id_custom: "",
 		name: "",
 		email: "",
+		ppn: "0",
+		pph: "0",
+		phone: "",
+		fax: "",
 	});
 	const [dataContact, setDataContact] = useState<dataContact>({
 		contact: [
@@ -119,6 +127,10 @@ export const FormEditCustomer = ({
 			id_custom: dataCustomer.id_custom,
 			name: dataCustomer.name,
 			email: dataCustomer.email,
+			phone: dataCustomer.phone,
+			fax: dataCustomer.fax,
+			ppn: dataCustomer.ppn,
+			pph: dataCustomer.pph,
 		});
 
 		if (dataCustomer.contact.length > 0) {
@@ -399,13 +411,81 @@ export const FormEditCustomer = ({
 									<Input
 										id='email'
 										name='email'
-										placeholder='Customer Email'
-										label='Customer Email'
+										placeholder='Email'
+										label='Email'
 										type='text'
 										required={true}
 										disabled={isLoading}
 										withLabel={true}
 										value={values.email}
+										onChange={handleChange}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									{errors.email && touched.email ? (
+										<span className='text-red-500 text-xs'>{errors.email}</span>
+									) : null}
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<InputWithIcon
+										id='phone'
+										name='phone'
+										placeholder='Phone'
+										type='text'
+										label='Phone'
+										onChange={handleChange}
+										value={values.phone}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+										icon='+62'
+										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='fax'
+										name='fax'
+										placeholder='Fax'
+										label='Fax'
+										type='text'
+										required={true}
+										disabled={isLoading}
+										withLabel={true}
+										value={values.fax}
+										onChange={handleChange}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<Input
+										id='ppn'
+										name='ppn'
+										placeholder='PPN'
+										label='PPN'
+										type='number'
+										required={true}
+										disabled={isLoading}
+										withLabel={true}
+										value={values.ppn}
+										onChange={handleChange}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='pph'
+										name='pph'
+										placeholder='PPH'
+										label='PPH'
+										type='number'
+										required={true}
+										disabled={isLoading}
+										withLabel={true}
+										value={values.pph}
 										onChange={handleChange}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>

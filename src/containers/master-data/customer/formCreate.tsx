@@ -24,6 +24,8 @@ interface data {
 	customerType: string;
 	name: string;
 	email: string;
+	phone: string;
+	fax: string;
 	ppn: string;
 	pph: string;
 	contact: [
@@ -58,6 +60,8 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 		name: "",
 		customerType: "PT.",
 		email: "",
+		phone: "",
+		fax: "",
 		ppn: "",
 		pph: "",
 		contact: [
@@ -90,22 +94,24 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 
 	const getProvince = () => {
 		const keys = ["province"];
-		const dataProvince: any = []
+		const dataProvince: any = [];
 		const filtered = json.filter(
 			(
 				(s) => (o: any) =>
 					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
 			)(new Set())
 		);
-		filtered.filter((res: any) => {
-			return res.province !== "province";
-		}).map( (prov: any) => {
-			dataProvince.push({
-				type: 'province',
-				value: prov.province,
-				label: prov.province
+		filtered
+			.filter((res: any) => {
+				return res.province !== "province";
 			})
-		});
+			.map((prov: any) => {
+				dataProvince.push({
+					type: "province",
+					value: prov.province,
+					label: prov.province,
+				});
+			});
 
 		setListProvince(dataProvince);
 		setListCity([]);
@@ -114,22 +120,24 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 	};
 
 	const getCity = (province: string) => {
-		let dataCity: any = []
+		let dataCity: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.province === province;
 		});
 		const keys = ["city"];
-		filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		).map(( res: any ) => {
-			dataCity.push({
-				value: res.city,
-				label: res.city
-			})
-		});
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataCity.push({
+					value: res.city,
+					label: res.city,
+				});
+			});
 
 		setListCity(dataCity);
 		setListDistrict([]);
@@ -137,44 +145,48 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 	};
 
 	const getDistrict = (city: string) => {
-		let dataDistrict: any = []
+		let dataDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.city === city;
 		});
 		const keys = ["district"];
-		filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		).map( (res: any) => {
-			dataDistrict.push({
-				value: res.district,
-				label: res.district
-			})
-		});
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataDistrict.push({
+					value: res.district,
+					label: res.district,
+				});
+			});
 		setListDistrict(dataDistrict);
 		setListSubDistrict([]);
 	};
 
 	const getSubDistrict = (district: string) => {
-		let dataSubDistrict: any = []
+		let dataSubDistrict: any = [];
 		const filtered = json.filter((res: any) => {
 			return res.district === district;
 		});
 		const keys = ["subdistrict"];
-		filtered.filter(
-			(
-				(s) => (o: any) =>
-					((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-			)(new Set())
-		).map( (res: any) => {
-			dataSubDistrict.push({
-				value: res.subdistrict,
-				label: res.subdistrict,
-				postal_code: res.postal_code
-			})
-		});
+		filtered
+			.filter(
+				(
+					(s) => (o: any) =>
+						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+				)(new Set())
+			)
+			.map((res: any) => {
+				dataSubDistrict.push({
+					value: res.subdistrict,
+					label: res.subdistrict,
+					postal_code: res.postal_code,
+				});
+			});
 		setListSubDistrict(dataSubDistrict);
 	};
 
@@ -221,17 +233,22 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 				});
 			}
 		});
-		
+
 		if (!dataEmpty) {
-			let dataBody : any = {
+			let dataBody: any = {
 				id_custom: "",
-				name: payload.customerType !== "" ? `${payload.customerType} ${payload.name}` : payload.name,
+				name:
+					payload.customerType !== ""
+						? `${payload.customerType} ${payload.name}`
+						: payload.name,
 				email: payload.email,
+				phone: payload.phone.toString(),
+				fax: payload.fax.toString(),
 				ppn: payload.ppn,
 				pph: payload.pph,
 				address: payload.address,
-				contact: payload.contact
-			}
+				contact: payload.contact,
+			};
 			try {
 				const response = await AddCustomer(dataBody);
 				if (response) {
@@ -273,7 +290,14 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, setFieldValue, errors, touched, values }) => (
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Customer</h1>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
@@ -293,15 +317,9 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 											<option defaultValue='PT' selected>
 												PT
 											</option>
-											<option value='CV'>
-												CV
-											</option>
-											<option value='Koperasi'>
-												Koperasi
-											</option>
-											<option value=''>
-												Other
-											</option>
+											<option value='CV'>CV</option>
+											<option value='Koperasi'>Koperasi</option>
+											<option value=''>Other</option>
 										</InputSelect>
 									</div>
 									<div className='w-[80%] ml-2'>
@@ -339,6 +357,38 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 								{errors.email && touched.email ? (
 									<span className='text-red-500 text-xs'>{errors.email}</span>
 								) : null}
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputWithIcon
+									id='phone'
+									name='phone'
+									placeholder='Phone'
+									type='text'
+									label='Phone'
+									onChange={handleChange}
+									value={values.phone}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									icon='+62'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='fax'
+									name='fax'
+									type='number'
+									placeholder='Fax'
+									label='Fax'
+									value={values.fax}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
@@ -395,9 +445,12 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 															name={`address.${i}.provinces`}
 															placeholder='Province'
 															label='Province'
-															onChange={ (e: any) => {
-																getCity(e.value)
-																setFieldValue(`address.${i}.provinces`, e.value)
+															onChange={(e: any) => {
+																getCity(e.value);
+																setFieldValue(
+																	`address.${i}.provinces`,
+																	e.value
+																);
 															}}
 															required={true}
 															withLabel={true}
@@ -411,9 +464,9 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 															name={`address.${i}.cities`}
 															placeholder='City'
 															label='City'
-															onChange={ (e: any) => {
-																getDistrict(e.value)
-																setFieldValue(`address.${i}.cities`, e.value)
+															onChange={(e: any) => {
+																getDistrict(e.value);
+																setFieldValue(`address.${i}.cities`, e.value);
 															}}
 															required={true}
 															withLabel={true}
@@ -429,9 +482,12 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 															name={`address.${i}.districts`}
 															placeholder='District'
 															label='District'
-															onChange={ (e: any) => {
-																getSubDistrict(e.value)
-																setFieldValue(`address.${i}.districts`, e.value)
+															onChange={(e: any) => {
+																getSubDistrict(e.value);
+																setFieldValue(
+																	`address.${i}.districts`,
+																	e.value
+																);
 															}}
 															required={true}
 															withLabel={true}
@@ -440,14 +496,20 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 													</div>
 													<div className='w-full'>
 														<InputSelectSearch
-														datas={listSubDistrict}
+															datas={listSubDistrict}
 															id={`address.${i}.sub_districts`}
 															name={`address.${i}.sub_districts`}
 															placeholder='Sub District'
 															label='Sub District'
-															onChange={ (e: any) => {
-																setFieldValue(`address.${i}.sub_districts`, e.value)
-																setFieldValue(`address.${i}.ec_postalcode`, parseInt(e.postal_code))
+															onChange={(e: any) => {
+																setFieldValue(
+																	`address.${i}.sub_districts`,
+																	e.value
+																);
+																setFieldValue(
+																	`address.${i}.ec_postalcode`,
+																	parseInt(e.postal_code)
+																);
 															}}
 															required={true}
 															withLabel={true}

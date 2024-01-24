@@ -149,7 +149,7 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<PdfMr
@@ -251,9 +251,7 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{dataSelected.wor.job_operational
-													? dataSelected.wor.job_no_mr
-													: dataSelected.wor.job_no}
+												{dataSelected.job_no}
 											</td>
 											<td className='border border-black text-center'>
 												{res.Material_Stock.Material_master.material_name}

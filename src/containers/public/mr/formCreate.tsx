@@ -130,16 +130,22 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		var year = dateObj.getUTCFullYear();
 		let datasWor: any = [
 			{
-				value: [],
-				label: year.toString().substring(2,4) + "." + 200 + " - Adm & Office"
+				value: [{
+					job_no: year.toString().substring(2,4) + 200 
+				}],
+				label: year.toString().substring(2,4) + 200 + " - Adm & Office"
 			},
 			{
-				value: [],
-				label: year.toString().substring(2,4) + "." + 210 + " - Maintance"
+				value: [{
+					job_no: year.toString().substring(2,4) + 210 
+				}],
+				label: year.toString().substring(2,4) + 210 + " - Maintance"
 			},
 			{
-				value: [],
-				label: year.toString().substring(2,4) + "." + 220 + " - Trainning & Studying"
+				value: [{
+					job_no: year.toString().substring(2,4) + 220 
+				}],
+				label: year.toString().substring(2,4) + 220 + " - Trainning & Studying"
 			},
 		];
 		try {
@@ -201,7 +207,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				}
 				setJobNo(
 					data.srimg === undefined
-						? data.job_no_mr
+						? data.value.job_no
 						: data.srimg.timeschedule.wor.job_no
 				);
 				setIsMaterial(true);
@@ -221,7 +227,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		let list_material_stock: any = [];
 		let materialStock: any = [];
 		if (datas.srimg === undefined) {
-			setWorID(datas.id);
+			setWorID("");
 			getMaterial();
 		} else {
 			datas.bom_detail.map((res: any) => {
@@ -255,7 +261,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		}
 		setJobNo(
 			datas.srimg === undefined
-				? datas.job_no_mr
+				? datas[0].job_no
 				: datas.srimg.timeschedule.wor.job_no
 		);
 		setIsMaterial(true);
@@ -276,7 +282,8 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			userId: getIdUser(),
 			date_mr: new Date(),
 			bomIdU: bomId,
-			worId: worID,
+			worId: worID === "" ? null : worID,
+			job_no: jobNo,
 			detailMr: listDetail,
 		};
 		try {

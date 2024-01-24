@@ -34,6 +34,22 @@ export const ViewCustomer = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Phone
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											+62{dataSelected.phone}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Fax
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.fax}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											PPN
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
