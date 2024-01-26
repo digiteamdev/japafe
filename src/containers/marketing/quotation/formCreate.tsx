@@ -3,6 +3,7 @@ import {
 	Section,
 	Input,
 	InputSelect,
+	InputWithIcon,
 	InputSelectSearch,
 	InputArea,
 	MultipleSelect,
@@ -29,14 +30,20 @@ interface data {
 	quo_auto: string;
 	customerId: string;
 	customercontactId: string;
-	deskription: string;
+	subject: string;
+	attention: string;
+	estimated_delivery: string;
+	waranti: string;
 	quo_img: string;
 	date: Date;
 	Quotations_Detail: [
 		{
 			item_of_work: string;
-			volume: number;
-			unit: string;
+			Child_QuDet: [
+				{
+					item_of_work: string;
+				}
+			];
 		}
 	];
 	parts: [
@@ -68,14 +75,20 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		quo_auto: "",
 		customerId: "",
 		customercontactId: "",
-		deskription: "",
+		subject: "",
+		estimated_delivery: "",
+		attention: "",
+		waranti: "",
 		quo_img: "",
 		date: new Date(),
 		Quotations_Detail: [
 			{
 				item_of_work: "",
-				volume: 0,
-				unit: "",
+				Child_QuDet: [
+					{
+						item_of_work: "",
+					},
+				],
 			},
 		],
 		parts: [
@@ -99,7 +112,10 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		var month = dateObj.getUTCMonth() + 1;
 		var year = dateObj.getUTCFullYear();
 		const id =
-			year.toString() + month.toString() + Math.floor(Math.random() * 10000) + 1;
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 10000) +
+			1;
 		setIdAutoNum(`QU${id}`);
 	};
 
@@ -149,6 +165,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		const form = new FormData();
 		// const dataCustomer = JSON.parse(payload.customerId);
 		const eqandpart: any = [];
+		const workScope: any = []
 		let equipmentEmpty: boolean = false;
 		payload.parts.map((res: any) => {
 			if (res.id === "") {
@@ -177,16 +194,35 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				});
 			}
 		});
+		payload.Quotations_Detail.map((res: any) => {
+			let itemWork = res.item_of_work
+			let listChild: any = []
+			res.Child_QuDet.map((child: any) => {
+				if(child.item_of_work !== ""){
+					listChild.push({
+						item_of_work: child.item_of_work
+					})
+				}
+			})
+			workScope.push({
+				item_of_work: itemWork,
+				Child_QuDet: listChild
+			})
+		})
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
 		form.append("customerId", payload.customerId);
 		form.append("customercontactId", payload.customercontactId);
-		form.append("deskription", payload.deskription);
+		form.append("subject", payload.subject);
+		form.append("attention", payload.attention);
+		form.append("warranty", payload.waranti);
+		form.append("estimated_delivery", payload.estimated_delivery);
+		form.append("send_by", "Wa");
 		form.append("quo_img", imgQuotation);
 		form.append("date", new Date().toUTCString());
-		form.append("Quotations_Detail", JSON.stringify(payload.Quotations_Detail));
+		form.append("Quotations_Detail", JSON.stringify(workScope));
 		form.append("eqandpart", JSON.stringify(eqandpart));
-
+		
 		try {
 			if (!equipmentEmpty) {
 				const response = await AddQuotation(form);
@@ -283,40 +319,32 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 					}) => (
 						<Form onChange={handleOnChanges}>
 							<h1 className='text-xl font-bold mt-3'>Quotation</h1>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<table className='w-full'>
-										<tr>
-											<td>
-												<Input
-													id='quo_num'
-													name='quo_num'
-													placeholder='Qoutation Number'
-													label='Qoutation Number'
-													type='text'
-													onChange={handleChange}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-											<td>
-												<Input
-													id='quo_auto'
-													name='quo_auto'
-													type='text'
-													value={idAutoNum}
-													disabled={true}
-													required={true}
-													withLabel={false}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 mt-6'
-												/>
-											</td>
-										</tr>
-									</table>
+									<Input
+										id='quo_num'
+										name='quo_num'
+										placeholder='Qoutation Number'
+										label='Qoutation Number'
+										type='text'
+										onChange={handleChange}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<Input
+										id='quo_auto'
+										name='quo_auto'
+										type='text'
+										value={idAutoNum}
+										disabled={true}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 mt-6'
+									/>
+								</div>
 								<div className='w-full'>
 									<InputSelectSearch
 										datas={dataCustomer}
@@ -378,8 +406,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 										name='customercontactId'
 										placeholder='contact person'
 										label='Contact person'
-										onChange={ (input:any) => {
-											setFieldValue('customercontactId', input.id)
+										onChange={(input: any) => {
+											setFieldValue("customercontactId", input.id);
 										}}
 										required={true}
 										withLabel={true}
@@ -407,7 +435,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 									) : null}
 								</div>
 							</Section>
-							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<Input
 										id='city'
@@ -434,64 +462,108 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
+								<div className='w-full'>
+									<Input
+										id='attention'
+										name='attention'
+										placeholder='Attention'
+										label='Attention'
+										type='text'
+										onChange={handleChange}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='estimated_delivery'
+										name='estimated_delivery'
+										placeholder='Estimate Delivery'
+										label='Estimate Delivery'
+										type='text'
+										onChange={handleChange}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
 							</Section>
 							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<InputArea
-										id='deskription'
-										name='deskription'
-										placeholder='Quotation Description'
-										label='Quotation Description'
+										id='subject'
+										name='subject'
+										placeholder='Subject'
+										label='Subject'
 										required={true}
 										onChange={handleChange}
 										row={2}
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
-									{errors.deskription && touched.deskription ? (
+									{errors.subject && touched.subject ? (
 										<span className='text-red-500 text-xs'>
-											{errors.deskription}
+											{errors.subject}
 										</span>
 									) : null}
 								</div>
-								<div className='w-full'>
-									<Input
-										id='quo_img'
-										name='quo_img'
-										placeholder='Quotation File'
-										label='Quotation File'
-										type='file'
-										accept='image/*, .pdf'
-										onChange={handleChange}
-										required={false}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-								</div>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<Input
+											id='waranti'
+											name='waranti'
+											placeholder='Waranti'
+											label='Waranti'
+											type='text'
+											onChange={handleChange}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='quo_img'
+											name='quo_img'
+											placeholder='Quotation File'
+											label='Quotation File'
+											type='file'
+											accept='image/*, .pdf'
+											onChange={handleChange}
+											required={false}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
 							</Section>
-							<h1 className='text-xl font-bold mt-3'>Scope Of work</h1>
+							<h1 className='text-xl font-bold mt-3'>Workscope Description</h1>
 							<FieldArray
 								name='Quotations_Detail'
 								render={(arrayDetails) => (
 									<>
 										{values.Quotations_Detail.map((res, i) => (
 											<Section
-												className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+												className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 												key={i}
 											>
-												<div className='w-full'>
-													<Input
+												<div className='w-full col-span-2'>
+													<InputWithIcon
 														id={`Quotations_Detail.${i}.item_of_work`}
 														name={`Quotations_Detail.${i}.item_of_work`}
-														placeholder='Detail Quotation'
-														label='Quotation Detail'
+														placeholder='Work Scope'
+														label='Work Scope'
+														type='text'
 														onChange={handleChange}
 														required={true}
 														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+														icon={`1.${i + 1}`}
+														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
 													/>
 												</div>
-												<div className='w-full'>
+												{/* <div className='w-full'>
 													<Input
 														id={`Quotations_Detail.${i}.volume`}
 														name={`Quotations_Detail.${i}.volume`}
@@ -503,8 +575,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
-												<div className='w-full'>
+												</div> */}
+												{/* <div className='w-full'>
 													<Input
 														id={`Quotations_Detail.${i}.unit`}
 														name={`Quotations_Detail.${i}.unit`}
@@ -515,7 +587,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
+												</div> */}
 												<div className='flex w-full'>
 													{i === values.Quotations_Detail.length - 1 ? (
 														<a
@@ -523,8 +595,11 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 															onClick={() =>
 																arrayDetails.push({
 																	item_of_work: "",
-																	volume: 0,
-																	unit: "",
+																	Child_QuDet: [
+																		{
+																			item_of_work: "",
+																		},
+																	],
 																})
 															}
 														>
@@ -543,6 +618,68 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 															Remove
 														</a>
 													) : null}
+												</div>
+												<div className='w-full col-span-3'>
+													<FieldArray
+														name={`Quotations_Detail.${i}.Child_QuDet`}
+														render={(arrayChild) => (
+															<>
+																{res.Child_QuDet.map(
+																	(detail: any, idx: number) => (
+																		<Section
+																			className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 ml-11'
+																			key={idx}
+																		>
+																			<div className='w-full col-span-2'>
+																				<InputWithIcon
+																					id={`Quotations_Detail.${i}.Child_QuDet.${idx}.item_of_work`}
+																					name={`Quotations_Detail.${i}.Child_QuDet.${idx}.item_of_work`}
+																					placeholder='Work Scope Detail'
+																					label='Work Scope Detail'
+																					type='text'
+																					onChange={handleChange}
+																					required={true}
+																					withLabel={false}
+																					className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-14 outline-primary-600'
+																					icon={`1.${i + 1}.${idx + 1}`}
+																					classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
+																				/>
+																			</div>
+																			<div className='flex w-full'>
+																				{idx === res.Child_QuDet.length - 1 ? (
+																					<a
+																						className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																						onClick={() =>
+																							arrayChild.push({
+																								item_of_work: "",
+																							})
+																						}
+																					>
+																						<Plus size={23} className='mt-1' />
+																						Detail
+																					</a>
+																				) : null}
+																				{res.Child_QuDet.length !== 1 ? (
+																					<a
+																						className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																						onClick={() => {
+																							arrayChild.remove(i);
+																						}}
+																					>
+																						<Trash2
+																							size={22}
+																							className='mt-1 mr-1'
+																						/>
+																						Remove
+																					</a>
+																				) : null}
+																			</div>
+																		</Section>
+																	)
+																)}
+															</>
+														)}
+													/>
 												</div>
 											</Section>
 										))}

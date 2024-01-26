@@ -14,7 +14,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-
+	console.log(dataSelected);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<PdfQuotation
@@ -126,46 +126,30 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 					<h1 className='font-bold text-xl mt-2'>Scope Of work</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
-							<table className='w-full'>
-								<thead>
-									<tr>
-										<th className='w-[50%] pl-2 border border-black text-center font-semibold'>
-											Item of work
-										</th>
-										<th className='w-[25%] pl-2 border border-black text-center font-semibold'>
-											Volume
-										</th>
-										<th className='w-[25%] pl-2 border border-black text-center font-semibold'>
-											Unit
-										</th>
-									</tr>
-								</thead>
-								{dataSelected.Quotations_Detail.length > 0 ? (
-									dataSelected.Quotations_Detail.map((res: any, i: number) => (
-										<tbody key={i}>
-											<tr>
-												<td className='pl-2 border border-black'>
-													{res.item_of_work}
-												</td>
-												<td className='pl-2 border border-black text-center'>
-													{res.volume}
-												</td>
-												<td className='pl-2 border border-black text-center'>
-													{res.unit}
-												</td>
-											</tr>
-										</tbody>
-									))
-								) : (
-									<tbody>
-										<tr>
-											<td className='w-full pl-2 border border-black'>-</td>
-											<td className='w-full pl-2 border border-black'>-</td>
-											<td className='w-full pl-2 border border-black'>-</td>
-										</tr>
-									</tbody>
-								)}
-							</table>
+							<div className='border border-black text-center'>
+								Item Of Work
+							</div>
+							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 '>
+								<div className='w-full'>
+									{dataSelected.Quotations_Detail.map((res: any, i: number) => (
+										<>
+											<div
+												className='border border-black font-semibold p-1'
+												key={i}
+											>
+												{`1.${i + 1} ${res.item_of_work}`}
+											</div>
+											<div className='w-full'>
+												{res.Child_QuDet.map((child: any, idx: number) => (
+													<div className='border border-black pl-10 p-1' key={idx}>
+														{`1.${i + 1}.${idx + 1} ${child.item_of_work}`}
+													</div>
+												))}
+											</div>
+										</>
+									))}
+								</div>
+							</Section>
 						</div>
 					</Section>
 					<h1 className='font-bold text-xl mt-2'>Equipment</h1>
