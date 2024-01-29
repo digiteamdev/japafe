@@ -154,7 +154,7 @@ export const ViewSpjCashAdvance = ({
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.job_no}
+										{dataSelected.job_no}
 									</td>
 								</tr>
 								<tr>
@@ -162,7 +162,7 @@ export const ViewSpjCashAdvance = ({
 										Customer
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.customerPo.quotations.Customer.name}
+										{dataSelected.wor === null ? "" : dataSelected.wor.customerPo.quotations.Customer.name}
 									</td>
 								</tr>
 								<tr>
@@ -170,7 +170,7 @@ export const ViewSpjCashAdvance = ({
 										Subject
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.subject}
+										{dataSelected.wor === null ? "" : dataSelected.wor.subject}
 									</td>
 								</tr>
 								<tr>
@@ -209,13 +209,13 @@ export const ViewSpjCashAdvance = ({
 											<td className="border border-black text-center">{ res.description }</td>
 											<td className="border border-black text-center">{ formatRupiah(res.total.toString()) }</td>
                                             <td className="border border-black text-center">{ formatRupiah(res.actual.toString()) }</td>
-                                            <td className="border border-black text-center">{ formatRupiah(res.balance.toString()) }</td>
+                                            <td className="border border-black text-center">{ res.balance.toString().startsWith('-') ? `-${formatRupiah(res.balance.toString())}` : formatRupiah(res.balance.toString()) }</td>
 										</tr>
 									)
 								}) }
 								<tr>
 									<td className="border border-black text-right pr-5" colSpan={4}>Total</td>
-									<td className="border border-black text-center">{ formatRupiah(dataSelected.grand_tot.toString()) }</td>
+									<td className="border border-black text-center">{ dataSelected.grand_tot.toString().startsWith('-') ? `-${formatRupiah(dataSelected.grand_tot.toString())}` : formatRupiah(dataSelected.grand_tot.toString()) }</td>
 								</tr>
 							</tbody>
 						</table>

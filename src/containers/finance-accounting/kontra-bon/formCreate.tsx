@@ -84,15 +84,16 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		setIdKontraBon(id);
 	};
 
-	const getPurchase = async () => {
+	const getPurchase = async () => { 
 		setIsLoading(true);
 		let data: any = [];
 		try {
 			const response = await GetReceive();
 			if (response.data) {
+				console.log(response.data)
 				response.data.result.map((res: any) => {
 					data.push({
-						label: res.id_so ? res.id_so : res.idPurchase,
+						label: res.id_spj ? res.id_spj : res.id_so ? res.id_so : res.idPurchase,
 						value: res,
 					});
 				});

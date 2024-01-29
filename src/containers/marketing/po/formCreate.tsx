@@ -280,9 +280,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					description: res.description,
 					qty: res.qty,
 					unit: res.unit,
-					price: res.price.toString(),
-					discount: res.discount.toString(),
-					total: htmlTotal.value,
+					price: res.price,
+					discount: res.discount === "" ? 0 : res.discount,
+					total: parseInt(htmlTotal.value),
 				});
 			}
 		});
@@ -328,9 +328,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			date_delivery: payload.date_delivery,
 			Deskription_CusPo: desc,
 			term_of_pay: term,
-			vat: vattotal,
-			grand_tot: htmlGrandTotal.value,
-			total: htmlTotals.value,
+			vat: parseInt(vattotal),
+			grand_tot: parseInt(htmlGrandTotal.value),
+			total: parseInt(htmlTotals.value),
 		};
 
 		try {

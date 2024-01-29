@@ -71,14 +71,6 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Quotation Description
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.deskription}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Customer Name
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>

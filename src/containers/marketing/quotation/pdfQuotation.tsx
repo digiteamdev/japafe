@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { X, FileText } from "react-feather";
 import moment from "moment";
 import html2canvas from "html2canvas";
@@ -18,6 +18,13 @@ interface props {
 }
 
 export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
+
+	const [listWorkScope, setListWorkScope] = useState<any>([]);
+
+	useEffect(() => {
+		listDetail()
+	}, [])
+	
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -30,7 +37,26 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 			// pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
 	};
-console.log(data)
+
+	const listDetail = () => {
+		let list: any = []
+		data.Quotations_Detail.map( (res: any, i: number) => {
+			list.push({
+				parrent: true,
+				no: `1.${i + 1}`,
+				workScope: res.item_of_work
+			})
+			res.Child_QuDet.map( (chil: any, idx: number) => {
+				list.push({
+					parrent: false,
+					no: `1.${i + 1}.${idx + 1}`,
+					workScope: chil.item_of_work
+				})
+			})
+		})
+		setListWorkScope(list)
+	}
+	console.log(data);
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>
@@ -96,132 +122,234 @@ console.log(data)
 										</button>
 									</div>
 									<div
-										className='my-4 mx-40 px-20 pb-4 pt-4'
+										className='my-4 mx-40 px-20 pb-4 pt-4 text-xs'
 										id='divToPrint'
 									>
-                                        <div className='flex border border-black'>
-												<div className='w-[45%] p-2'>
-													<h4 className='text-xs font-semibold'>
-														PT DWITAMA MULYA PERSADA
-													</h4>
-													<p className='text-[9px]'>
-														Kawasan Industri De Prima Terra
+										<div className='flex border border-black'>
+											<div className='w-[45%] p-2'>
+												<h4 className='text-xs font-semibold'>
+													PT DWITAMA MULYA PERSADA
+												</h4>
+												<p className='text-[9px]'>
+													Kawasan Industri De Prima Terra
+												</p>
+												<p className='text-[9px]'>
+													Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar
+													Bandung 40287
+												</p>
+												<p className='text-[9px]'>
+													Phone : +62 22 88881810, +62 22 87528469-60
+												</p>
+												<p className='text-[9px]'>
+													Email : sales@dwitama.co.id - www.dwitama.co.id
+												</p>
+											</div>
+											<div className='w-[55%]'>
+												<div className='flex ml-8 p-3'>
+													<Image
+														className='w-[35%] mx-1'
+														src={Logo4}
+														alt='logo'
+													/>
+													<Image
+														className='w-[15%] mx-1'
+														src={Logo}
+														alt='logo'
+													/>
+													<Image
+														className='w-[15%] mx-1'
+														src={Logo2}
+														alt='logo'
+													/>
+													<Image
+														className='w-[15%] mx-1'
+														src={Logo3}
+														alt='logo'
+													/>
+												</div>
+											</div>
+										</div>
+										<div className='w-full grid grid-cols-7 grid-rows-2'>
+											<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-4 row-span-2 bg-green-500'>
+												<h2 className='text-lg font-bold text-center pt-4'>
+													Quotation
+												</h2>
+											</div>
+											<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+												<h2 className='text-center'>
+													No. Dokumen / Revisi
+												</h2>
+											</div>
+											<div className='w-full p-2 border border-black border-t-0'>
+												<h2 className='text-center'>Level</h2>
+											</div>
+											<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
+												<h2 className='text-center'>
+													DMP/PCH/FRM-04 / 00
+												</h2>
+											</div>
+											<div className='w-full p-2 border border-black border-t-0'>
+												<h2 className='text-center'>3</h2>
+											</div>
+										</div>
+										<div className='w-full mt-2'>
+											<div className='grid grid-cols-5'>
+												<div className='w-full'>Quotation No</div>
+												<div className='w-full col-span-2'>
+													: {data.quo_num}
+												</div>
+												<div className='w-full col-span-2 text-right'>
+													Bandung, {moment(new Date()).format('DD MMMM YYYY')}
+												</div>
+											</div>
+											<div className='grid grid-cols-5 mb-2'>
+												<div className='w-full'>To</div>
+												<div className='w-full col-span-4'>
+													: {data.Customer.name}
+													<p className='ml-2'>
+														{data.Customer.address[0].address_workshop},{" "}
+														{data.Customer.address[0].sub_districts}
 													</p>
-													<p className='text-[9px]'>
-														Jl. Raya Sapan - Gede Bage Block D1 07 Tegalluar
-														Bandung 40287
-													</p>
-													<p className='text-[9px]'>
-														Phone : +62 22 88881810, +62 22 87528469-60
-													</p>
-													<p className='text-[9px]'>
-														Email : sales@dwitama.co.id - www.dwitama.co.id
+													<p className='ml-2'>
+														{data.Customer.address[0].cities},{" "}
+														{data.Customer.address[0].ec_postalcode}
 													</p>
 												</div>
-												<div className='w-[55%]'>
-													<div className='flex ml-8 p-3'>
-														<Image
-															className='w-[35%] mx-1'
-															src={Logo4}
-															alt='logo'
-														/>
-														<Image
-															className='w-[15%] mx-1'
-															src={Logo}
-															alt='logo'
-														/>
-														<Image
-															className='w-[15%] mx-1'
-															src={Logo2}
-															alt='logo'
-														/>
-														<Image
-															className='w-[15%] mx-1'
-															src={Logo3}
-															alt='logo'
-														/>
+											</div>
+											<div className='grid grid-cols-5'>
+												<div className='w-full'>Telp</div>
+												<div className='w-full col-span-4'>
+													: +62{data.Customer.phone}
+												</div>
+											</div>
+											<div className='grid grid-cols-5'>
+												<div className='w-full'>Fax</div>
+												<div className='w-full col-span-4'>
+													: {data.Customer.fax}
+												</div>
+											</div>
+											<div className='grid grid-cols-5'>
+												<div className='w-full'>Email</div>
+												<div className='w-full col-span-4'>
+													: {data.Customer.email}
+												</div>
+											</div>
+											<div className='grid grid-cols-5 pb-2'>
+												<div className='w-full'>Attention</div>
+												<div className='w-full col-span-4'>
+													: {data.attention}
+												</div>
+											</div>
+											<div className='w-full divide-y p-[1.5px] bg-slate-400'></div>
+											<div className='grid grid-cols-5 pb-2'>
+												<div className='w-full'>Subject</div>
+												<div className='w-full col-span-4'>
+													: {data.subject}
+												</div>
+											</div>
+											<div className='w-full divide-y p-[1.5px] bg-slate-400'></div>
+											<div className='w-full'>
+												We Would like to provide our qoutation as follow:
+											</div>
+											<div className='ml-2'>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														1.{" "}
+														<span className='underline'>
+															WORKSCOPE DESCRIPTION
+														</span>
+													</p>
+													<div className="grid grid-cols-2 ml-2">
+														<div className="w-full">
+															{ listWorkScope.map( (res:any, i:number) => (
+																<div className="flex" key={i}>
+																	<div className={`w-[15%] text-right mr-2 ${ res.parrent ? 'font-bold' : '' }`}>
+																		{ res.no }
+																	</div>
+																	<div className={`w-[85%] ${ res.parrent ? 'font-bold' : '' }`}>
+																		{ res.workScope }
+																	</div>
+																</div>
+															))}
+														</div>
+														<div className="w-full">
+
+														</div>
 													</div>
 												</div>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														2. <span className='underline'>DELIVERY TIME</span>
+													</p>
+												</div>
+												<div className='w-full'>
+													Delivery time is estimated at{" "}
+													<span className='font-bold ml-3'>
+														{data.estimated_delivery}
+													</span>
+												</div>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														3.{" "}
+														<span className='underline'>
+															PRICE AND TERM OF PAYMENT
+														</span>
+													</p>
+												</div>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														4. <span className='underline'>VALIDITY</span>
+													</p>
+												</div>
+												<div className='w-full'>
+													This proposal will remain valid for 21 (Twenty one)
+													calender days from the date of bid opening and may be
+													modified or withdrawn by seller prior to receipt of
+													buyer`s acceptance.
+												</div>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														5. <span className='underline'>WARRANTY</span>
+													</p>
+												</div>
+												<div className='w-full'>
+													<p>
+														Warranty period is{" "}
+														<span className='font-bold'>{data.warranty}</span>
+													</p>
+													<p>
+														This warranty is valid in accordance with the period
+														and conditions set by PT. Dwitama Mulya Persada.
+													</p>
+													<p className='font-bold'>
+														Warranty part as per approval drawing, not
+														performance warranty
+													</p>
+												</div>
+												<div className='w-full mt-[2px]'>
+													<p className='font-bold'>
+														6. <span className='underline'>PROPRIENTARY</span>
+													</p>
+												</div>
+												<div className='w-full whitespace-normal'>
+													<p>
+														We herein submit this proposal in confidence for
+														evaluation by the buyer. Its contents are
+														proprietary to the seller. By taking receipt of this
+														proposal, the buyer agrees not to reveal its content
+														in whole or in part beyond those persons in its own
+														organization necessary to properly evaluate this
+														proposal or to perform any resulting contract. Buyer
+														shall not reveal the contents of this proposal to a
+														third party or make copies of this proposal without
+														the prior written consent of the seller.
+													</p>
+												</div>
 											</div>
-											<div className='w-full grid grid-cols-6 grid-rows-2'>
-												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2 bg-purple-500'>
-													<h2 className='text-lg font-bold text-center pt-4'>
-														Quotation
-													</h2>
-												</div>
-												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
-													<h2 className='text-base text-center'>
-														No. Dokumen / Revisi
-													</h2>
-												</div>
-												<div className='w-full p-2 border border-black border-t-0'>
-													<h2 className='text-base text-center'>Level</h2>
-												</div>
-												<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
-													<h2 className='text-base text-center'>
-														DMP/PCH/FRM-04 / 00
-													</h2>
-												</div>
-												<div className='w-full p-2 border border-black border-t-0'>
-													<h2 className='text-base text-center'>3</h2>
-												</div>
+											<div className='w-full mt-3'>
+												We hope that our quotation well meet to your requirement, thank you for your attention and cooperation
 											</div>
-                                        <div className="w-full mt-4">
-                                            <div className="grid grid-cols-5">
-                                                <div className="w-full">Date</div>
-                                                <div className="w-full col-span-4">: { moment(data.date).format('DD MMMM YYYY') }</div>
-                                            </div>
-                                            <div className="grid grid-cols-5">
-                                                <div className="w-full">Quotation Ref</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="grid grid-cols-5 mb-2">
-                                                <div className="w-full">To</div>
-                                                <div className="w-full col-span-4">: { data.Customer.name }</div>
-                                            </div>
-                                            <div className="w-full divide-y p-1 bg-slate-400"></div>
-                                            <div className="w-full grid grid-cols-5">
-                                                <div className="w-full">Attention</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="grid grid-cols-5">
-                                                <div className="w-full">Subject</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="grid grid-cols-5">
-                                                <div className="w-full">End Users</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="grid grid-cols-5">
-                                                <div className="w-full">Makers</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="grid grid-cols-5 mb-2">
-                                                <div className="w-full">Site Location</div>
-                                                <div className="w-full col-span-4">: </div>
-                                            </div>
-                                            <div className="w-full divide-y p-1 bg-slate-400"></div>
-                                        </div>
-                                        <div className="w-full mt-2">
-                                            <p className="text-center font-semibold">Description</p>
-											<p className="">{ data.deskription }</p>
-                                        </div>
-                                        <div className="w-full mt-2">
-                                            <p className="text-sm">We hope that our proposal well meet to your requirement, thank you for kind attention and corporation.</p>
-                                        </div>
-                                        <div className="w-full mt-2">
-                                            <p className="text-base text-center mt-2">Your Faithfully,</p>
-                                            <div className="grid grid-cols-2 mt-2">
-                                                <div className="w-full text-center">
-                                                    <p className="mb-[65px]">Bandung, {moment(new Date()).format('DD-MMMM-YYYY')}</p>
-                                                    <p>Manager Marketing</p>
-                                                </div>
-                                                <div className="w-full text-center">
-                                                    <p className="mb-[65px]">Bandung, {moment(new Date()).format('DD-MMMM-YYYY')}</p>
-                                                    <p>Sales & Marketing Dept</p>
-                                                </div>
-                                            </div>
-                                        </div>
+										</div>
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>

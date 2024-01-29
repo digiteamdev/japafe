@@ -130,20 +130,20 @@ export const PdfCashAdvance = ({
 												<div className='w-1/4'>Job No</div>
 												<div className='w-full'>
 													:{" "}
-													{dataSelected.wor.job_no}
+													{dataSelected.job_no}
 												</div>
 											</div>
 											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Customer</div>
 												<div className='w-full'>
 													:{" "}
-													{dataSelected.wor.customerPo.quotations.Customer.name}
+													{ dataSelected.wor === null ? "" : dataSelected.wor.customerPo.quotations.Customer.name}
 												</div>
 											</div>
 											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Subject</div>
 												<div className='w-full'>
-													: {dataSelected.wor.subject}
+													: { dataSelected.wor === null ? "" : dataSelected.wor.subject}
 												</div>
 											</div>
 											<div className='flex flex-row w-full'>

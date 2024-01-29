@@ -23,6 +23,7 @@ interface data {
 	id_cash_advance: string;
 	employeeId: string;
 	worId: string;
+	job_no: string;
 	userId: string;
 	status_payment: string;
 	currency: string;
@@ -37,14 +38,13 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [caID, setCaID] = useState<string>("");
 	const [listEmploye, setListEmploye] = useState<any>([]);
-	const [subject, setSubject] = useState<string>("");
-	const [customer, setCustomer] = useState<string>("");
 	const [userId, setUserId] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		id_cash_advance: "",
 		employeeId: "",
 		worId: "",
+		job_no: "",
 		userId: "",
 		detail: [
 			{
@@ -107,7 +107,31 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	};
 
 	const getWor = async () => {
-		let datasWor: any = [];
+		var dateObj = new Date();
+		var year = dateObj.getUTCFullYear();
+		let datasWor: any = [
+			{
+				value: {
+					id: null,
+					job_no: year.toString().substring(2,4) + 200
+				},
+				label: year.toString().substring(2,4) + 200 + " - Adm & Office"
+			},
+			{
+				value: {
+					id: null,
+					job_no: year.toString().substring(2,4) + 210
+				},
+				label: year.toString().substring(2,4) + 210 + " - Maintance"
+			},
+			{
+				value: {
+					id: null,
+					job_no: year.toString().substring(2,4) + 220
+				},
+				label: year.toString().substring(2,4) + 220 + " - Trainning & Studying"
+			},
+		];
 		try {
 			const response = await GetWorCash();
 			if (response) {
@@ -124,7 +148,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		}
 	};
 
-	const addCashAdvance = async (payload: data) => {
+	const addCashAdvance = async (payload: any) => {
+		console.log(payload)
 		setIsLoading(true);
 		let detail: any = [];
 		payload.detail.map((res: any) => {
@@ -140,6 +165,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			id_cash_advance: payload.id_cash_advance,
 			employeeId: payload.employeeId,
 			worId: payload.worId,
+			job_no: payload.job_no,
 			userId: payload.userId,
 			status_payment: payload.status_payment,
 			note: payload.note,
@@ -237,8 +263,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									label='Job No'
 									onChange={(e: any) => {
 										setFieldValue("worId", e.value.id);
-										setSubject(e.value.subject);
-										setCustomer(e.value.customerPo.quotations.Customer.name);
+										setFieldValue("job_no", e.value.job_no);
 									}}
 									required={true}
 									withLabel={true}

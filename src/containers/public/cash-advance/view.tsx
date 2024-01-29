@@ -254,7 +254,7 @@ export const ViewCashAdvance = ({
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.job_no}
+										{dataSelected.job_no}
 									</td>
 								</tr>
 								<tr>
@@ -262,7 +262,7 @@ export const ViewCashAdvance = ({
 										Customer
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.customerPo.quotations.Customer.name}
+										{ dataSelected.wor === null ? "" : dataSelected.wor.customerPo.quotations.Customer.name}
 									</td>
 								</tr>
 								<tr>
@@ -270,7 +270,7 @@ export const ViewCashAdvance = ({
 										Subject
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.wor.subject}
+										{ dataSelected.wor === null ? "" : dataSelected.wor.subject}
 									</td>
 								</tr>
 								<tr>

@@ -178,7 +178,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 									label='Reference'
 									onChange={(e: any) => {
 										setFieldValue("id", e.value.id);
-										setFieldValue("job_no", e.value.wor.job_no);
+										setFieldValue("job_no", e.value.job_no);
 										setFieldValue("pic", e.value.user.employee.employee_name);
 										setFieldValue("status_payment", e.value.status_payment);
 										setFieldValue(
