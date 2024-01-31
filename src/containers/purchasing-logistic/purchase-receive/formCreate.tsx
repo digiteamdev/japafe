@@ -34,6 +34,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 	const [suplier, setSuplier] = useState<string>("");
 	const [suplierAddress, setSuplierAddress] = useState<string>("");
 	const [suplierPhone, setSuplierPhone] = useState<string>("");
+	const [suplierFax, setSuplierFax] = useState<string>("");
 	const [idPurchase, setIdPurchase] = useState<string>("");
 	const [idPR, setIdPR] = useState<string>("");
 	const [data, setData] = useState<data>({
@@ -213,6 +214,9 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 										setSuplierPhone(
 											`+62${e.value.supplier.SupplierContact[0].phone}`
 										);
+										setSuplierFax(
+											e.value.supplier.fax
+										);
 										if (e.value.detailMr.length > 0) {
 											setFieldValue("detailMr", e.value.detailMr);
 											setFieldValue("srDetail", []);
@@ -309,6 +313,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 									placeholder='Fax'
 									label='Fax'
 									type='text'
+									value={suplierFax}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -336,9 +341,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 															label='Job No'
 															type='text'
 															value={
-																res.mr.wor.job_operational
-																	? res.mr.wor.job_no_mr
-																	: res.mr.wor.job_no
+																res.mr.job_no
 															}
 															disabled={true}
 															required={true}
@@ -449,9 +452,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 															label='Job No'
 															type='text'
 															value={
-																res.sr.wor.job_operational
-																	? res.sr.wor.job_no_mr
-																	: res.sr.wor.job_no
+																res.sr.job_no
 															}
 															disabled={true}
 															required={true}

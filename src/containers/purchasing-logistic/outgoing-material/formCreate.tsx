@@ -311,9 +311,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 											);
 											setFieldValue(
 												`mr.${i}.job_no`,
-												res.mr.wor.job_operational
-													? res.mr.wor.job_no_mr
-													: res.mr.wor.job_no
+												res.mr.job_no
 											);
 											setFieldValue(
 												`mr.${i}.requestBy`,

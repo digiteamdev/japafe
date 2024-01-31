@@ -216,9 +216,7 @@ export const PdfDpr = ({
 																						</td>
 																						<td className='border-black border-t border-l  text-center mb-1'>
 																							<p className='mb-1'>
-																								{result.mr.wor.job_operational
-																									? result.mr.wor.job_no_mr
-																									: result.mr.wor.job_no}
+																								{result.mr.job_no}
 																							</p>
 																						</td>
 																						<td className='border-black border-t border-l text-center mb-1'>

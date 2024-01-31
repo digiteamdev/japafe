@@ -99,7 +99,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                     { dataSelected.detailMr.map( (res:any, i: number) => (
                                         <tr key={i}>
                                             <td className="border border-black p-2 text-center">
-                                                { res.mr.wor.job_no_operational ? res.mr.wor.job_no_mr : res.mr.wor.job_no }
+                                                { res.mr.job_no }
                                             </td>
                                             <td className="border border-black p-2 text-center">
                                                 { res.Material_Stock.spesifikasi }
@@ -139,7 +139,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                     { dataSelected.SrDetail.map( (res:any, i: number) => (
                                         <tr key={i}>
                                             <td className="border border-black p-2 text-center">
-                                                { res.sr.wor.job_no_operational ? res.sr.wor.job_no_mr : res.sr.wor.job_no }
+                                                { res.sr.job_no }
                                             </td>
                                             <td className="border border-black p-2 text-center">
                                                 { res.part }

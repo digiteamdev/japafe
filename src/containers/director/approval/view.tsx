@@ -317,7 +317,7 @@ export const ViewApprovalDirector = ({
 																		return (
 																			<tr key={idx}>
 																				<td className='border border-black text-center'>
-																					{result.mr.wor.job_no}
+																					{result.mr.job_no}
 																				</td>
 																				<td className='border border-black text-center'>
 																					{

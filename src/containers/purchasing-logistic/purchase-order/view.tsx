@@ -265,9 +265,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 												{moment(res.mr.date_mr).format("DD-MMMM-YYYY")}
 											</td>
 											<td className='border border-black text-center'>
-												{res.mr.wor.job_operational
-													? res.mr.wor.job_no_mr
-													: res.mr.wor.job_no}
+												{res.mr.job_no}
 											</td>
 											<td className='border border-black text-center'>
 												{`${res.Material_Stock.Material_master.material_name} - ${res.Material_Stock.spesifikasi}`}

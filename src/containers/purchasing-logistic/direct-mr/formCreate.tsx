@@ -80,9 +80,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 						qty: res.qtyAppr,
 						note: res.note,
 						price: res.Material_Stock.harga,
-						job_no: res.mr.wor.job_operational
-							? res.mr.wor.job_no_mr
-							: res.mr.wor.job_no,
+						job_no: res.mr.job_no,
 					});
 					if (!suplier.includes(res.supplier.supplier_name)) {
 						suplier.push(res.supplier.supplier_name);

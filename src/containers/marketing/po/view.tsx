@@ -46,7 +46,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 			return Total
 		}
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -176,13 +176,13 @@ export const ViewPo = ({ dataSelected }: props) => {
 														{res.unit}
 													</td>
 													<td className='pl-2 border border-black text-center'>
-														{formatRupiah(res.price)}
+														{formatRupiah(res.price.toString())}
 													</td>
 													<td className='pl-2 border border-black text-center'>
-														{formatRupiah(res.discount)}
+														{formatRupiah(res.discount.toString())}
 													</td>
 													<td className='pl-2 border border-black text-center'>
-														{formatRupiah(res.total)}
+														{formatRupiah(res.total.toString())}
 													</td>
 												</tr>
 											)

@@ -89,9 +89,7 @@ export const FormEditApprovalMr = ({
 				note: res.note,
 				qtyAppr: res.qtyAppr,
 				no_mr: res.mr.no_mr,
-				job_no: res.mr.wor.job_operational
-					? res.mr.wor.job_no_mr
-					: res.mr.wor.job_no,
+				job_no: res.mr.job_no,
 				stock: res.Material_Stock.jumlah_Stock,
 				approvedRequestId: res.approvedRequestId,
 				user: res.mr.user.employee.employee_name,

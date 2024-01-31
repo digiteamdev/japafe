@@ -1,5 +1,6 @@
 import moment from "moment";
 import { Section } from "../../../components";
+import { Console } from "console";
 
 interface props {
 	dataSelected: any;
@@ -8,6 +9,7 @@ interface props {
 }
 
 export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
+	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -65,7 +67,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{res.mr.wor.job_operational ? res.mr.wor.job_no_mr : res.mr.wor.job_no }
+												{res.mr.job_no }
 											</td>
 											<td className='border border-black text-center'>
 												{res.mrappr}

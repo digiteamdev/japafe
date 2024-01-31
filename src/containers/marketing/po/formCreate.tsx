@@ -446,7 +446,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									label='Quotation'
 									onChange={(e: any) => {
 										setCustomerName(e.value.Customer.name);
-										setDeskription(e.value.deskription);
+										setDeskription(e.value.subject);
 										setEquipment(e.value.eqandpart[0].equipment.nama);
 										setCountPart(e.value.eqandpart.length);
 										setQuoId(e.value.id);
@@ -591,11 +591,18 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 							<div className='w-full'>
 								<InputDate
 									id='date_delivery'
-									label='Date_delivery'
-									value={
-										values.date_delivery === null ? new Date() : values.date_delivery
+									label='Date delivery'
+									minDate={
+										values.date_of_po === null ? new Date() : values.date_of_po
 									}
-									onChange={(value: any) => setFieldValue("date_delivery", value)}
+									value={
+										values.date_delivery === null
+											? new Date()
+											: values.date_delivery
+									}
+									onChange={(value: any) =>
+										setFieldValue("date_delivery", value)
+									}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'

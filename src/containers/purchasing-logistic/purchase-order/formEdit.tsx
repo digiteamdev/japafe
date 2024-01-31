@@ -99,9 +99,7 @@ export const FormEditPurchaseMr = ({
 				qty: result.qtyAppr,
 				note: result.note,
 				price: result.price,
-				job_no: result.mr.wor.job_operational
-					? result.mr.wor.job_no_mr
-					: result.mr.wor.job_no,
+				job_no: result.mr.job_no,
 			});
 			total = total + result.total;
 			setCurrency(result.currency);
@@ -160,9 +158,7 @@ export const FormEditPurchaseMr = ({
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,
-							job_no: result.mr.wor.job_operational
-								? result.mr.wor.job_no_mr
-								: result.mr.wor.job_no,
+							job_no: result.mr.job_no,
 						});
 					});
 				});

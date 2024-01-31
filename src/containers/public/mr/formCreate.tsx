@@ -222,6 +222,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	};
 
 	const selectWor = (datas: any) => {
+		console.log(datas)
 		let list_material: any = [];
 		let material: any = [];
 		let list_material_stock: any = [];

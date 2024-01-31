@@ -281,9 +281,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 															return (
 																<tr key={idx}>
 																	<td className='border border-black text-center'>
-																		{result.mr.wor.job_operational
-																			? result.mr.wor.job_no_mr
-																			: result.mr.wor.job_no}
+																		{result.mr.job_no}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{
