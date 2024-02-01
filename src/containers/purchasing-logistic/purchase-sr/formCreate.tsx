@@ -74,9 +74,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 						qty: res.qtyAppr,
 						note: res.note,
 						price: 0,
-						job_no: res.sr.wor.job_operational
-							? res.sr.wor.job_no_mr
-							: res.sr.wor.job_no,
+						job_no: res.sr.job_no,
 					});
 				});
 				setData({

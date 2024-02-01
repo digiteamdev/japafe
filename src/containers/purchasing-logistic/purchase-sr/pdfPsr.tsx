@@ -204,9 +204,7 @@ export const PdfPsr = ({
 																					</td>
 																					<td className='border-black border-t border-l  text-center mb-1'>
 																						<p className='mb-1'>
-																							{result.sr.wor.job_operational
-																								? result.sr.wor.job_no_mr
-																								: result.sr.wor.job_no}
+																							{result.sr.job_no}
 																						</p>
 																					</td>
 																					<td className='border-black border-t border-l text-center mb-1'>

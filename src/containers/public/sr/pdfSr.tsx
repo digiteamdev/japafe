@@ -31,7 +31,7 @@ export const PdfSr = ({ isModal, data, showModalPdf }: props) => {
 			pdf.save(`Material_request_${data.no_sr}.pdf`);
 		});
 	};
-	console.log(data);
+
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>
@@ -191,9 +191,7 @@ export const PdfSr = ({ isModal, data, showModalPdf }: props) => {
 													<p>Job No</p>
 													<p className='col-span-2'>
 														:{" "}
-														{data.wor.job_operational
-															? data.wor.job_no_mr
-															: data.wor.job_no}
+														{data.job_no}
 													</p>
 												</div>
 												<div className='border border-t-0 border-black grid grid-cols-3 p-1'></div>

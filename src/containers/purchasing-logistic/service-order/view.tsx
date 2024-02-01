@@ -283,9 +283,7 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 												{moment(res.sr.date_sr).format("DD-MMMM-YYYY")}
 											</td>
 											<td className='border border-black text-center'>
-												{res.sr.wor.job_operational
-													? res.sr.wor.job_no_mr
-													: res.sr.wor.job_no}
+												{res.sr.job_no}
 											</td>
 											<td className='border border-black text-center'>
 												{`${res.part} / ${res.workCenter.name}`}

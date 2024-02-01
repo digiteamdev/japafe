@@ -115,7 +115,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 		setCustomer(
 			dataSelected.wor.customerPo.quotations.Customer.name
 		);
-		setJobNo(dataSelected.wor.job_operational ? dataSelected.wor.job_no_mr : dataSelected.wor.job_no)
+		setJobNo(dataSelected.job_no)
 		setSubject(dataSelected.wor.subject);
 	};
 

@@ -70,9 +70,7 @@ export const FormEditPurchaseSr = ({
 				note: res.note,
 				note_revision: res.note_revision,
 				price: res.total / res.qty,
-				job_no: res.sr.wor.job_operational
-					? res.sr.wor.job_no_mr
-					: res.sr.wor.job_no,
+				job_no: res.sr.job_no,
 			});
 		});
 		setData({

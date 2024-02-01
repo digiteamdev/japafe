@@ -66,7 +66,7 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{res.sr.wor.job_operational ? res.sr.wor.job_no_mr : res.sr.wor.job_no }
+												{res.sr.job_no }
 											</td>
 											<td className='border border-black text-center'>
 												{res.srappr}

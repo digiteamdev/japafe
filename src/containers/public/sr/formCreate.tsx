@@ -140,13 +140,13 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 		try {
 			const response = await GetAllWorkerCenter();
 			if (response) {
-				let listWork: any = []
+				let listWork: any = [];
 				response.data.result.map((result: any) => {
 					listWork.push({
 						label: result.name,
-						value: result
-					})
-				})
+						value: result,
+					});
+				});
 				setListWorkCenter(listWork);
 			}
 		} catch (error) {}
@@ -254,9 +254,9 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 			});
 		});
 		let data = {
-			dispacthIDS: payload.dispacthIDS,
+			dispacthIDS: payload.dispacthIDS === "" ? null : payload.dispacthIDS,
 			userId: payload.userId,
-			worId: payload.worId,
+			worId: payload.worId === "" ? null : payload.worId,
 			job_no: jobNo,
 			date_sr: payload.date_sr,
 			SrDetail: listService,
@@ -486,24 +486,12 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 											label='Job No'
 											onChange={(e: any) => {
 												let list_service: any = [];
+												let list_part: any = [];
 												let userID = getIdUser();
-												setJobNo(
-													e.internal
-														? e.value[0].job_no
-														: e.value.srimg.timeschedule.wor.job_no
-												);
-												setSubject(
-													e.internal
-														? "-"
-														: e.value.srimg.timeschedule.wor.subject
-												);
-												setCustomer(
-													e.internal
-														? "-"
-														: e.value.srimg.timeschedule.wor.customerPo
-																.quotations.Customer.name
-												);
 												if (e.internal) {
+													setJobNo(e.value[0].job_no);
+													setSubject("-");
+													setCustomer("-");
 													list_service.push({
 														dispacthdetailId: null,
 														workCenterId: "",
@@ -514,8 +502,35 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 														note: "",
 													});
 													setIsOperasional(true);
+												} else {
+													setJobNo(e.value.srimg.timeschedule.wor.job_no);
+													setSubject(e.value.srimg.timeschedule.wor.subject);
+													setCustomer(e.value.srimg.timeschedule.wor.customerPo.quotations.Customer.name);
+													e.value.dispatchDetail.map((res: any) => {
+														if (res.so) {
+															e.value.srimg.srimgdetail.map((srimg: any) => {
+																if (!list_part.includes(srimg.name_part)) {
+																	list_part.push(srimg.name_part);
+																}
+																if (srimg.name_part === res.part) {
+																	list_service.push({
+																		dispacthdetailId: res.id,
+																		workCenterId: res.workId,
+																		description: res.workCenter.name,
+																		part: res.part,
+																		unit: e.value.srimg.timeschedule.wor.unit,
+																		qty: srimg.qty,
+																		note: "",
+																	});
+																}
+															});
+														}
+													});
+													setFieldValue("dispacthIDS", e.value.id)
+													setFieldValue("worId", e.value.srimg.timeschedule.worId)
+													setListPartDispatch(list_part);
+													setIsService(true);
 												}
-												setFieldValue("userId", userID);
 												setFieldValue("userId", userID);
 												setFieldValue("SrDetail", list_service);
 												setIsService(true);
@@ -568,13 +583,20 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																<div className='w-full'>
 																	{result.dispacthdetailId === null ? (
 																		<InputSelectSearch
-																			datas={ isOperasional ? listPart : listPartDispatch }
+																			datas={
+																				isOperasional
+																					? listPart
+																					: listPartDispatch
+																			}
 																			id={`detailSr.${i}.part`}
 																			name={`detailSr.${i}.part`}
 																			placeholder='Part'
 																			label='Part'
-																			onChange={ (e: any) => {
-																				setFieldValue(`SrDetail.${i}.part`, e.value.nama_part)
+																			onChange={(e: any) => {
+																				setFieldValue(
+																					`SrDetail.${i}.part`,
+																					e.value.nama_part
+																				);
 																			}}
 																			required={true}
 																			withLabel={true}
@@ -646,8 +668,11 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		name={`detailSr.${i}.workCenterId`}
 																		placeholder='Description'
 																		label='Description'
-																		onChange={ (e: any) => {
-																			setFieldValue(`detailSr.${i}.workCenterId`, e.value.id)
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`SrDetail.${i}.workCenterId`,
+																				e.value.id
+																			);
 																		}}
 																		required={true}
 																		withLabel={true}

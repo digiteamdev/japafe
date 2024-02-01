@@ -117,9 +117,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,
-							job_no: result.sr.wor.job_operational
-								? result.sr.wor.job_no_mr
-								: result.sr.wor.job_no,
+							job_no: result.sr.job_no,
 						});
 					});
 				});

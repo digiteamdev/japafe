@@ -329,6 +329,24 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "equipment-part",
+				link: "/purchasing-logistic/equipment-part",
+				title: "Equipment & Part",
+				subMenu: null,
+			},
+			{
+				id: "material-type",
+				link: "/purchasing-logistic/material-type",
+				title: "Material Type",
+				subMenu: null,
+			},
+			{
+				id: "material",
+				link: "/purchasing-logistic/material",
+				title: "Material",
+				subMenu: null,
+			},
 		],
 	},
 	{
@@ -631,24 +649,24 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "equipment-part",
-				link: "/engineering/equipment-part",
-				title: "Equipment & Part",
-				subMenu: null,
-			},
-			{
-				id: "material-type",
-				link: "/engineering/material-type",
-				title: "Material Type",
-				subMenu: null,
-			},
-			{
-				id: "material",
-				link: "/engineering/material",
-				title: "Material",
-				subMenu: null,
-			},
+			// {
+			// 	id: "equipment-part",
+			// 	link: "/engineering/equipment-part",
+			// 	title: "Equipment & Part",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material-type",
+			// 	link: "/engineering/material-type",
+			// 	title: "Material Type",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material",
+			// 	link: "/engineering/material",
+			// 	title: "Material",
+			// 	subMenu: null,
+			// },
 		],
 	},
 	{

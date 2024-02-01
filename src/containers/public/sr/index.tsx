@@ -181,7 +181,7 @@ export const Sr = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_sr).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.wor.job_operational ? res.wor.job_no_mr : res.wor.job_no }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.job_no }</td>
                                     <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.username }</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

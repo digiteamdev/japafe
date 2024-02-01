@@ -302,9 +302,7 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 														return (
 															<tr key={idx}>
 																<td className='border border-black text-center'>
-																	{result.sr.wor.job_operational
-																		? result.sr.wor.job_no_mr
-																		: result.sr.wor.job_no}
+																	{result.sr.job_no}
 																</td>
 																<td className='border border-black text-center'>
 																	{result.part}

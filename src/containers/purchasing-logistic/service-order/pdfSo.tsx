@@ -281,9 +281,7 @@ export const PdfSo = ({ isModal, data, showModalPdf }: props) => {
 													<div className='w-[30%]'>Job</div>
 													<div className='w-[70%]'>
 														:{" "}
-														{data.SrDetail[0].sr.wor.job_operational
-															? data.SrDetail[0].sr.wor.job_no_mr
-															: data.SrDetail[0].sr.wor.job_no}
+														{data.SrDetail[0].sr.job_no}
 													</div>
 												</div>
 											</Section>

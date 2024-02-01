@@ -66,9 +66,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 						note: res.note,
 						qtyAppr: res.qtyAppr,
 						no_sr: res.sr.no_sr,
-						job_no: res.sr.wor.job_operational
-							? res.sr.wor.job_no_mr
-							: res.sr.wor.job_no,
+						job_no: res.job_no,
 						user: res.sr.user.employee.employee_name,
 					});
 				});

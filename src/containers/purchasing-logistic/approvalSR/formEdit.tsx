@@ -88,9 +88,7 @@ export const FormEditApprovalSr = ({
 				note: res.note,
 				qtyAppr: res.qtyAppr,
 				no_sr: res.sr.no_sr,
-				job_no: res.sr.wor.job_operational
-					? res.sr.wor.job_no_mr
-					: res.sr.wor.job_no,
+				job_no: res.sr.job_no,
 				approvedRequestId: res.approvedRequestId,
 				user: res.sr.user.employee.employee_name,
 			});
