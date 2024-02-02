@@ -137,6 +137,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("scope_of_work", payload.scope_of_work);
 		dataBody.append("file_list", file);
 		dataBody.append("noted", payload.noted);
+		dataBody.append("status", payload.status);
 		dataBody.append("job_operational", payload.job_operational);
 		try {
 			const response = await AddWor(dataBody);
