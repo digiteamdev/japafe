@@ -191,6 +191,7 @@ export const KontraBon = () => {
 						</tr>
 					) : (
 						data.map((res:any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -200,16 +201,16 @@ export const KontraBon = () => {
 										{res.id_kontrabon}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase.idPurchase}
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase ?  res.purchase.idPurchase : res.cash_advance.id_spj}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{moment(res.due_date).format('DD-MMM-YYYY')}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase.note}
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase ? res.purchase.note : res.cash_advance.note}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.supplier.supplier_name : res.purchase.supplier.supplier_name }
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.supplier.supplier_name : res.purchase ? res.purchase.supplier.supplier_name : "-" }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{formatRupiah(res.grandtotal.toString())}

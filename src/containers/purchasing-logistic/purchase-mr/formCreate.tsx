@@ -72,10 +72,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						material: res.Material_Stock.spesifikasi,
 						qty: res.qtyAppr,
 						note: res.note,
-						price: res.Material_Stock.harga,
-						job_no: res.mr.wor.job_operational
-							? res.mr.wor.job_no_mr
-							: res.mr.wor.job_no,
+						price: res.job_no,
 					});
 				});
 				setData({

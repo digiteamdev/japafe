@@ -193,6 +193,8 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 			return "Dirrect Purchase Order";
 		} else if (data.startsWith("DSR")) {
 			return "Dirrect Service Order";
+		} else {
+			return "Spj Cash Advance"
 		}
 	};
 
@@ -200,115 +202,116 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 		setIsModal(val);
 	};
 
-	const showTax = () => {
-		if (dataSelected.purchase) {
-			if (dataSelected.purchase.taxPsrDmr === "ppn") {
-				return (
-					<tr>
-						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-							PPN {dataSelected.purchase.supplier.ppn}% (
-							{dataSelected.purchase.currency})
-						</td>
-						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(ppn().toString())}
-						</td>
-					</tr>
-				);
-			} else if (dataSelected.purchase.taxPsrDmr === "pph") {
-				return (
-					<tr>
-						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-							PPH {dataSelected.purchase.supplier.pph}% (
-							{dataSelected.purchase.currency})
-						</td>
-						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(pph().toString())}
-						</td>
-					</tr>
-				);
-			} else if (dataSelected.purchase.taxPsrDmr === "ppn_and_pph") {
-				return (
-					<>
-						<tr>
-							<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-								PPN {dataSelected.purchase.supplier.ppn}% (
-								{dataSelected.purchase.currency})
-							</td>
-							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(ppn().toString())}
-							</td>
-						</tr>
-						<tr>
-							<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-								PPH {dataSelected.purchase.supplier.pph}% (
-								{dataSelected.purchase.currency})
-							</td>
-							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(pph().toString())}
-							</td>
-						</tr>
-					</>
-				);
-			} else {
-				return false;
-			}
-		} else {
-			if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn") {
-				return (
-					<tr>
-						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-							PPN {dataSelected.term_of_pay_po_so.poandso.supplier.ppn}% (
-							{dataSelected.term_of_pay_po_so.poandso.currency})
-						</td>
-						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(ppn().toString())}
-						</td>
-					</tr>
-				);
-			} else if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "pph") {
-				return (
-					<tr>
-						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-							PPH {dataSelected.term_of_pay_po_so.poandso.supplier.pph}% (
-							{dataSelected.term_of_pay_po_so.poandso.currency})
-						</td>
-						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(pph().toString())}
-						</td>
-					</tr>
-				);
-			} else if (
-				dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
-			) {
-				return (
-					<>
-						<tr>
-							<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-								PPN {dataSelected.term_of_pay_po_so.poandso.supplier.ppn}% (
-								{dataSelected.term_of_pay_po_so.poandso.currency})
-							</td>
-							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(ppn().toString())}
-							</td>
-						</tr>
-						<tr>
-							<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-								PPH {dataSelected.term_of_pay_po_so.poandso.supplier.pph}% (
-								{dataSelected.term_of_pay_po_so.poandso.currency})
-							</td>
-							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(pph().toString())}
-							</td>
-						</tr>
-					</>
-				);
-			}
-		}
-	};
+	// const showTax = () => {
+	// 	if (dataSelected.purchase) {
+	// 		if (dataSelected.purchase.taxPsrDmr === "ppn") {
+	// 			return (
+	// 				<tr>
+	// 					<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 						PPN {dataSelected.purchase.supplier.ppn}% (
+	// 						{dataSelected.purchase.currency})
+	// 					</td>
+	// 					<td className='w-[50%] pl-2 border border-gray-200'>
+	// 						{formatRupiah(ppn().toString())}
+	// 					</td>
+	// 				</tr>
+	// 			);
+	// 		} else if (dataSelected.purchase.taxPsrDmr === "pph") {
+	// 			return (
+	// 				<tr>
+	// 					<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 						PPH {dataSelected.purchase.supplier.pph}% (
+	// 						{dataSelected.purchase.currency})
+	// 					</td>
+	// 					<td className='w-[50%] pl-2 border border-gray-200'>
+	// 						{formatRupiah(pph().toString())}
+	// 					</td>
+	// 				</tr>
+	// 			);
+	// 		} else if (dataSelected.purchase.taxPsrDmr === "ppn_and_pph") {
+	// 			return (
+	// 				<>
+	// 					<tr>
+	// 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 							PPN {dataSelected.purchase.supplier.ppn}% (
+	// 							{dataSelected.purchase.currency})
+	// 						</td>
+	// 						<td className='w-[50%] pl-2 border border-gray-200'>
+	// 							{formatRupiah(ppn().toString())}
+	// 						</td>
+	// 					</tr>
+	// 					<tr>
+	// 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 							PPH {dataSelected.purchase.supplier.pph}% (
+	// 							{dataSelected.purchase.currency})
+	// 						</td>
+	// 						<td className='w-[50%] pl-2 border border-gray-200'>
+	// 							{formatRupiah(pph().toString())}
+	// 						</td>
+	// 					</tr>
+	// 				</>
+	// 			);
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	} else {
+	// 		if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn") {
+	// 			return (
+	// 				<tr>
+	// 					<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 						PPN {dataSelected.term_of_pay_po_so.poandso.supplier.ppn}% (
+	// 						{dataSelected.term_of_pay_po_so.poandso.currency})
+	// 					</td>
+	// 					<td className='w-[50%] pl-2 border border-gray-200'>
+	// 						{formatRupiah(ppn().toString())}
+	// 					</td>
+	// 				</tr>
+	// 			);
+	// 		} else if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "pph") {
+	// 			return (
+	// 				<tr>
+	// 					<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 						PPH {dataSelected.term_of_pay_po_so.poandso.supplier.pph}% (
+	// 						{dataSelected.term_of_pay_po_so.poandso.currency})
+	// 					</td>
+	// 					<td className='w-[50%] pl-2 border border-gray-200'>
+	// 						{formatRupiah(pph().toString())}
+	// 					</td>
+	// 				</tr>
+	// 			);
+	// 		} else if (
+	// 			dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
+	// 		) {
+	// 			return (
+	// 				<>
+	// 					<tr>
+	// 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 							PPN {dataSelected.term_of_pay_po_so.poandso.supplier.ppn}% (
+	// 							{dataSelected.term_of_pay_po_so.poandso.currency})
+	// 						</td>
+	// 						<td className='w-[50%] pl-2 border border-gray-200'>
+	// 							{formatRupiah(ppn().toString())}
+	// 						</td>
+	// 					</tr>
+	// 					<tr>
+	// 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+	// 							PPH {dataSelected.term_of_pay_po_so.poandso.supplier.pph}% (
+	// 							{dataSelected.term_of_pay_po_so.poandso.currency})
+	// 						</td>
+	// 						<td className='w-[50%] pl-2 border border-gray-200'>
+	// 							{formatRupiah(pph().toString())}
+	// 						</td>
+	// 					</tr>
+	// 				</>
+	// 			);
+	// 		}
+	// 	}
+	// };
+	console.log(dataSelected)
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfKontraBon
+			{/* <PdfKontraBon
 				isModal={isModal}
 				data={dataSelected}
 				discount={discount}
@@ -316,7 +319,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 				pph={pph}
 				total={total}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -356,11 +359,11 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											{`${typePurchase(
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.poandso.id_so
-													: dataSelected.purchase.idPurchase
+													: dataSelected.purchase ? dataSelected.purchase.idPurchase : dataSelected.cash_advance.id_spj
 											)} / ${
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.poandso.id_so
-													: dataSelected.purchase.idPurchase
+													: dataSelected.purchase ? dataSelected.purchase.idPurchase : dataSelected.cash_advance.id_spj
 											}`}
 										</td>
 									</tr>
@@ -372,7 +375,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.supplier
 														.supplier_name
-												: dataSelected.purchase.supplier.supplier_name}
+												: dataSelected.purchase ? dataSelected.purchase.supplier.supplier_name : "-"}
 										</td>
 									</tr>
 									<tr>
@@ -404,14 +407,14 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Bill Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
+												: dataSelected.purchase ? dataSelected.purchase.currency : ""}
 											)
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{formatRupiah(
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.price.toString()
-													: total().toString()
+													: dataSelected.purchase ? total().toString() : formatRupiah(dataSelected.grandtotal.toString())
 											)}
 										</td>
 									</tr>
@@ -420,20 +423,20 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Discount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
+												: dataSelected.purchase ? dataSelected.purchase.currency : ""}
 											)
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{formatRupiah(discount().toString())}
+											{ dataSelected.cash_advance ? 0 : formatRupiah(discount().toString())}
 										</td>
 									</tr>
-									{showTax()}
+									{/* {showTax()} */}
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Cash Advant (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
+												: dataSelected.purchase ? dataSelected.purchase.currency : ""}
 											)
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>{0}</td>
@@ -443,7 +446,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Total Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase.currency}
+												: dataSelected.purchase ? dataSelected.purchase.currency : ""}
 											)
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
@@ -457,7 +460,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.limitpay
-												: dataSelected.purchase.note}{" "}
+												: dataSelected.purchase ? dataSelected.purchase.note : ""}{" "}
 											(
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.percent
@@ -465,7 +468,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											%)
 										</td>
 									</tr>
-									<tr>
+									{/* <tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Paid To
 										</td>
@@ -482,7 +485,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.status_valid ? "Valid" : "Unvalid"}
 										</td>
-									</tr>
+									</tr> */}
 								</tbody>
 							</table>
 						</div>

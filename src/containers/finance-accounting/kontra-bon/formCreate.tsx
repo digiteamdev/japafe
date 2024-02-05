@@ -27,6 +27,7 @@ interface data {
 	due_date: any;
 	invoice: string;
 	purchaseID: string | null;
+	cdvId: string | null;
 	DO: string;
 	grandtotal: number;
 	tax_invoice: boolean;
@@ -47,7 +48,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 	const [pph, setPph] = useState<number>(0);
 	const [disc, setDisc] = useState<number>(0);
 	const [payTax, setPayTax] = useState<boolean>(true);
-	const [cashAdv, setCashAdv] = useState<string>("");
+	const [Account, setAccount] = useState<boolean>(false);
 	const [bankName, setBankName] = useState<string>("");
 	const [accName, setAccName] = useState<string>("");
 	const [accNo, setAccNo] = useState<string>("");
@@ -58,6 +59,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		id_kontrabon: "",
 		account_name: "",
 		purchaseID: null,
+		cdvId: null,
 		tax_prepered: new Date(),
 		due_date: new Date(),
 		invoice: "",
@@ -90,7 +92,6 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		try {
 			const response = await GetReceive();
 			if (response.data) {
-				console.log(response.data)
 				response.data.result.map((res: any) => {
 					data.push({
 						label: res.id_spj ? res.id_spj : res.id_so ? res.id_so : res.idPurchase,
@@ -119,103 +120,120 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		let dataAcc: any = [];
 		let hasTax: boolean = false;
 		let taxType: string = "";
-		data.detailMr.map((res: any) => {
-			disc = disc + res.disc;
-			bill = bill + res.total;
-		});
-		data.SrDetail.map((res: any) => {
-			disc = disc + res.disc;
-			bill = bill + res.total;
-		});
-		data.supplier?.SupplierBank.map((bank: any) => {
-			dataAcc.push({
-				label: `${bank.account_name} - ${bank.bank_name}`,
-				value: bank,
+		if(data.detailMr === undefined){
+			data.cdv_detail.map((res: any) => {
+				bill = bill + res.actual
+			})
+			setTotalAmount(bill)
+			setBillAmount(bill);
+			setBillPaid(bill);
+			setPercent(100)
+			setTax("");
+			setDataAccBank([]);
+			setDisc(disc);
+			setSuplier("-");
+			setTermOfPayment("-");
+			setAccount(false)
+		}else{
+			data.detailMr.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
 			});
-		});
-		if (data.taxPsrDmr === "ppn") {
-			ppn = taxAmount(bill, data.supplier.ppn);
-			billPaid = taxAmount(
-				bill,
-				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
-			);
-			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
-				setTotalAmount(billPaid - disc);
+			data.SrDetail.map((res: any) => {
+				disc = disc + res.disc;
+				bill = bill + res.total;
+			});
+			data.supplier?.SupplierBank.map((bank: any) => {
+				dataAcc.push({
+					label: `${bank.account_name} - ${bank.bank_name}`,
+					value: bank,
+				});
+			});
+			if (data.taxPsrDmr === "ppn") {
+				ppn = taxAmount(bill, data.supplier.ppn);
+				billPaid = taxAmount(
+					bill,
+					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+				);
+				if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+					setTotalAmount(billPaid - disc);
+				} else {
+					setTotalAmount(billPaid - disc + ppn);
+				}
+			} else if (data.taxPsrDmr === "pph") {
+				billPaid = taxAmount(
+					bill,
+					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+				);
+				pph = taxAmount(bill, data.supplier.pph);
+				if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+					setTotalAmount(billPaid - disc);
+				} else {
+					setTotalAmount(billPaid - disc + pph);
+				}
+			} else if (data.taxPsrDmr === "ppn_and_pph") {
+				ppn = taxAmount(bill, data.supplier.ppn);
+				pph = taxAmount(bill, data.supplier.pph);
+				billPaid = taxAmount(
+					bill,
+					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+				);
+				if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+					setTotalAmount(billPaid - disc);
+				} else {
+					setTotalAmount(billPaid - disc + ppn + pph);
+				}
 			} else {
-				setTotalAmount(billPaid - disc + ppn);
-			}
-		} else if (data.taxPsrDmr === "pph") {
-			billPaid = taxAmount(
-				bill,
-				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
-			);
-			pph = taxAmount(bill, data.supplier.pph);
-			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
+				billPaid = taxAmount(
+					bill,
+					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+				);
 				setTotalAmount(billPaid - disc);
-			} else {
-				setTotalAmount(billPaid - disc + pph);
 			}
-		} else if (data.taxPsrDmr === "ppn_and_pph") {
-			ppn = taxAmount(bill, data.supplier.ppn);
-			pph = taxAmount(bill, data.supplier.pph);
-			billPaid = taxAmount(
-				bill,
+			if (
+				(data.term_of_pay_po_so &&
+					!data.term_of_pay_po_so[0].tax_invoice &&
+					data.taxPsrDmr === "ppn") ||
+				(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn")
+			) {
+				setPpn(ppn);
+				setPph(0);
+			} else if (
+				(data.term_of_pay_po_so &&
+					!data.term_of_pay_po_so[0].tax_invoice &&
+					data.taxPsrDmr === "pph") ||
+				(!data.term_of_pay_po_so && data.taxPsrDmr === "pph")
+			) {
+				setPph(pph);
+				setPpn(0);
+			} else if (
+				(data.term_of_pay_po_so &&
+					!data.term_of_pay_po_so[0].tax_invoice &&
+					data.taxPsrDmr === "ppn_and_pph") ||
+				(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn_and_pph")
+			) {
+				setPph(pph);
+				setPpn(ppn);
+			} else {
+				setPph(0);
+				setPpn(0);
+			}
+			setTax(taxType);
+			setDataAccBank(dataAcc);
+			setBillAmount(bill);
+			setBillPaid(billPaid);
+			setDisc(disc);
+			setSuplier(data.supplier.supplier_name);
+			setPercent(
 				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
 			);
-			if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
-				setTotalAmount(billPaid - disc);
-			} else {
-				setTotalAmount(billPaid - disc + ppn + pph);
-			}
-		} else {
-			billPaid = taxAmount(
-				bill,
-				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+			setTermOfPayment(
+				data.term_of_pay_po_so
+					? `${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
+					: `${data.note}`
 			);
-			setTotalAmount(billPaid - disc);
+			setAccount(true)
 		}
-		if (
-			(data.term_of_pay_po_so &&
-				!data.term_of_pay_po_so[0].tax_invoice &&
-				data.taxPsrDmr === "ppn") ||
-			(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn")
-		) {
-			setPpn(ppn);
-			setPph(0);
-		} else if (
-			(data.term_of_pay_po_so &&
-				!data.term_of_pay_po_so[0].tax_invoice &&
-				data.taxPsrDmr === "pph") ||
-			(!data.term_of_pay_po_so && data.taxPsrDmr === "pph")
-		) {
-			setPph(pph);
-			setPpn(0);
-		} else if (
-			(data.term_of_pay_po_so &&
-				!data.term_of_pay_po_so[0].tax_invoice &&
-				data.taxPsrDmr === "ppn_and_pph") ||
-			(!data.term_of_pay_po_so && data.taxPsrDmr === "ppn_and_pph")
-		) {
-			setPph(pph);
-			setPpn(ppn);
-		} else {
-			setPph(0);
-			setPpn(0);
-		}
-		setTax(taxType);
-		setDataAccBank(dataAcc);
-		setBillAmount(bill);
-		setBillPaid(billPaid);
-		setDisc(disc);
-		setSuplier(data.supplier.supplier_name);
-		setPercent(
-			data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
-		);
-		setTermOfPayment(
-			data.term_of_pay_po_so
-				? `${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
-				: `${data.note}`
-		);
 	};
 
 	const addKontraBon = async (payload: any) => {
@@ -292,13 +310,26 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									placeholder='ID Purchase'
 									label='ID Purchase'
 									onChange={(e: any) => {
-										console.log(e.value)
 										selectPO(e.value);
-										if (
+										if(e.value.cdv_detail !== undefined){
+											let totalAmount = 0;
+											e.value.cdv_detail.map( (res: any) => {
+												totalAmount = totalAmount + res.actual
+											})
+											setFieldValue("purchaseID", null);
+											setFieldValue("cdvId", e.value.id);
+											setFieldValue("poandsoId", null);
+											setFieldValue("termId", null);
+											setFieldValue("tax_invoice", false);
+											setFieldValue("grandtotal", totalAmount);
+											setFieldValue("account_name", null);
+											setPayTax(true);
+										}else if (
 											e.value.term_of_pay_po_so &&
 											e.value.term_of_pay_po_so[0].tax_invoice
 										) {
 											setFieldValue("purchaseID", null);
+											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", false);
@@ -308,6 +339,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											e.value.term_of_pay_po_so[0].status
 										) {
 											setFieldValue("purchaseID", null);
+											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", true);
@@ -315,6 +347,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 										} else if (!e.value.term_of_pay_po_so) {
 											setFieldValue("poandsoId", null);
 											setFieldValue("termId", null);
+											setFieldValue("cdvId", null);
 											setFieldValue("purchaseID", e.value.id);
 											setFieldValue("tax_invoice", true);
 											setPayTax(true);
@@ -325,6 +358,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											}
 										} else {
 											setFieldValue("purchaseID", null);
+											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", true);
@@ -486,120 +520,124 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelect
-									id='tax'
-									name='tax'
-									placeholder='Pay Tax'
-									label='Pay Tax'
-									onChange={(e: any) => {
-										if (e.target.value === "yes") {
-											setFieldValue("tax_invoice", true);
-											if (tax === "ppn") {
-												setTotalAmount(billPaid + ppn);
-												setFieldValue("grandtotal", billPaid + ppn);
-											} else {
-												setTotalAmount(billPaid);
-												setFieldValue("grandtotal", billPaid);
-											}
-										} else {
-											setTotalAmount(billPaid);
-											setFieldValue("tax_invoice", false);
-											setFieldValue("grandtotal", billPaid);
-										}
-									}}
-									disabled={payTax}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='yes' selected={values.tax_invoice}>
-										Pay With Tax
-									</option>
-									<option value='no' selected={!values.tax_invoice}>
-										Pay No Tax
-									</option>
-								</InputSelect>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='totalAmount'
-									name='totalAmount'
-									placeholder='Total Amount'
-									label='Total Amount'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={formatRupiah(totalAmount.toString())}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputSelectSearch
-									datas={dataAccBank}
-									id='account_namec'
-									name='account_name'
-									placeholder='Acc Name'
-									label='Acc Name'
-									onChange={(e: any) => {
-										setFieldValue("account_name", e.value.id);
-										setFieldValue("grandtotal", totalAmount);
-										setBankName(e.value.bank_name);
-										setAccName(e.value.account_name);
-										setAccNo(e.value.rekening);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='bankName'
-									name='bankName'
-									placeholder='Bank Name'
-									label='Bank Name'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={bankName}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='accName'
-									name='accName'
-									placeholder='Account Name'
-									label='Account Name'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={accName}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='accNumber'
-									name='accNumber'
-									placeholder='Account Number'
-									label='Account Number'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={accNo}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						{ Account ? (
+							<>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<InputSelect
+											id='tax'
+											name='tax'
+											placeholder='Pay Tax'
+											label='Pay Tax'
+											onChange={(e: any) => {
+												if (e.target.value === "yes") {
+													setFieldValue("tax_invoice", true);
+													if (tax === "ppn") {
+														setTotalAmount(billPaid + ppn);
+														setFieldValue("grandtotal", billPaid + ppn);
+													} else {
+														setTotalAmount(billPaid);
+														setFieldValue("grandtotal", billPaid);
+													}
+												} else {
+													setTotalAmount(billPaid);
+													setFieldValue("tax_invoice", false);
+													setFieldValue("grandtotal", billPaid);
+												}
+											}}
+											disabled={payTax}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										>
+											<option value='yes' selected={values.tax_invoice}>
+												Pay With Tax
+											</option>
+											<option value='no' selected={!values.tax_invoice}>
+												Pay No Tax
+											</option>
+										</InputSelect>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='totalAmount'
+											name='totalAmount'
+											placeholder='Total Amount'
+											label='Total Amount'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={formatRupiah(totalAmount.toString())}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<InputSelectSearch
+											datas={dataAccBank}
+											id='account_namec'
+											name='account_name'
+											placeholder='Acc Name'
+											label='Acc Name'
+											onChange={(e: any) => {
+												setFieldValue("account_name", e.value.id);
+												setFieldValue("grandtotal", totalAmount);
+												setBankName(e.value.bank_name);
+												setAccName(e.value.account_name);
+												setAccNo(e.value.rekening);
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
+									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<Input
+											id='bankName'
+											name='bankName'
+											placeholder='Bank Name'
+											label='Bank Name'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={bankName}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='accName'
+											name='accName'
+											placeholder='Account Name'
+											label='Account Name'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={accName}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='accNumber'
+											name='accNumber'
+											placeholder='Account Number'
+											label='Account Number'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={accNo}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							</>
+						) : null }
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
