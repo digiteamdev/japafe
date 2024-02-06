@@ -13,14 +13,14 @@ import {
 import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateDuePayment } from "./formCreate";
 import {
-	GetKontraBon,
+	GetDuePayment,
 	DeleteKontraBon,
 	SearchKontraBon
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
-// import { ViewKontraBon } from './view';
+import { ViewDuePayment } from './view';
 // import { FormEditKontraBon } from "./formEdit";
 
 export const DuePayment = () => {
@@ -36,17 +36,15 @@ export const DuePayment = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID" },
-		{ name: "Purchase ID" },
+		{ name: "ID Kontrabon" },
 		{ name: "Pay Date" },
 		{ name: "Description" },
-		{ name: "Recipient" },
 		{ name: "Value" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getKontraBon(page, perPage);
+		getDuePayment(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -57,14 +55,14 @@ export const DuePayment = () => {
 			setDataSelected(false)
 		}
 		if(reload){
-			getKontraBon(page, perPage);
+			getDuePayment(page, perPage);
 		}
 	};
 
-	const getKontraBon = async (page: number, limit: number) => {
+	const getDuePayment = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetKontraBon(page, limit);
+			const response = await GetDuePayment(page, limit);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -113,7 +111,7 @@ export const DuePayment = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getKontraBon(1, 10);
+				getDuePayment(1, 10);
 			} else {
 				toast.error("Delete Worker Center Failed", {
 					position: "top-center",
@@ -191,61 +189,55 @@ export const DuePayment = () => {
 						</tr>
 					) : (
 						data.map((res:any, i: number) => {
+							console.log(res)
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{res.id_kontrabon}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase.idPurchase}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{moment(res.due_date).format('DD-MMM-YYYY')}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase.note}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.supplier.supplier_name : res.purchase.supplier.supplier_name }
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>
-								// 		{formatRupiah(res.grandtotal.toString())}
-								// 	</td>
-								// 	<td className='whitespace-nowrap px-6 py-4 text-center'>
-								// 		<div>
-								// 			<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 			onClick={ () => {
-								// 				setDataSelected(res);
-								// 				showModal(true,'view', false);
-								// 			}}>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 			{ res.status_valid ? null : (
-								// 				<>
-								// 					<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-								// 					onClick={ () => {
-								// 						setDataSelected(res);
-								// 						showModal(true,'edit', false);
-								// 					}}>
-								// 						<Edit color='white' />
-								// 					</Button>
-								// 					<Button 
-								// 						className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-								// 						onClick={ () => {
-								// 							setDataSelected(res);
-								// 							showModal(true,'delete', false);
-								// 						}}>
-								// 						<Trash2 color='white' />
-								// 					</Button>
-								// 				</>
-								// 			) }
-								// 		</div>
-								// 	</td>
-								// </tr>
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{res.id_kontrabon}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{moment(res.due_date).format('DD-MMM-YYYY')}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase ? res.purchase.note : res.cash_advance.note}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{formatRupiah(res.grandtotal.toString())}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<div>
+											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											onClick={ () => {
+												setDataSelected(res);
+												showModal(true,'view', false);
+											}}>
+												<Eye color='white' />
+											</Button>
+											{/* { res.status_valid ? null : (
+												<>
+													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={ () => {
+														setDataSelected(res);
+														showModal(true,'edit', false);
+													}}>
+														<Edit color='white' />
+													</Button>
+													<Button 
+														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+														onClick={ () => {
+															setDataSelected(res);
+															showModal(true,'delete', false);
+														}}>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) } */}
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -259,7 +251,7 @@ export const DuePayment = () => {
 							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getKontraBon(value, perPage);
+								getDuePayment(value, perPage);
 							}}
 						/>
 					) : null
@@ -282,8 +274,7 @@ export const DuePayment = () => {
 						showModal={showModal}
 					>
 						{ modalContent === 'view' ? (
-                            <></>
-							// <ViewKontraBon dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+							<ViewDuePayment dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 						) :  modalContent === 'edit' ? (
                             <></>
                             // <FormEditKontraBon content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

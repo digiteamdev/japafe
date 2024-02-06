@@ -11,7 +11,7 @@ import { Formik, Form, FieldArray } from "formik";
 import { cashierSchema } from "../../../schema/finance-accounting/cashier/cashierSchema";
 import {
 	ReSchedulleKontrabon,
-	AddCashier,
+	AddDueDate,
 	GetAllKontra,
 } from "../../../services";
 import { toast } from "react-toastify";
@@ -67,71 +67,17 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 
 	const addCashier = async (payload: any) => {
 		setIsLoading(true);
-		let totalDebet: number = 0;
-		let totalKredit: number = 0;
-		let jurnal: any = [];
-		payload.journal_cashier.map((res: any) => {
-			jurnal.push({
-				coa_id: res.coa_id,
-				status_transaction: res.status_transaction,
-				grandtotal: res.grandtotal,
+		let data: any = [];
+		payload.kontrabon.map((res: any) => {
+			data.push({
+				id: res.id,
+				status_duedate: true,
 			});
-			if (res.status_transaction === "Debet") {
-				totalDebet = totalDebet + res.grandtotal;
-			} else {
-				totalKredit = totalKredit + res.grandtotal;
-			}
 		});
-		let data = {
-			id_cashier: idCashier,
-			status_payment: payload.status_payment,
-			kontrabonId: payload.kontrabonId,
-			cdvId: payload.id_cash_advance,
-			date_cashier: payload.date_cashier,
-			note: payload.note,
-			total: payload.total,
-			journal_cashier: jurnal,
-		};
-		if (totalDebet === 0 || totalKredit === 0) {
-			toast.warning("Journal total has not been filled in", {
-				position: "top-center",
-				autoClose: 1000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		} else if (totalDebet !== totalKredit) {
-			toast.warning("debits and credits are not balanced", {
-				position: "top-center",
-				autoClose: 1000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		} else if (totalDebet === totalKredit) {
-			try {
-				const response = await AddCashier(data);
-				if (response) {
-					toast.success("Add Cashier Success", {
-						position: "top-center",
-						autoClose: 1000,
-						hideProgressBar: true,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: "colored",
-					});
-					showModal(false, content, true);
-				}
-			} catch (error) {
-				toast.error("Add Cashier Failed", {
+		try {
+			const response = await AddDueDate({valid: data});
+			if (response) {
+				toast.success("Valid Due Payment Success", {
 					position: "top-center",
 					autoClose: 1000,
 					hideProgressBar: true,
@@ -141,8 +87,19 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
+				showModal(false, content, true);
 			}
-		} else {
+		} catch (error) {
+			toast.error("Valid Due Payment Failed", {
+				position: "top-center",
+				autoClose: 1000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
 		}
 		setIsLoading(false);
 	};
@@ -150,7 +107,7 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 	const reSchedulleKontrabon = async (id: string, date: Date) => {
 		setIsLoading(true);
 		try {
-			const response = await ReSchedulleKontrabon(id, {due_date: date});
+			const response = await ReSchedulleKontrabon(id, { due_date: date });
 			if (response) {
 				toast.success("Reschedulle kontrabon Success", {
 					position: "top-center",
@@ -201,7 +158,6 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 							name='kontrabon'
 							render={(arrays) =>
 								values.kontrabon.map((result: any, i: number) => {
-									console.log(result);
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 pt-2'>
@@ -230,9 +186,11 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 														disabled={true}
 														withLabel={true}
 														value={
-															result.purchaseID === null
+															result.termId
 																? `${result.term_of_pay_po_so.poandso.note} ${result.term_of_pay_po_so.limitpay} ${result.term_of_pay_po_so.percent}%`
-																: result.purchase.note
+																: result.purchaseID
+																? result.purchase.note
+																: result.cash_advance.note
 														}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
@@ -262,7 +220,7 @@ export const FormCreateDuePayment = ({ content, showModal }: props) => {
 																onChange={(value: any) => {
 																	setFieldValue(`kontrabon.${i}.date`, value);
 																	reSchedulleKontrabon(result.id, value);
-																	arrays.remove(i) 
+																	arrays.remove(i);
 																}}
 																withLabel={true}
 																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'

@@ -4,7 +4,6 @@ import { Section } from "../../../components";
 import { formatRupiah } from "../../../utils/index";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
-import { PdfKontraBon } from "./pdfKontraBon";
 import moment from "moment";
 import { toast } from "react-toastify";
 
@@ -14,7 +13,7 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
+export const ViewDuePayment = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [position, setPosition] = useState<any>([]);
 
@@ -120,67 +119,6 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 				progress: undefined,
 				theme: "colored",
 			});
-		}
-	};
-
-	const showButtonValid = (data: any) => {
-		if (position === "Manager") {
-			if (data.status_valid) {
-				return (
-					<div>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve()}
-						>
-							<div className='flex px-1 py-1'>
-								<X size={16} className='mr-1' /> Unvalid Manager
-							</div>
-						</button>
-					</div>
-				);
-			} else {
-				return (
-					<div>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => showModalPdf(true)}
-						>
-							<div className='flex px-1 py-1'>
-								<Printer size={16} className='mr-1' /> Print
-							</div>
-						</button>
-						<button
-							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-							onClick={() => approve()}
-						>
-							<div className='flex px-1 py-1'>
-								<Check size={16} className='mr-1' /> Valid Manager
-							</div>
-						</button>
-					</div>
-				);
-			}
-		} else {
-			return (
-				<div>
-					<button
-						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => showModalPdf(true)}
-					>
-						<div className='flex px-1 py-1'>
-							<Printer size={16} className='mr-1' /> Print
-						</div>
-					</button>
-				</div>
-			);
 		}
 	};
 
@@ -307,25 +245,12 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 			}
 		}
 	};
+	console.log(dataSelected)
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			{/* <PdfKontraBon
-				isModal={isModal}
-				data={dataSelected}
-				discount={discount}
-				ppn={ppn}
-				pph={pph}
-				total={total}
-				showModalPdf={showModalPdf}
-			/> */}
 			{dataSelected ? (
 				<>
-					{/* <div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
-						<div className='text-right mr-6'>
-							{showButtonValid(dataSelected)}
-						</div>
-					</div> */}
 					<h1 className='font-bold text-xl'>Kontra Bon</h1>
 					<Section className='grid grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
