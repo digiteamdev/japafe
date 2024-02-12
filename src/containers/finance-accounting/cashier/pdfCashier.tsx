@@ -105,7 +105,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 															{moment(data.date_cashier).format("DD-MMMM-YYYY")}
 														</div>
 													</div>
-													<div className='flex flex-row w-full'>
+													{/* <div className='flex flex-row w-full'>
 														<div className='w-1/4'>Refrence</div>
 														<div className='w-full'>
 															:{" "}
@@ -113,17 +113,12 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 																? data.cash_advance.id_cash_advance
 																: data.kontrabon.id_kontrabon}
 														</div>
-													</div>
+													</div> */}
 													<div className='flex flex-row w-full'>
 														<div className='w-1/4'>Pay To</div>
 														<div className='w-full'>
 															:{" "}
-															{data.kontrabonId === null
-																? data.cash_advance.employee.employee_name
-																: data.kontrabon.term_of_pay_po_so === null
-																? data.kontrabon.purchase.supplier.supplier_name
-																: data.kontrabon.term_of_pay_po_so.poandso
-																		.supplier.supplier_name}
+															{data.pay_to}
 														</div>
 													</div>
 													<div className='flex flex-row w-full'>
@@ -153,7 +148,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 														<div className='w-1/4'>Payment Info</div>
 														<div className='w-full'>
 															:{" "}
-															{data.kontrabonId === null ? `Cash To ${data.cash_advance.employee.employee_name}` : `${data.kontrabon.SupplierBank.bank_name}, ${data.kontrabon.SupplierBank.account_name}, ${data.kontrabon.SupplierBank.rekening}`}
+															{`Cash To ${data.pay_to}`}
 														</div>
 													</div>
 												</Section>

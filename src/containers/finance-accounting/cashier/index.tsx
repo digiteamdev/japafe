@@ -199,7 +199,7 @@ export const Cashier = () => {
 										{res.id_cashier}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.kontrabonId === null ? res.cash_advance.id_cash_advance : res.kontrabon.id_kontrabon}
+										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon.id_kontrabon : '-' }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.note}
@@ -208,7 +208,7 @@ export const Cashier = () => {
 										{formatRupiah(res.total.toString())}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.kontrabonId === null ? res.cash_advance.employee.employee_name : res.kontrabon.purchase === null ? res.kontrabon.term_of_pay_po_so.poandso.supplier.supplier_name : res.kontrabon.purchase.supplier.supplier_name}
+										{res.pay_to}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										<div>

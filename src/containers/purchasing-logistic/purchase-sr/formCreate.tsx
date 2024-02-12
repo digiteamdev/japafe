@@ -243,7 +243,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 									<option value='ppn'>PPN</option>
 									<option value='pph'>PPH</option>
 									<option value='ppn_and_pph'>PPN dan PPH</option>
-									<option value='non_tax'>No Tax</option>
+									<option value='nontax'>No Tax</option>
 								</InputSelect>
 							</div>
 							<div className='w-full'>

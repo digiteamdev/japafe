@@ -24,7 +24,11 @@ interface data {
 	status_payment: string;
 	id_cash_advance: string;
 	kontrabonId: string;
+	account_name: string;
+	bank_name: string;
+	rekening: string;
 	date_cashier: Date;
+	pay_to: string;
 	note: string;
 	total: number;
 	journal_cashier: any;
@@ -32,24 +36,25 @@ interface data {
 
 export const FormCreateCashier = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isDirrect, setIsDirrect] = useState<boolean>(true);
 	const [dataPurchase, setDataPurchase] = useState<any>([]);
 	const [dataCoa, setDataCoa] = useState<any>([]);
 	const [idCashier, setIdCashier] = useState<string>("");
-	const [suplier, setSuplier] = useState<string>("");
 	const [currency, setCurrency] = useState<string>("");
 	const [total, setTotal] = useState<number>(0);
 	const [ppn, setPpn] = useState<number>(0);
 	const [pph, setPph] = useState<number>(0);
 	const [disc, setDisc] = useState<number>(0);
 	const [totalAmount, setTotalAmount] = useState<number>(0);
-	const [bankName, setBankName] = useState<string>("");
-	const [accNumber, setAccNumber] = useState<string>("");
-	const [accName, setAccName] = useState<string>("");
 	const [data, setData] = useState<data>({
 		id_cashier: "",
-		status_payment: "Transfer",
+		status_payment: "Cash",
 		kontrabonId: "",
 		id_cash_advance: "",
+		pay_to: "",
+		account_name: "",
+		bank_name: "",
+		rekening: "",
 		date_cashier: new Date(),
 		note: "",
 		total: 0,
@@ -88,6 +93,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		try {
 			const response = await GetCashier();
 			if (response.data) {
+				data.push({
+					label: "Dirrect",
+					value: [],
+				});
 				response.data.result.map((res: any) => {
 					if (res.id_kontrabon) {
 						data.push({
@@ -189,8 +198,13 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			date_cashier: payload.date_cashier,
 			note: payload.note,
 			total: payload.total,
+			pay_to: payload.pay_to,
+			account_name: payload.account_name,
+			bank_name: payload.bank_name,
+			rekening: payload.rekening,
 			journal_cashier: jurnal,
 		};
+
 		if (totalDebet === 0 || totalKredit === 0) {
 			toast.warning("Journal total has not been filled in", {
 				position: "top-center",
@@ -288,147 +302,169 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
-										setSuplier(
-											e.value.id_kontrabon === undefined
-												? e.value.employee.employee_name
-												: e.value.term_of_pay_po_so
-												? e.value.term_of_pay_po_so.poandso.supplier
-														.supplier_name
-												: e.value.purchase.supplier.supplier_name
-										);
-										setCurrency(
-											e.value.id_kontrabon === undefined
-												? "IDR"
-												: e.value.term_of_pay_po_so
-												? e.value.term_of_pay_po_so.poandso.currency
-												: e.value.purchase.currency
-										);
-										setTotal(
-											e.value.id_kontrabon === undefined
-												? e.value.total
-												: e.value.term_of_pay_po_so
-												? e.value.term_of_pay_po_so.price
-												: totalPaid(e.value.purchase)
-										);
-										setTotalAmount(
-											e.value.id_kontrabon === undefined
-												? e.value.total
-												: e.value.grandtotal
-										);
-										setBankName(
-											e.value.id_kontrabon === undefined
-												? ""
-												: e.value.SupplierBank.bank_name
-										);
-										setAccName(
-											e.value.id_kontrabon === undefined
-												? ""
-												: e.value.SupplierBank.account_name
-										);
-										setAccNumber(
-											e.value.id_kontrabon === undefined
-												? ""
-												: e.value.SupplierBank.rekening
-										);
-										setFieldValue(
-											"note",
-											e.value.id_kontrabon === undefined
-												? e.value.note
-												: e.value.term_of_pay_po_so
-												? `${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}`
-												: `${e.value.purchase.note}`
-										);
-										setFieldValue(
-											"kontrabonId",
-											e.value.id_kontrabon === undefined ? null : e.value.id
-										);
-										setFieldValue(
-											"id_cash_advance",
-											e.value.id_kontrabon === undefined ? e.value.id : null
-										);
-										setFieldValue(
-											"total",
-											e.value.id_kontrabon === undefined
-												? e.value.total
-												: e.value.grandtotal
-										);
-										setFieldValue(
-											"status_payment", "Transfer"
-										);
-										if (e.value.id_cash_advance) {
+										if (e.label === "Dirrect") {
+											setCurrency("IDR");
+											setTotal(0);
+											setTotalAmount(0);
+											setFieldValue("pay_to", "");
+											setFieldValue("account_name", "");
+											setFieldValue("bank_name", "");
+											setFieldValue("rekening", "");
+											setFieldValue("note", "");
+											setFieldValue("kontrabonId", null);
+											setFieldValue("id_cash_advance", null);
+											setFieldValue("total", 0);
+											setFieldValue("status_payment", "cash");
 											setDisc(0);
 											setPpn(0);
 											setPph(0);
-											setFieldValue(
-												"status_payment", "Cash"
-											);
-										} else if (e.value.term_of_pay_po_so) {
-											discAmount(e.value.term_of_pay_po_so.poandso);
-											if (
-												e.value.term_of_pay_po_so.tax_invoice &&
-												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
-											) {
-												taxAmount(
-													totalPaid(e.value.term_of_pay_po_so.poandso),
-													e.value.term_of_pay_po_so.poandso.supplier.ppn,
-													"ppn"
-												);
-											} else if (
-												e.value.term_of_pay_po_so.tax_invoice &&
-												e.value.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
-											) {
-												taxAmount(
-													totalPaid(e.value.term_of_pay_po_so.poandso),
-													e.value.term_of_pay_po_so.poandso.supplier.pph,
-													"pph"
-												);
-											} else if (
-												e.value.term_of_pay_po_so.tax_invoice &&
-												e.value.term_of_pay_po_so.poandso.taxPsrDmr ===
-													"ppn_and_pph"
-											) {
-												taxAmount(
-													totalPaid(e.value.term_of_pay_po_so.poandso),
-													e.value.term_of_pay_po_so.poandso.supplier.ppn,
-													"ppn"
-												);
-												taxAmount(
-													totalPaid(e.value.term_of_pay_po_so.poandso),
-													e.value.term_of_pay_po_so.poandso.supplier.pph,
-													"pph"
-												);
-											} else {
-												setPpn(0);
-												setPph(0);
-											}
+											setIsDirrect(false);
 										} else {
-											discAmount(e.value.purchase);
-											if (e.value.purchase.taxPsrDmr === "ppn") {
-												taxAmount(
-													totalPaid(e.value.purchase),
-													e.value.purchase.supplier.ppn,
-													"ppn"
-												);
-											} else if (e.value.purchase.taxPsrDmr === "pph") {
-												taxAmount(
-													totalPaid(e.value.purchase),
-													e.value.purchase.supplier.pph,
-													"pph"
-												);
-											} else if (e.value.purchase.taxPsrDmr === "ppn_and_pph") {
-												taxAmount(
-													totalPaid(e.value.purchase),
-													e.value.purchase.supplier.ppn,
-													"ppn"
-												);
-												taxAmount(
-													totalPaid(e.value.purchase),
-													e.value.purchase.supplier.ppn,
-													"pph"
-												);
-											} else {
+											setIsDirrect(true);
+											setFieldValue(
+												"pay_to",
+												e.value.id_kontrabon === undefined
+													? e.value.employee.employee_name
+													: e.value.term_of_pay_po_so
+													? e.value.term_of_pay_po_so.poandso.supplier
+															.supplier_name
+													: e.value.purchase.supplier.supplier_name
+											);
+											setCurrency(
+												e.value.id_kontrabon === undefined
+													? "IDR"
+													: e.value.term_of_pay_po_so
+													? e.value.term_of_pay_po_so.poandso.currency
+													: e.value.purchase.currency
+											);
+											setTotal(
+												e.value.id_kontrabon === undefined
+													? e.value.grand_tot
+													: e.value.term_of_pay_po_so
+													? e.value.term_of_pay_po_so.price
+													: totalPaid(e.value.purchase)
+											);
+											setTotalAmount(
+												e.value.id_kontrabon === undefined
+													? e.value.grand_tot
+													: e.value.grandtotal
+											);
+											setFieldValue(
+												"account_name",
+												e.value.id_kontrabon === undefined
+													? ""
+													: e.value.SupplierBank.account_name
+											);
+											setFieldValue(
+												"bank_name",
+												e.value.id_kontrabon === undefined
+													? ""
+													: e.value.SupplierBank.bank_name
+											);
+											setFieldValue(
+												"rekening",
+												e.value.id_kontrabon === undefined
+													? ""
+													: e.value.SupplierBank.rekening
+											);
+											setFieldValue(
+												"note",
+												e.value.id_kontrabon === undefined
+													? e.value.note
+													: e.value.term_of_pay_po_so
+													? `${e.value.term_of_pay_po_so.limitpay}, ${e.value.term_of_pay_po_so.poandso.note}`
+													: `${e.value.purchase.note}`
+											);
+											setFieldValue(
+												"kontrabonId",
+												e.value.id_kontrabon === undefined ? null : e.value.id
+											);
+											setFieldValue(
+												"id_cash_advance",
+												e.value.id_kontrabon === undefined ? e.value.id : null
+											);
+											setFieldValue(
+												"total",
+												e.value.id_kontrabon === undefined
+													? e.value.grand_tot
+													: e.value.grandtotal
+											);
+											setFieldValue("status_payment", "Transfer");
+											if (e.value.id_cash_advance) {
+												setDisc(0);
 												setPpn(0);
 												setPph(0);
+												setFieldValue("status_payment", "Cash");
+											} else if (e.value.term_of_pay_po_so) {
+												discAmount(e.value.term_of_pay_po_so.poandso);
+												if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.ppn,
+														"ppn"
+													);
+												} else if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.pph,
+														"pph"
+													);
+												} else if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr ===
+														"ppn_and_pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.ppn,
+														"ppn"
+													);
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.pph,
+														"pph"
+													);
+												} else {
+													setPpn(0);
+													setPph(0);
+												}
+											} else {
+												discAmount(e.value.purchase);
+												if (e.value.purchase.taxPsrDmr === "ppn") {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"ppn"
+													);
+												} else if (e.value.purchase.taxPsrDmr === "pph") {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.pph,
+														"pph"
+													);
+												} else if (
+													e.value.purchase.taxPsrDmr === "ppn_and_pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"ppn"
+													);
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"pph"
+													);
+												} else {
+													setPpn(0);
+													setPph(0);
+												}
 											}
 										}
 									}}
@@ -444,10 +480,13 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Pay To'
 									label='Pay To'
 									type='text'
+									onChange={(e: any) => {
+										setFieldValue("pay_to", e.target.value);
+									}}
 									required={true}
-									disabled={true}
+									disabled={isDirrect}
 									withLabel={true}
-									value={suplier}
+									value={values.pay_to}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -475,7 +514,21 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									label='Total Pay'
 									type='text'
 									required={true}
-									disabled={true}
+									pattern='\d*'
+									onChange={(e: any) => {
+										let totals: number = 0;
+										if (e.target.value !== "") {
+											totals = parseInt(e.target.value.replace(/\./g, ""));
+											setTotal(totals);
+											setTotalAmount((totals + ppn + pph) - disc);
+											setFieldValue("total", (totals + ppn + pph) - disc);
+										} else {
+											setTotal(0);
+											setTotalAmount((0 + ppn + pph) - disc);
+											setFieldValue("total", (0 + ppn + pph) - disc);
+										}
+									}}
+									disabled={isDirrect}
 									withLabel={true}
 									value={formatRupiah(total.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -488,8 +541,22 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='PPN'
 									label='PPN'
 									type='text'
+									pattern='\d*'
+									onChange={(e: any) => {
+										let ppns: number = 0;
+										if (e.target.value !== "") {
+											ppns = parseInt(e.target.value.replace(/\./g, ""));
+											setPpn(ppns);
+											setTotalAmount((total + ppns + pph) - disc);
+											setFieldValue("total", (total + ppns + pph) - disc);
+										} else {
+											setPpn(0);
+											setTotalAmount((total + 0 + pph) - disc);
+											setFieldValue("total", (total + 0 + pph) - disc);
+										}
+									}}
 									required={true}
-									disabled={true}
+									disabled={isDirrect}
 									withLabel={true}
 									value={formatRupiah(ppn.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -502,8 +569,22 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='PPH'
 									label='PPH'
 									type='text'
+									pattern='\d*'
+									onChange={(e: any) => {
+										let pphs: number = 0;
+										if (e.target.value !== "") {
+											pphs = parseInt(e.target.value.replace(/\./g, ""));
+											setPph(pphs);
+											setTotalAmount((total + ppn + pphs) - disc);
+											setFieldValue("total", (total + ppn + pphs) - disc);
+										} else {
+											setPph(0);
+											setTotalAmount((total + ppn + 0) - disc);
+											setFieldValue("total", (total + ppn + 0) - disc);
+										}
+									}}
 									required={true}
-									disabled={true}
+									disabled={isDirrect}
 									withLabel={true}
 									value={formatRupiah(pph.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -516,8 +597,22 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Discount'
 									label='Discount'
 									type='text'
+									pattern='\d*'
+									onChange={(e: any) => {
+										let discs: number = 0;
+										if (e.target.value !== "") {
+											discs = parseInt(e.target.value.replace(/\./g, ""));
+											setDisc(discs);
+											setTotalAmount((total + ppn + pph) - discs);
+											setFieldValue("total", (total + ppn + pph) - discs);
+										} else {
+											setDisc(0);
+											setTotalAmount(total + ppn + pph - 0);
+											setFieldValue("total", (total + ppn + pph) - 0);
+										}
+									}}
 									required={true}
-									disabled={true}
+									disabled={isDirrect}
 									withLabel={true}
 									value={formatRupiah(disc.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -547,7 +642,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									label='Pay With'
 									type='text'
 									value={values.status_payment}
-									onChange={handleChange}
+									onChange={(e: any) => {
+										setFieldValue("status_payment", e.target.value);
+										setFieldValue("account_name", "");
+										setFieldValue("bank_name", "")
+										setFieldValue("rekening","")
+									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -571,50 +671,52 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2 pb-2 border-b border-b-gray-500 '>
-							<div className='w-full'>
-								<Input
-									id='bank_name'
-									name='bank_name'
-									placeholder='Bank Name'
-									label='Bank Name'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={bankName}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='acc_name'
-									name='acc_name'
-									placeholder='Account Name'
-									label='Account Name'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={accName}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='acc_no'
-									name='acc_no'
-									placeholder='Account Number'
-									label='Account Number'
-									type='text'
-									required={true}
-									disabled={true}
-									withLabel={true}
-									value={accNumber}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						{values.status_payment === "Transfer" ? (
+							<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2 pb-2 border-b border-b-gray-500 '>
+								<div className='w-full'>
+									<Input
+										id='bank_name'
+										name='bank_name'
+										placeholder='Bank Name'
+										label='Bank Name'
+										type='text'
+										required={true}
+										onChange={handleChange}
+										withLabel={true}
+										value={values.bank_name}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='account_name'
+										name='account_name'
+										placeholder='Account Name'
+										label='Account Name'
+										type='text'
+										required={true}
+										onChange={handleChange}
+										withLabel={true}
+										value={values.account_name}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='rekening'
+										name='rekening'
+										placeholder='Account Number'
+										label='Account Number'
+										type='text'
+										required={true}
+										onChange={handleChange}
+										withLabel={true}
+										value={values.rekening}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+						) : null}
 						<FieldArray
 							name='journal_cashier'
 							render={(arrays) =>

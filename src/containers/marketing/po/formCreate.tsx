@@ -243,7 +243,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		if (htmlTotal !== null && htmlVat !== null) {
 			const Total: any = parseInt(htmlTotal.value) + parseInt(htmlVat.value);
 			return Total.toString();
-			// return formatRupiah(Total.toString())
+		}else{
+			const Total: any = htmlTotal === null ? 0 : parseInt(htmlTotal.value);
+			return Total.toString();
 		}
 	};
 

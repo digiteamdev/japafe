@@ -346,7 +346,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											{moment(dataSelected.date_cashier).format("DD-MMMM-YYYY")}
 										</td>
 									</tr>
-									<tr>
+									{/* <tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Purchase Type / Id Purchase
 										</td>
@@ -367,19 +367,13 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 													: dataSelected.kontrabon.purchase.idPurchase
 											}`}
 										</td>
-									</tr>
+									</tr> */}
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Pay To
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabonId === null
-												? dataSelected.cash_advance.employee.employee_name
-												: dataSelected.kontrabon.purchase === null
-												? dataSelected.kontrabon.term_of_pay_po_so.poandso
-														.supplier.supplier_name
-												: dataSelected.kontrabon.purchase.supplier
-														.supplier_name}
+											{dataSelected.pay_to}
 										</td>
 									</tr>
 									<tr>
@@ -446,7 +440,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Transfer Info
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabonId === null ? `Cash To ${dataSelected.cash_advance.employee.employee_name}` : `${dataSelected.kontrabon.SupplierBank.bank_name}, ${dataSelected.kontrabon.SupplierBank.rekening}, ${dataSelected.kontrabon.SupplierBank.account_name}`}
+											{`Cash To ${dataSelected.pay_to}`}
 										</td>
 									</tr>
 									<tr>
