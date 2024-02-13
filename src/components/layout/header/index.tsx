@@ -28,7 +28,7 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 	}, [])
 
 	return (
-		<nav className={`${ isSidebar ? 'md:pl-80' : 'md:pl-3' } fixed z-18 w-full bg-blue-100 transition-all duration-500 ease-in-out`}>
+		<nav className={`${ isSidebar ? 'md:pl-80' : 'md:pl-3' } fixed z-10 w-full bg-blue-100 transition-all duration-500 ease-in-out`}>
 			<div className='py-3 px-3 lg:px-5 lg:pl-3'>
 				<div className='flex justify-between items-center'>
 					<div className='flex justify-start items-center w-full'>

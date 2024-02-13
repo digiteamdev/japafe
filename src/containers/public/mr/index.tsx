@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,7 +7,7 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateMr } from "./formCreate";
@@ -20,7 +20,6 @@ import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 
 export const Mr = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,14 +29,14 @@ export const Mr = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "MR No" },
-        { name: "MR Date" },
+		{ name: "MR Date" },
 		{ name: "Departement" },
-        { name: "User" },
-        { name: "Action" }
+		{ name: "User" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
@@ -63,14 +62,14 @@ export const Mr = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -96,7 +95,7 @@ export const Mr = () => {
 	const deleteMR = async (id: string) => {
 		try {
 			const response = await DeleteMR(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -124,12 +123,61 @@ export const Mr = () => {
 		setIsModal(false);
 	};
 
+	const bgMr = (status: string) => {
+		switch (status) {
+			case "Request":
+				return "hover:bg-gray-200";
+			case "Approval":
+				return "bg-yellow-500 hover:bg-yellow-200";
+			case "Purchase":
+				return "bg-orange-500 hover:bg-orange-200";
+			case "Receive":
+				return "bg-blue-500 hover:bg-blue-200";
+			case "Finish":
+				return "bg-green-500 hover:bg-green-200";
+			case "Reject":
+				return "bg-red-500 hover:bg-red-200";
+			default:
+				return "hover:bg-gray-200";
+		}
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
 				title='Material Request'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
+				informasi={
+					<div className='absolute z-0 right-2 mt-3'>
+						<div className='grid grid-cols-3 gap-2'>
+							<div className='flex'>
+								<div className='bg-white border border-black w-4 h-4 mr-2'></div>
+								<div className='text-sm'>Request</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-yellow-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Approval</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-orange-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Purchase</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-blue-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Receive</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-green-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Finish</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-red-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Reject</div>
+							</div>
+						</div>
+					</div>
+				}
 			/>
 			<Content
 				title='Material Request'
@@ -176,13 +224,23 @@ export const Mr = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-md ${bgMr(
+										res.statusMr
+									)}`}
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_mr }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_mr).format('DD-MM-YYYY') }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.sub_depart.name }</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.no_mr}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{moment(res.date_mr).format("DD-MM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.user.employee.sub_depart.name}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.user.employee.employee_name}
+									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
@@ -194,19 +252,19 @@ export const Mr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{
-												res.status_spv !== 'valid' || res.status_manager !== 'valid' ? (
-													<>
-														<Button
-															className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-															onClick={() => {
-																setDataSelected(res);
-																showModal(true,'edit', false);
-															}}
-														>
-															<Edit color='white' />
-														</Button>
-														{/* <Button
+											{res.status_spv !== "valid" ||
+											res.status_manager !== "valid" ? (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "edit", false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+													{/* <Button
 															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 															onClick={() => {
 																setDataSelected(res);
@@ -215,9 +273,8 @@ export const Mr = () => {
 														>
 															<Trash2 color='white' />
 														</Button> */}
-													</>
-												) : null
-											}
+												</>
+											) : null}
 										</div>
 									</td>
 								</tr>
@@ -225,20 +282,18 @@ export const Mr = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getMr(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getMr(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -256,11 +311,19 @@ export const Mr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewMR dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewMR
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreateMr content={modalContent} showModal={showModal} />
+						<FormCreateMr content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditMr
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

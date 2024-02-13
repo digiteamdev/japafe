@@ -124,12 +124,61 @@ export const Sr = () => {
 		setIsModal(false);
 	};
 
+	const bgSr = (status: string) => {
+		switch (status) {
+			case "Request":
+				return "hover:bg-gray-200";
+			case "Approval":
+				return "bg-yellow-500 hover:bg-yellow-200";
+			case "Purchase":
+				return "bg-orange-500 hover:bg-orange-200";
+			case "Receive":
+				return "bg-blue-500 hover:bg-blue-200";
+			case "Finish":
+				return "bg-green-500 hover:bg-green-200";
+			case "Reject":
+				return "bg-red-500 hover:bg-red-200";
+			default:
+				return "hover:bg-gray-200";
+		}
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
 				title='Service Request'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
+				informasi={
+					<div className='absolute z-0 right-2 mt-3'>
+						<div className='grid grid-cols-3 gap-2'>
+							<div className='flex'>
+								<div className='bg-white border border-black w-4 h-4 mr-2'></div>
+								<div className='text-sm'>Request</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-yellow-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Approval</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-orange-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Purchase</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-blue-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Receive</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-green-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Finish</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-red-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Reject</div>
+							</div>
+						</div>
+					</div>
+				}
 			/>
 			<Content
 				title='Service Request'
@@ -176,7 +225,7 @@ export const Sr = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className={`border-b transition duration-300 ease-in-out text-md ${bgSr(res.statusSr)}`}
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.no_sr }</td>
