@@ -58,21 +58,21 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			const response = await GetAllMRPo("PO");
 			if (response) {
 				let detail: any = [];
-				response.data.result.map((res: any, i: number) => {
+				response.data.result.map((res: any) => {
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
 						user: res.mr.user.employee.employee_name,
 						supId: res.supId,
 						taxpr: res.taxpr,
-						akunId: res.akunId,
+						job_no: res.mr.job_no,
 						disc: res.disc,
 						currency: "IDR",
 						total: res.Material_Stock.harga * res.qtyAppr,
 						material: res.Material_Stock.spesifikasi,
 						qty: res.qtyAppr,
 						note: res.note,
-						price: res.job_no,
+						price: res.price,
 					});
 				});
 				setData({
@@ -134,7 +134,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 				id: res.id,
 				supId: res.supId,
 				taxpr: res.taxpr,
-				akunId: res.akunId,
 				currency: res.currency,
 				qtyAppr: parseInt(res.qty),
 				price: parseInt(res.price),
@@ -284,29 +283,20 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-												{/* <div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.taxpr`}
-																		name={`detailMr.${i}.taxpr`}
-																		placeholder='Tax'
-																		label='Tax'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.taxpr`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option defaultValue='no data' selected>
-																			Choose Type
-																		</option>
-																		<option value='ppn'>PPN</option>
-																		<option value='noneppn'>Non PPN</option>
-																	</InputSelect>
-																</div> */}
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.job_no`}
+														name={`detailMr.${i}.job_no`}
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={result.job_no}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
 												<div className='w-full'>
 													<InputSelect
 														id={`detailMr.${i}.supId`}
@@ -337,42 +327,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																		selected={res.id === result.supId}
 																	>
 																		{res.supplier_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`detailMr.${i}.akunId`}
-														name={`detailMr.${i}.akunId`}
-														placeholder='Akun'
-														label='Akun'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailMr.${i}.akunId`,
-																e.target.value
-															);
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Akun
-														</option>
-														{listCoa.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listCoa.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		// selected={res.id === result.material}
-																	>
-																		{res.coa_name}
 																	</option>
 																);
 															})
@@ -559,314 +513,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													)}
 												</div>
 											</Section>
-											{/* <Disclosure defaultOpen>
-												{({ open }) => (
-													<div>
-														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-															<h4 className='text-lg font-bold'>
-																No MR : {result.job_no}
-															</h4>
-															<h4 className='text-lg font-bold'>
-																{open ? <ChevronDown /> : <ChevronUp />}
-															</h4>
-														</Disclosure.Button>
-														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.no_mr`}
-																		name={`detailMr.${i}.no_mr`}
-																		placeholder='No MR'
-																		label='No MR'
-																		type='text'
-																		value={result.no_mr}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.taxpr`}
-																		name={`detailMr.${i}.taxpr`}
-																		placeholder='Tax'
-																		label='Tax'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.taxpr`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option defaultValue='no data' selected>
-																			Choose Type
-																		</option>
-																		<option value='ppn'>PPN</option>
-																		<option value='noneppn'>Non PPN</option>
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.supId`}
-																		name={`detailMr.${i}.supId`}
-																		placeholder='Suplier'
-																		label='Suplier'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.supId`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Suplier
-																		</option>
-																		{listSupplier.length === 0 ? (
-																			<option value='no data'>No data</option>
-																		) : (
-																			listSupplier.map(
-																				(res: any, i: number) => {
-																					return (
-																						<option
-																							value={res.id}
-																							key={i}
-																							selected={res.id === result.supId}
-																						>
-																							{res.supplier_name}
-																						</option>
-																					);
-																				}
-																			)
-																		)}
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.akunId`}
-																		name={`detailMr.${i}.akunId`}
-																		placeholder='Akun'
-																		label='Akun'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.akunId`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Akun
-																		</option>
-																		{listCoa.length === 0 ? (
-																			<option value='no data'>No data</option>
-																		) : (
-																			listCoa.map((res: any, i: number) => {
-																				return (
-																					<option
-																						value={res.id}
-																						key={i}
-																						// selected={res.id === result.material}
-																					>
-																						{res.coa_name}
-																					</option>
-																				);
-																			})
-																		)}
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.material`}
-																		name={`detailMr.${i}.material`}
-																		placeholder='Material Name'
-																		label='Material Name'
-																		type='text'
-																		value={result.material}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.qty`}
-																		name={`detailMr.${i}.qty`}
-																		placeholder='Qty'
-																		label='Qty'
-																		type='number'
-																		value={result.qty}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					result.price,
-																					e.target.value,
-																					result.disc
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.qty`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-															</Section>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.currency`}
-																		name={`detailMr.${i}.currency`}
-																		placeholder='Currency'
-																		label='Currency'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.Currency`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='IDR' selected>
-																			IDR
-																		</option>
-																		<option value='EUR'>EUR</option>
-																		<option value='SGD'>SGD</option>
-																		<option value='USD'>USD</option>
-																		<option value='YEN'>YEN</option>
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.note`}
-																		name={`detailMr.${i}.note`}
-																		placeholder='Note'
-																		label='Note'
-																		type='text'
-																		value={result.note}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.price`}
-																		name={`detailMr.${i}.price`}
-																		placeholder='Price'
-																		label='Price'
-																		type='number'
-																		value={result.price}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					e.target.value,
-																					result.qty,
-																					result.disc
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.price`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.disc`}
-																		name={`detailMr.${i}.disc`}
-																		placeholder='Discount'
-																		label='Discount'
-																		type='number'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.total`,
-																				totalHarga(
-																					result.price,
-																					result.qty,
-																					e.target.value
-																				)
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.disc`,
-																				e.target.value
-																			);
-																		}}
-																		value={result.disc}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.total`}
-																		name={`detailMr.${i}.total`}
-																		placeholder='Total Price'
-																		label='Total Price'
-																		type='number'
-																		value={result.total}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.user`}
-																		name={`detailMr.${i}.user`}
-																		placeholder='Request By'
-																		label='Request By'
-																		type='text'
-																		value={result.user}
-																		disabled={true}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
-																</div>
-															</Section>
-															<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500'>
-																<div className='w-full'>
-																	{values.detailMr.length === 1 ? null : (
-																		<a
-																			className='inline-flex text-red-500 cursor-pointer mt-2'
-																			onClick={() => {
-																				arrayMr.remove(i);
-																			}}
-																		>
-																			<Trash2 size={18} className='mr-1 mt-1' />{" "}
-																			Remove Material Request
-																		</a>
-																	)}
-																</div>
-															</Section>
-														</Disclosure.Panel>
-													</div>
-												)}
-											</Disclosure> */}
 										</div>
 									);
 								})

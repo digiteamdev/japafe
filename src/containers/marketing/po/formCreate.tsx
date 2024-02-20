@@ -5,12 +5,14 @@ import {
 	InputSelect,
 	InputDate,
 	InputSelectSearch,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { poSchema } from "../../../schema/marketing/po/PoSchema";
 import { AddPo, GetAllQuotation } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -23,22 +25,14 @@ interface data {
 	po_num_auto: string;
 	quo_id: string;
 	tax: string;
+	upload_doc: any;
 	noted: string;
 	date_of_po: Date | null;
 	date_delivery: Date | null;
 	vat: string;
 	grand_tot: string;
 	total: string;
-	Deskription_CusPo: [
-		{
-			description: string;
-			qty: string;
-			unit: string;
-			price: string;
-			discount: string;
-			total: string;
-		}
-	];
+	Deskription_CusPo: string;
 	term_of_pay: [
 		{
 			limitpay: string;
@@ -51,37 +45,35 @@ interface data {
 
 export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [typeTax, setTypeTax] = useState<string>("");
 	const [tax, setTax] = useState<number>(0);
 	const [taxPPN, setTaxPPN] = useState<number>(0);
 	const [taxPPH, setTaxPPH] = useState<number>(0);
+	const [total, setTotal] = useState<number>(0);
+	const [totalPPN, setTotalPPN] = useState<number>(0);
+	const [totalPPH, setTotalPPH] = useState<number>(0);
 	const [listQuotation, setListQuotation] = useState<any>([]);
+	const [listPriceQuotation, setListPriceQuotation] = useState<any>([]);
 	const [customerName, setCustomerName] = useState<string>("");
 	const [deskription, setDeskription] = useState<string>("");
 	const [equipment, setEquipment] = useState<string>("");
 	const [quoId, setQuoId] = useState<string>("");
 	const [countPart, setCountPart] = useState<string>("");
+	const [poFile, setPoFile] = useState<any>(null);
 	const [idAutoNum, setIdAutoNum] = useState<string>("");
 	const [data, setData] = useState<data>({
 		id_po: "",
 		po_num_auto: "",
 		quo_id: "",
 		tax: "",
+		upload_doc: "",
 		noted: "",
 		vat: "",
 		grand_tot: "",
 		total: "",
 		date_of_po: new Date(),
 		date_delivery: new Date(),
-		Deskription_CusPo: [
-			{
-				description: "",
-				qty: "",
-				unit: "",
-				price: "",
-				discount: "",
-				total: "",
-			},
-		],
+		Deskription_CusPo: "",
 		term_of_pay: [
 			{
 				limitpay: "",
@@ -186,23 +178,27 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			const nameSplit = event.target.name.split("."),
 				index = nameSplit[1],
 				percent = event.target.value,
-				htmlTotal = document.getElementById("grand_tot") as HTMLInputElement,
 				htmlTotalTerm = document.getElementById(
 					`term_of_pay.${index}.price`
 				) as HTMLInputElement,
-				total: any = htmlTotal.value === "" ? 0 : htmlTotal.value,
-				totalTerm: any = (parseInt(total) * percent) / 100;
-			htmlTotalTerm.value = totalTerm.toString();
+				totalTerm: any = (parseInt(grandTotal()) * percent) / 100;
+			htmlTotalTerm.value = formatRupiah(totalTerm.toString());
 		} else if (event.target.name === "tax") {
 			if (event.target.value === "ppn") {
+				setTypeTax("ppn");
 				setTax(taxPPN);
 			} else if (event.target.value === "pph") {
+				setTypeTax("pph");
 				setTax(taxPPH);
 			} else if (event.target.value === "ppn_and_pph") {
+				setTypeTax("ppn_and_pph");
 				setTax(taxPPN + taxPPH);
 			} else {
+				setTypeTax("");
 				setTax(0);
 			}
+		} else if (event.target.name === "upload_doc"){
+			setPoFile(event.target.files[0]);
 		}
 	};
 
@@ -222,30 +218,34 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	};
 
 	const vat = (taxType: string) => {
-		const htmlTotal = document.getElementById("total") as HTMLInputElement;
-		if (htmlTotal !== null) {
-			if (taxType === "ppn") {
-				const jumlahTax = (parseInt(htmlTotal.value) * taxPPN) / 100;
-				return jumlahTax.toString();
-			} else {
-				const jumlahTax = (parseInt(htmlTotal.value) * taxPPH) / 100;
-				return jumlahTax.toString();
-			}
-			// return formatRupiah(jumlahTax.toString())
+		// const htmlTotal = document.getElementById("total") as HTMLInputElement;
+		if (taxType === "ppn") {
+			const jumlahTax = (total * taxPPN) / 100;
+			setTotalPPN(jumlahTax);
+			return jumlahTax.toString();
+		} else if (taxType === "pph") {
+			const jumlahTax = (total * taxPPH) / 100;
+			setTotalPPH(jumlahTax);
+			return jumlahTax.toString();
 		} else {
+			setTotalPPN(0);
+			setTotalPPH(0);
 			return "0";
 		}
 	};
 
 	const grandTotal = () => {
-		const htmlTotal = document.getElementById("total") as HTMLInputElement;
-		const htmlVat = document.getElementById("vat") as HTMLInputElement;
-		if (htmlTotal !== null && htmlVat !== null) {
-			const Total: any = parseInt(htmlTotal.value) + parseInt(htmlVat.value);
-			return Total.toString();
-		}else{
-			const Total: any = htmlTotal === null ? 0 : parseInt(htmlTotal.value);
-			return Total.toString();
+		if (typeTax === "ppn") {
+			const grandtotal: number = total + totalPPN;
+			return grandtotal.toString();
+		} else if (typeTax === "pph") {
+			const grandtotal: number = total + totalPPH;
+			return grandtotal.toString();
+		} else if (typeTax === "ppn_and_pph") {
+			const grandtotal: number = total + totalPPN + totalPPH;
+			return grandtotal.toString();
+		} else {
+			return total.toString();
 		}
 	};
 
@@ -259,35 +259,35 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		const desc: any = [];
 		const term: any = [];
 		let vattotal: string = "0";
-		let descEmpty: boolean = false;
+		// let descEmpty: boolean = false;
 		let termOFPaymentEmpty: boolean = false;
-		payload.Deskription_CusPo.map((res: any, i: number) => {
-			if (res.description === "") {
-				toast.warning("Description not empty", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				descEmpty = true;
-			} else {
-				const htmlTotal = document.getElementById(
-					`Deskription_CusPo.${i}.total`
-				) as HTMLInputElement;
-				desc.push({
-					description: res.description,
-					qty: res.qty,
-					unit: res.unit,
-					price: res.price,
-					discount: res.discount === "" ? 0 : res.discount,
-					total: parseInt(htmlTotal.value),
-				});
-			}
-		});
+		// payload.Deskription_CusPo.map((res: any, i: number) => {
+		// 	if (res.description === "") {
+		// 		toast.warning("Description not empty", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 		descEmpty = true;
+		// 	} else {
+		// 		const htmlTotal = document.getElementById(
+		// 			`Deskription_CusPo.${i}.total`
+		// 		) as HTMLInputElement;
+		// 		desc.push({
+		// 			description: res.description,
+		// 			qty: res.qty,
+		// 			unit: res.unit,
+		// 			price: res.price,
+		// 			discount: res.discount === "" ? 0 : res.discount,
+		// 			total: parseInt(htmlTotal.value),
+		// 		});
+		// 	}
+		// });
 		payload.term_of_pay.map((res: any, i: number) => {
 			if (res.limitpay === "") {
 				toast.warning("Term Of Payment not empty", {
@@ -320,24 +320,37 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		} else if (payload.tax === "ppn_and_pph") {
 			vattotal = (parseInt(vat("ppn")) + parseInt(vat("pph"))).toString();
 		}
-		const dataBody = {
-			id_po: payload.id_po,
-			po_num_auto: idAutoNum,
-			quo_id: quoId,
-			tax: payload.tax,
-			noted: payload.noted,
-			date_of_po: payload.date_of_po,
-			date_delivery: payload.date_delivery,
-			Deskription_CusPo: desc,
-			term_of_pay: term,
-			vat: parseInt(vattotal),
-			grand_tot: parseInt(htmlGrandTotal.value),
-			total: parseInt(htmlTotals.value),
-		};
-
+		// const dataBody = {
+		// 	id_po: payload.id_po,
+		// 	po_num_auto: idAutoNum,
+		// 	quo_id: quoId,
+		// 	tax: payload.tax,
+		// 	noted: payload.noted,
+		// 	date_of_po: payload.date_of_po,
+		// 	date_delivery: payload.date_delivery,
+		// 	Deskription_CusPo: desc,
+		// 	term_of_pay: term,
+		// 	vat: parseInt(vattotal),
+		// 	grand_tot: parseInt(htmlGrandTotal.value),
+		// 	total: parseInt(htmlTotals.value),
+		// };
+		const form = new FormData();
+		
+		form.append("id_po", payload.id_po);
+		form.append("po_num_auto", idAutoNum);
+		form.append("quo_id", quoId);
+		form.append("tax", payload.tax);
+		form.append("noted", payload.noted);
+		form.append("date_of_po", payload.date_of_po);
+		form.append("upload_doc", poFile);
+		form.append("date_delivery", payload.date_delivery);
+		form.append("term_of_pay", JSON.stringify(term));
+		form.append("vat", vattotal);
+		form.append("grand_tot", grandTotal());
+		form.append("total", total.toString());
 		try {
-			if (!termOFPaymentEmpty && !descEmpty) {
-				const response = await AddPo(dataBody);
+			if (!termOFPaymentEmpty ) {
+				const response = await AddPo(form);
 				if (response) {
 					toast.success("Add Customer PO Success", {
 						position: "top-center",
@@ -386,7 +399,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto  h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				validationSchema={poSchema}
@@ -405,40 +418,34 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Customer PO</h1>
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<table className='w-full'>
-									<tr>
-										<td>
-											<Input
-												id='quo_num'
-												name='quo_num'
-												placeholder='Po Number'
-												label='PO Number'
-												type='text'
-												onChange={handleChange}
-												required={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-										</td>
-										<td>
-											<Input
-												id='quo_auto'
-												name='quo_auto'
-												type='text'
-												value={idAutoNum}
-												disabled={true}
-												required={true}
-												withLabel={false}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 mt-6'
-											/>
-										</td>
-									</tr>
-								</table>
+								<Input
+									id='id_po'
+									name='id_po'
+									placeholder='Po Number'
+									label='PO Number'
+									type='text'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='quo_auto'
+									name='quo_auto'
+									placeholder='Po Id'
+									label='PO Id'
+									type='text'
+									value={idAutoNum}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listQuotation}
@@ -447,33 +454,27 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									placeholder='Quotation'
 									label='Quotation'
 									onChange={(e: any) => {
+										let total: number = 0;
 										setCustomerName(e.value.Customer.name);
 										setDeskription(e.value.subject);
-										setEquipment(e.value.eqandpart[0].equipment.nama);
-										setCountPart(e.value.eqandpart.length);
+										// setEquipment(e.value.eqandpart[0].equipment.nama);
+										setListPriceQuotation(e.value.price_quotation);
 										setQuoId(e.value.id);
 										setTaxPPH(e.value.Customer.pph);
 										setTaxPPN(e.value.Customer.ppn);
+										setFieldValue(
+											"Deskription_CusPo",
+											e.value.Quotations_Detail
+										);
+										e.value.price_quotation.map((res: any) => {
+											total = total + res.total_price;
+										});
+										setTotal(total);
 									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
-								{/* <option defaultValue='' selected>
-										Choose Quotation
-									</option>
-									{listQuotation.length === 0 ? (
-										<option value=''>No Data Quotation</option>
-									) : (
-										listQuotation.map((res: any, i: number) => {
-											return (
-												<option value={JSON.stringify(res)} key={i}>
-													{res.quo_auto} - {res.Customer.name}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSe> */}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -490,7 +491,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputSelect
 									id='tax'
@@ -514,69 +515,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									<span className='text-red-500 text-xs'>{errors.tax}</span>
 								) : null}
 							</div>
-							<div className='w-full'>
-								<Input
-									id='noted'
-									name='noted'
-									placeholder='Noted'
-									label='Noted'
-									type='text'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='subject'
-									name='subject'
-									placeholder='Subject'
-									label='Subject'
-									type='text'
-									value={deskription}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='flex w-full'>
-								<table className='w-full'>
-									<tr>
-										<td className='w-[70%]'>
-											<Input
-												id='equipment'
-												name='equipment'
-												placeholder='Equipment'
-												label='Equipment'
-												type='text'
-												value={equipment}
-												disabled={true}
-												required={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block p-2.5 outline-primary-600 w-full mr-1'
-											/>
-										</td>
-										<td className='w-[30%]'>
-											<Input
-												id='part'
-												name='part'
-												placeholder='part'
-												type='text'
-												value={countPart}
-												disabled={true}
-												required={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block p-2.5 outline-primary-600 w-full mt-6'
-											/>
-										</td>
-									</tr>
-								</table>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date'
@@ -610,269 +548,523 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
+							<div className='w-full'>
+								<Input
+									id='upload_doc'
+									name='upload_doc'
+									placeholder='PO File'
+									label='PO File'
+									type='file'
+									accept='image/*, .pdf'
+									onChange={handleChange}
+									required={false}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 						</Section>
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-[-20px]'>
-							<FieldArray
-								name='Deskription_CusPo'
-								render={(arrayDeskription) => (
-									<>
-										{values.Deskription_CusPo.map((res, i) => (
-											<Section
-												className={`grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2`}
-												key={i}
-											>
+						<Section className='grid grid-cols-1 gap-2'>
+							<div className='w-full'>
+								<Input
+									id='subject'
+									name='subject'
+									placeholder='Subject'
+									label='Subject'
+									type='text'
+									value={deskription}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						{/* <Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+							</div>
+							<div className='flex w-full'>
+								<table className='w-full'>
+									<tr>
+										<td className='w-[70%]'>
+											<Input
+												id='equipment'
+												name='equipment'
+												placeholder='Equipment'
+												label='Equipment'
+												type='text'
+												value={equipment}
+												disabled={true}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block p-2.5 outline-primary-600 w-full mr-1'
+											/>
+										</td>
+										<td className='w-[30%]'>
+											<Input
+												id='part'
+												name='part'
+												placeholder='part'
+												type='text'
+												value={countPart}
+												disabled={true}
+												required={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block p-2.5 outline-primary-600 w-full mt-6'
+											/>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</Section> */}
+						{values.Deskription_CusPo === "" ? null : (
+							<>
+								<h1 className='text-xl font-bold mt-2'>Scope Of Work</h1>
+								<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+									<p className='whitespace-pre-line'>
+										{values.Deskription_CusPo}
+									</p>
+									{/* <FieldArray
+										name='Deskription_CusPo'
+										render={(arrayDeskription) => (
+											<>
+												{values.Deskription_CusPo.map((res, i) => {
+													console.log("as",res)
+													return(
+													<Section
+														className={`grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2`}
+														key={i}
+													>
+														<div className='w-full'>
+															<table className='w-full'>
+																<tr>
+																	<td className='w-[20%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.description`}
+																			name={`Deskription_CusPo.${i}.description`}
+																			placeholder='Description'
+																			label='Description'
+																			onChange={handleChange}
+																			required={true}
+																			value={res.description}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[10%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.qty`}
+																			name={`Deskription_CusPo.${i}.qty`}
+																			placeholder='Quantity'
+																			label='Quantity'
+																			type='number'
+																			onChange={handleChange}
+																			required={true}
+																			value={res.qty}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[10%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.unit`}
+																			name={`Deskription_CusPo.${i}.unit`}
+																			placeholder='Unit'
+																			label='Unit'
+																			type='text'
+																			value={res.unit}
+																			onChange={handleChange}
+																			required={true}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[10%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.price`}
+																			name={`Deskription_CusPo.${i}.price`}
+																			placeholder='Price'
+																			label='Price'
+																			type='text'
+																			pattern='\d*'
+																			value={ formatRupiah(res.price.toString())}
+																			onChange={handleChange}
+																			required={true}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[10%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.discount`}
+																			name={`Deskription_CusPo.${i}.discount`}
+																			placeholder='Discount'
+																			label='Discount'
+																			type='text'
+																			pattern='\d*'
+																			onChange={handleChange}
+																			required={true}
+																			value={ formatRupiah(res.discount.toString())}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[25%]'>
+																		<Input
+																			id={`Deskription_CusPo.${i}.total`}
+																			name={`Deskription_CusPo.${i}.total`}
+																			placeholder='Total'
+																			label='total'
+																			type='total'
+																			disabled={true}
+																			value={ formatRupiah(res.total.toString())}
+																			onChange={handleChange}
+																			required={true}
+																			withLabel={i > 0 ? false : true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[15%]'>
+																		<div className='flex w-full'>
+																			{i === values.Deskription_CusPo.length - 1 ? (
+																				<a
+																					className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																					onClick={() =>
+																						arrayDeskription.push({
+																							description: "",
+																							qty: "",
+																							unit: "",
+																							price: "",
+																							discount: "",
+																							total: "",
+																						})
+																					}
+																				>
+																					<Plus size={23} className='mt-1' />
+																					Add
+																				</a>
+																			) : null}
+																			{values.Deskription_CusPo.length !== 1 ? (
+																				<a
+																					className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																					onClick={() => {
+																						arrayDeskription.remove(i);
+																					}}
+																				>
+																					<Trash2 size={22} className='mt-1 mr-1' />
+																					Remove
+																				</a>
+																			) : null}
+																		</div>
+																	</td>
+																</tr>
+															</table>
+														</div>
+													</Section>
+												)})}
 												<div className='w-full'>
 													<table className='w-full'>
 														<tr>
-															<td className='w-[20%]'>
-																<Input
-																	id={`Deskription_CusPo.${i}.description`}
-																	name={`Deskription_CusPo.${i}.description`}
-																	placeholder='Description'
-																	label='Description'
-																	onChange={handleChange}
-																	required={true}
-																	withLabel={i > 0 ? false : true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[10%]'>
-																<Input
-																	id={`Deskription_CusPo.${i}.qty`}
-																	name={`Deskription_CusPo.${i}.qty`}
-																	placeholder='Quantity'
-																	label='Quantity'
-																	type='number'
-																	onChange={handleChange}
-																	required={true}
-																	withLabel={i > 0 ? false : true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[10%]'>
-																<Input
-																	id={`Deskription_CusPo.${i}.unit`}
-																	name={`Deskription_CusPo.${i}.unit`}
-																	placeholder='Unit'
-																	label='Unit'
-																	type='text'
-																	value={res.unit}
-																	onChange={handleChange}
-																	required={true}
-																	withLabel={i > 0 ? false : true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[10%]'>
-																<Input
-																	id={`Deskription_CusPo.${i}.price`}
-																	name={`Deskription_CusPo.${i}.price`}
-																	placeholder='Price'
-																	label='Price'
-																	type='number'
-																	value={res.price}
-																	onChange={handleChange}
-																	required={true}
-																	withLabel={i > 0 ? false : true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[10%]'>
-																<Input
-																	id={`Deskription_CusPo.${i}.discount`}
-																	name={`Deskription_CusPo.${i}.discount`}
-																	placeholder='Discount'
-																	label='Discount'
-																	type='number'
-																	onChange={handleChange}
-																	required={true}
-																	withLabel={i > 0 ? false : true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
+															<td className='w-[50%]'></td>
+															<td className='w-[10%]'>Total</td>
 															<td className='w-[25%]'>
 																<Input
-																	id={`Deskription_CusPo.${i}.total`}
-																	name={`Deskription_CusPo.${i}.total`}
+																	id='total'
+																	name='total'
 																	placeholder='Total'
 																	label='total'
-																	type='total'
-																	disabled={true}
-																	// value={res.total}
-																	onChange={handleChange}
+																	type='text'
+																	value={totalPrice(values.Deskription_CusPo)}
 																	required={true}
-																	withLabel={i > 0 ? false : true}
+																	disabled={true}
+																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																/>
 															</td>
-															<td className='w-[15%]'>
-																<div className='flex w-full'>
-																	{i === values.Deskription_CusPo.length - 1 ? (
-																		<a
-																			className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-																			onClick={() =>
-																				arrayDeskription.push({
-																					description: "",
-																					qty: "",
-																					unit: "",
-																					price: "",
-																					discount: "",
-																					total: "",
-																				})
-																			}
-																		>
-																			<Plus size={23} className='mt-1' />
-																			Add
-																		</a>
-																	) : null}
-																	{values.Deskription_CusPo.length !== 1 ? (
-																		<a
-																			className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-																			onClick={() => {
-																				arrayDeskription.remove(i);
-																			}}
-																		>
-																			<Trash2 size={22} className='mt-1 mr-1' />
-																			Remove
-																		</a>
-																	) : null}
-																</div>
+															<td className='w-[15%]'></td>
+														</tr>
+														{values.tax === "ppn" ? (
+															<tr>
+																<td className='w-[50%]'></td>
+																<td className='w-[10%]'>PPN</td>
+																<td className='w-[25%]'>
+																	<Input
+																		id='vat'
+																		name='vat'
+																		placeholder='Vat'
+																		label='Vat'
+																		type='text'
+																		value={vat("ppn")}
+																		required={true}
+																		disabled={true}
+																		withLabel={false}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</td>
+																<td className='w-[15%]'></td>
+															</tr>
+														) : values.tax === "pph" ? (
+															<tr>
+																<td className='w-[50%]'></td>
+																<td className='w-[10%]'>PPH</td>
+																<td className='w-[25%]'>
+																	<Input
+																		id='vat'
+																		name='vat'
+																		placeholder='Vat'
+																		label='Vat'
+																		type='text'
+																		value={vat("pph")}
+																		required={true}
+																		disabled={true}
+																		withLabel={false}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</td>
+																<td className='w-[15%]'></td>
+															</tr>
+														) : values.tax === "ppn_and_pph" ? (
+															<>
+																<tr>
+																	<td className='w-[50%]'></td>
+																	<td className='w-[10%]'>PPN</td>
+																	<td className='w-[25%]'>
+																		<Input
+																			id='vat'
+																			name='vat'
+																			placeholder='Vat'
+																			label='Vat'
+																			type='text'
+																			value={vat("ppn")}
+																			required={true}
+																			disabled={true}
+																			withLabel={false}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[15%]'></td>
+																</tr>
+																<tr>
+																	<td className='w-[50%]'></td>
+																	<td className='w-[10%]'>PPH</td>
+																	<td className='w-[25%]'>
+																		<Input
+																			id='vat'
+																			name='vat'
+																			placeholder='Vat'
+																			label='Vat'
+																			type='text'
+																			value={vat("pph")}
+																			required={true}
+																			disabled={true}
+																			withLabel={false}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	</td>
+																	<td className='w-[15%]'></td>
+																</tr>
+															</>
+														) : null}
+														<tr>
+															<td className='w-[50%]'></td>
+															<td className='w-[10%]'>Grand Total</td>
+															<td className='w-[25%]'>
+																<Input
+																	id='grand_tot'
+																	name='grand_tot'
+																	placeholder='Grand Total'
+																	label='Grand Total'
+																	type='text'
+																	value={grandTotal()}
+																	required={true}
+																	disabled={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
 															</td>
+															<td className='w-[15%]'></td>
 														</tr>
 													</table>
 												</div>
-											</Section>
-										))}
-										<div className='w-full'>
-											<table className='w-full'>
-												<tr>
-													<td className='w-[50%]'></td>
-													<td className='w-[10%]'>Total</td>
-													<td className='w-[25%]'>
-														<Input
-															id='total'
-															name='total'
-															placeholder='Total'
-															label='total'
-															type='text'
-															value={totalPrice(values.Deskription_CusPo)}
-															required={true}
-															disabled={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</td>
-													<td className='w-[15%]'></td>
-												</tr>
-												{values.tax === "ppn" ? (
-													<tr>
-														<td className='w-[50%]'></td>
-														<td className='w-[10%]'>PPN</td>
-														<td className='w-[25%]'>
-															<Input
-																id='vat'
-																name='vat'
-																placeholder='Vat'
-																label='Vat'
-																type='text'
-																value={vat("ppn")}
-																required={true}
-																disabled={true}
-																withLabel={false}
-																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-															/>
-														</td>
-														<td className='w-[15%]'></td>
-													</tr>
-												) : values.tax === "pph" ? (
-													<tr>
-														<td className='w-[50%]'></td>
-														<td className='w-[10%]'>PPH</td>
-														<td className='w-[25%]'>
-															<Input
-																id='vat'
-																name='vat'
-																placeholder='Vat'
-																label='Vat'
-																type='text'
-																value={vat("pph")}
-																required={true}
-																disabled={true}
-																withLabel={false}
-																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-															/>
-														</td>
-														<td className='w-[15%]'></td>
-													</tr>
-												) : values.tax === "ppn_and_pph" ? (
-													<>
-														<tr>
-															<td className='w-[50%]'></td>
-															<td className='w-[10%]'>PPN</td>
-															<td className='w-[25%]'>
-																<Input
-																	id='vat'
-																	name='vat'
-																	placeholder='Vat'
-																	label='Vat'
-																	type='text'
-																	value={vat("ppn")}
-																	required={true}
-																	disabled={true}
-																	withLabel={false}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[15%]'></td>
-														</tr>
-														<tr>
-															<td className='w-[50%]'></td>
-															<td className='w-[10%]'>PPH</td>
-															<td className='w-[25%]'>
-																<Input
-																	id='vat'
-																	name='vat'
-																	placeholder='Vat'
-																	label='Vat'
-																	type='text'
-																	value={vat("pph")}
-																	required={true}
-																	disabled={true}
-																	withLabel={false}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</td>
-															<td className='w-[15%]'></td>
-														</tr>
-													</>
-												) : null}
-												<tr>
-													<td className='w-[50%]'></td>
-													<td className='w-[10%]'>Grand Total</td>
-													<td className='w-[25%]'>
-														<Input
-															id='grand_tot'
-															name='grand_tot'
-															placeholder='Grand Total'
-															label='Grand Total'
-															type='text'
-															value={grandTotal()}
-															required={true}
-															disabled={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</td>
-													<td className='w-[15%]'></td>
-												</tr>
-											</table>
-										</div>
-									</>
-								)}
-							/>
-						</Section>
+											</>
+										)}
+									/> */}
+								</Section>
+							</>
+						)}
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-[-10px]'>
 							<h1 className='text-xl font-bold mt-3'>Term Of Payment</h1>
+							{listPriceQuotation.map((res: any, i: number) => {
+								return (
+									<div key={i}>
+										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
+											<div className='w-full'>
+												<InputArea
+													id='desc'
+													name='desc'
+													placeholder='Description'
+													label='Description'
+													required={true}
+													value={res.description}
+													row={2}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='qty'
+													name='qty'
+													placeholder='Quantity'
+													label='Quantity'
+													type='text'
+													value={formatRupiah(res.qty.toString())}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='unit'
+													name='unit'
+													placeholder='Unit'
+													label='Unit'
+													type='text'
+													value={res.unit}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='unit_price'
+													name='unit_price'
+													placeholder='Unit Price'
+													label='Unit Price'
+													type='text'
+													value={formatRupiah(res.unit_price.toString())}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='total_price'
+													name='total_price'
+													placeholder='Total Price'
+													label='Total Price'
+													type='text'
+													value={formatRupiah(res.total_price.toString())}
+													disabled={true}
+													required={true}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+										</Section>
+										{values.tax === "ppn" ? (
+											<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+												<div className='col-span-4 text-right'>
+													<p className='mt-4'>PPN</p>
+												</div>
+												<div className='w-full'>
+													<Input
+														id='ppn'
+														name='ppn'
+														placeholder='PPN'
+														type='text'
+														value={vat("ppn")}
+														disabled={true}
+														required={true}
+														withLabel={false}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+										) : values.tax === "pph" ? (
+											<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+												<div className='col-span-4 text-right'>
+													<p className='mt-4'>PPH</p>
+												</div>
+												<div className='w-full'>
+													<Input
+														id='pph'
+														name='pph'
+														placeholder='PPH'
+														type='text'
+														value={vat("pph")}
+														disabled={true}
+														required={true}
+														withLabel={false}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+										) : values.tax === "ppn_and_pph" ? (
+											<>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='col-span-4 text-right'>
+														<p className='mt-4'>PPN</p>
+													</div>
+													<div className='w-full'>
+														<Input
+															id='ppn'
+															name='ppn'
+															placeholder='PPN'
+															type='text'
+															value={vat("ppn")}
+															disabled={true}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='col-span-4 text-right'>
+														<p className='mt-4'>PPH</p>
+													</div>
+													<div className='w-full'>
+														<Input
+															id='pph'
+															name='pph'
+															placeholder='PPH'
+															type='text'
+															value={vat("pph")}
+															disabled={true}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+											</>
+										) : null}
+										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+											<div className='col-span-4 text-right'>
+												<p className='mt-4'>Grand Total</p>
+											</div>
+											<div className='w-full'>
+												<Input
+													id='qty'
+													name='qty'
+													placeholder='Grand Total'
+													type='text'
+													value={formatRupiah(grandTotal())}
+													disabled={true}
+													required={true}
+													withLabel={false}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+												/>
+											</div>
+										</Section>
+									</div>
+								);
+							})}
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (

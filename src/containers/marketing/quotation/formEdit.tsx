@@ -112,8 +112,8 @@ export const FormEditQuotation = ({
 	});
 
 	useEffect(() => {
-		getEquipment();
 		settingData();
+		// getEquipment();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -157,27 +157,27 @@ export const FormEditQuotation = ({
 			});
 		}
 
-		if (dataQuotation.eqandpart.length > 0) {
-			dataQuotation.eqandpart.map((res: any) => {
-				listPart.push({
-					id: res.id,
-					id_quotation: res.id_quotation,
-					id_part: res.id_part,
-					id_equipment: res.id_equipment,
-					qty: res.qty,
-					keterangan: res.keterangan,
-				});
-			});
-		} else {
-			listPart.push({
-				id: "",
-				id_quotation: "",
-				id_part: "",
-				id_equipment: "",
-				qty: "",
-				keterangan: "",
-			});
-		}
+		// if (dataQuotation.eqandpart.length > 0) {
+		// 	dataQuotation.eqandpart.map((res: any) => {
+		// 		listPart.push({
+		// 			id: res.id,
+		// 			id_quotation: res.id_quotation,
+		// 			id_part: res.id_part,
+		// 			id_equipment: res.id_equipment,
+		// 			qty: res.qty,
+		// 			keterangan: res.keterangan,
+		// 		});
+		// 	});
+		// } else {
+		// 	listPart.push({
+		// 		id: "",
+		// 		id_quotation: "",
+		// 		id_part: "",
+		// 		id_equipment: "",
+		// 		qty: "",
+		// 		keterangan: "",
+		// 	});
+		// }
 
 		setDataDetail({
 			Quotations_Detail: listDetail,
@@ -188,39 +188,39 @@ export const FormEditQuotation = ({
 		});
 	};
 
-	const getEquipment = async () => {
-		try {
-			const response = await GetAllEquipment();
-			if (response.data) {
-				let list: any = [];
-				let listEquipment: any = [];
-				response.data.result.map((res: any) => {
-					if (dataQuotation.eqandpart.length > 0) {
-						dataQuotation.eqandpart.map((result: any) => {
-							res.eq_part.map((dataPart: any) => {
-								if (dataPart.id_equipment === result.id_equipment) {
-									list.push(dataPart);
-									listEquipment.push(res);
-									// setEquipmentSelected(res.id);
-								}
-							});
-						});
-					}
-				});
-				setListParts(list);
-				const keys = ["id"];
-				const eq = listEquipment.filter(
-					(
-						(s) => (o: any) =>
-							((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-					)(new Set())
-				);
-				setEquipment(eq);
-			}
-		} catch (error) {
-			setEquipment([]);
-		}
-	};
+	// const getEquipment = async () => {
+	// 	try {
+	// 		const response = await GetAllEquipment();
+	// 		if (response.data) {
+	// 			let list: any = [];
+	// 			let listEquipment: any = [];
+	// 			response.data.result.map((res: any) => {
+	// 				if (dataQuotation.eqandpart.length > 0) {
+	// 					dataQuotation.eqandpart.map((result: any) => {
+	// 						res.eq_part.map((dataPart: any) => {
+	// 							if (dataPart.id_equipment === result.id_equipment) {
+	// 								list.push(dataPart);
+	// 								listEquipment.push(res);
+	// 								// setEquipmentSelected(res.id);
+	// 							}
+	// 						});
+	// 					});
+	// 				}
+	// 			});
+	// 			setListParts(list);
+	// 			const keys = ["id"];
+	// 			const eq = listEquipment.filter(
+	// 				(
+	// 					(s) => (o: any) =>
+	// 						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+	// 				)(new Set())
+	// 			);
+	// 			setEquipment(eq);
+	// 		}
+	// 	} catch (error) {
+	// 		setEquipment([]);
+	// 	}
+	// };
 
 	const showUpload = (id: any) => {
 		const inputan = document.getElementById(id);

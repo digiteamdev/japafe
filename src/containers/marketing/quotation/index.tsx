@@ -182,13 +182,13 @@ export const Quotation = () => {
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{res.quo_num}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{res.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{`+62${res.CustomerContact.phone}`}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.date).format("DD-MMMM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>

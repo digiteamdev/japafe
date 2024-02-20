@@ -178,9 +178,6 @@ export const PdfDpr = ({
 																				<p className='mb-1'>Job no</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
-																				<p className='mb-1'>Akun</p>
-																			</th>
-																			<th className='border-black border-t  border-l text-center mb-1'>
 																				<p className='mb-1'>
 																					Material / Material Spesifikasi
 																				</p>
@@ -217,11 +214,6 @@ export const PdfDpr = ({
 																						<td className='border-black border-t border-l  text-center mb-1'>
 																							<p className='mb-1'>
 																								{result.mr.job_no}
-																							</p>
-																						</td>
-																						<td className='border-black border-t border-l text-center mb-1'>
-																							<p className='mb-1'>
-																								{result.coa.coa_code}
 																							</p>
 																						</td>
 																						<td className='border-black border-t border-l text-center mb-1'>

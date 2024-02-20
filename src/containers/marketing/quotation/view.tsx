@@ -3,6 +3,7 @@ import { Section } from "../../../components";
 import moment from "moment";
 import { PdfQuotation } from "./pdfQuotation";
 import { Printer } from "react-feather";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	dataSelected: any;
@@ -14,9 +15,9 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-	console.log(dataSelected);
+
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfQuotation
 				isModal={isModal}
 				data={dataSelected}
@@ -26,7 +27,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 				<>
 					<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
 						<div>
-							<h1 className='font-bold text-xl'>Work Order Release</h1>
+							<h1 className='font-bold text-xl'>Quotation</h1>
 						</div>
 						<div className='text-right mr-6'>
 							<button
@@ -39,7 +40,6 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							</button>
 						</div>
 					</div>
-					<h1 className='font-bold text-xl'>Quotation</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -118,83 +118,61 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 					<h1 className='font-bold text-xl mt-2'>Scope Of work</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
-							<div className='border border-black text-center'>
-								Item Of Work
-							</div>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 '>
-								<div className='w-full'>
-									{dataSelected.Quotations_Detail.map((res: any, i: number) => (
-										<>
-											<div
-												className='border border-black font-semibold p-1'
-												key={i}
-											>
-												{`1.${i + 1} ${res.item_of_work}`}
-											</div>
-											<div className='w-full'>
-												{res.Child_QuDet.map((child: any, idx: number) => (
-													<div className='border border-black pl-10 p-1' key={idx}>
-														{`1.${i + 1}.${idx + 1} ${child.item_of_work}`}
-													</div>
-												))}
-											</div>
-										</>
-									))}
-								</div>
-							</Section>
+							<p className="whitespace-pre-line">{ dataSelected.Quotations_Detail }</p>
 						</div>
 					</Section>
-					<h1 className='font-bold text-xl mt-2'>Equipment</h1>
-					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+					<h1 className='font-bold text-xl mt-2'>Price And Term Of Payment</h1>
+					<Section className='grid grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
-											Equipment
+										<th className=' pl-2 border border-black text-center font-semibold'>
+											Description
 										</th>
-										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
-											Part
-										</th>
-										<th className='w-[10%] pl-2 border border-black text-center font-semibold'>
+										<th className=' pl-2 border border-black text-center font-semibold'>
 											Quantity
 										</th>
-										<th className='w-[30%] pl-2 border border-black text-center font-semibold'>
-											Description
+										<th className=' pl-2 border border-black text-center font-semibold'>
+											Unit
+										</th>
+										<th className=' pl-2 border border-black text-center font-semibold'>
+											Unit Price
+										</th>
+										<th className=' pl-2 border border-black text-center font-semibold'>
+											Total Price
 										</th>
 									</tr>
 								</thead>
-								{dataSelected.eqandpart.length > 0 ? (
-									dataSelected.eqandpart.map((res: any, i: number) => (
-										<tbody key={i}>
-											<tr>
-												<td className='pl-2 border border-black'>
-													{res.equipment.nama}
-												</td>
-												<td className='pl-2 border border-black'>
-													{res.eq_part.nama_part}
+								<tbody>
+									{dataSelected.price_quotation.map((res: any, i: number) => {
+										return (
+											<tr key={i}>
+												<td className='pl-2 border border-black text-center whitespace-pre'>
+													{res.description}
 												</td>
 												<td className='pl-2 border border-black text-center'>
 													{res.qty}
 												</td>
-												<td className='pl-2 border border-black'>
-													{res.keterangan}
+												<td className='pl-2 border border-black text-center'>
+													{res.unit}
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													{formatRupiah(res.unit_price.toString())}
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													{formatRupiah(res.total_price.toString())}
 												</td>
 											</tr>
-										</tbody>
-									))
-								) : (
-									<tbody>
-										<tr>
-											<td className='w-full pl-2 border border-black'>-</td>
-											<td className='w-full pl-2 border border-black'>-</td>
-											<td className='w-full pl-2 border border-black'>-</td>
-											<td className='w-full pl-2 border border-black'>-</td>
-										</tr>
-									</tbody>
-								)}
+										);
+									})}
+								</tbody>
 							</table>
 						</div>
+					</Section>
+					<Section className="grid grid-cols-1 mt-2">
+						<p>Note Payment : <span className="whitespace-pre">{ dataSelected.note_payment }</span></p>
+						<p>Term Payment : <span className="whitespace-pre">{ dataSelected.term_payment }</span></p>
 					</Section>
 				</>
 			) : null}

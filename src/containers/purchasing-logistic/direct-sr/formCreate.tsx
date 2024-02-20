@@ -77,7 +77,6 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 						user: res.sr.user.employee.employee_name,
 						supId: res.supId,
 						tax: res.tax,
-						akunId: res.akunId,
 						disc: res.disc,
 						currency: "IDR",
 						total: res.total,
@@ -160,7 +159,6 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 				id: res.id,
 				supId: res.supId,
 				taxPsrDmr: res.tax,
-				akunId: res.akunId,
 				currency: res.currency,
 				qtyAppr: parseInt(res.qty),
 				price: parseInt(res.price),
@@ -348,40 +346,18 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 													/>
 												</div>
 												<div className='w-full'>
-													<InputSelect
-														id={`detailMr.${i}.akunId`}
-														name={`detailMr.${i}.akunId`}
-														placeholder='Akun'
-														label='Akun'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailMr.${i}.akunId`,
-																e.target.value
-															);
-														}}
+													<Input
+														id={`detailMr.${i}.job_no`}
+														name={`detailMr.${i}.job_no`}
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={result.no_sr}
+														disabled={true}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Akun
-														</option>
-														{listCoa.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listCoa.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		// selected={res.id === result.material}
-																	>
-																		{res.coa_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
+													/>
 												</div>
 												<div className='w-full'>
 													<Input

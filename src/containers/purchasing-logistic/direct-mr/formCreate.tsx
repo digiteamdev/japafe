@@ -66,13 +66,13 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 				let suplier: any = [];
 				let dataSuplier: any = [];
 				response.data.result.map((res: any) => {
+					console.log(res)
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
 						user: res.mr.user.employee.employee_name,
 						supId: res.supId,
 						taxpr: res.taxpr,
-						akunId: res.akunId,
 						disc: res.disc,
 						currency: "IDR",
 						total: res.Material_Stock.harga * res.qtyAppr,
@@ -154,7 +154,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 				id: res.id,
 				supId: res.supId,
 				taxpr: res.taxpr,
-				akunId: res.akunId,
 				currency: res.currency,
 				qtyAppr: parseInt(res.qty),
 				price: parseInt(res.price),
@@ -338,42 +337,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`detailMr.${i}.akunId`}
-														name={`detailMr.${i}.akunId`}
-														placeholder='Akun'
-														label='Akun'
-														onChange={(e: any) => {
-															setFieldValue(
-																`detailMr.${i}.akunId`,
-																e.target.value
-															);
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Akun
-														</option>
-														{listCoa.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listCoa.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		// selected={res.id === result.material}
-																	>
-																		{res.coa_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
 												</div>
 												<div className='w-full'>
 													<Input

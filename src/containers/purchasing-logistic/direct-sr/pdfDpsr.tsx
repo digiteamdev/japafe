@@ -183,9 +183,6 @@ export const PdfDpsr = ({
 																				<p className='mb-1'>Job no</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
-																				<p className='mb-1'>Akun</p>
-																			</th>
-																			<th className='border-black border-t  border-l text-center mb-1'>
 																				<p className='mb-1'>Description</p>
 																			</th>
 																			<th className='border-black border-t  border-l text-center mb-1'>
@@ -217,11 +214,6 @@ export const PdfDpsr = ({
 																						<td className='border-black border-t border-l  text-center mb-1'>
 																							<p className='mb-1'>
 																								{result.sr.job_no}
-																							</p>
-																						</td>
-																						<td className='border-black border-t border-l text-center mb-1'>
-																							<p className='mb-1'>
-																								{result.coa.coa_code}
 																							</p>
 																						</td>
 																						<td className='border-black border-t border-l text-center mb-1'>

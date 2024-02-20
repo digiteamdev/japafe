@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
 	Section,
 	Input,
-	InputSelect,
 	InputWithIcon,
 	InputSelectSearch,
 	InputArea,
@@ -19,6 +18,7 @@ import { toast } from "react-toastify";
 import { FormCreateEquipment } from "./formCreateEquipment";
 import { FormCreateCustomer } from "./formCreateCustomer";
 import { Plus, Trash2 } from "react-feather";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -36,21 +36,23 @@ interface data {
 	waranti: string;
 	quo_img: string;
 	date: Date;
-	Quotations_Detail: [
-		{
-			item_of_work: string;
-			Child_QuDet: [
-				{
-					item_of_work: string;
-				}
-			];
-		}
-	];
+	note_payment: string;
+	term_payment: string;
+	Quotations_Detail: string;
 	parts: [
 		{
 			id: string;
 			qty: string;
 			keterangan: string;
+		}
+	];
+	price_quotation: [
+		{
+			description: string;
+			qty: number;
+			unit: string;
+			unit_price: number;
+			total_price: number;
 		}
 	];
 }
@@ -65,6 +67,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const [AddressCustomer, setCustomerAddress] = useState<string>("");
 	const [equipment, setEquipment] = useState<any>([]);
 	const [listParts, setListParts] = useState<any>([]);
+	const [datasUnit, setDatasUnit] = useState<any>([]);
 	const [parts, setParts] = useState<any>([]);
 	const [equipmentSelected, setEquipmentSelected] = useState<string>("");
 	const [searchCustomer, setSearchCustomer] = useState<string>("");
@@ -81,21 +84,23 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		waranti: "",
 		quo_img: "",
 		date: new Date(),
-		Quotations_Detail: [
-			{
-				item_of_work: "",
-				Child_QuDet: [
-					{
-						item_of_work: "",
-					},
-				],
-			},
-		],
+		note_payment: "",
+		term_payment: "",
+		Quotations_Detail: "",
 		parts: [
 			{
 				id: "",
 				qty: "",
 				keterangan: "",
+			},
+		],
+		price_quotation: [
+			{
+				description: "",
+				qty: 0,
+				unit: "",
+				unit_price: 0,
+				total_price: 0,
 			},
 		],
 	});
@@ -104,6 +109,29 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		getEquipment();
 		generateIdNum();
 		getCustomer();
+		let data: any = [
+			{
+				label: "each",
+				value: "each",
+			},
+			{
+				label: "set",
+				value: "set",
+			},
+			{
+				label: "lot",
+				value: "lot",
+			},
+			{
+				label: "unit",
+				value: "unit",
+			},
+			{
+				label: "other",
+				value: "other",
+			},
+		];
+		setDatasUnit(data);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -163,52 +191,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const addQuotation = async (payload: any) => {
 		setIsLoading(true);
 		const form = new FormData();
-		// const dataCustomer = JSON.parse(payload.customerId);
-		const eqandpart: any = [];
-		const workScope: any = []
-		let equipmentEmpty: boolean = false;
-		payload.parts.map((res: any) => {
-			if (res.id === "") {
-				toast.warning("Equipment not empty", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				equipmentEmpty = true;
-			} else {
-				listParts.map((eq: any) => {
-					if (eq.id === res.id) {
-						const dataPart = {
-							id_equipment: eq.id_equipment,
-							id_part: res.id,
-							qty: res.qty === "" ? 0 : res.qty,
-							keterangan: res.keterangan,
-						};
-						eqandpart.push(dataPart);
-					}
-				});
-			}
-		});
-		payload.Quotations_Detail.map((res: any) => {
-			let itemWork = res.item_of_work
-			let listChild: any = []
-			res.Child_QuDet.map((child: any) => {
-				if(child.item_of_work !== ""){
-					listChild.push({
-						item_of_work: child.item_of_work
-					})
-				}
-			})
-			workScope.push({
-				item_of_work: itemWork,
-				Child_QuDet: listChild
-			})
-		})
+		
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
 		form.append("customerId", payload.customerId);
@@ -220,25 +203,25 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		form.append("send_by", "Wa");
 		form.append("quo_img", imgQuotation);
 		form.append("date", new Date().toUTCString());
-		form.append("Quotations_Detail", JSON.stringify(workScope));
-		form.append("eqandpart", JSON.stringify(eqandpart));
-		
+		form.append("Quotations_Detail", payload.Quotations_Detail);
+		form.append("price_quotation", JSON.stringify(payload.price_quotation));
+		form.append("note_payment", payload.note_payment);
+		form.append("term_payment", payload.term_payment);
+
 		try {
-			if (!equipmentEmpty) {
-				const response = await AddQuotation(form);
-				if (response) {
-					toast.success("Add Quotation Success", {
-						position: "top-center",
-						autoClose: 5000,
-						hideProgressBar: true,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: "colored",
-					});
-					showModal(false, content, true);
-				}
+			const response = await AddQuotation(form);
+			if (response) {
+				toast.success("Add Quotation Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
 			}
 		} catch (error) {
 			toast.error("Add Quotation Failed", {
@@ -295,7 +278,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{isCreateEquipment ? (
 				<FormCreateEquipment showModal={setIsCreateEquipment} />
 			) : isCreateCustomer ? (
@@ -539,293 +522,194 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 								</Section>
 							</Section>
 							<h1 className='text-xl font-bold mt-3'>Workscope Description</h1>
+							<Section className='grid grid-cols-1'>
+								<div className='w-full'>
+									<InputArea
+										id='Quotations_Detail'
+										name='Quotations_Detail'
+										placeholder='Scope of Work'
+										label='Scope of work'
+										required={true}
+										onChange={handleChange}
+										row={4}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 resize-y'
+									/>
+								</div>
+							</Section>
+							
+							<h1 className='text-xl font-bold mt-3'>
+								Price And Term Of Payment
+							</h1>
 							<FieldArray
-								name='Quotations_Detail'
-								render={(arrayDetails) => (
+								name='price_quotation'
+								render={(arrayPrice) => (
 									<>
-										{values.Quotations_Detail.map((res, i) => (
-											<Section
-												className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
-												key={i}
-											>
-												<div className='w-full col-span-2'>
-													<InputWithIcon
-														id={`Quotations_Detail.${i}.item_of_work`}
-														name={`Quotations_Detail.${i}.item_of_work`}
-														placeholder='Work Scope'
-														label='Work Scope'
-														type='text'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-														icon={`1.${i + 1}`}
-														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
-													/>
-												</div>
-												{/* <div className='w-full'>
-													<Input
-														id={`Quotations_Detail.${i}.volume`}
-														name={`Quotations_Detail.${i}.volume`}
-														placeholder='Volume'
-														label='Volume'
-														onChange={handleChange}
-														type='number'
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div> */}
-												{/* <div className='w-full'>
-													<Input
-														id={`Quotations_Detail.${i}.unit`}
-														name={`Quotations_Detail.${i}.unit`}
-														placeholder='Unit'
-														label='Unit'
-														onChange={handleChange}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div> */}
-												<div className='flex w-full'>
-													{i === values.Quotations_Detail.length - 1 ? (
-														<a
-															className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-															onClick={() =>
-																arrayDetails.push({
-																	item_of_work: "",
-																	Child_QuDet: [
-																		{
-																			item_of_work: "",
-																		},
-																	],
-																})
-															}
-														>
-															<Plus size={23} className='mt-1' />
-															Add
-														</a>
-													) : null}
-													{values.Quotations_Detail.length !== 1 ? (
-														<a
-															className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-															onClick={() => {
-																arrayDetails.remove(i);
+										{values.price_quotation.map((res: any, i: number) => {
+											return (
+												<Section
+													className='grid lg:grid-cols-6 sm:grid-cols-3 gap-2 mt-2'
+													key={i}
+												>
+													<div className='w-full'>
+														<InputArea
+															id={`price_quotation.${i}.description`}
+															name={`price_quotation.${i}.description`}
+															placeholder='Description'
+															label='Description'
+															required={true}
+															onChange={handleChange}
+															row={1}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_quotation.${i}.qty`}
+															name={`price_quotation.${i}.qty`}
+															placeholder='Quantity'
+															label='Quantity'
+															type='text'
+															pattern='\d*'
+															onChange={(e: any) => {
+																let qty: number = 0;
+																qty = parseInt(
+																	e.target.value.replace(/\./g, "")
+																);
+																setFieldValue(`price_quotation.${i}.qty`, qty);
+																setFieldValue(
+																	`price_quotation.${i}.total_price`,
+																	qty * res.unit_price
+																);
 															}}
-														>
-															<Trash2 size={22} className='mt-1 mr-1' />
-															Remove
-														</a>
-													) : null}
-												</div>
-												<div className='w-full col-span-3'>
-													<FieldArray
-														name={`Quotations_Detail.${i}.Child_QuDet`}
-														render={(arrayChild) => (
-															<>
-																{res.Child_QuDet.map(
-																	(detail: any, idx: number) => (
-																		<Section
-																			className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 ml-11'
-																			key={idx}
-																		>
-																			<div className='w-full col-span-2'>
-																				<InputWithIcon
-																					id={`Quotations_Detail.${i}.Child_QuDet.${idx}.item_of_work`}
-																					name={`Quotations_Detail.${i}.Child_QuDet.${idx}.item_of_work`}
-																					placeholder='Work Scope Detail'
-																					label='Work Scope Detail'
-																					type='text'
-																					onChange={handleChange}
-																					required={true}
-																					withLabel={false}
-																					className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-14 outline-primary-600'
-																					icon={`1.${i + 1}.${idx + 1}`}
-																					classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
-																				/>
-																			</div>
-																			<div className='flex w-full'>
-																				{idx === res.Child_QuDet.length - 1 ? (
-																					<a
-																						className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-																						onClick={() =>
-																							arrayChild.push({
-																								item_of_work: "",
-																							})
-																						}
-																					>
-																						<Plus size={23} className='mt-1' />
-																						Detail
-																					</a>
-																				) : null}
-																				{res.Child_QuDet.length !== 1 ? (
-																					<a
-																						className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-																						onClick={() => {
-																							arrayChild.remove(i);
-																						}}
-																					>
-																						<Trash2
-																							size={22}
-																							className='mt-1 mr-1'
-																						/>
-																						Remove
-																					</a>
-																				) : null}
-																			</div>
-																		</Section>
-																	)
-																)}
-															</>
-														)}
-													/>
-												</div>
-											</Section>
-										))}
+															value={formatRupiah(res.qty.toString())}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<InputSelectSearch
+															datas={datasUnit}
+															id={`price_quotation.${i}.unit`}
+															name={`price_quotation.${i}.unit`}
+															placeholder='Unit'
+															label='Unit'
+															onChange={(input: any) => {
+																setFieldValue(
+																	`price_quotation.${i}.unit`,
+																	input.value
+																);
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_quotation.${i}.unit_price`}
+															name={`price_quotation.${i}.unit_price`}
+															placeholder='Unit Price'
+															label='Unit Price'
+															type='text'
+															pattern='\d*'
+															onChange={(e: any) => {
+																let unit_price: number = 0;
+																unit_price = parseInt(
+																	e.target.value.replace(/\./g, "")
+																);
+																setFieldValue(
+																	`price_quotation.${i}.unit_price`,
+																	unit_price
+																);
+																setFieldValue(
+																	`price_quotation.${i}.total_price`,
+																	unit_price * res.qty
+																);
+															}}
+															value={formatRupiah(res.unit_price.toString())}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_quotation.${i}.total_price`}
+															name={`price_quotation.${i}.total_price`}
+															placeholder='Total Price'
+															label='Total Price'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.total_price.toString())}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='flex w-full'>
+														{i === values.price_quotation.length - 1 ? (
+															<a
+																className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																onClick={() =>
+																	arrayPrice.push({
+																		description: "",
+																		qty: 0,
+																		unit: "",
+																		unit_price: 0,
+																		total_price: 0,
+																	})
+																}
+															>
+																<Plus size={23} className='mt-1' />
+																Add
+															</a>
+														) : null}
+														{values.price_quotation.length !== 1 ? (
+															<a
+																className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																onClick={() => {
+																	arrayPrice.remove(i);
+																}}
+															>
+																<Trash2 size={22} className='mt-1 mr-1' />
+																Remove
+															</a>
+														) : null}
+													</div>
+												</Section>
+											);
+										})}
 									</>
 								)}
 							/>
-							<h1 className='text-xl font-bold mt-3'>Items Of Part</h1>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid lg:grid-cols-2 sm:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									{/* <InputSelect
-											id='equipment'
-											name='equipment'
-											placeholder='Equipment'
-											label='Equipment'
-											onChange={handleChange}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option defaultValue='' selected>
-												Choose Equipment
-											</option>
-											{equipment.length === 0 ? (
-												<option value=''>No Data Equipment</option>
-											) : (
-												equipment.map((res: any, i: number) => {
-													return (
-														<option value={JSON.stringify(res)} key={i}>
-															{res.nama}
-														</option>
-													);
-												})
-											)}
-										</InputSelect> */}
-									<MultipleSelect
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-										listdata={equipment}
-										placeholder='Select Equipment'
-										displayValue='nama'
-										onSelect={selectEquipment}
-										onRemove={selectEquipment}
+									<InputArea
+										id='note_payment'
+										name='note_payment'
+										placeholder='Note Payment'
+										label='Note Payment'
+										required={true}
+										onChange={handleChange}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
-									{/* <a
-										className='inline-flex text-green-500 text-lg cursor-pointer'
-										onClick={() => setIsCreateEquipment(true)}
-									>
-										<Plus size={18} className='mr-1 mt-1' /> Add Equipment
-									</a> */}
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<FieldArray
-										name='parts'
-										render={(arrayParts) => (
-											<>
-												{values.parts.map((res, i) => (
-													<Section
-														className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
-														key={i}
-													>
-														<div>
-															<InputSelect
-																id={`parts.${i}.id`}
-																name={`parts.${i}.id`}
-																placeholder='Equipment'
-																label='Equipment'
-																onChange={handleChange}
-																required={true}
-																withLabel={true}
-																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-															>
-																<option defaultValue='' selected>
-																	Choose Part
-																</option>
-																{listParts.length === 0 ? (
-																	<option value=''>No Data Part</option>
-																) : (
-																	listParts.map((res: any, i: number) => {
-																		return (
-																			<option value={res.id} key={i}>
-																				{res.nama_part} ({res.equipment.nama})
-																			</option>
-																		);
-																	})
-																)}
-															</InputSelect>
-														</div>
-														<div>
-															<Input
-																id={`parts.${i}.qty`}
-																name={`parts.${i}.qty`}
-																placeholder='Quantity'
-																label='Quantity'
-																type='number'
-																onChange={handleChange}
-																required={true}
-																withLabel={true}
-																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-															/>
-														</div>
-														<div>
-															<Input
-																id={`parts.${i}.keterangan`}
-																name={`parts.${i}.keterangan`}
-																placeholder='Keterangan'
-																label='Keterangan'
-																type='text'
-																onChange={handleChange}
-																required={true}
-																withLabel={true}
-																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-															/>
-														</div>
-														<div className='flex w-full'>
-															{i === values.parts.length - 1 ? (
-																<a
-																	className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-																	onClick={() =>
-																		arrayParts.push({
-																			id: "",
-																			qty: "",
-																			keterangan: "",
-																		})
-																	}
-																>
-																	<Plus size={23} className='mt-1' />
-																	Add
-																</a>
-															) : null}
-															{values.parts.length !== 1 ? (
-																<a
-																	className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-																	onClick={() => {
-																		arrayParts.remove(i);
-																	}}
-																>
-																	<Trash2 size={22} className='mt-1 mr-1' />
-																	Remove
-																</a>
-															) : null}
-														</div>
-													</Section>
-												))}
-											</>
-										)}
+									<InputArea
+										id='term_payment'
+										name='term_payment'
+										placeholder='Term Payment'
+										label='Term Payment'
+										required={true}
+										onChange={handleChange}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
 							</Section>

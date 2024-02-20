@@ -10,6 +10,8 @@ import Logo2 from "../../../assets/logo/Logo-ISO-14001.png";
 import Logo3 from "../../../assets/logo/Logo-ISO-45001.png";
 import Logo4 from "../../../assets/logo/dwitama.png";
 import Image from "next/image";
+import { formatRupiah } from "@/src/utils";
+import { Input } from "@/src/components/input";
 
 interface props {
 	isModal?: boolean;
@@ -18,13 +20,6 @@ interface props {
 }
 
 export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
-
-	const [listWorkScope, setListWorkScope] = useState<any>([]);
-
-	useEffect(() => {
-		listDetail()
-	}, [])
-	
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -38,25 +33,6 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 		});
 	};
 
-	const listDetail = () => {
-		let list: any = []
-		data.Quotations_Detail.map( (res: any, i: number) => {
-			list.push({
-				parrent: true,
-				no: `1.${i + 1}`,
-				workScope: res.item_of_work
-			})
-			res.Child_QuDet.map( (chil: any, idx: number) => {
-				list.push({
-					parrent: false,
-					no: `1.${i + 1}.${idx + 1}`,
-					workScope: chil.item_of_work
-				})
-			})
-		})
-		setListWorkScope(list)
-	}
-	console.log(data);
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>
@@ -170,23 +146,19 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 										</div>
 										<div className='w-full grid grid-cols-7 grid-rows-2'>
-											<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-4 row-span-2 bg-green-500'>
+											<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-4 row-span-2 bg-purple-400'>
 												<h2 className='text-lg font-bold text-center pt-4'>
 													Quotation
 												</h2>
 											</div>
 											<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
-												<h2 className='text-center'>
-													No. Dokumen / Revisi
-												</h2>
+												<h2 className='text-center'>No. Dokumen / Revisi</h2>
 											</div>
 											<div className='w-full p-2 border border-black border-t-0'>
 												<h2 className='text-center'>Level</h2>
 											</div>
 											<div className='w-full p-2 border border-black border-t-0 border-r-0 col-span-2'>
-												<h2 className='text-center'>
-													DMP/PCH/FRM-04 / 00
-												</h2>
+												<h2 className='text-center'>DMP/PCH/FRM-04 / 00</h2>
 											</div>
 											<div className='w-full p-2 border border-black border-t-0'>
 												<h2 className='text-center'>3</h2>
@@ -199,7 +171,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 													: {data.quo_num}
 												</div>
 												<div className='w-full col-span-2 text-right'>
-													Bandung, {moment(new Date()).format('DD MMMM YYYY')}
+													Bandung, {moment(new Date()).format("DD MMMM YYYY")}
 												</div>
 											</div>
 											<div className='grid grid-cols-5 mb-2'>
@@ -259,22 +231,13 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 															WORKSCOPE DESCRIPTION
 														</span>
 													</p>
-													<div className="grid grid-cols-2 ml-2">
-														<div className="w-full">
-															{ listWorkScope.map( (res:any, i:number) => (
-																<div className="flex" key={i}>
-																	<div className={`w-[15%] text-right mr-2 ${ res.parrent ? 'font-bold' : '' }`}>
-																		{ res.no }
-																	</div>
-																	<div className={`w-[85%] ${ res.parrent ? 'font-bold' : '' }`}>
-																		{ res.workScope }
-																	</div>
-																</div>
-															))}
+													<div className='grid grid-cols-2 ml-2'>
+														<div className='w-full'>
+															<p className='whitespace-pre'>
+																{data.Quotations_Detail}
+															</p>
 														</div>
-														<div className="w-full">
-
-														</div>
+														<div className='w-full'></div>
 													</div>
 												</div>
 												<div className='w-full mt-[2px]'>
@@ -291,10 +254,66 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 												<div className='w-full mt-[2px]'>
 													<p className='font-bold'>
 														3.{" "}
-														<span className='underline'>
+														<span className='underline mb-1'>
 															PRICE AND TERM OF PAYMENT
 														</span>
 													</p>
+													<table className='w-full mt-2'>
+														<thead>
+															<tr className='bg-purple-400'>
+																<th className='text-center pb-2'>No</th>
+																<th className='text-center pb-2'>
+																	Description
+																</th>
+																<th className='text-center pb-2'>Qty</th>
+																<th className='text-center pb-2'>Unit</th>
+																<th className='text-center pb-2'>Unit Price</th>
+																<th className='text-center pb-2'>
+																	Total Price
+																</th>
+															</tr>
+														</thead>
+														<tbody>
+															{data.price_quotation.map(
+																(res: any, i: number) => {
+																	return (
+																		<tr key={i} className='bg-slate-200'>
+																			<td className='text-center border border-b-black pb-2'>
+																				{i + 1}
+																			</td>
+																			<td className='text-center border border-b-black pb-2'>
+																				{res.description}
+																			</td>
+																			<td className='text-center border border-b-black pb-2'>
+																				{res.qty}
+																			</td>
+																			<td className='text-center border border-b-black pb-2'>
+																				{res.unit}
+																			</td>
+																			<td className='text-center border border-b-black pb-2'>
+																				{formatRupiah(
+																					res.unit_price.toString()
+																				)}
+																			</td>
+																			<td className='text-center border border-b-black pb-2'>
+																				{formatRupiah(
+																					res.total_price.toString()
+																				)}
+																			</td>
+																		</tr>
+																	);
+																}
+															)}
+														</tbody>
+													</table>
+													<div className='flex'>
+														<div className='w-[25%]'>Note</div>
+														<div className='w-[75%]'>: {data.note_payment}</div>
+													</div>
+													<div className='flex'>
+														<div className='w-[25%]'>Term Of Payment</div>
+														<div className='w-[75%]'>: {data.term_payment}</div>
+													</div>
 												</div>
 												<div className='w-full mt-[2px]'>
 													<p className='font-bold'>
@@ -347,7 +366,62 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='w-full mt-3'>
-												We hope that our quotation well meet to your requirement, thank you for your attention and cooperation
+												We hope that our quotation well meet to your
+												requirement, thank you for your attention and
+												cooperation
+											</div>
+										</div>
+										<div className='grid grid-cols-3 gap-2 mt-2 text-center'>
+											<div className='w-full'>
+												<p className='mb-16'>Yours Faithfully,</p>
+												<Input
+													placeholder='Signature'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
+												<Input
+													placeholder='No Hp'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
+											</div>
+											<div className='w-full'>
+												<p className='mb-20'></p>
+												<Input
+													placeholder='Signature'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
+												<Input
+													placeholder='No Hp'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
+											</div>
+											<div className='w-full'>
+												<p className='mb-16'>Consent By,</p>
+												<Input
+													placeholder='Signature'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
+												<Input
+													placeholder='No Hp'
+													type='text'
+													required={true}
+													withLabel={false}
+													className='text-black text-lg rounded-lg text-center w-full outline-none'
+												/>
 											</div>
 										</div>
 									</div>
