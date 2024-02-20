@@ -24,8 +24,8 @@ export const Po = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID PO" },
-		{ name: "PO Num" },
+		{ name: "PO/SO/SPK Num" },
+		{ name: "Quotation Num" },
 		{ name: "Customer" },
 		{ name: "Subject" },
 		{ name: "Action" },
@@ -184,16 +184,16 @@ export const Po = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.po_num_auto}
+										{res.id_po === '' ? '-' : res.id_po}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.id_po === '' ? '-' : res.id_po}
+										{res.quotations.quo_num}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.quotations.Customer.name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4'>
-										{res.quotations.deskription}
+										{res.quotations.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>

@@ -8,47 +8,21 @@ interface props {
 }
 
 export const ViewPo = ({ dataSelected }: props) => {
-
-	const total = () => {
-		let total: number = 0
-		dataSelected.Deskription_CusPo.map( (res: any) => {
-			total = total + parseInt(res.total)
-		})
-		return total
-	}
-
+	
 	const ppn = () => {
-		let ppn =
-			(parseInt(dataSelected.total) * dataSelected.quotations.Customer.ppn) /
-			100;
+		let ppn: number =
+			(dataSelected.total * dataSelected.quotations.Customer.ppn) / 100;
 		return Math.ceil(ppn);
 	};
 
 	const pph = () => {
-		let pph =
-			(parseInt(dataSelected.total) * dataSelected.quotations.Customer.pph) /
-			100;
+		let pph: number =
+			(dataSelected.total * dataSelected.quotations.Customer.pph) / 100;
 		return Math.ceil(pph);
 	};
 
-	const grandTotal = () => {
-		if(dataSelected.tax === 'ppn'){
-			const Total: any = total() + ppn();
-			return Total
-		}else if(dataSelected.tax === 'pph'){
-			const Total: any = total() + pph();
-			return Total
-		}else if(dataSelected.tax === 'ppn_and_pph'){
-			const Total: any = total() + ppn() + pph();
-			return Total
-		}else{
-			const Total: any = total();
-			return Total
-		}
-	};
-
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
 				<>
 					<h1 className='font-bold text-xl'>Customer PO</h1>
@@ -59,15 +33,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 								<tbody>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Customer PO ID
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.po_num_auto}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Customer PO Number
+											PO/SO/SPK No
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.id_po}
@@ -75,7 +41,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Customer PO Date
+											PO/SO/SPK Date
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{moment(dataSelected.date).format("DD-MMMM-YYYY")}
@@ -83,10 +49,9 @@ export const ViewPo = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Quotation Id / Quotation Number
+											Quotation No
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.quotations.quo_auto} /{" "}
 											{dataSelected.quotations.quo_num}
 										</td>
 									</tr>
@@ -98,7 +63,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 											{dataSelected.quotations.Customer.name}
 										</td>
 									</tr>
-									<tr>
+									{/* <tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment
 										</td>
@@ -106,13 +71,13 @@ export const ViewPo = ({ dataSelected }: props) => {
 											{dataSelected.quotations.eqandpart[0].equipment.nama} /{" "}
 											{dataSelected.quotations.eqandpart.length} Count Part
 										</td>
-									</tr>
+									</tr> */}
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Subject
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.quotations.deskription}
+											{dataSelected.quotations.subject}
 										</td>
 									</tr>
 									<tr>
@@ -125,17 +90,27 @@ export const ViewPo = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Noted
+											PO/SO/SPK File
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.noted}
+											{dataSelected.upload_doc === null ? (
+												"Tidak Ada File"
+											) : (
+												<a
+													href={dataSelected.upload_doc}
+													target='_blank'
+													className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
+												>
+													show file
+												</a>
+											)}
 										</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 					</Section>
-					<h1 className='font-bold text-xl mt-2'>Description Detail</h1>
+					{/* <h1 className='font-bold text-xl mt-2'>Description Detail</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -276,26 +251,159 @@ export const ViewPo = ({ dataSelected }: props) => {
 								</tbody>
 							</table>
 						</div>
-					</Section>
-					<h1 className='font-bold text-xl mt-2'>Term Of Payment</h1>
+					</Section> */}
+					<h1 className='font-bold text-xl mt-2'>Scope Of Work</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
+							<p className='whitespace-pre-line'>
+								{dataSelected.quotations.Quotations_Detail}
+							</p>
+						</div>
+					</Section>
+					<h1 className='font-bold text-xl mt-2'>Term Of Payment</h1>
+					<Section className='grid grid-cols-1 gap-2 mt-2'>
+						<div className='w-full'>
 							<table className='w-full'>
-								<thead></thead>
+								<thead>
+									<tr>
+										<th className='pl-2 w-[40%] border border-black text-center'>
+											Description
+										</th>
+										<th className='pl-2 w-[10%] border border-black text-center'>
+											Qty
+										</th>
+										<th className='pl-2 w-[10%] border border-black text-center'>
+											Unit
+										</th>
+										<th className='pl-2 w-[10%] border border-black text-center'>
+											Unit Price
+										</th>
+										<th className='pl-2 w-[10%] border border-black text-center'>
+											Total Price
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{dataSelected.quotations.price_quotation.map(
+										(res: any, i: number) => (
+											<tr key={i}>
+												<td className='pl-2 w-[40%] border border-black text-center'>
+													{res.description}
+												</td>
+												<td className='pl-2 w-[10%] border border-black text-center'>
+													{res.qty}
+												</td>
+												<td className='pl-2 w-[10%] border border-black text-center'>
+													{res.unit}
+												</td>
+												<td className='pl-2 w-[10%] border border-black text-center'>
+													{formatRupiah(res.unit_price.toString())}
+												</td>
+												<td className='pl-2 w-[10%] border border-black text-center'>
+													{formatRupiah(res.total_price.toString())}
+												</td>
+											</tr>
+										)
+									)}
+									{dataSelected.tax === "ppn" ? (
+										<tr>
+											<td
+												className='pr-2 border border-black text-right'
+												colSpan={4}
+											>
+												PPN {dataSelected.quotations.Customer.ppn}%
+											</td>
+											<td className='pl-2 border border-black text-center'>
+												{formatRupiah(ppn().toString())}
+											</td>
+										</tr>
+									) : dataSelected.tax === "pph" ? (
+										<tr>
+											<td
+												className='pr-2 border border-black text-right'
+												colSpan={4}
+											>
+												PPH {dataSelected.quotations.Customer.pph}%
+											</td>
+											<td className='pl-2 border border-black text-center'>
+												{formatRupiah(pph().toString())}
+											</td>
+										</tr>
+									) : dataSelected.tax === "ppn_and_pph" ? (
+										<>
+											<tr>
+												<td
+													className='pr-2 border border-black text-right'
+													colSpan={4}
+												>
+													PPN {dataSelected.quotations.Customer.ppn}%
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													{formatRupiah(ppn().toString())}
+												</td>
+											</tr>
+											<tr>
+												<td
+													className='pr-2 border border-black text-right'
+													colSpan={4}
+												>
+													PPH {dataSelected.quotations.Customer.pph}%
+												</td>
+												<td className='pl-2 border border-black text-center'>
+													{formatRupiah(pph().toString())}
+												</td>
+											</tr>
+										</>
+									) : null}
+									<tr>
+										<td
+											className='pr-2 border border-black text-right'
+											colSpan={4}
+										>
+											Grand Total
+										</td>
+										<td className='pl-2 border border-black text-center'>
+											{formatRupiah(dataSelected.grand_tot.toString())}
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</Section>
+					<h5 className='mt-2'>Payment Method</h5>
+					<Section className='grid grid-cols-1 gap-2 mt-2'>
+						<div className='w-full'>
+							<table className='w-full'>
+								<thead>
+									<tr>
+										<th className='pl-2 border border-black text-center'>
+											Payment
+										</th>
+										<th className='pl-2 border border-black text-center'>
+											Percent
+										</th>
+										<th className='pl-2 border border-black text-center'>
+											Total Pay
+										</th>
+										<th className='pl-2 border border-black text-center'>
+											Date Payment
+										</th>
+									</tr>
+								</thead>
 								{dataSelected.term_of_pay.length > 0 ? (
 									dataSelected.term_of_pay.map((res: any, i: number) => (
 										<tbody key={i}>
 											<tr>
-												<td className='pl-2 w-[50%] border border-black'>
+												<td className='pl-2 w-[50%] border border-black text-center'>
 													{res.limitpay}
 												</td>
 												<td className='pl-2 w-[10%] border border-black text-center'>
 													{res.percent}%
 												</td>
 												<td className='pl-2 w-[10%] border border-black text-center'>
-													({formatRupiah(res.price.toString())})
+													{formatRupiah(res.price.toString())}
 												</td>
-												<td className='pl-2 w-[30%] border border-black'>
+												<td className='pl-2 w-[30%] border border-black text-center'>
 													{moment(res.date_limit).format("DD-MMMM-YYYY")}
 												</td>
 											</tr>

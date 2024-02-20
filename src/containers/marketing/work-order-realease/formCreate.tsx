@@ -320,7 +320,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 							<div className='w-full'>
 								<Input
 									id='address'
@@ -350,11 +350,24 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<Input
+								<InputArea
 									id='subject'
 									name='subject'
 									placeholder='Subject'
 									label='Subject'
+									type='text'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputArea
+									id='job_desk'
+									name='job_desk'
+									placeholder='Job Descripstion'
+									label='Job Descripstion'
 									type='text'
 									onChange={handleChange}
 									required={true}

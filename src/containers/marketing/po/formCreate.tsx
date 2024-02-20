@@ -197,7 +197,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				setTypeTax("");
 				setTax(0);
 			}
-		} else if (event.target.name === "upload_doc"){
+		} else if (event.target.name === "upload_doc") {
 			setPoFile(event.target.files[0]);
 		}
 	};
@@ -289,6 +289,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		// 	}
 		// });
 		payload.term_of_pay.map((res: any, i: number) => {
+			console.log(res);
 			if (res.limitpay === "") {
 				toast.warning("Term Of Payment not empty", {
 					position: "top-center",
@@ -335,7 +336,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		// 	total: parseInt(htmlTotals.value),
 		// };
 		const form = new FormData();
-		
+
 		form.append("id_po", payload.id_po);
 		form.append("po_num_auto", idAutoNum);
 		form.append("quo_id", quoId);
@@ -399,7 +400,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto  h-[calc(100vh-100px)]'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				validationSchema={poSchema}
@@ -423,8 +424,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 								<Input
 									id='id_po'
 									name='id_po'
-									placeholder='Po Number'
-									label='PO Number'
+									placeholder='PO/SO/SPK No'
+									label='PO/SO/SPK No'
 									type='text'
 									onChange={handleChange}
 									required={true}
@@ -1111,7 +1112,22 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																	name={`term_of_pay.${i}.percent`}
 																	placeholder='%'
 																	type='number'
-																	onChange={handleChange}
+																	onChange={(e: any) => {
+																		const nameSplit = e.target.name.split("."),
+																			index = nameSplit[1],
+																			percent = e.target.value,
+																			htmlTotalTerm = document.getElementById(
+																				`term_of_pay.${index}.price`
+																			) as HTMLInputElement,
+																			totalTerm: any =
+																				(parseInt(grandTotal()) * percent) /
+																				100;
+																		htmlTotalTerm.value = formatRupiah(
+																			totalTerm.toString()
+																		);
+																		setFieldValue(`term_of_pay.${i}.percent`, e.target.value)
+																		setFieldValue(`term_of_pay.${i}.price`, totalTerm)
+																	}}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
