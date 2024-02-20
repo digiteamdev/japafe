@@ -59,6 +59,7 @@ interface data {
 
 export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isUnitInput, setIsUnitInput] = useState<boolean>(false);
 	const [isCreateEquipment, setIsCreateEquipment] = useState<boolean>(false);
 	const [isCreateCustomer, setIsCreateCustomer] = useState<boolean>(false);
 	const [listContact, setListContact] = useState<any>([]);
@@ -127,8 +128,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				value: "unit",
 			},
 			{
-				label: "other",
-				value: "other",
+				label: "Input",
+				value: "Input",
 			},
 		];
 		setDatasUnit(data);
@@ -191,7 +192,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const addQuotation = async (payload: any) => {
 		setIsLoading(true);
 		const form = new FormData();
-		
+
 		form.append("quo_num", payload.quo_num);
 		form.append("quo_auto", idAutoNum);
 		form.append("customerId", payload.customerId);
@@ -537,7 +538,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 									/>
 								</div>
 							</Section>
-							
+
 							<h1 className='text-xl font-bold mt-3'>
 								Price And Term Of Payment
 							</h1>
@@ -590,22 +591,46 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 														/>
 													</div>
 													<div className='w-full'>
-														<InputSelectSearch
-															datas={datasUnit}
-															id={`price_quotation.${i}.unit`}
-															name={`price_quotation.${i}.unit`}
-															placeholder='Unit'
-															label='Unit'
-															onChange={(input: any) => {
-																setFieldValue(
-																	`price_quotation.${i}.unit`,
-																	input.value
-																);
-															}}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-														/>
+														{isUnitInput ? (
+															<Input
+																id={`price_quotation.${i}.unit`}
+																name={`price_quotation.${i}.unit`}
+																placeholder='Unit'
+																label='Unit'
+																type='text'
+																onChange={(e: any) => {
+																	setFieldValue(
+																		`price_quotation.${i}.unit`,
+																		e.target.value
+																	);
+																}}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														) : (
+															<InputSelectSearch
+																datas={datasUnit}
+																id={`price_quotation.${i}.unit`}
+																name={`price_quotation.${i}.unit`}
+																placeholder='Unit'
+																label='Unit'
+																onChange={(input: any) => {
+																	if (input.value === "Input") {
+																		setIsUnitInput(true);
+																	} else {
+																		setIsUnitInput(false);
+																		setFieldValue(
+																			`price_quotation.${i}.unit`,
+																			input.value
+																		);
+																	}
+																}}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+															/>
+														)}
 													</div>
 													<div className='w-full'>
 														<Input
