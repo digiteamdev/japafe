@@ -350,7 +350,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		form.append("grand_tot", grandTotal());
 		form.append("total", total.toString());
 		try {
-			if (!termOFPaymentEmpty ) {
+			if (!termOFPaymentEmpty) {
 				const response = await AddPo(form);
 				if (response) {
 					toast.success("Add Customer PO Success", {
@@ -967,105 +967,105 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 												/>
 											</div>
 										</Section>
-										{values.tax === "ppn" ? (
-											<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
-												<div className='col-span-4 text-right'>
-													<p className='mt-4'>PPN</p>
-												</div>
-												<div className='w-full'>
-													<Input
-														id='ppn'
-														name='ppn'
-														placeholder='PPN'
-														type='text'
-														value={vat("ppn")}
-														disabled={true}
-														required={true}
-														withLabel={false}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
-										) : values.tax === "pph" ? (
-											<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
-												<div className='col-span-4 text-right'>
-													<p className='mt-4'>PPH</p>
-												</div>
-												<div className='w-full'>
-													<Input
-														id='pph'
-														name='pph'
-														placeholder='PPH'
-														type='text'
-														value={vat("pph")}
-														disabled={true}
-														required={true}
-														withLabel={false}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
-										) : values.tax === "ppn_and_pph" ? (
-											<>
-												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
-													<div className='col-span-4 text-right'>
-														<p className='mt-4'>PPN</p>
-													</div>
-													<div className='w-full'>
-														<Input
-															id='ppn'
-															name='ppn'
-															placeholder='PPN'
-															type='text'
-															value={vat("ppn")}
-															disabled={true}
-															required={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-												</Section>
-												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
-													<div className='col-span-4 text-right'>
-														<p className='mt-4'>PPH</p>
-													</div>
-													<div className='w-full'>
-														<Input
-															id='pph'
-															name='pph'
-															placeholder='PPH'
-															type='text'
-															value={vat("pph")}
-															disabled={true}
-															required={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-												</Section>
-											</>
-										) : null}
-										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
-											<div className='col-span-4 text-right'>
-												<p className='mt-4'>Grand Total</p>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='qty'
-													name='qty'
-													placeholder='Grand Total'
-													type='text'
-													value={formatRupiah(grandTotal())}
-													disabled={true}
-													required={true}
-													withLabel={false}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-										</Section>
 									</div>
 								);
 							})}
+							{values.tax === "ppn" ? (
+								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='col-span-4 text-right'>
+										<p className='mt-4'>PPN</p>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='ppn'
+											name='ppn'
+											placeholder='PPN'
+											type='text'
+											value={vat("ppn")}
+											disabled={true}
+											required={true}
+											withLabel={false}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							) : values.tax === "pph" ? (
+								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+									<div className='col-span-4 text-right'>
+										<p className='mt-4'>PPH</p>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='pph'
+											name='pph'
+											placeholder='PPH'
+											type='text'
+											value={vat("pph")}
+											disabled={true}
+											required={true}
+											withLabel={false}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							) : values.tax === "ppn_and_pph" ? (
+								<>
+									<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+										<div className='col-span-4 text-right'>
+											<p className='mt-4'>PPN</p>
+										</div>
+										<div className='w-full'>
+											<Input
+												id='ppn'
+												name='ppn'
+												placeholder='PPN'
+												type='text'
+												value={vat("ppn")}
+												disabled={true}
+												required={true}
+												withLabel={false}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</div>
+									</Section>
+									<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+										<div className='col-span-4 text-right'>
+											<p className='mt-4'>PPH</p>
+										</div>
+										<div className='w-full'>
+											<Input
+												id='pph'
+												name='pph'
+												placeholder='PPH'
+												type='text'
+												value={vat("pph")}
+												disabled={true}
+												required={true}
+												withLabel={false}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</div>
+									</Section>
+								</>
+							) : null}
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='col-span-4 text-right'>
+									<p className='mt-4'>Grand Total</p>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='qty'
+										name='qty'
+										placeholder='Grand Total'
+										type='text'
+										value={formatRupiah(grandTotal())}
+										disabled={true}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (
@@ -1125,8 +1125,14 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																		htmlTotalTerm.value = formatRupiah(
 																			totalTerm.toString()
 																		);
-																		setFieldValue(`term_of_pay.${i}.percent`, e.target.value)
-																		setFieldValue(`term_of_pay.${i}.price`, totalTerm)
+																		setFieldValue(
+																			`term_of_pay.${i}.percent`,
+																			e.target.value
+																		);
+																		setFieldValue(
+																			`term_of_pay.${i}.price`,
+																			totalTerm
+																		);
 																	}}
 																	required={true}
 																	withLabel={false}

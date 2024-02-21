@@ -28,8 +28,8 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 			// const width = pdf.internal.pageSize.getWidth();
 			// const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
-			window.open(pdf.output("bloburl"), "_blank");
-			// pdf.save(`quotation_${data.quo_auto}.pdf`);
+			// window.open(pdf.output("bloburl"), "_blank");
+			pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
 	};
 
@@ -326,28 +326,32 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 													modified or withdrawn by seller prior to receipt of
 													buyer`s acceptance.
 												</div>
+												{ data.warranty === "" ? null : (
+													<>
+														<div className='w-full mt-[2px]'>
+															<p className='font-bold'>
+																5. <span className='underline'>WARRANTY</span>
+															</p>
+														</div>
+														<div className='w-full'>
+															<p>
+																Warranty period is{" "}
+																<span className='font-bold'>{data.warranty}</span>
+															</p>
+															<p>
+																This warranty is valid in accordance with the period
+																and conditions set by PT. Dwitama Mulya Persada.
+															</p>
+															<p className='font-bold'>
+																Warranty part as per approval drawing, not
+																performance warranty
+															</p>
+														</div>
+													</>
+												) }
 												<div className='w-full mt-[2px]'>
 													<p className='font-bold'>
-														5. <span className='underline'>WARRANTY</span>
-													</p>
-												</div>
-												<div className='w-full'>
-													<p>
-														Warranty period is{" "}
-														<span className='font-bold'>{data.warranty}</span>
-													</p>
-													<p>
-														This warranty is valid in accordance with the period
-														and conditions set by PT. Dwitama Mulya Persada.
-													</p>
-													<p className='font-bold'>
-														Warranty part as per approval drawing, not
-														performance warranty
-													</p>
-												</div>
-												<div className='w-full mt-[2px]'>
-													<p className='font-bold'>
-														6. <span className='underline'>PROPRIENTARY</span>
+														{ data.warranty === "" ? "5." : "6. " } <span className='underline'>PROPRIENTARY</span>
 													</p>
 												</div>
 												<div className='w-full whitespace-normal'>

@@ -368,6 +368,12 @@ export const ViewPo = ({ dataSelected }: props) => {
 									</tr>
 								</tbody>
 							</table>
+							<table>
+								<thead></thead>
+								<tbody>
+									
+								</tbody>
+							</table>
 						</div>
 					</Section>
 					<h5 className='mt-2'>Payment Method</h5>

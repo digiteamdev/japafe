@@ -7,10 +7,11 @@ import {
 	InputDate,
 	InputArea,
 } from "../../../components";
-import { Formik, Form } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import { worSchema } from "../../../schema/marketing/work-order-release/worSchema";
 import { AddWor, GetAllEmployeDepart, GetAllPo } from "../../../services";
 import { toast } from "react-toastify";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -25,6 +26,7 @@ interface data {
 	job_desk: string;
 	contract_no_spk: string;
 	employeeId: string;
+	estimatorId: string;
 	value_contract: string;
 	priority_status: string;
 	qty: string;
@@ -42,6 +44,7 @@ interface data {
 	noted: string;
 	status: string;
 	job_operational: string;
+	work_scope: any;
 }
 
 export const FormCreateWor = ({ content, showModal }: props) => {
@@ -63,6 +66,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		job_desk: "",
 		contract_no_spk: "",
 		employeeId: "",
+		estimatorId: "",
 		value_contract: "",
 		priority_status: "",
 		qty: "",
@@ -80,6 +84,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		noted: "",
 		status: "",
 		job_operational: "false",
+		work_scope: [],
 	});
 
 	useEffect(() => {
@@ -122,6 +127,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("job_desk", payload.job_desk);
 		dataBody.append("contract_no_spk", payload.contract_no_spk);
 		dataBody.append("employeeId", payload.employeeId);
+		dataBody.append("estimatorId", payload.estimatorId);
 		dataBody.append("value_contract", valueContract);
 		dataBody.append("priority_status", payload.priority_status);
 		dataBody.append("qty", payload.qty);
@@ -129,7 +135,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("date_of_order", payload.date_of_order);
 		dataBody.append("delivery_date", payload.delivery_date);
 		dataBody.append("shipping_address", payload.shipping_address);
-		dataBody.append("estimated_man_our", payload.estimated_man_our);
+		dataBody.append("estimated_man_our", '0');
 		dataBody.append("eq_model", payload.eq_model);
 		dataBody.append("eq_mfg", payload.eq_mfg);
 		dataBody.append("eq_rotation", payload.eq_rotation);
@@ -139,6 +145,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("noted", payload.noted);
 		dataBody.append("status", payload.status);
 		dataBody.append("job_operational", payload.job_operational);
+		dataBody.append("work_scope_item", JSON.stringify(payload.work_scope));
 		try {
 			const response = await AddWor(dataBody);
 			if (response) {
@@ -188,7 +195,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	};
 
 	const getEmploye = async () => {
-		let datasEmploye: any = []
+		let datasEmploye: any = [];
 		try {
 			const response = await GetAllEmployeDepart(
 				"SALES %26 MKT",
@@ -198,9 +205,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasEmploye.push({
 						value: res,
-						label: res.employee_name
-					})
-				})
+						label: res.employee_name,
+					});
+				});
 				setListEmploye(datasEmploye);
 			}
 		} catch (error) {
@@ -209,7 +216,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				validationSchema={worSchema}
@@ -271,6 +278,9 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									placeholder='Customer PO'
 									label='Customer PO'
 									onChange={(e: any) => {
+										let scopeWork: any = [];
+										const scopeQuotations =
+											e.value.quotations.Quotations_Detail.split("\n");
 										setCustomerId(e.value.id);
 										setCustomer(e.value.quotations.Customer.name);
 										setCustomerContact(
@@ -279,8 +289,18 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										setCustomerAddress(
 											e.value.quotations.Customer.address[0].address_workshop
 										);
-										setEquipment(e.value.quotations.eqandpart[0].equipment.nama);
-										setValueContract(e.value.total);
+										setFieldValue("subject", e.value.quotations.subject);
+										scopeQuotations.map((res: any) => {
+											scopeWork.push({
+												item: res,
+												qty: 0,
+											});
+										});
+										setFieldValue("work_scope", scopeWork);
+										// setEquipment(
+										// 	e.value.quotations.eqandpart[0].equipment.nama
+										// );
+										// setValueContract(e.value.total);
 									}}
 									required={true}
 									withLabel={true}
@@ -356,6 +376,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									placeholder='Subject'
 									label='Subject'
 									type='text'
+									value={values.subject}
 									onChange={handleChange}
 									required={true}
 									withLabel={true}
@@ -376,8 +397,8 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							{/* <div className='w-full'>
 								<InputArea
 									id='job_desk'
 									name='job_desk'
@@ -402,57 +423,31 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
-								<InputSelectSearch
-									datas={listEmploye}
-									id='employeeId'
-									name='employeeId'
-									placeholder='Sales'
-									label='Sales'
-									onChange={ (e: any) => {
-										setFieldValue('employeeId', e.value.id)
-									}}
-									required={true}
+								<InputDate
+									id='date_of_order'
+									label='Date Of Order'
+									value={values.date_of_order}
+									onChange={(value: any) =>
+										setFieldValue("date_of_order", value)
+									}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
-									{/* <option defaultValue='' selected>
-										Choose Sales
-									</option>
-									{listEmploye.length === 0 ? (
-										<option value=''>No Data Sales</option>
-									) : (
-										listEmploye.map((res: any, i: number) => {
-											return (
-												<option value={res.id} key={i}>
-													{res.employee_name}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSearch> */}
-								{errors.employeeId && touched.employeeId ? (
-									<span className='text-red-500 text-xs'>
-										{errors.employeeId}
-									</span>
-								) : null}
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<Input
-									id='value_contract'
-									name='value_contract'
-									placeholder='Value Kontrak'
-									label='Value Kontrak'
-									type='number'
-									value={valueContract}
-									onChange={handleChange}
-									disabled={true}
-									required={true}
+								<InputDate
+									id='delivery_date'
+									label='Delivery Schedulle'
+									value={values.delivery_date}
+									onChange={(value: any) =>
+										setFieldValue("delivery_date", value)
+									}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>
@@ -495,7 +490,120 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={listEmploye}
+									id='employeeId'
+									name='employeeId'
+									placeholder='Sales'
+									label='Sales'
+									onChange={(e: any) => {
+										setFieldValue("employeeId", e.value.id);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{/* <option defaultValue='' selected>
+										Choose Sales
+									</option>
+									{listEmploye.length === 0 ? (
+										<option value=''>No Data Sales</option>
+									) : (
+										listEmploye.map((res: any, i: number) => {
+											return (
+												<option value={res.id} key={i}>
+													{res.employee_name}
+												</option>
+											);
+										})
+									)}
+								</InputSelectSearch> */}
+								{errors.employeeId && touched.employeeId ? (
+									<span className='text-red-500 text-xs'>
+										{errors.employeeId}
+									</span>
+								) : null}
+							</div>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={listEmploye}
+									id='estimatorId'
+									name='estimatorId'
+									placeholder='Estimator'
+									label='Estimator'
+									onChange={(e: any) => {
+										setFieldValue("estimatorId", e.value.id);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{errors.employeeId && touched.employeeId ? (
+									<span className='text-red-500 text-xs'>
+										{errors.employeeId}
+									</span>
+								) : null}
+							</div>
+							<div className='w-full'>
+								<InputArea
+									id='shipping_address'
+									name='shipping_address'
+									placeholder='Shipping Address'
+									label='Shipping Address'
+									type='text'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='file_list'
+									name='file_list'
+									placeholder='File List'
+									label='File List'
+									type='file'
+									accept='image/*, .pdf'
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='value_contract'
+									name='value_contract'
+									placeholder='Value Kontrak'
+									label='Value Kontrak'
+									type='number'
+									value={valueContract}
+									onChange={handleChange}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='qty'
+									name='qty'
+									placeholder='Quantity'
+									label='Quantity'
+									type='number'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section> */}
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='unit'
@@ -535,8 +643,8 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						</Section> */}
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputArea
 									id='shipping_address'
@@ -577,7 +685,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
+						</Section> */}
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -629,7 +737,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputArea
 									id='scope_of_work'
@@ -656,20 +764,93 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							<div className='w-full'>
-								<Input
-									id='file_list'
-									name='file_list'
-									placeholder='File List'
-									label='File List'
-									type='file'
-									accept='image/*, .pdf'
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						</Section> */}
+						<h1 className='text-xl font-bold mt-3'>Scope Of Work</h1>
+						<FieldArray
+							name='work_scope'
+							render={(arrayScope) => (
+								<>
+									{values.work_scope.map((res: any, i: number) => {
+										return (
+											<Section
+												className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+												key={i}
+											>
+												<div className='w-full'>
+													<InputArea
+														id={`work_scope.${i}.item`}
+														name={`work_scope.${i}.item`}
+														placeholder='Work Scope Item'
+														label='Work Scope Item'
+														type='text'
+														value={res.item}
+														onChange={(e: any) => {
+															setFieldValue(
+																`work_scope.${i}.item`,
+																e.target.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='grid grid-cols-2'>
+													<div className='w-full'>
+														<Input
+															id={`work_scope.${i}.qty`}
+															name={`work_scope.${i}.qty`}
+															placeholder='Quantity'
+															label='Quantity'
+															type='text'
+															pattern='*/d'
+															value={res.qty}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`work_scope.${i}.qty`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='flex ml-2'>
+														{i === values.work_scope.length - 1 ? (
+															<a
+																className='flex mt-8 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+																onClick={() =>
+																	arrayScope.push({
+																		item: "",
+																		qty: 0,
+																	})
+																}
+															>
+																<Plus size={23} className='mt-1' />
+																Add
+															</a>
+														) : null}
+														{values.work_scope.length !== 1 ? (
+															<a
+																className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+																onClick={() => {
+																	arrayScope.remove(i);
+																}}
+															>
+																<Trash2 size={22} className='mt-1 mr-1' />
+																Remove
+															</a>
+														) : null}
+													</div>
+												</div>
+											</Section>
+										);
+									})}
+								</>
+							)}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

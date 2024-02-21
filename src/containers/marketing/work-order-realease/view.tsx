@@ -53,7 +53,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 	}
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfWor isModal={isModal} data={dataSelected} showModalPdf={showModalPdf}/>
 			{dataSelected ? (
 				<div>
@@ -72,10 +72,10 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 							</button>
 							{ position === "Manager" && role === "MARKETING" || position === "Supervisor" && role === "MARKETING" ? (
 								<button 
-								className={`justify-center rounded-full border border-transparent ${dataSelected.status === null || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
+								className={`justify-center rounded-full border border-transparent ${dataSelected.status === "" || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}
 							>
-								{ dataSelected.status === null || dataSelected.status === 'unvalid' ? (<p className="px-1 py-1">Validate</p>) : (<p className="px-1 py-1">Unvalid</p>) }
+								{ dataSelected.status === "" || dataSelected.status === 'unvalid' ? (<p className="px-1 py-1">Validate</p>) : (<p className="px-1 py-1">Unvalid</p>) }
 							</button>
 							) : null }
 						</div>
@@ -98,7 +98,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 											Quotation / Customer
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.customerPo.quotations.quo_auto} /{" "}
+											{dataSelected.customerPo.quotations.quo_num} /{" "}
 											{dataSelected.customerPo.quotations.Customer.name}
 										</td>
 									</tr>
@@ -137,15 +137,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 											Subject
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.subject}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Contract No (SPK)
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.contract_no_spk}
+											{dataSelected.customerPo.quotations.subject}
 										</td>
 									</tr>
 									<tr>
@@ -159,7 +151,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Date Of Order / Delivery Date
+											Date Of Order / Date Schedulle
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{moment(dataSelected.date_of_order).format(
@@ -184,34 +176,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 											Equipment
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{
-												dataSelected.customerPo.quotations.eqandpart[0]
-													.equipment.nama
-											} - Manufacture : {dataSelected.eq_mfg} , Rotasi: {dataSelected.eq_rotation} , Model: {dataSelected.eq_model} , Power: {dataSelected.eq_power}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Estimate Man Hour
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.estimated_man_our} Hour
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Scope Of Work
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.scope_of_work}
-										</td>
-									</tr>
-									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Note
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.noted}
+											Mfg : {dataSelected.eq_mfg} , Rotasi: {dataSelected.eq_rotation} , Model: {dataSelected.eq_model} , Power: {dataSelected.eq_power}
 										</td>
 									</tr>
 									<tr>
@@ -232,6 +197,35 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 											}
 										</td>
 									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div className="w-full">
+							<h1 className='font-bold text-xl mt-2'>Scope Of work</h1>
+							<table className="w-full">
+								<thead>
+									<tr>
+										<th className="border border-black text-center">No</th>
+										<th className="border border-black text-center">Standart work scope item</th>
+										<th className="border border-black text-center">qty</th>
+									</tr>
+								</thead>
+								<tbody>
+									{ dataSelected.work_scope_item.map( (res: any, i:number) => {
+										return(
+											<tr key={i}>
+												<td className="border border-black text-center">
+													{ i + 1 }
+												</td>
+												<td className="border border-black text-center">
+													{ res.item }
+												</td>
+												<td className="border border-black text-center">
+													{ res.qty }
+												</td>
+											</tr>
+										)
+									})}
 								</tbody>
 							</table>
 						</div>

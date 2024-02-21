@@ -10,6 +10,7 @@ import Logo3 from "../../../assets/logo/Logo-ISO-45001.png";
 import Logo4 from "../../../assets/logo/dwitama.png";
 import Image from "next/image";
 import { Printer, Square, CheckSquare } from "react-feather";
+import { Input } from "@/src/components/input";
 
 interface props {
 	isModal?: boolean;
@@ -27,7 +28,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 			// const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
 			// window.open(pdf.output("bloburl"), "_blank");
-			pdf.save(`Work_Order_Release_${data.job_operational ? data.job_no_mr :  data.job_no}.pdf`);
+			pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
 		});
 	};
 
@@ -96,7 +97,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 										</button>
 									</div>
 									<div className='my-4 mx-40 px-20 pb-4' id='divToPrint'>
-										<div className="pt-4">
+										<div className='pt-4'>
 											<div className='flex border border-black'>
 												<div className='w-[45%] p-2'>
 													<h4 className='text-xs font-semibold'>
@@ -142,7 +143,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='w-full grid grid-cols-6 grid-rows-2'>
-												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2 bg-purple-500'>
+												<div className=' w-full p-2 border border-black border-t-0 border-r-0 col-span-3 row-span-2 bg-purple-400'>
 													<h2 className='text-lg font-bold text-center pt-4'>
 														Work Order Release
 													</h2>
@@ -168,8 +169,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												<div className='grid grid-cols-5'>
 													<div className='w-full font-semibold'>Job No</div>
 													<div className='w-full font-semibold col-span-4'>
-														:{" "}
-														{data.job_no}
+														: {data.job_no}
 													</div>
 												</div>
 												<div className='grid grid-cols-5'>
@@ -199,19 +199,22 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												<div className='grid grid-cols-7'>
 													<div className='w-full col-span-3'>Date Of Order</div>
 													<div className='w-full col-span-4'>
-														: {moment(data.date_of_order).format("DD MMMM YYYY")}
+														:{" "}
+														{moment(data.date_of_order).format("DD MMMM YYYY")}
 													</div>
 												</div>
 												<div className='grid grid-cols-6'>
-													<div className='w-full col-span-2'>Contact Person</div>
+													<div className='w-full col-span-2'>
+														Contact Person
+													</div>
 													<div className='w-full col-span-4'>
 														:{" "}
 														{
 															data.customerPo.quotations.CustomerContact
 																.contact_person
 														}{" "}
-														(+62{data.customerPo.quotations.CustomerContact.phone}
-														)
+														(+62
+														{data.customerPo.quotations.CustomerContact.phone})
 													</div>
 												</div>
 												<div className='grid grid-cols-7'>
@@ -219,7 +222,8 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 														Delivery Schedule
 													</div>
 													<div className='w-full col-span-4'>
-														: {moment(data.delivery_date).format("DD MMMM YYYY")}
+														:{" "}
+														{moment(data.delivery_date).format("DD MMMM YYYY")}
 													</div>
 												</div>
 												<div className='grid grid-cols-6'>
@@ -252,7 +256,9 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 													</div>
 													<div className='grid grid-cols-3'>
 														<div>Rotation</div>
-														<div className='col-span-2'>: {data.eq_rotation}</div>
+														<div className='col-span-2'>
+															: {data.eq_rotation}
+														</div>
 													</div>
 													<div className='grid grid-cols-3'>
 														<div>: Model</div>
@@ -283,26 +289,24 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 													Standar work scope item
 												</div>
 											</div>
-											{data.customerPo.quotations.Quotations_Detail.map(
-												(res: any, i: number) => {
-													return (
-														<div
-															className='flex border-b border-b-slate-400'
-															key={i}
-														>
-															<div className='p-2 text-center w-[10%]'>
-																{i + 1}
-															</div>
-															<div className='p-2 text-center w-[30%]'>
-																{res.volume}
-															</div>
-															<div className='p-2 text-center w-[60%]'>
-																{res.item_of_work}
-															</div>
+											{data.work_scope_item.map((res: any, i: number) => {
+												return (
+													<div
+														className='flex border-b border-b-slate-400'
+														key={i}
+													>
+														<div className='p-1 text-center w-[10%]'>
+															{i + 1}
 														</div>
-													);
-												}
-											)}
+														<div className='p-1 text-center w-[30%]'>
+															{res.qty}
+														</div>
+														<div className='p-1 text-center w-[60%]'>
+															{res.item}
+														</div>
+													</div>
+												);
+											})}
 											<div className='flex w-full mt-2 bg-purple-400'>
 												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
 													Prepared by
@@ -315,9 +319,33 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='flex w-full'>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
 											</div>
 											<div className='flex w-full bg-purple-400'>
 												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
@@ -331,9 +359,33 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='flex w-full'>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
 											</div>
 											<div className='flex w-full bg-purple-400'>
 												<div className='w-full border border-black border-r-0 pb-1 px-1 text-center font-semibold'>
@@ -347,9 +399,33 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 											</div>
 											<div className='flex w-full'>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-r-0 border-t-0 h-20'></div>
-												<div className='w-full border border-black border-t-0 h-20'></div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-r-0 border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
+												<div className='w-full border border-black border-t-0'>
+													<Input
+														placeholder='..........'
+														type='text'
+														required={true}
+														withLabel={false}
+														className='text-black text-lg rounded-lg text-center w-full outline-none p-2'
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
