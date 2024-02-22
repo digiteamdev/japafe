@@ -20,6 +20,7 @@ interface props {
 }
 
 export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
+
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -28,8 +29,8 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 			// const width = pdf.internal.pageSize.getWidth();
 			// const height = pdf.internal.pageSize.getHeight();
 			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
-			// window.open(pdf.output("bloburl"), "_blank");
-			pdf.save(`quotation_${data.quo_auto}.pdf`);
+			window.open(pdf.output("bloburl"), "_blank");
+			// pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
 	};
 
@@ -240,7 +241,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 														<div className='w-full'></div>
 													</div>
 												</div>
-												<div className='w-full mt-[2px]'>
+												<div className='w-full mt-[2px] mb-[4px]'>
 													<p className='font-bold'>
 														2. <span className='underline'>DELIVERY TIME</span>
 													</p>
@@ -326,7 +327,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 													modified or withdrawn by seller prior to receipt of
 													buyer`s acceptance.
 												</div>
-												{ data.warranty === "" ? null : (
+												{data.warranty === "" ? null : (
 													<>
 														<div className='w-full mt-[2px]'>
 															<p className='font-bold'>
@@ -336,11 +337,14 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 														<div className='w-full'>
 															<p>
 																Warranty period is{" "}
-																<span className='font-bold'>{data.warranty}</span>
+																<span className='font-bold'>
+																	{data.warranty}
+																</span>
 															</p>
 															<p>
-																This warranty is valid in accordance with the period
-																and conditions set by PT. Dwitama Mulya Persada.
+																This warranty is valid in accordance with the
+																period and conditions set by PT. Dwitama Mulya
+																Persada.
 															</p>
 															<p className='font-bold'>
 																Warranty part as per approval drawing, not
@@ -348,10 +352,11 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 															</p>
 														</div>
 													</>
-												) }
+												)}
 												<div className='w-full mt-[2px]'>
 													<p className='font-bold'>
-														{ data.warranty === "" ? "5." : "6. " } <span className='underline'>PROPRIENTARY</span>
+														{data.warranty === "" ? "5." : "6. "}{" "}
+														<span className='underline'>PROPRIENTARY</span>
 													</p>
 												</div>
 												<div className='w-full whitespace-normal'>
@@ -379,14 +384,14 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 											<div className='w-full'>
 												<p className='mb-16'>Yours Faithfully,</p>
 												<Input
-													placeholder='Signature'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}
 													className='text-black text-lg rounded-lg text-center w-full outline-none'
 												/>
 												<Input
-													placeholder='No Hp'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}
@@ -396,14 +401,14 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 											<div className='w-full'>
 												<p className='mb-20'></p>
 												<Input
-													placeholder='Signature'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}
 													className='text-black text-lg rounded-lg text-center w-full outline-none'
 												/>
 												<Input
-													placeholder='No Hp'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}
@@ -413,14 +418,14 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 											<div className='w-full'>
 												<p className='mb-16'>Consent By,</p>
 												<Input
-													placeholder='Signature'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}
 													className='text-black text-lg rounded-lg text-center w-full outline-none'
 												/>
 												<Input
-													placeholder='No Hp'
+													placeholder='.....'
 													type='text'
 													required={true}
 													withLabel={false}

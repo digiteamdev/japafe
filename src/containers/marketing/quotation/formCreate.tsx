@@ -538,7 +538,6 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 									/>
 								</div>
 							</Section>
-
 							<h1 className='text-xl font-bold mt-3'>
 								Price And Term Of Payment
 							</h1>

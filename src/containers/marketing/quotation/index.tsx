@@ -1,28 +1,40 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import { removeToken } from "../../../configs/session";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
+import {
+	SectionTitle,
+	Content,
+	Modal,
+	Table,
+	Button,
+	ModalDelete,
+	Pagination,
+} from "../../../components";
 import { BookOpen, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateQuotation } from "./formCreate";
 import { ViewQuotation } from "./view";
-import { FormEditQuotation } from "./formEdit"
-import { GetAllCustomer, GetQuotation, SearchQuotation, DeleteQuotation  } from "../../../services";
+import { FormEditQuotation } from "./formEdit";
+import {
+	GetAllCustomer,
+	GetQuotation,
+	SearchQuotation,
+	DeleteQuotation,
+} from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
 
 export const Quotation = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
-    const [dataCustomer, setDataCustomer] = useState<any>([]);
+	const [dataCustomer, setDataCustomer] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No Qoutation" },
@@ -34,7 +46,7 @@ export const Quotation = () => {
 
 	useEffect(() => {
 		getQuatation(page, perPage);
-        getCustomer();
+		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -44,7 +56,7 @@ export const Quotation = () => {
 		// if(!val){
 		// 	setDataSelected({id: '',name: ''})
 		// }
-		if(reload){
+		if (reload) {
 			getQuatation(page, perPage);
 		}
 	};
@@ -67,20 +79,24 @@ export const Quotation = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchQuotation = async (page: number, limit: number, search: string) => {
+	const searchQuotation = async (
+		page: number,
+		limit: number,
+		search: string
+	) => {
 		setIsLoading(true);
 		try {
 			const response = await SearchQuotation(page, limit, search);
@@ -96,7 +112,7 @@ export const Quotation = () => {
 	const deleteQuotation = async (id: string) => {
 		try {
 			const response = await DeleteQuotation(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Quotation Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -202,17 +218,17 @@ export const Quotation = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.CustomerPo === null ? (
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "edit", false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											{res.CustomerPo === null ? (
 												<>
-													<Button
-														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true,'edit', false);
-														}}
-													>
-														<Edit color='white' />
-													</Button>
 													<Button
 														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 														onClick={() => {
@@ -223,7 +239,7 @@ export const Quotation = () => {
 														<Trash2 color='white' />
 													</Button>
 												</>
-											) : null }
+											) : null}
 										</div>
 									</td>
 								</tr>
@@ -231,20 +247,18 @@ export const Quotation = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getQuatation(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getQuatation(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -256,17 +270,22 @@ export const Quotation = () => {
 				/>
 			) : (
 				<Modal
-				title='Quotation'
-				isModal={isModal}
-				content={modalContent}
-				showModal={showModal}
-			>
+					title='Quotation'
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+				>
 					{modalContent === "view" ? (
 						<ViewQuotation dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
 						<FormCreateQuotation content={modalContent} showModal={showModal} />
 					) : (
-						<FormEditQuotation content={modalContent} showModal={showModal} dataQuotation={dataSelected} dataCustomer={dataCustomer}/>
+						<FormEditQuotation
+							content={modalContent}
+							showModal={showModal}
+							dataQuotation={dataSelected}
+							dataCustomer={dataCustomer}
+						/>
 					)}
 				</Modal>
 			)}
