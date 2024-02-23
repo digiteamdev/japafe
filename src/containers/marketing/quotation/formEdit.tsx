@@ -115,7 +115,6 @@ export const FormEditQuotation = ({
 	const settingData = () => {
 		let dataPrice: any = [];
 		dataQuotation.price_quotation.map((res: any) => {
-			console.log(res);
 			dataPrice.push(res);
 		});
 		setData({
@@ -247,7 +246,7 @@ export const FormEditQuotation = ({
 		form.append("estimated_delivery", payload.estimated_delivery);
 		form.append("waranti", payload.waranti);
 		form.append("subject", payload.subject);
-		form.append("Quotations_Detail:", payload.Quotations_Detail);
+		form.append("Quotations_Detail", payload.Quotations_Detail);
 		form.append("note_payment", payload.note_payment);
 		form.append("term_payment", payload.term_payment);
 		form.append("send_by", payload.send_by);

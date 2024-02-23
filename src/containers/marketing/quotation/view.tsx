@@ -16,6 +16,48 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 		setIsModal(val);
 	};
 
+	const listScopeWork = (data: string) => {
+		const listScopeWork: any = data.split("\r\n");
+		let list1: any = []
+		let list2: any = []
+		if (listScopeWork.length > 10) {
+			let no: number = (listScopeWork.length - 1) / 2
+			listScopeWork.map( (res:any, i: number) => {
+				if( i < no ){
+					list1.push(res)
+				}else{
+					list2.push(res)
+				}
+			})
+			return (
+				<Section className='grid grid-cols-2 gap-2 mt-2'>
+					<div className='w-full'>
+						{ list1.map( (res:any, i:number) => {
+							return(
+								<p className='whitespace-pre' key={i}>{res}</p>
+							)
+						})}
+					</div>
+					<div className='w-full'>
+						{ list2.map( (res:any, i:number) => {
+							return(
+								<p className='whitespace-pre' key={i}>{res}</p>
+							)
+						})}
+					</div>
+				</Section>
+			);
+		} else {
+			return (
+				<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+					<div className='w-full'>
+						<p className='whitespace-pre'>{data}</p>
+					</div>
+				</Section>
+			);
+		}
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfQuotation
@@ -116,11 +158,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 						</div>
 					</Section>
 					<h1 className='font-bold text-xl mt-2'>Scope Of work</h1>
-					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-						<div className='w-full'>
-							<p className="whitespace-pre-line">{ dataSelected.Quotations_Detail }</p>
-						</div>
-					</Section>
+					{listScopeWork(dataSelected.Quotations_Detail)}
 					<h1 className='font-bold text-xl mt-2'>Price And Term Of Payment</h1>
 					<Section className='grid grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
@@ -170,9 +208,19 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							</table>
 						</div>
 					</Section>
-					<Section className="grid grid-cols-1 mt-2">
-						<p>Note Payment : <span className="whitespace-pre">{ dataSelected.note_payment }</span></p>
-						<p>Term Payment : <span className="whitespace-pre">{ dataSelected.term_payment }</span></p>
+					<Section className='grid grid-cols-1 mt-2'>
+						<p>
+							Note Payment :{" "}
+							<span className='whitespace-pre'>
+								{dataSelected.note_payment}
+							</span>
+						</p>
+						<p>
+							Term Payment :{" "}
+							<span className='whitespace-pre'>
+								{dataSelected.term_payment}
+							</span>
+						</p>
 					</Section>
 				</>
 			) : null}

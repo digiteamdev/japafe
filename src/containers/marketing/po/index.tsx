@@ -189,10 +189,10 @@ export const Po = () => {
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.quotations.quo_num}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4'>
 										{res.quotations.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4'>
 										{res.quotations.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>

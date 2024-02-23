@@ -20,7 +20,6 @@ interface props {
 }
 
 export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
-
 	const printDocument = () => {
 		const doc: any = document.getElementById("divToPrint");
 		html2canvas(doc).then((canvas) => {
@@ -32,6 +31,52 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 			window.open(pdf.output("bloburl"), "_blank");
 			// pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
+	};
+
+	const listScopeWork = (data: string) => {
+		const listScopeWork: any = data.split("\r\n");
+		let list1: any = [];
+		let list2: any = [];
+		if (listScopeWork.length > 10) {
+			let no: number = (listScopeWork.length - 1) / 2;
+			listScopeWork.map((res: any, i: number) => {
+				if (i < no) {
+					list1.push(res);
+				} else {
+					list2.push(res);
+				}
+			});
+			return (
+				<div className='grid grid-cols-2 ml-2'>
+					<div className='w-full'>
+						{list1.map((res: any, i: number) => {
+							return (
+								<p className='whitespace-pre' key={i}>
+									{res}
+								</p>
+							);
+						})}
+					</div>
+					<div className='w-full'>
+						{list2.map((res: any, i: number) => {
+							return (
+								<p className='whitespace-pre' key={i}>
+									{res}
+								</p>
+							);
+						})}
+					</div>
+				</div>
+			);
+		} else {
+			return (
+				<div className='grid grid-cols-1 ml-2'>
+					<div className='w-full'>
+						<p className='whitespace-pre'>{data}</p>
+					</div>
+				</div>
+			);
+		}
 	};
 
 	return (
@@ -232,15 +277,8 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 															WORKSCOPE DESCRIPTION
 														</span>
 													</p>
-													<div className='grid grid-cols-2 ml-2'>
-														<div className='w-full'>
-															<p className='whitespace-pre'>
-																{data.Quotations_Detail}
-															</p>
-														</div>
-														<div className='w-full'></div>
-													</div>
 												</div>
+												{ listScopeWork(data.Quotations_Detail) }
 												<div className='w-full mt-[2px] mb-[4px]'>
 													<p className='font-bold'>
 														2. <span className='underline'>DELIVERY TIME</span>
