@@ -168,37 +168,44 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 											<div className='w-full mt-4 text-sm'>
 												<div className='grid grid-cols-5'>
 													<div className='w-full font-semibold'>Job No</div>
-													<div className='w-full font-semibold col-span-4'>
-														: {data.job_no}
+													<div className='w-full font-semibold col-span-4 flex'>
+														:{" "}
+														{data.job_no.split("").map((res: any, i: number) => {
+															return (
+																<p className='mx-[2px] px-2 border border-black text-lg' key={i}>
+																	{res}
+																</p>
+															);
+														})}
 													</div>
 												</div>
 												<div className='grid grid-cols-5'>
 													<div className='w-full'>Customer</div>
-													<div className='w-full col-span-4'>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 														: {data.customerPo.quotations.Customer.name}
 													</div>
 												</div>
 												<div className='grid grid-cols-5'>
 													<div className='w-full'>Job Description</div>
-													<div className='w-full col-span-4'>
-														: {data.job_desk}
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
+														: {data.job_description}
 													</div>
 												</div>
 											</div>
 											<div className='w-full grid grid-cols-2 gap-1 text-sm mt-2'>
 												<div className='grid grid-cols-7'>
 													<div className='w-full col-span-3'>Quantity</div>
-													<div className='w-full col-span-4'>: {data.qty}</div>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>: {data.qty}</div>
 												</div>
 												<div className='grid grid-cols-6'>
 													<div className='w-full col-span-2'>PO No</div>
-													<div className='w-full col-span-4'>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 														: {data.customerPo.po_num_auto}
 													</div>
 												</div>
 												<div className='grid grid-cols-7'>
 													<div className='w-full col-span-3'>Date Of Order</div>
-													<div className='w-full col-span-4'>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 														:{" "}
 														{moment(data.date_of_order).format("DD MMMM YYYY")}
 													</div>
@@ -207,7 +214,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 													<div className='w-full col-span-2'>
 														Contact Person
 													</div>
-													<div className='w-full col-span-4'>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 														:{" "}
 														{
 															data.customerPo.quotations.CustomerContact
@@ -234,16 +241,28 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												</div>
 												<div className='grid grid-cols-7'>
 													<div className='w-full col-span-3'>
+													</div>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
+													</div>
+												</div>
+												<div className='grid grid-cols-6'>
+													<div className='w-full col-span-2'>Estimator</div>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
+														: {data.estimator.employee_name}
+													</div>
+												</div>
+												<div className='grid grid-cols-7'>
+													<div className='w-full col-span-3'>
 														Shipping Address
 													</div>
-													<div className='w-full col-span-4'>
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 														: {data.shipping_address}
 													</div>
 												</div>
 												<div className='grid grid-cols-6'>
 													<div className='w-full col-span-2'>Email Address</div>
-													<div className='w-full col-span-4'>
-														: {data.employee.email}
+													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
+														: {data.customerPo.quotations.Customer.email}
 													</div>
 												</div>
 											</div>
@@ -252,57 +271,85 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												<div className='grid grid-cols-2 col-span-4 gap-1'>
 													<div className='grid grid-cols-3'>
 														<div>: Mfg</div>
-														<div className='col-span-2'>: {data.eq_mfg}</div>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>: {data.eq_mfg}</div>
 													</div>
 													<div className='grid grid-cols-3'>
 														<div>Rotation</div>
-														<div className='col-span-2'>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
 															: {data.eq_rotation}
 														</div>
 													</div>
 													<div className='grid grid-cols-3'>
-														<div>: Model</div>
-														<div className='col-span-2'>: {data.eq_model}</div>
+														<div className="pl-1.5">Model</div>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>: {data.eq_model}</div>
 													</div>
 													<div className='grid grid-cols-3'>
 														<div>Power</div>
-														<div className='col-span-2'>: {data.eq_power}</div>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>: {data.eq_power}</div>
+													</div>
+													<div className='grid grid-cols-3'>
+														<div className="pl-1.5">Warranty</div>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>: {data.customerPo.quotations.warranty}</div>
+													</div>
+													<div className='grid grid-cols-3'>
+														<div></div>
+														<div className='col-span-2 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>	</div>
 													</div>
 												</div>
 											</div>
-											<div className='w-full grid grid-cols-2 gap-1 text-sm my-2'>
-												<div className='w-full'>
-													Priority Status : {data.priority_status}
+											<div className='grid grid-cols-5 mb-2 mt-1 text-sm'>
+													<div className='w-full'>Priority Status</div>
+													<div className='w-full col-span-4 flex'>
+														: 
+														<div className={`mx-1 ${data.priority_status === 'ST' ? "px-1" : "px-2"} border border-black`}>{ data.priority_status === 'ST' ? "X" : "" }</div>
+														<div className="mr-4">ST</div>
+														<div className={`mx-1 ${data.priority_status === 'OT' ? "px-1" : "px-2"} border border-black`}>{ data.priority_status === 'OT' ? "X" : "" }</div>
+														<div className="mr-4">OT</div>
+														<div className={`mx-1 ${data.priority_status === 'XXT' ? "px-1" : "px-2"} border border-black`}>{ data.priority_status === 'XXT' ? "X" : "" }</div>
+														<div className="mr-4">XXT</div>
+														<div className={`mx-1 ${data.priority_status === 'T&M' ? "px-1" : "px-2"} border border-black`}>{ data.priority_status === 'T&M' ? "X" : "" }</div>
+														<div className="mr-4">T & M</div>
+														<div className={`mx-1 ${data.priority_status === 'Q' ? "px-1" : "px-2"} border border-black`}>{ data.priority_status === 'Q' ? "X" : "" }</div>
+														<div className="mr-4">Q</div>
+													</div>
 												</div>
-												<div className='w-full'>
-													Quote No. : {data.customerPo.quotations.quo_auto}
+												<div className='grid grid-cols-5 my-1.5 text-sm'>
+													<div className='w-full'>Quotation No</div>
+													<div className='w-full col-span-4'>
+														: {data.customerPo.quotations.quo_num}
+													</div>
 												</div>
-											</div>
-											<div className='flex border border-black bg-purple-400'>
+											<div className='flex border border-black bg-purple-400 text-sm'>
 												<div className='p-2 text-center w-[10%] font-semibold'>
 													No
 												</div>
-												<div className='p-2 text-center w-[30%] font-semibold'>
+												<div className='p-2 text-center w-[20%] font-semibold'>
 													Qty Item
 												</div>
-												<div className='p-2 text-center w-[60%] font-semibold'>
+												<div className='p-2 text-center w-[50%] font-semibold'>
 													Standar work scope item
+												</div>
+												<div className='p-2 text-center w-[20%] font-semibold'>
+													Unit
 												</div>
 											</div>
 											{data.work_scope_item.map((res: any, i: number) => {
 												return (
 													<div
-														className='flex border-b border-b-slate-400'
+														className='flex border-b border-b-slate-400 text-sm'
 														key={i}
 													>
 														<div className='p-1 text-center w-[10%]'>
 															{i + 1}
 														</div>
-														<div className='p-1 text-center w-[30%]'>
+														<div className='p-1 text-center w-[20%]'>
 															{res.qty}
 														</div>
-														<div className='p-1 text-center w-[60%]'>
+														<div className='p-1 w-[50%]'>
 															{res.item}
+														</div>
+														<div className='p-1 text-center w-[20%]'>
+															{res.unit}
 														</div>
 													</div>
 												);

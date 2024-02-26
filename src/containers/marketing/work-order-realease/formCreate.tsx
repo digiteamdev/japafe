@@ -49,8 +49,10 @@ interface data {
 
 export const FormCreateWor = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isUnitInput, setIsUnitInput] = useState<boolean>(false);
 	const [listPo, setListPo] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
+	const [datasUnit, setDatasUnit] = useState<any>([]);
 	const [customerId, setCustomerId] = useState<string>("");
 	const [customer, setCustomer] = useState<string>("");
 	const [customerContact, setCustomerContact] = useState<string>("");
@@ -90,6 +92,29 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	useEffect(() => {
 		getPo();
 		getEmploye();
+		let data: any = [
+			{
+				label: "each",
+				value: "each",
+			},
+			{
+				label: "set",
+				value: "set",
+			},
+			{
+				label: "lot",
+				value: "lot",
+			},
+			{
+				label: "unit",
+				value: "unit",
+			},
+			{
+				label: "Input",
+				value: "Input",
+			},
+		];
+		setDatasUnit(data);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -124,7 +149,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("date_wor", payload.date_wor);
 		dataBody.append("cuspoId", customerId);
 		dataBody.append("subject", payload.subject);
-		dataBody.append("job_desk", payload.job_desk);
+		dataBody.append("job_description", payload.job_desk);
 		dataBody.append("contract_no_spk", payload.contract_no_spk);
 		dataBody.append("employeeId", payload.employeeId);
 		dataBody.append("estimatorId", payload.estimatorId);
@@ -135,7 +160,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("date_of_order", payload.date_of_order);
 		dataBody.append("delivery_date", payload.delivery_date);
 		dataBody.append("shipping_address", payload.shipping_address);
-		dataBody.append("estimated_man_our", '0');
+		dataBody.append("estimated_man_our", "0");
 		dataBody.append("eq_model", payload.eq_model);
 		dataBody.append("eq_mfg", payload.eq_mfg);
 		dataBody.append("eq_rotation", payload.eq_rotation);
@@ -184,7 +209,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasPo.push({
 						value: res,
-						label: `${res.po_num_auto} - ${res.quotations.Customer.name}`,
+						label: `${res.id_po} - ${res.quotations.Customer.name}`,
 					});
 				});
 				setListPo(datasPo);
@@ -262,7 +287,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										Choose Job Operational
 									</option>
 									<option value='B'>BUMN</option>
-									<option value='S'>Swasta</option>
+									<option value='S'>SWASTA</option>
 								</InputSelect>
 								{errors.job_operational && touched.job_operational ? (
 									<span className='text-red-500 text-xs'>
@@ -294,6 +319,8 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 											scopeWork.push({
 												item: res,
 												qty: 0,
+												unit: "",
+												unitInput: false
 											});
 										});
 										setFieldValue("work_scope", scopeWork);
@@ -795,7 +822,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-												<div className='grid grid-cols-2'>
+												<div className='grid md:grid-cols-3 sm:grid-cols-1 gap-3'>
 													<div className='w-full'>
 														<Input
 															id={`work_scope.${i}.qty`}
@@ -816,6 +843,50 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600'
 														/>
+													</div>
+													<div className='w-full'>
+														{ res.unitInput ? (
+															<Input
+																id={`work_scope.${i}.unit`}
+																name={`work_scope.${i}.unit`}
+																placeholder='Unit'
+																label='Unit'
+																type='text'
+																onChange={(e: any) => {
+																	setFieldValue(
+																		`work_scope.${i}.unit`,
+																		e.target.value
+																	);
+																}}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+															/>
+														) : (
+															<InputSelectSearch
+																datas={datasUnit}
+																id={`work_scope.${i}.unit`}
+																name={`work_scope.${i}.unit`}
+																placeholder='Unit'
+																label='Unit'
+																onChange={(input: any) => {
+																	if (input.value === "Input") {
+																		setFieldValue(
+																			`work_scope.${i}.unitInput`,
+																			true
+																		);
+																	} else {
+																		setFieldValue(
+																			`work_scope.${i}.unit`,
+																			input.value
+																		);
+																	}
+																}}
+																required={true}
+																withLabel={true}
+																className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+															/>
+														)}
 													</div>
 													<div className='flex ml-2'>
 														{i === values.work_scope.length - 1 ? (

@@ -142,11 +142,27 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Job Description
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{ dataSelected.job_description }
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Priority
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.priority_status} (Quantity:{" "}
 											{dataSelected.qty})
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Sales / Estimator
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.employee.employee_name} / {dataSelected.estimator.employee_name}
 										</td>
 									</tr>
 									<tr>
@@ -208,6 +224,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 										<th className="border border-black text-center">No</th>
 										<th className="border border-black text-center">Standart work scope item</th>
 										<th className="border border-black text-center">qty</th>
+										<th className="border border-black text-center">Unit</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -222,6 +239,9 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 												</td>
 												<td className="border border-black text-center">
 													{ res.qty }
+												</td>
+												<td className="border border-black text-center">
+													{ res.unit }
 												</td>
 											</tr>
 										)
