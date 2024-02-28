@@ -289,7 +289,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		// 	}
 		// });
 		payload.term_of_pay.map((res: any, i: number) => {
-			console.log(res);
 			if (res.limitpay === "") {
 				toast.warning("Term Of Payment not empty", {
 					position: "top-center",

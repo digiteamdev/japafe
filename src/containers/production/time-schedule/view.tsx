@@ -53,7 +53,7 @@ export const ViewSchedule = ({
 			monthDiff(
 				new Date(dataSelected.wor.date_of_order),
 				new Date(dataSelected.wor.delivery_date)
-			) + 1
+			) + 1, dataSelected.wor.date_of_order, dataSelected.wor.delivery_date
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -98,6 +98,8 @@ export const ViewSchedule = ({
 				color: "#facc15",
 				left: 0,
 				width: 60 * (durationDay - countHoliday),
+				gapleft: 0,
+				gaprigth: 0
 			});
 			dataSelected.aktivitas.map((res: any) => {
 				let listDatesRange: any = [];
@@ -127,6 +129,8 @@ export const ViewSchedule = ({
 				}
 				dataAktivitas.push({
 					...res,
+					gapleft: rangeDay - 1,
+					gaprigth: CountGapRight(durationDay, res.days + (rangeDay - 1) ),
 					left: 60 * (rangeDay - countHolidayRange) - 60,
 					width: 60 * res.days,
 				});
@@ -135,12 +139,36 @@ export const ViewSchedule = ({
 		setAktivitas(dataAktivitas);
 	};
 
-	const showMonth = (countMoth: number) => {
+	const CountGapRight = (rangeJob: number, duration: number) => {
+		return rangeJob - duration
+	}
+
+	const showMonth = (countMoth: number, start: any, end: any) => {
 		let listMoths: any = [];
 		for (var i = 0; i < countMoth; i++) {
-			listMoths.push(
-				getMonthName(new Date(dataSelected.wor.date_of_order).getMonth() + i)
-			);
+			let rangeDay = countDay(start, end);
+			let countDate: number = 0;
+			for (var idx = 0; idx < rangeDay; idx++) {
+				if (idx === 0) {
+					let unixTime = Math.floor(new Date(start).getTime() / 1000);
+					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
+					if (mothDate === getMonthName(new Date(start).getMonth() + i)) {
+						countDate = countDate + 1;
+					}
+				} else {
+					let unixTime = Math.floor(
+						new Date(start).getTime() / 1000 + 86400 * idx
+					);
+					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
+					if (mothDate === getMonthName(new Date(start).getMonth() + i)) {
+						countDate = countDate + 1;
+					}
+				}
+			}
+			listMoths.push({
+				moth: getMonthName(new Date(start).getMonth() + i),
+				countDate: countDate,
+			});
 		}
 		setListMonth(listMoths);
 	};
@@ -310,7 +338,7 @@ export const ViewSchedule = ({
 							<X size={16} className='mr-1' /> Unvalid SPV
 						</div>
 					</button>
-				)
+				);
 			}
 		} else if (position === "Manager") {
 			if (data.status_manager === "unvalid" || data.status_manager === null) {
@@ -326,22 +354,22 @@ export const ViewSchedule = ({
 				);
 			} else {
 				return (
-				<button
-					className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-					onClick={() => approve("Manager")}
-				>
-					<div className='flex px-1 py-1'>
-						<Check size={16} className='mr-1' /> Unvalid Manager
-					</div>
-				</button>
-				)
+					<button
+						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+						onClick={() => approve("Manager")}
+					>
+						<div className='flex px-1 py-1'>
+							<Check size={16} className='mr-1' /> Unvalid Manager
+						</div>
+					</button>
+				);
 			}
 		}
 	};
-
+	
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-hidden'>
-			<PdfTimeSchedule
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
+			{/* <PdfTimeSchedule
 				isModal={isModal}
 				dataSelected={dataSelected}
 				showModalPdf={setIsModal}
@@ -351,20 +379,20 @@ export const ViewSchedule = ({
 				listMoth={listMoth}
 				numMoth={numMoth}
 				holiday={holiday}
-			/>
+			/> */}
 			<h1 className='font-bold text-xl'>Time Schedulle</h1>
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
 						<div className='text-right mr-6'>
-							<button
+							{/* <button
 								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 								onClick={() => showModalPdf(true)}
 							>
 								<div className='flex px-1 py-1'>
 									<Printer size={16} className='mr-1' /> Print
 								</div>
-							</button>
+							</button> */}
 							{showButtonValid(dataSelected)}
 						</div>
 					</div>
@@ -418,12 +446,14 @@ export const ViewSchedule = ({
 											{dataSelected.holiday ? "Not Working" : "Working"}
 										</td>
 									</tr>
-									<tr>
+									{/* <tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 											Approval Supervisor
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.status_spv === "valid" ? dataSelected.status_spv : "Unvalid"}
+											{dataSelected.status_spv === "valid"
+												? dataSelected.status_spv
+												: "Unvalid"}
 										</td>
 									</tr>
 									<tr>
@@ -431,322 +461,107 @@ export const ViewSchedule = ({
 											Approval Manager
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.status_manager === "valid" ? dataSelected.status_manager : "Unvalid"}
+											{dataSelected.status_manager === "valid"
+												? dataSelected.status_manager
+												: "Unvalid"}
 										</td>
-									</tr>
+									</tr> */}
 								</table>
 							</Section>
 							<h1 className='font-bold text-xl'>Aktivity</h1>
-							<div className='flex'>
-								<div className='w-[40%]'>
-									<div className='flex w-full'>
-										<div className='w-[10%]'>
-											<div className='w-full border-t border-l border-gray-500 p-[2px]'>
-												&nbsp;
-											</div>
-											<div className='w-full border-l text-center border-gray-500 p-[2px]'>
+							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8 text-xs'>
+								<table className='w-full'>
+									<thead></thead>
+									<tbody>
+										<tr>
+											<td
+												className='border border-black text-center w-[2%]'
+												rowSpan={2}
+											>
 												No
-											</div>
-											<div className='w-full border-l border-gray-500 p-[2px]'>
-												&nbsp;
-											</div>
-										</div>
-										<div className='w-full'>
-											<div className='grid grid-cols-4 w-full'>
-												<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
-													Aktivitas
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													Start Date
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													End Date
-												</div>
-												<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-													Duration
-												</div>
-												<div className='w-full border-l border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-												<div className='w-full border-r border-gray-500 p-[2px]'>
-													&nbsp;
-												</div>
-											</div>
-										</div>
-									</div>
-									{aktivitas.map((res: any, i: number) => {
-										return (
-											<div className='flex w-full' key={i}>
-												<div className='w-[10%]'>
-													<div
-														className={`w-full border-l border-t border-gray-500 text-justifym-auto h-14 p-2 ${
-															i === aktivitas.length - 1 ? "border-b" : ""
-														}`}
-													>
-														<p className='text-center text-xs'>
-															{i === 0 ? "-" : i}
-														</p>
-													</div>
-												</div>
-												<div className='w-full'>
-													<div className='grid grid-cols-4 w-full'>
-														<div
-															className={`w-full border-l border-r border-t border-gray-500 text-justifym-auto h-14 p-2 ${
-																i === aktivitas.length - 1 ? "border-b" : ""
-															}`}
-														>
-															<p className='text-center text-xs'>
-																{i === 0 ? res.name : res.masterAktivitas.name}
-															</p>
-														</div>
-														<div
-															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																i === aktivitas.length - 1 ? "border-b" : ""
-															}`}
-														>
-															<p className='text-center text-xs'>
-																{i === 0
-																	? moment(res.start).format("DD-MM-YYYY")
-																	: moment(res.startday).format("DD-MM-YYYY")}
-															</p>
-														</div>
-														<div
-															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																i === aktivitas.length - 1 ? "border-b" : ""
-															}`}
-														>
-															<p className='text-center text-xs'>
-																{i === 0
-																	? moment(res.end).format("DD-MM-YYYY")
-																	: moment(res.endday).format("DD-MM-YYYY")}
-															</p>
-														</div>
-														<div
-															className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																i === aktivitas.length - 1 ? "border-b" : ""
-															}`}
-														>
-															<p className='text-center text-xs'>
-																{i === 0 ? res.duration : res.days} days
-															</p>
-														</div>
-													</div>
-												</div>
-											</div>
-										);
-									})}
-								</div>
-								<div className='w-[60%]'>
-									<div className='grid grid-cols-1 w-full overflow-auto'>
-										<div
-											style={{
-												width: `${
-													dataSelected.holiday
-														? 60 * listDateHoliday.length
-														: 60 * listDate.length
-												}px`,
-											}}
-											className={`border-t border-r border-gray-500 p-[2px]`}
-										>
-											<div className='text-center'>Calender</div>
-										</div>
-										<div
-											style={{
-												width: `${
-													dataSelected.holiday
-														? 60 * listDateHoliday.length
-														: 60 * listDate.length
-												}px`,
-												gridTemplateColumns: `repeat(${numMoth}, minmax(0, 1fr))`,
-											}}
-											className={`grid border-t border-b border-r border-gray-500 p-[2px]`}
-										>
+											</td>
+											<td
+												className='border border-black text-center w-[20%]'
+												rowSpan={2}
+											>
+												Activity
+											</td>
 											{listMoth.map((res: any, i: number) => {
 												return (
-													<div key={i} className='w-full text-center'>
-														{res}
-													</div>
+													<td
+														className='border border-black text-center'
+														key={i}
+														colSpan={res.countDate}
+													>
+														{res.moth}
+													</td>
 												);
 											})}
-										</div>
-										<div
-											style={{
-												width: `${
-													dataSelected.holiday
-														? 60 * listDateHoliday.length
-														: 60 * listDate.length
-												}px`,
-											}}
-											className={`flex border-gray-500`}
-										>
-											{dataSelected.holiday
-												? listDateHoliday.map((res: any, i: number) => {
-														return (
-															<div
-																key={i}
-																style={{
-																	width: "60px",
-																	display: `${
-																		dataSelected.holiday
-																			? checkHoliday(res, "date")
-																			: ""
-																	}`,
-																}}
-																className={`w-full text-center ${
-																	i !== listDateHoliday.length + 1
-																		? "border-r"
-																		: ""
-																} border-b border-gray-500`}
-															>
-																{moment(res).format("dd DD")}
-															</div>
-														);
-												  })
-												: listDate.map((res: any, i: number) => {
-														return (
-															<div
-																key={i}
-																style={{
-																	width: "60px",
-																	display: `${
-																		dataSelected.holiday
-																			? checkHoliday(res, "date")
-																			: ""
-																	}`,
-																}}
-																className={`w-full text-center ${
-																	i !== listDate.length + 1 ? "border-r" : ""
-																} border-b border-gray-500`}
-															>
-																{moment(res).format("dd DD")}
-															</div>
-														);
-												  })}
-										</div>
-										{aktivitas.map((result: any, idx: number) => {
+										</tr>
+										<tr>
+											{listDate.map((res: any, i: number) => {
+												return (
+													<td
+														className='border border-black text-center'
+														key={i}
+													>
+														{moment(res).format("D")}
+													</td>
+												);
+											})}
+										</tr>
+										{aktivitas.map((res: any, i: number) => {
 											return (
-												<div
-													key={idx}
-													style={{
-														width: `${
-															dataSelected.holiday
-																? 60 * listDateHoliday.length
-																: 60 * listDate.length
-														}px`,
-													}}
-													className={`flex relative ${
-														idx === aktivitas.length - 1 ? "border-b" : ""
-													} border-gray-500 h-14`}
-												>
-													{dataSelected.holiday
-														? listDateHoliday.map((res: any, i: number) => {
-																return (
-																	<div
-																		key={i}
-																		style={{
-																			width: `${
-																				dataSelected.holiday
-																					? 60 * listDateHoliday.length
-																					: 60 * listDate.length
-																			}px`,
-																			display: `${
-																				dataSelected.holiday
-																					? checkHoliday(res, "date")
-																					: ""
-																			}`,
-																		}}
-																		className={`text-center border-r border-gray-400 border-b-gray-400 p-4`}
-																	>
-																		<p className='p-[1px]'>&nbsp;</p>
-																	</div>
-																);
-														  })
-														: listDate.map((res: any, i: number) => {
-																return (
-																	<div
-																		key={i}
-																		style={{
-																			width: `${
-																				dataSelected.holiday
-																					? 60 * listDateHoliday.length
-																					: 60 * listDate.length
-																			}px`,
-																			display: `${
-																				dataSelected.holiday
-																					? checkHoliday(res, "date")
-																					: ""
-																			}`,
-																		}}
-																		className={`text-center border-r border-gray-400 border-b-gray-400 p-4`}
-																	>
-																		<p className='p-[1px]'>&nbsp;</p>
-																	</div>
-																);
-														  })}
-													<div
-														style={{
-															width: `${result.width}px`,
-															left: `${result.left}px`,
-														}}
-														className={`absolute my-2 ${
-															idx === 0 ? "bg-orange-400" : "bg-blue-400"
-														} rounded-lg`}
-														data-te-toggle='tooltip'
-														title={`Activity: ${
-															idx === 0
-																? result.name
-																: result.masterAktivitas.name
-														} \nDuration: ${
-															idx === 0 ? result.duration : result.days
-														} day \nProgress: ${result.progress}%`}
+												<tr key={i}>
+													<td className='border border-black text-center w-[2%]'>
+														{i === 0 ? '' : i}
+													</td>
+													<td className='border border-black text-center w-[20%]'>
+														{ i === 0 ? res.name : res.work_scope_item.item}
+													</td>
+													{res.gapleft > 0 ? (
+														<td
+															className='border border-black border-r-0'
+															colSpan={res.gapleft}
+														>
+															<div></div>
+														</td>
+													) : null}
+													<td
+														className={`border border-black ${
+															res.gapleft > 0 ? "border-l-0" : ""
+														} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
+														colSpan={ i === 0 ? res.duration : res.days}
 													>
 														<div
-															style={{
-																width:
-																	idx === 0
-																		? "100%"
-																		: result.progress === 0
-																		? "1%"
-																		: result.progress + "%",
-															}}
 															className={`${
-																idx === 0 ? "bg-orange-600" : "bg-blue-600"
-															} p-2 rounded-lg`}
+																res.id === "Task"
+																	? "bg-orange-500"
+																	: "bg-yellow-500"
+															} w-full h-3 rounded-lg cursor-pointer`}
+															data-te-toggle='tooltip'
+															title={`
+																		Activity: ${ i === 0 ? res.name : res.work_scope_item.item} \nStart Date: ${moment(res.start).format(
+																"DD MMMM yyyy"
+															)}\nEnd Date: ${moment(res.end).format(
+																"DD MMMM yyyy"
+															)}\nDuration: ${res.days} day\nProgress: ${res.progress}%`}
+														></div>
+													</td>
+													{res.gaprigth > 0 ? (
+														<td
+															className='border border-black border-l-0'
+															colSpan={res.gaprigth}
 														>
-															<p className='p-0 m-0 text-center font-semibold  text-xs'>
-																{idx === 0
-																	? result.name
-																	: result.progress + "%"}
-															</p>
-														</div>
-														{/* <p className='p-0 text-center font-semibold  text-xs'>
-															{ idx === 0 ? result.duration : result.days} days
-														</p> */}
-													</div>
-												</div>
+															<div></div>
+														</td>
+													) : null}
+												</tr>
 											);
 										})}
-									</div>
-								</div>
-							</div>
+									</tbody>
+								</table>
+							</Section>
 						</>
 					) : null}
 				</>

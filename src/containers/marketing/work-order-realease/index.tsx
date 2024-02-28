@@ -187,17 +187,17 @@ export const Wor = () => {
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
-										<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<td className='px-6 py-4 text-center'>
 											{res.job_no}{" "}
 											{res.refivision !== '0' ? res.refivision : ''}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<td className='px-6 py-4 text-center'>
 											{moment(res.date_wor).format("DD-MMMM-YYYY")}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<td className='px-6 py-4 text-center'>
 											{res.customerPo.quotations.Customer.name}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4 text-center'>
+										<td className='px-6 py-4 text-center'>
 											{res.customerPo.quotations.subject}
 										</td>
 										<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>

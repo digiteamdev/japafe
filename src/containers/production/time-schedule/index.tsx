@@ -41,6 +41,7 @@ export const Schedule = () => {
 		{ name: "Date Schedulle" },
 		{ name: "Customer" },
 		{ name: "Subject" },
+		{ name: "Priority" },
 		{ name: "Action" }
 	];
 
@@ -207,17 +208,20 @@ export const Schedule = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4 text-center'>
 										{ res.wor.job_no }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4 text-center'>
 										{ moment(res.timesch).format('DD-MMMM-YYYY') }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4 text-center'>
 										{ res.wor.customerPo.quotations.Customer.name }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.wor.subject }
+									<td className='px-6 py-4 text-center'>
+										{ res.wor.customerPo.quotations.subject }
+									</td>
+									<td className='px-6 py-4 text-center'>
+										{ res.wor.priority_status }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[15%] text-center'>
 										<div>
@@ -228,7 +232,7 @@ export const Schedule = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											{
+											{/* {
 												res.status_manager === null || res.status_manager === "unvalid" ? (
 													<>
 														<Button className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md `}
@@ -248,7 +252,7 @@ export const Schedule = () => {
 														</Button>
 													</>
 												) : null
-											}
+											} */}
 										</div>
 									</td>
 								</tr>

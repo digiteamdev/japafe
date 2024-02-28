@@ -5,6 +5,7 @@ import {
 	InputSelect,
 	InputSelectSearch,
 	InputDate,
+	InputArea,
 } from "../../../components";
 import { Formik, Form } from "formik";
 import {
@@ -67,7 +68,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	const [jobDesc, setJobDesc] = useState<string>("");
 	const [note, setNote] = useState<string>("");
 	const [row, setRow] = useState<number>(0);
-	const [activity, setActivity] = useState<string>("");
+	const [activity, setActivity] = useState<any>([]);
 	const [activityId, setActivityId] = useState<string>("");
 	const [activityStar, setActivityStar] = useState<any>(new Date());
 	const [activityEnd, setActivityEnd] = useState<any>(new Date());
@@ -115,7 +116,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 
 	useEffect(() => {
 		getWor();
-		getActivity();
 		generateIdNum();
 		getHolidays();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,7 +129,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${ res.job_no } - ${res.customerPo.quotations.Customer.name}`,
+						label: `${res.job_no} - ${res.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
@@ -139,26 +139,9 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		}
 	};
 
-	const getActivity = async () => {
-		let datasActivity: any = [];
-		try {
-			const response = await GetAllActivity();
-			if (response.data) {
-				response.data.result.map((res: any) => {
-					datasActivity.push({
-						value: res,
-						label: res.name,
-					});
-				});
-				setListActivity(datasActivity);
-			}
-		} catch (error: any) {
-			setListActivity(datasActivity);
-		}
-	};
-
 	const selectWor = (data: any) => {
 		let listDates: any = [];
+		let datasActivity: any = [];
 		let countHoliday = 0;
 		let durationDay = countDay(data.date_of_order, data.delivery_date);
 		if (holiday === "yes") {
@@ -179,8 +162,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			}
 		}
 		setCustomer(data.customerPo.quotations.Customer.name);
-		setSubject(data.subject);
-		setJobDesc(data.job_desk);
+		setSubject(data.customerPo.quotations.subject);
+		setJobDesc(data.job_description);
 		setNote(data.noted);
 		setStartDate(data.date_of_order);
 		setEndDate(data.delivery_date);
@@ -206,9 +189,19 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
 		);
 		showMonth(
-			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
+			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1,
+			data.date_of_order,
+			data.delivery_date
 		);
 		showDate(data.date_of_order, data.delivery_date);
+		data.work_scope_item.map((res: any) => {
+			datasActivity.push({
+				value: res,
+				label: res.item,
+			});
+		});
+		setListActivity(datasActivity);
+		setActivity([]);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -271,7 +264,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					monthDiff(
 						new Date(data.date_of_order),
 						new Date(data.delivery_date)
-					) + 1
+					) + 1, data.date_of_order, data.delivery_date
 				);
 				showDate(data.date_of_order, data.delivery_date);
 			} else {
@@ -410,6 +403,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let countHoliday = 0;
 		let countHolidayRange = 0;
 		let listDatesRange: any = [];
+		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
 		let durationDay = countDay(activityStar, activityEnd);
 		for (var i = 0; i < rangeDay; i++) {
@@ -444,6 +438,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				countHolidayRange = countHolidayRange + parseInt(holiday.toString());
 			}
 		}
+
 		tasks.map((res: any, i: any) => {
 			if (i === 0) {
 				newTaks.push({
@@ -451,7 +446,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					end: res.end,
 					name: res.name,
 					id: res.id,
+					activity: res.activity,
 					progress: res.progress,
+					gapleft: 0,
+					gaprigth: 0,
 					duration: res.duration,
 					holiday: res.holiday,
 					left: res.left,
@@ -465,10 +463,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					newTaks.push({
 						start: activityStar,
 						end: activityEnd,
-						name: activity,
+						name: activity.label,
 						id: activityId,
+						activity: activity,
 						progress: 0,
 						duration: durationDay - countHoliday,
+						gapleft: rangeDay - 1,
+						gaprigth: CountGapRight(rangeJob, (durationDay - countHoliday) + (rangeDay - 1)),
 						holiday: countHoliday,
 						color: "#60a5fa",
 						left: 60 * rangeDay - 60,
@@ -481,8 +482,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						activity: res.activity,
 						progress: res.progress,
 						duration: res.duration,
+						gapleft: res.gapleft,
+						gaprigth: res.gaprigth,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
@@ -496,8 +500,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						activity: res.activity,
 						progress: res.progress,
 						duration: res.duration,
+						gapleft: res.gapleft,
+						gaprigth: res.gaprigth,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
@@ -512,10 +519,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			newTaks.push({
 				start: activityStar,
 				end: activityEnd,
-				name: activity,
+				name: activity.label,
+				activity: activity,
 				id: activityId,
 				progress: 0,
 				duration: durationDay - countHoliday,
+				gapleft: rangeDay - 1,
+				gaprigth: CountGapRight(rangeJob, (durationDay - countHoliday) + (rangeDay - 1)),
 				holiday: countHoliday,
 				color: "#60a5fa",
 				left: 60 * rangeDay - 60,
@@ -534,6 +544,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let countHoliday = 0;
 		let countHolidayRange = 0;
 		let listDatesRange: any = [];
+		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
 		let durationDay = countDay(activityStar, activityEnd);
 		for (var i = 0; i < rangeDay; i++) {
@@ -580,8 +591,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					end: res.end,
 					name: res.name,
 					id: res.id,
+					activity: res.activity,
 					progress: res.progress,
 					duration: res.duration,
+					gapleft: res.gapleft,
+					gaprigth: res.gaprigth,
 					holiday: res.holiday,
 					left: res.left,
 					leftHoliday: res.leftHoliday,
@@ -594,10 +608,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					newTaks.push({
 						start: activityStar,
 						end: activityEnd,
-						name: activity,
+						name: activity.label,
 						id: activityId,
+						activity: activity,
 						progress: 0,
 						duration: durationDay - countHoliday,
+						gapleft: rangeDay - 1,
+						gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
 						holiday: countHoliday,
 						color: "#60a5fa",
 						left: 60 * rangeDay - 60,
@@ -610,8 +627,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						activity: res.activity,
 						progress: res.progress,
 						duration: res.duration,
+						gapleft: res.gapleft,
+						gaprigth: res.gaprigth,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
@@ -625,8 +645,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						end: res.end,
 						name: res.name,
 						id: res.id,
+						activity: res.activity,
 						progress: res.progress,
 						duration: res.duration,
+						gapleft: res.gapleft,
+						gaprigth: res.gaprigth,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
@@ -641,10 +664,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			newTaks.push({
 				start: activityStar,
 				end: activityEnd,
-				name: activity,
+				name: activity.label,
 				id: activityId,
+				activity: activity,
 				progress: 0,
 				duration: durationDay - countHoliday,
+				gapleft: rangeDay - 1,
+				gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
 				holiday: countHoliday,
 				color: "#60a5fa",
 				left: 60 * rangeDay - 60,
@@ -676,6 +702,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		setIsEdit(false);
 	};
 
+	const CountGapRight = (rangeJob: number, duration: number) => {
+		return rangeJob - duration
+	}
+
 	const generateIdNum = () => {
 		var dateObj = new Date();
 		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
@@ -698,7 +728,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		tasks.map((res: any, i: number) => {
 			if (i !== 0) {
 				aktivitas.push({
-					aktivitasId: res.id,
+					workId: res.id,
 					days: res.duration,
 					holiday_count: res.holiday,
 					progress: res.progress,
@@ -779,10 +809,32 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		return [start, end];
 	};
 
-	const showMonth = (countMoth: number) => {
+	const showMonth = (countMoth: number, start: any, end: any) => {
 		let listMoths: any = [];
 		for (var i = 0; i < countMoth; i++) {
-			listMoths.push(getMonthName(new Date(starDate).getMonth() + i));
+			let rangeDay = countDay(start, end);
+			let countDate: number = 0;
+			for (var idx = 0; idx < rangeDay; idx++) {
+				if (idx === 0) {
+					let unixTime = Math.floor(new Date(start).getTime() / 1000);
+					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
+					if (mothDate === getMonthName(new Date(starDate).getMonth() + i)) {
+						countDate = countDate + 1;
+					}
+				} else {
+					let unixTime = Math.floor(
+						new Date(start).getTime() / 1000 + 86400 * idx
+					);
+					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
+					if (mothDate === getMonthName(new Date(starDate).getMonth() + i)) {
+						countDate = countDate + 1;
+					}
+				}
+			}
+			listMoths.push({
+				moth: getMonthName(new Date(starDate).getMonth() + i),
+				countDate: countDate,
+			});
 		}
 		setListMonth(listMoths);
 	};
@@ -883,7 +935,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getActivity();
 				setIsCreateActivity(false);
 			}
 		} catch (error) {
@@ -907,7 +958,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{isCreateActivity ? (
 				<Formik
 					initialValues={dataActivity}
@@ -1029,7 +1080,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					}) => (
 						<Form onChange={handleOnChanges}>
 							<h1 className='text-xl font-bold mt-3'>Time Schedule</h1>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<InputDate
 										id='timesch'
@@ -1056,22 +1107,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 									/>
-									{/* <option value='no data' selected>
-											Choose Job No WOR
-										</option>
-										{listWor.length === 0 ? (
-											<option value='no data'>No Data Job No WOR</option>
-										) : (
-											listWor.map((res: any, i: number) => {
-												return (
-													<option value={JSON.stringify(res)} key={i} selected={ res.id === values.worId }>
-														{res.job_no} -{" "}
-														{res.customerPo.quotations.Customer.name}
-													</option>
-												);
-											})
-										)}
-									</InputSelectSearch> */}
 								</div>
 								<div className='w-full'>
 									<Input
@@ -1087,54 +1122,43 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<Input
+									<InputArea
 										id='subject'
 										name='subject'
 										placeholder='Subject'
 										label='Subject'
-										type='text'
-										value={subject}
-										disabled={true}
 										required={true}
+										disabled={true}
+										value={subject}
+										row={2}
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-								<div className='w-full'>
-									<InputDate
-										id='startDate'
-										label='Start Date'
-										value={starDate}
-										withLabel={true}
-										disabled={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-									/>
-								</div>
-								<div className='w-full'>
-									<InputDate
-										id='endDate'
-										label='end Date'
-										value={endDate}
-										withLabel={true}
-										disabled={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-									/>
-								</div>
 							</Section>
-							<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
-									<Input
+									<InputArea
 										id='jobDesc'
 										name='jobDesc'
 										placeholder='Job Description'
 										label='Job Description'
-										type='text'
+										required={true}
+										disabled={true}
 										value={jobDesc}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='startDate'
+										placeholder='Start Date'
+										label='Start Date'
+										type='text'
+										value={moment(new Date(starDate)).format('DD MMMM yyyy')}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -1143,12 +1167,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 								</div>
 								<div className='w-full'>
 									<Input
-										id='noted'
-										name='noted'
-										placeholder='Noted'
-										label='Noted'
+										id='endDate'
+										placeholder='End Date'
+										label='End Date'
 										type='text'
-										value={note}
+										value={moment(new Date(endDate)).format('DD MMMM yyyy')}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -1185,47 +1208,15 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 												name='activity'
 												placeholder='Activity'
 												label='Activity'
+												value={activity}
 												onChange={(e: any) => {
-													setActivity(e.value.name);
+													setActivity(e);
 													setActivityId(e.value.id);
-													// if(input.target.value === 'create'){
-													// 	showCreateActivity(values)
-													// }
 												}}
 												required={true}
 												withLabel={true}
 												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 											/>
-											{/* <option value='no data' selected>
-													Choose Activity
-												</option>
-												{listActivity.length === 0 ? (
-													<option value='no data'>No Data Activity</option>
-												) : (
-													listActivity.map((res: any, i: number) => {
-														if (isEdit) {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={
-																		dataSelected.id === res.id ? true : false
-																	}
-																>
-																	{res.name}
-																</option>
-															);
-														} else {
-															return (
-																<option value={JSON.stringify(res)} key={i}>
-																	{res.name}
-																</option>
-															);
-														}
-													})
-												)}
-												<option value='create'>Add Activity</option>
-											</InputSelectSearch> */}
 										</div>
 										<div className='w-full'>
 											<InputDate
@@ -1334,8 +1325,106 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 											</button>
 										</div>
 									)}
-									<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8'>
-										<div className='flex'>
+									<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-8 text-xs'>
+										<table className='w-full'>
+											<thead></thead>
+											<tbody>
+												<tr>
+													<td
+														className='border border-black text-center w-[2%]'
+														rowSpan={2}
+													>
+														No
+													</td>
+													<td
+														className='border border-black text-center w-[20%]'
+														rowSpan={2}
+													>
+														Activity
+													</td>
+													{listMoth.map((res: any, i: number) => {
+														return (
+															<td
+																className='border border-black text-center'
+																key={i}
+																colSpan={res.countDate}
+															>
+																{res.moth}
+															</td>
+														);
+													})}
+												</tr>
+												<tr>
+													{listDate.map((res: any, i: number) => {
+														return (
+															<td
+																className='border border-black text-center'
+																key={i}
+															>
+																{moment(res).format("D")}
+															</td>
+														);
+													})}
+												</tr>
+												{tasks.map((res: any, i: number) => {
+													return (
+														<tr key={i}>
+															<td className='border border-black text-center w-[2%]'>
+																{i === 0 ? '' : i}
+															</td>
+															<td className='border border-black text-center w-[20%]'>
+																{res.name}
+															</td>
+															{res.gapleft > 0 ? (
+																<td
+																	className='border border-black border-r-0'
+																	colSpan={res.gapleft}
+																>
+																	<div></div>
+																</td>
+															) : null}
+															<td
+																className={`border border-black ${
+																	res.gapleft > 0 ? "border-l-0" : ""
+																} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
+																colSpan={res.duration}
+															>
+																<div
+																	className={`${
+																		res.id === "Task"
+																			? "bg-orange-500"
+																			: "bg-yellow-500"
+																	} w-full h-3 rounded-lg cursor-pointer`}
+																	data-te-toggle='tooltip'
+																	title={`
+																		Activity: ${res.name} \nStart Date: ${moment(res.start).format(
+																		"DD MMMM yyyy"
+																	)}\nEnd Date: ${moment(res.end).format(
+																		"DD MMMM yyyy"
+																	)}\nDuration: ${res.duration} day`}
+																	onClick={() => {
+																		i === 0 ? "" : editActivity(res, i);
+																		setActivity({
+																			value: res.activity,
+																			label: res.name,
+																		});
+																	}}
+																></div>
+															</td>
+															{res.gaprigth > 0 ? (
+																<td
+																	className='border border-black border-l-0'
+																	colSpan={res.gaprigth}
+																>
+																	<div></div>
+																</td>
+															) : null}
+														</tr>
+													);
+												})}
+											</tbody>
+										</table>
+										{/* <div className='flex'>
 											<div className='w-[40%]'>
 												<div className='flex w-full'>
 													<div className='w-[10%]'>
@@ -1407,13 +1496,11 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 															<div className='w-full'>
 																<div className='grid grid-cols-4 w-full'>
 																	<div
-																		className={`w-full border-l border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
+																		className={`w-full text-xs border-l border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
 																			i === tasks.length - 1 ? "border-b" : ""
 																		}`}
 																	>
-																		<p className='text-center text-xs'>
 																			{res.name}
-																		</p>
 																	</div>
 																	<div
 																		className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
@@ -1630,15 +1717,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 													})}
 												</div>
 											</div>
-										</div>
-										{/* <div className={`w-full`}>
-													<Gantt
-														tasks={tasks}
-														viewMode={ViewMode.Day}
-														locale='ID'
-														onDateChange={handleTaskChange}
-													/>
-												</div> */}
+										</div> */}
 									</Section>
 									<div className='mt-8 flex justify-end'>
 										<div className='flex gap-2 items-center'>

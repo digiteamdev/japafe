@@ -66,7 +66,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 				let suplier: any = [];
 				let dataSuplier: any = [];
 				response.data.result.map((res: any) => {
-					console.log(res)
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
