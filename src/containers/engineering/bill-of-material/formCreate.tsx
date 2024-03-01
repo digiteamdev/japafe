@@ -4,6 +4,7 @@ import {
 	Input,
 	InputSelect,
 	InputSelectSearch,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { billOfMaterialSchema } from "../../../schema/engineering/bill-0f-material/billOfMaterial";
@@ -25,17 +26,12 @@ interface props {
 
 interface data {
 	srId: string;
-	bom_detail: [
-		{
-			partId: string;
-			part: string;
-			materialId: string;
-			material: string;
-			satuan: string;
-			jumlah: string;
-			dimensi: string;
-		}
-	];
+	customer: string;
+	subject: string;
+	model: string;
+	qty: number;
+	equipment: string;
+	bom_detail: any
 }
 
 interface dataMaterial {
@@ -60,17 +56,12 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	const [listPart, setListPart] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		srId: "",
-		bom_detail: [
-			{
-				partId: "",
-				part: "",
-				materialId: "",
-				material: "",
-				satuan: "",
-				jumlah: "",
-				dimensi: "",
-			},
-		],
+		customer: "",
+		subject: "",
+		model: "",
+		qty: 0,
+		equipment: "",
+		bom_detail: []
 	});
 	const [dataMaterial, setDataMaterial] = useState<dataMaterial>({
 		material_name: "",
@@ -122,10 +113,10 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 				});
 				setEquipment(equipment);
 				setListPart(part);
-				setData({
-					srId: data.id,
-					bom_detail: listPartDetail,
-				});
+				// setData({
+				// 	srId: data.id,
+				// 	bom_detail: listPartDetail,
+				// });
 			} else {
 				setCustomerName("");
 				setDateSummary("");
@@ -137,37 +128,45 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	};
 
 	const selectSummary = (datas: any) => {
-		let equipment: any = [];
-		let part: any = [];
-		let listPartDetail: any = [];
-		setCustomerName(datas.timeschedule.wor.customerPo.quotations.Customer.name);
-		setDateSummary(moment(datas.date_of_summary).format("DD-MM-YYYY"));
-		setSubject(datas.timeschedule.wor.subject);
-		datas.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
-			if (!equipment.includes(res.equipment.nama)) {
-				equipment.push(res.equipment.nama);
-			}
-		});
-		datas.srimgdetail.map((res: any) => {
-			part.push({
-				id: res.id,
-				name: res.name_part,
-			});
-			listPartDetail.push({
-				partId: res.id,
-				part: res.name_part,
-				materialId: "",
-				material: "",
-				satuan: "",
-				jumlah: res.qty,
-				dimensi: "",
-			});
-		});
-		setEquipment(equipment);
-		setListPart(part);
+		// setCustomerName(datas.timeschedule.wor.customerPo.quotations.Customer.name);
+		// setDateSummary(moment(datas.date_of_summary).format("DD-MM-YYYY"));
+		// setSubject(datas.timeschedule.wor.subject);
+		// datas.timeschedule.wor.customerPo.quotations.eqandpart.map((res: any) => {
+		// 	if (!equipment.includes(res.equipment.nama)) {
+		// 		equipment.push(res.equipment.nama);
+		// 	}
+		// });
+		// datas.srimgdetail.map((res: any) => {
+		// 	part.push({
+		// 		id: res.id,
+		// 		name: res.name_part,
+		// 	});
+		// 	listPartDetail.push({
+		// 		partId: res.id,
+		// 		part: res.name_part,
+		// 		materialId: "",
+		// 		material: "",
+		// 		satuan: "",
+		// 		jumlah: res.qty,
+		// 		dimensi: "",
+		// 	});
+		// });
+		// setEquipment(equipment);
+		// setListPart(part);
 		setData({
 			srId: datas.id,
-			bom_detail: listPartDetail,
+			customer: datas.timeschedule.wor.customerPo.quotations.Customer.name,
+			subject: datas.timeschedule.wor.customerPo.quotations.subject,
+			model: datas.model,
+			qty: datas.qty,
+			equipment: datas.equipment,
+			bom_detail: [{
+				part: "",
+				material: "",
+				satuan: "",
+				jumlah: 0,
+				dimanesi: ""
+			}],
 		});
 	};
 
@@ -179,9 +178,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasSummary.push({
 						value: res,
-						label: `${res.id_summary} - ${
-							res.timeschedule.wor.job_no
-						}`,
+						label: `${res.timeschedule.wor.job_no} - ${res.timeschedule.wor.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListSummary(datasSummary);
@@ -215,6 +212,11 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 		});
 		setData({
 			srId: data.srId,
+			customer: "",
+			subject: "",
+			model: "",
+			qty: 0,
+			equipment: "",
 			bom_detail: newDetail,
 		});
 	};
@@ -307,16 +309,16 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 					}) => (
 						<Form onChange={handleOnChanges}>
 							<h1 className='text-xl font-bold mt-3'>Bill Of Material</h1>
-							<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<InputSelectSearch
 										datas={listSummary}
 										id='srId'
 										name='srId'
-										placeholder='id Summary'
-										label='Id Summary'
+										placeholder='Job No'
+										label='Job No'
 										onChange={(e: any) => {
-											selectSummary(e.value)
+											selectSummary(e.value);
 											setFieldValue("srId", e.value.id);
 											// if (event.target.value !== "Choose Id Summary") {
 											// 	let data = JSON.parse(event.target.value);
@@ -342,7 +344,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 										)}
 									</InputSelectSearch> */}
 								</div>
-								<div className='w-full'>
+								{/* <div className='w-full'>
 									<Input
 										id='date_wor'
 										name='date_wor'
@@ -355,9 +357,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
-								</div>
-							</Section>
-							<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								</div> */}
 								<div className='w-full'>
 									<Input
 										id='customer'
@@ -365,7 +365,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 										placeholder='Customer Name'
 										label='Customer'
 										type='text'
-										value={customerName}
+										value={ values.customer }
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -373,13 +373,14 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 									/>
 								</div>
 								<div className='w-full'>
-									<Input
-										id='customer'
-										name='customer'
+									<InputArea
+										id='subject'
+										name='subject'
 										placeholder='Subject'
 										label='Subject'
 										type='text'
-										value={subject}
+										value={values.subject}
+										onChange={handleChange}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -387,15 +388,43 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 									/>
 								</div>
 							</Section>
-							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<Input
-										id='customer'
-										name='customer'
+										id='equipment'
+										name='equipment'
 										placeholder='Equipment'
 										label='Equipment'
 										type='text'
-										value={equipment.toString()}
+										value={values.equipment}
+										disabled={true}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='model'
+										name='model'
+										placeholder='Model'
+										label='Model'
+										type='text'
+										value={values.model}
+										disabled={true}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='quantity'
+										name='quantity'
+										placeholder='Quantity'
+										label='Quantity'
+										type='text'
+										value={values.qty.toString()}
 										disabled={true}
 										required={true}
 										withLabel={true}

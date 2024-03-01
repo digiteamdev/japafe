@@ -74,6 +74,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	const [activityEnd, setActivityEnd] = useState<any>(new Date());
 	const [starDate, setStartDate] = useState<any>(new Date());
 	const [endDate, setEndDate] = useState<any>(new Date());
+	const [bobot, setBobot] = useState<number>(0);
+	const [totalBobot, setTotalBobot] = useState<number>(0);
 	const [holiday, setHoliday] = useState<string>("no");
 	const [idAutoNum, setIdAutoNum] = useState<string>("");
 	const [numMoth, setNumMonth] = useState<number>(0);
@@ -264,7 +266,9 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					monthDiff(
 						new Date(data.date_of_order),
 						new Date(data.delivery_date)
-					) + 1, data.date_of_order, data.delivery_date
+					) + 1,
+					data.date_of_order,
+					data.delivery_date
 				);
 				showDate(data.date_of_order, data.delivery_date);
 			} else {
@@ -402,6 +406,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let listDates: any = [];
 		let countHoliday = 0;
 		let countHolidayRange = 0;
+		let total_bobot: number = totalBobot + bobot;
 		let listDatesRange: any = [];
 		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
@@ -438,45 +443,20 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				countHolidayRange = countHolidayRange + parseInt(holiday.toString());
 			}
 		}
-
-		tasks.map((res: any, i: any) => {
-			if (i === 0) {
-				newTaks.push({
-					start: res.start,
-					end: res.end,
-					name: res.name,
-					id: res.id,
-					activity: res.activity,
-					progress: res.progress,
-					gapleft: 0,
-					gaprigth: 0,
-					duration: res.duration,
-					holiday: res.holiday,
-					left: res.left,
-					leftHoliday: res.leftHoliday,
-					width: res.width,
-					widthHoliday: res.Holiday,
-					color: res.color,
-				});
-			} else {
-				if (i === parseInt(row.toString())) {
-					newTaks.push({
-						start: activityStar,
-						end: activityEnd,
-						name: activity.label,
-						id: activityId,
-						activity: activity,
-						progress: 0,
-						duration: durationDay - countHoliday,
-						gapleft: rangeDay - 1,
-						gaprigth: CountGapRight(rangeJob, (durationDay - countHoliday) + (rangeDay - 1)),
-						holiday: countHoliday,
-						color: "#60a5fa",
-						left: 60 * rangeDay - 60,
-						leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
-						width: 60 * durationDay,
-						widthHoliday: 60 * (durationDay - countHoliday),
-					});
+		if(total_bobot > 100){
+			toast.error("Total Bobot can't be more than 100", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}else{
+			tasks.map((res: any, i: any) => {
+				if (i === 0) {
 					newTaks.push({
 						start: res.start,
 						end: res.end,
@@ -484,9 +464,10 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						id: res.id,
 						activity: res.activity,
 						progress: res.progress,
+						gapleft: 0,
+						gaprigth: 0,
 						duration: res.duration,
-						gapleft: res.gapleft,
-						gaprigth: res.gaprigth,
+						bobot: res.bobot,
 						holiday: res.holiday,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
@@ -495,46 +476,94 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						color: res.color,
 					});
 				} else {
-					newTaks.push({
-						start: res.start,
-						end: res.end,
-						name: res.name,
-						id: res.id,
-						activity: res.activity,
-						progress: res.progress,
-						duration: res.duration,
-						gapleft: res.gapleft,
-						gaprigth: res.gaprigth,
-						holiday: res.holiday,
-						left: res.left,
-						leftHoliday: res.leftHoliday,
-						width: res.width,
-						color: res.color,
-						widthHoliday: res.Holiday,
-					});
+					if (i === parseInt(row.toString())) {
+						newTaks.push({
+							start: activityStar,
+							end: activityEnd,
+							name: activity.label,
+							id: activityId,
+							activity: activity,
+							progress: 0,
+							duration: durationDay - countHoliday,
+							gapleft: rangeDay - 1,
+							gaprigth: CountGapRight(
+								rangeJob,
+								durationDay - countHoliday + (rangeDay - 1)
+							),
+							bobot: bobot,
+							holiday: countHoliday,
+							color: "#60a5fa",
+							left: 60 * rangeDay - 60,
+							leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+							width: 60 * durationDay,
+							widthHoliday: 60 * (durationDay - countHoliday),
+						});
+						newTaks.push({
+							start: res.start,
+							end: res.end,
+							name: res.name,
+							id: res.id,
+							activity: res.activity,
+							progress: res.progress,
+							duration: res.duration,
+							gapleft: res.gapleft,
+							gaprigth: res.gaprigth,
+							holiday: res.holiday,
+							bobot: res.bobot,
+							left: res.left,
+							leftHoliday: res.leftHoliday,
+							width: res.width,
+							widthHoliday: res.Holiday,
+							color: res.color,
+						});
+					} else {
+						newTaks.push({
+							start: res.start,
+							end: res.end,
+							name: res.name,
+							id: res.id,
+							activity: res.activity,
+							progress: res.progress,
+							duration: res.duration,
+							gapleft: res.gapleft,
+							gaprigth: res.gaprigth,
+							holiday: res.holiday,
+							left: res.left,
+							bobot: res.bobot,
+							leftHoliday: res.leftHoliday,
+							width: res.width,
+							color: res.color,
+							widthHoliday: res.Holiday,
+						});
+					}
 				}
-			}
-		});
-		if (tasks.length === parseInt(row.toString())) {
-			newTaks.push({
-				start: activityStar,
-				end: activityEnd,
-				name: activity.label,
-				activity: activity,
-				id: activityId,
-				progress: 0,
-				duration: durationDay - countHoliday,
-				gapleft: rangeDay - 1,
-				gaprigth: CountGapRight(rangeJob, (durationDay - countHoliday) + (rangeDay - 1)),
-				holiday: countHoliday,
-				color: "#60a5fa",
-				left: 60 * rangeDay - 60,
-				leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
-				width: 60 * durationDay,
-				widthHoliday: 60 * (durationDay - countHoliday),
 			});
+			if (tasks.length === parseInt(row.toString())) {
+				newTaks.push({
+					start: activityStar,
+					end: activityEnd,
+					name: activity.label,
+					activity: activity,
+					id: activityId,
+					progress: 0,
+					bobot: bobot,
+					duration: durationDay - countHoliday,
+					gapleft: rangeDay - 1,
+					gaprigth: CountGapRight(
+						rangeJob,
+						durationDay - countHoliday + (rangeDay - 1)
+					),
+					holiday: countHoliday,
+					color: "#60a5fa",
+					left: 60 * rangeDay - 60,
+					leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+					width: 60 * durationDay,
+					widthHoliday: 60 * (durationDay - countHoliday),
+				});
+			}
+			setTask(newTaks);
+			setTotalBobot(total_bobot)
 		}
-		setTask(newTaks);
 	};
 
 	const editTask = () => {
@@ -543,6 +572,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let listDates: any = [];
 		let countHoliday = 0;
 		let countHolidayRange = 0;
+		let total_bobot: number = totalBobot + bobot;
 		let listDatesRange: any = [];
 		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
@@ -579,49 +609,25 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				countHolidayRange = countHolidayRange + parseInt(holiday.toString());
 			}
 		}
-		tasks.map((res: any, i: number) => {
-			if (dataRow !== i) {
-				taskEdit.push(res);
-			}
-		});
-		taskEdit.map((res: any, i: any) => {
-			if (i === 0) {
-				newTaks.push({
-					start: res.start,
-					end: res.end,
-					name: res.name,
-					id: res.id,
-					activity: res.activity,
-					progress: res.progress,
-					duration: res.duration,
-					gapleft: res.gapleft,
-					gaprigth: res.gaprigth,
-					holiday: res.holiday,
-					left: res.left,
-					leftHoliday: res.leftHoliday,
-					width: res.width,
-					widthHoliday: res.Holiday,
-					color: res.color,
-				});
-			} else {
-				if (i === parseInt(row.toString())) {
-					newTaks.push({
-						start: activityStar,
-						end: activityEnd,
-						name: activity.label,
-						id: activityId,
-						activity: activity,
-						progress: 0,
-						duration: durationDay - countHoliday,
-						gapleft: rangeDay - 1,
-						gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
-						holiday: countHoliday,
-						color: "#60a5fa",
-						left: 60 * rangeDay - 60,
-						leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
-						width: 60 * durationDay,
-						widthHoliday: 60 * (durationDay - countHoliday),
-					});
+		if(total_bobot > 100){
+			toast.error("Total Bobot can't be more than 100", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}else{
+			tasks.map((res: any, i: number) => {
+				if (dataRow !== i) {
+					taskEdit.push(res);
+				}
+			});
+			taskEdit.map((res: any, i: any) => {
+				if (i === 0) {
 					newTaks.push({
 						start: res.start,
 						end: res.end,
@@ -633,54 +639,97 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						gapleft: res.gapleft,
 						gaprigth: res.gaprigth,
 						holiday: res.holiday,
+						bobot: res.bobot,
 						left: res.left,
 						leftHoliday: res.leftHoliday,
 						width: res.width,
-						color: res.color,
 						widthHoliday: res.Holiday,
+						color: res.color,
 					});
 				} else {
-					newTaks.push({
-						start: res.start,
-						end: res.end,
-						name: res.name,
-						id: res.id,
-						activity: res.activity,
-						progress: res.progress,
-						duration: res.duration,
-						gapleft: res.gapleft,
-						gaprigth: res.gaprigth,
-						holiday: res.holiday,
-						left: res.left,
-						leftHoliday: res.leftHoliday,
-						width: res.width,
-						color: res.color,
-						widthHoliday: res.Holiday,
-					});
+					if (i === parseInt(row.toString())) {
+						newTaks.push({
+							start: activityStar,
+							end: activityEnd,
+							name: activity.label,
+							id: activityId,
+							activity: activity,
+							bobot: bobot,
+							progress: 0,
+							duration: durationDay - countHoliday,
+							gapleft: rangeDay - 1,
+							gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
+							holiday: countHoliday,
+							color: "#60a5fa",
+							left: 60 * rangeDay - 60,
+							leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+							width: 60 * durationDay,
+							widthHoliday: 60 * (durationDay - countHoliday),
+						});
+						newTaks.push({
+							start: res.start,
+							end: res.end,
+							name: res.name,
+							id: res.id,
+							activity: res.activity,
+							progress: res.progress,
+							duration: res.duration,
+							bobot: res.bobot,
+							gapleft: res.gapleft,
+							gaprigth: res.gaprigth,
+							holiday: res.holiday,
+							left: res.left,
+							leftHoliday: res.leftHoliday,
+							width: res.width,
+							color: res.color,
+							widthHoliday: res.Holiday,
+						});
+					} else {
+						newTaks.push({
+							start: res.start,
+							end: res.end,
+							name: res.name,
+							id: res.id,
+							activity: res.activity,
+							progress: res.progress,
+							bobot: res.bobot,
+							duration: res.duration,
+							gapleft: res.gapleft,
+							gaprigth: res.gaprigth,
+							holiday: res.holiday,
+							left: res.left,
+							leftHoliday: res.leftHoliday,
+							width: res.width,
+							color: res.color,
+							widthHoliday: res.Holiday,
+						});
+					}
 				}
-			}
-		});
-		if (taskEdit.length === parseInt(row.toString())) {
-			newTaks.push({
-				start: activityStar,
-				end: activityEnd,
-				name: activity.label,
-				id: activityId,
-				activity: activity,
-				progress: 0,
-				duration: durationDay - countHoliday,
-				gapleft: rangeDay - 1,
-				gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
-				holiday: countHoliday,
-				color: "#60a5fa",
-				left: 60 * rangeDay - 60,
-				leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
-				width: 60 * durationDay,
-				widthHoliday: 60 * (durationDay - countHoliday),
 			});
+			if (taskEdit.length === parseInt(row.toString())) {
+				newTaks.push({
+					start: activityStar,
+					end: activityEnd,
+					name: activity.label,
+					id: activityId,
+					activity: activity,
+					progress: 0,
+					bobot: bobot,
+					duration: durationDay - countHoliday,
+					gapleft: rangeDay - 1,
+					gaprigth: rangeJob - (durationDay - countHoliday) + (rangeDay - 1),
+					holiday: countHoliday,
+					color: "#60a5fa",
+					left: 60 * rangeDay - 60,
+					leftHoliday: 60 * (rangeDay - countHolidayRange) - 60,
+					width: 60 * durationDay,
+					widthHoliday: 60 * (durationDay - countHoliday),
+				});
+			}
+			setIsEdit(false);
+			setTask(newTaks);
+			setTotalBobot(total_bobot)
 		}
-		setIsEdit(false);
-		setTask(newTaks);
 	};
 
 	const removeTask = () => {
@@ -703,8 +752,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	const CountGapRight = (rangeJob: number, duration: number) => {
-		return rangeJob - duration
-	}
+		return rangeJob - duration;
+	};
 
 	const generateIdNum = () => {
 		var dateObj = new Date();
@@ -732,6 +781,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 					days: res.duration,
 					holiday_count: res.holiday,
 					progress: res.progress,
+					bobot: res.bobot,
 					startday: res.start,
 					endday: res.end,
 				});
@@ -1158,7 +1208,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 										placeholder='Start Date'
 										label='Start Date'
 										type='text'
-										value={moment(new Date(starDate)).format('DD MMMM yyyy')}
+										value={moment(new Date(starDate)).format("DD MMMM yyyy")}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -1171,7 +1221,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 										placeholder='End Date'
 										label='End Date'
 										type='text'
-										value={moment(new Date(endDate)).format('DD MMMM yyyy')}
+										value={moment(new Date(endDate)).format("DD MMMM yyyy")}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -1200,7 +1250,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 							</Section>
 							{isShowGantt ? (
 								<>
-									<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+									<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 										<div className='w-full'>
 											<InputSelectSearch
 												datas={listActivity}
@@ -1242,6 +1292,21 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 												maxDate={new Date(endDate)}
 												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 												classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+											/>
+										</div>
+										<div className='w-full'>
+											<Input
+												id='bobot'
+												name='bobot'
+												placeholder='Bobot'
+												label='Bobot'
+												type='number'
+												onChange={(e: any) => {
+													setBobot(parseInt(e.target.value))
+												}}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 											/>
 										</div>
 										<div className='w-full'>
@@ -1367,357 +1432,71 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 													})}
 												</tr>
 												{tasks.map((res: any, i: number) => {
-													return (
-														<tr key={i}>
-															<td className='border border-black text-center w-[2%]'>
-																{i === 0 ? '' : i}
-															</td>
-															<td className='border border-black text-center w-[20%]'>
-																{res.name}
-															</td>
-															{res.gapleft > 0 ? (
-																<td
-																	className='border border-black border-r-0'
-																	colSpan={res.gapleft}
-																>
-																	<div></div>
+													if(i !== 0){
+														return (
+															<tr key={i}>
+																<td className='border border-black text-center w-[2%]'>
+																	{i === 0 ? "" : i}
 																</td>
-															) : null}
-															<td
-																className={`border border-black ${
-																	res.gapleft > 0 ? "border-l-0" : ""
-																} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
-																colSpan={res.duration}
-															>
-																<div
-																	className={`${
-																		res.id === "Task"
-																			? "bg-orange-500"
-																			: "bg-yellow-500"
-																	} w-full h-3 rounded-lg cursor-pointer`}
-																	data-te-toggle='tooltip'
-																	title={`
-																		Activity: ${res.name} \nStart Date: ${moment(res.start).format(
-																		"DD MMMM yyyy"
-																	)}\nEnd Date: ${moment(res.end).format(
-																		"DD MMMM yyyy"
-																	)}\nDuration: ${res.duration} day`}
-																	onClick={() => {
-																		i === 0 ? "" : editActivity(res, i);
-																		setActivity({
-																			value: res.activity,
-																			label: res.name,
-																		});
-																	}}
-																></div>
-															</td>
-															{res.gaprigth > 0 ? (
-																<td
-																	className='border border-black border-l-0'
-																	colSpan={res.gaprigth}
-																>
-																	<div></div>
+																<td className='border border-black text-center w-[20%]'>
+																	{res.name} ({res.bobot}%)
 																</td>
-															) : null}
-														</tr>
-													);
+																{res.gapleft > 0 ? (
+																	<td
+																		className='border border-black border-r-0'
+																		colSpan={res.gapleft}
+																	>
+																		<div></div>
+																	</td>
+																) : null}
+																<td
+																	className={`border border-black ${
+																		res.gapleft > 0 ? "border-l-0" : ""
+																	} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
+																	colSpan={res.duration}
+																>
+																	<div
+																		className={`${
+																			res.id === "Task"
+																				? "bg-orange-500"
+																				: "bg-yellow-500"
+																		} w-full h-3 rounded-lg cursor-pointer`}
+																		data-te-toggle='tooltip'
+																		title={`
+																			Activity: ${res.name} \nStart Date: ${moment(res.start).format(
+																			"DD MMMM yyyy"
+																		)}\nEnd Date: ${moment(res.end).format(
+																			"DD MMMM yyyy"
+																		)}\nDuration: ${res.duration} day`}
+																		onClick={() => {
+																			i === 0 ? "" : editActivity(res, i);
+																			setActivity({
+																				value: res.activity,
+																				label: res.name,
+																			});
+																		}}
+																	></div>
+																</td>
+																{res.gaprigth > 0 ? (
+																	<td
+																		className='border border-black border-l-0'
+																		colSpan={res.gaprigth}
+																	>
+																		<div></div>
+																	</td>
+																) : null}
+															</tr>
+														);
+													}
 												})}
 											</tbody>
 										</table>
-										{/* <div className='flex'>
-											<div className='w-[40%]'>
-												<div className='flex w-full'>
-													<div className='w-[10%]'>
-														<div className='w-full border-t border-l border-gray-500 p-[2px]'>
-															&nbsp;
-														</div>
-														<div className='w-full border-l  text-center border-gray-500 p-[2px]'>
-															No
-														</div>
-														<div className='w-full border-l border-gray-500 p-[2px]'>
-															&nbsp;
-														</div>
-													</div>
-													<div className='w-full'>
-														<div className='grid grid-cols-4 w-full'>
-															<div className='w-full border-t border-l border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-t border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full text-center border-l border-r border-gray-500 p-[2px]'>
-																Aktivitas
-															</div>
-															<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-																Start Date
-															</div>
-															<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-																End Date
-															</div>
-															<div className='w-full border-r border-gray-500 text-center p-[2px]'>
-																Duration
-															</div>
-															<div className='w-full border-l border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-															<div className='w-full border-r border-gray-500 p-[2px]'>
-																&nbsp;
-															</div>
-														</div>
-													</div>
-												</div>
-												{tasks.map((res: any, i: number) => {
-													return (
-														<div className='flex w-full' key={i}>
-															<div className='w-[10%]'>
-																<div
-																	className={`w-full border-l border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																		i === tasks.length - 1 ? "border-b" : ""
-																	}`}
-																>
-																	<p className='text-center text-xs'>
-																		{i === 0 ? "-" : i}
-																	</p>
-																</div>
-															</div>
-															<div className='w-full'>
-																<div className='grid grid-cols-4 w-full'>
-																	<div
-																		className={`w-full text-xs border-l border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																			i === tasks.length - 1 ? "border-b" : ""
-																		}`}
-																	>
-																			{res.name}
-																	</div>
-																	<div
-																		className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																			i === tasks.length - 1 ? "border-b" : ""
-																		}`}
-																	>
-																		<p className='text-center text-xs'>
-																			{moment(res.start).format("DD-MM-YYYY")}
-																		</p>
-																	</div>
-																	<div
-																		className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																			i === tasks.length - 1 ? "border-b" : ""
-																		}`}
-																	>
-																		<p className='text-center text-xs'>
-																			{moment(res.end).format("DD-MM-YYYY")}
-																		</p>
-																	</div>
-																	<div
-																		className={`w-full border-r border-t border-gray-500 text-justify m-auto h-14 p-2 ${
-																			i === tasks.length - 1 ? "border-b" : ""
-																		}`}
-																	>
-																		<p className='text-center text-xs'>
-																			{res.duration} Days
-																		</p>
-																	</div>
-																</div>
-															</div>
-														</div>
-													);
-												})}
-											</div>
-											<div className='w-[60%]'>
-												<div className='grid grid-cols-1 w-full overflow-auto'>
-													<div
-														style={{
-															width: `${
-																holiday === "yes"
-																	? 60 * listDateHoliday.length
-																	: 60 * numDate
-															}px`,
-														}}
-														className={`border-t border-r border-gray-500 p-[2px]`}
-													>
-														<div className='text-center'>Calender</div>
-													</div>
-													<div
-														style={{
-															width: `${
-																holiday === "yes"
-																	? 60 * listDateHoliday.length
-																	: 60 * numDate
-															}px`,
-															gridTemplateColumns: `repeat(${numMoth}, minmax(0, 1fr))`,
-														}}
-														className={`grid border-t border-b border-r border-gray-500 p-[2px]`}
-													>
-														{listMoth.map((res: any, i: number) => {
-															return (
-																<div key={i} className='w-full text-center'>
-																	{res}
-																</div>
-															);
-														})}
-													</div>
-													<div
-														style={{
-															width: `${
-																holiday === "yes"
-																	? 60 * listDateHoliday.length
-																	: 60 * numDate
-															}px`,
-														}}
-														className={`flex border-gray-500`}
-													>
-														{holiday === "yes"
-															? listDateHoliday.map((res: any, i: number) => {
-																	return (
-																		<div
-																			key={i}
-																			style={{
-																				width: "60px",
-																				display: `${
-																					holiday === "yes"
-																						? checkHoliday(res, "chart")
-																						: ""
-																				}`,
-																			}}
-																			className={`w-full text-center ${
-																				i !== listDateHoliday.length + 1
-																					? "border-r"
-																					: ""
-																			} border-b border-gray-500`}
-																		>
-																			{moment(res).format("dd DD")}
-																		</div>
-																	);
-															  })
-															: listDate.map((res: any, i: number) => {
-																	return (
-																		<div
-																			key={i}
-																			style={{
-																				width: "60px",
-																				display: `${
-																					holiday === "yes"
-																						? checkHoliday(res, "chart")
-																						: ""
-																				}`,
-																			}}
-																			className={`w-full text-center ${
-																				i !== listDate.length + 1
-																					? "border-r"
-																					: ""
-																			} border-b border-gray-500`}
-																		>
-																			{moment(res).format("dd DD")}
-																		</div>
-																	);
-															  })}
-													</div>
-													{tasks.map((result: any, idx: number) => {
-														return (
-															<div
-																key={idx}
-																style={{
-																	width: `${
-																		holiday === "yes"
-																			? 60 * listDateHoliday.length
-																			: 60 * numDate
-																	}px`,
-																}}
-																className={`flex relative ${
-																	idx === tasks.length - 1 ? "border-b" : ""
-																} border-gray-500 h-14`}
-															>
-																{holiday === "yes"
-																	? listDateHoliday.map(
-																			(res: any, i: number) => {
-																				return (
-																					<div
-																						key={i}
-																						style={{
-																							width: `${
-																								holiday === "yes"
-																									? 60 * listDateHoliday.length
-																									: 60 * numDate
-																							}px`,
-																							display: `${
-																								holiday === "yes"
-																									? checkHoliday(res, "chart")
-																									: ""
-																							}`,
-																						}}
-																						className={`text-center border-r border-gray-400 p-4`}
-																					>
-																						<p className='p-[1px]'>&nbsp;</p>
-																					</div>
-																				);
-																			}
-																	  )
-																	: listDate.map((res: any, i: number) => {
-																			return (
-																				<div
-																					key={i}
-																					style={{
-																						width: `${
-																							holiday === "yes"
-																								? 60 * listDateHoliday.length
-																								: 60 * numDate
-																						}px`,
-																						display: `${
-																							holiday === "yes"
-																								? checkHoliday(res, "chart")
-																								: ""
-																						}`,
-																					}}
-																					className={`text-center border-r border-gray-400 p-4`}
-																				>
-																					<p className='p-[1px]'>&nbsp;</p>
-																				</div>
-																			);
-																	  })}
-																<div
-																	style={{
-																		width: `${
-																			holiday === "yes"
-																				? result.widthHoliday
-																				: result.width
-																		}px`,
-																		left: `${
-																			holiday === "yes"
-																				? result.leftHoliday
-																				: result.left
-																		}px`,
-																		backgroundColor: `${result.color}`,
-																	}}
-																	className={`absolute p-2 my-2 bg-blue-400 rounded-lg cursor-pointer`}
-																	data-te-toggle='tooltip'
-																	title={`
-																		Activity: ${result.name} \nDuration: ${result.duration} day \nProgress: ${result.progress}%`}
-																	onClick={() =>
-																		idx === 0 ? "" : editActivity(result, idx)
-																	}
-																>
-																	<p className='p-0 text-center font-semibold text-xs'>
-																		{result.duration} days
-																	</p>
-																</div>
-															</div>
-														);
-													})}
-												</div>
-											</div>
-										</div> */}
+									</Section>
+									<Section className="grig grid-cols-1 gap-1">
+										<div className="w-full">
+											<p>Total Activity : { tasks.length - 1 }</p>
+											<p>Total Bobot : { totalBobot }%</p>
+										</div>
 									</Section>
 									<div className='mt-8 flex justify-end'>
 										<div className='flex gap-2 items-center'>

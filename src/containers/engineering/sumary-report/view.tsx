@@ -14,17 +14,17 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-
+	console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfSummary
+			{/* <PdfSummary
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
-					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
+					{/* <div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
 						<div className='text-right mr-6'>
 							<button
 								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
@@ -35,7 +35,7 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 								</div>
 							</button>
 						</div>
-					</div>
+					</div> */}
 					<h1 className='font-bold text-xl'>Summary Report</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
@@ -48,15 +48,51 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
 											{dataSelected.timeschedule.wor.job_no} (
-											{dataSelected.timeschedule.wor.customerPo.quotations.Customer.name})
+											{
+												dataSelected.timeschedule.wor.customerPo.quotations
+													.Customer.name
+											}
+											)
 										</td>
 									</tr>
 									<tr>
 										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Description
+											Equipment
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.timeschedule.wor.subject}
+											{dataSelected.equipment}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Model
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.model}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Quantity
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.qty}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											O E M
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.ioem}
+										</td>
+									</tr>
+									<tr>
+										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											Serial Number / Tag Number
+										</td>
+										<td className='w-[50%] pl-2 border border-gray-200'>
+											{dataSelected.isr} / {dataSelected.itn}
 										</td>
 									</tr>
 									<tr>
@@ -72,17 +108,17 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 											Introduction Image
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{
-												dataSelected.inimg ? (
-													<Image
-														src={dataSelected.inimg}
-														width={70}
-														height={70}
-														alt='Picture part'
-														className='mr-2'
-													/>
-												) : "-"
-											}
+											{dataSelected.inimg !== null ? (
+												<Image
+													src={dataSelected.inimg}
+													width={70}
+													height={70}
+													alt='Picture part'
+													className='mr-2'
+												/>
+											) : (
+												"-"
+											)}
 										</td>
 									</tr>
 								</tbody>
@@ -92,61 +128,56 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 					<h1 className='font-bold text-xl mt-2'>Static Part</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
-							{dataSelected.srimgdetail.length > 0
-								? dataSelected.srimgdetail.map((res: any, i: number) => {
+							<table className='w-full'>
+								<thead>
+									<tr>
+										<th className='border border-black text-center'>Image</th>
+										<th className='border border-black text-center'>Part</th>
+										<th className='border border-black text-center'>Finding</th>
+										<th className='border border-black text-center'>Quantity</th>
+										<th className='border border-black text-center'>Type</th>
+										<th className='border border-black text-center'>note</th>
+									</tr>
+								</thead>
+								<tbody>
+									{dataSelected.srimgdetail.map((res: any, i: number) => {
 										return (
-											<div key={i}>
-												<h1 className='font-bold text-lg'>
-													{i + 1}. {res.name_part}
-												</h1>
-												<div className='ml-5'>
-													<div className='flex w-full mt-2'>
-														{res.imgSummary.length > 0
-															? res.imgSummary.map((resImg: any) => {
-																	return (
-																		<Image
-																			key={i}
-																			src={resImg.img}
-																			width={70}
-																			height={70}
-																			alt='Picture part'
-																			className='mr-2'
-																		/>
-																	);
-															  })
-															: null}
-													</div>
-													<div className='w-full mt-2'>
-														<table>
-															<thead></thead>
-															<tbody>
-																<tr>
-																	<td className='w-[10%]'>Finding</td>
-																	<td className='w-[1%] text-center'>:</td>
-																	<td className='w-[89%]'>
-																		{res.input_finding}
-																	</td>
-																</tr>
-																<tr>
-																	<td className='w-[10%]'>Recom</td>
-																	<td className='w-[1%] text-center'>:</td>
-																	<td className='w-[89%]'>
-																		{res.choice.replace(/_|-|\./g, " ")}
-																	</td>
-																</tr>
-																<tr>
-																	<td className='w-[10%]'>Note</td>
-																	<td className='w-[1%] text-center'>:</td>
-																	<td className='w-[89%]'>{res.noted}</td>
-																</tr>
-															</tbody>
-														</table>
-													</div>
-												</div>
-											</div>
+											<tr key={i}>
+												<td className='border border-black text-center'>
+													{res.imgSummary.length > 0
+														? res.imgSummary.map((resImg: any) => {
+																return (
+																	<Image
+																		key={i}
+																		src={resImg.img}
+																		width={70}
+																		height={70}
+																		alt='Picture part'
+																		className='mr-2'
+																	/>
+																);
+														}) : null}
+												</td>
+												<td className="border border-black text-center">
+													{ res.name_part }
+												</td>
+												<td className="border border-black text-center">
+													{ res.input_finding }
+												</td>
+												<td className="border border-black text-center">
+													{ res.qty }
+												</td>
+												<td className="border border-black text-center">
+													{ res.choice.replace(/_|-|\./g, " ") }
+												</td>
+												<td className="border border-black text-center">
+													{ res.note }
+												</td>
+											</tr>
 										);
-								  })
-								: null}
+									})}
+								</tbody>
+							</table>
 						</div>
 					</Section>
 				</>

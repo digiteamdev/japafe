@@ -28,7 +28,9 @@ interface data {
 	job_no: string;
 	date_of_summary: any;
 	timeschId: string;
-	quantity: string;
+	qty: string;
+	equipment: string;
+	model: string;
 	ioem: string;
 	isr: string;
 	itn: string;
@@ -62,7 +64,9 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		job_no: "",
 		date_of_summary: new Date(),
 		timeschId: "",
-		quantity: "",
+		equipment: "",
+		model: "",
+		qty: "",
 		ioem: "",
 		isr: "",
 		itn: "",
@@ -104,17 +108,17 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				let data = JSON.parse(event.target.value);
 				let part: any = [];
 				setCustomerName(data.wor.customerPo.quotations.Customer.name);
-				setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
-				setSubject(data.wor.subject);
-				setEquipment(
-					data.wor.customerPo.quotations.eqandpart[0].equipment.nama
-				);
-				setEquipmentModel(data.wor.eq_model);
-				if (data.wor.customerPo.quotations.eqandpart.length > 0) {
-					data.wor.customerPo.quotations.eqandpart.map((res: any) => {
-						part.push(res.eq_part);
-					});
-				}
+				// setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
+				setSubject(data.wor.customerPo.quotations.subject);
+				// setEquipment(
+				// 	data.wor.customerPo.quotations.eqandpart[0].equipment.nama
+				// );
+				// setEquipmentModel(data.wor.eq_model);
+				// if (data.wor.customerPo.quotations.eqandpart.length > 0) {
+				// 	data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+				// 		part.push(res.eq_part);
+				// 	});
+				// }
 				setQuantity(data.wor.qty);
 				setPart(part);
 			} else {
@@ -137,7 +141,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${res.idTs} - ${res.wor.job_no }`,
+						label: `${res.wor.job_no} - ${res.wor.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
@@ -150,17 +154,17 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	const selectWor = (data: any) => {
 		let part: any = [];
 		setCustomerName(data.wor.customerPo.quotations.Customer.name);
-		setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
-		setSubject(data.wor.subject);
-		setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
-		setEquipmentModel(data.wor.eq_model);
-		if (data.wor.customerPo.quotations.eqandpart.length > 0) {
-			data.wor.customerPo.quotations.eqandpart.map((res: any) => {
-				part.push(res.eq_part);
-			});
-		}
-		setQuantity(data.wor.qty);
-		setPart(part);
+		// setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
+		setSubject(data.wor.customerPo.quotations.subject);
+		// setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
+		// setEquipmentModel(data.wor.eq_model);
+		// if (data.wor.customerPo.quotations.eqandpart.length > 0) {
+		// 	data.wor.customerPo.quotations.eqandpart.map((res: any) => {
+		// 		part.push(res.eq_part);
+		// 	});
+		// }
+		// setQuantity(data.wor.qty);
+		// setPart(part);
 	};
 
 	const uploadImage = async (payload: any) => {
@@ -193,7 +197,9 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		form.append("ioem", payload.ioem);
 		form.append("isr", payload.isr);
 		form.append("itn", payload.itn);
-		form.append("quantity", payload.quantity);
+		form.append("equipment", payload.equipment);
+		form.append("model", payload.model);
+		form.append("qty", payload.qty);
 		form.append("srimgdetail", JSON.stringify(payload.srimgdetail));
 		try {
 			const response = await AddSummary(form);
@@ -226,7 +232,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={sumarySchema}
@@ -245,7 +251,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Summary Report</h1>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date_of_summary'
@@ -271,7 +277,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 									placeholder='Job Number'
 									label='Job Number'
 									onChange={(e: any) => {
-										selectWor(e.value)
+										selectWor(e.value);
 										setFieldValue("timeschId", e.value.id);
 										// if (event.target.value !== "Choose Job Number WOR") {
 										// 	let data = JSON.parse(event.target.value);
@@ -304,22 +310,6 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<Input
-									id='date_wor'
-									name='date_wor'
-									placeholder='Date Of WOR'
-									label='Date Of WOR'
-									type='text'
-									value={dateWor}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
 									id='customer'
 									name='customer'
 									placeholder='Customer Name'
@@ -333,131 +323,114 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<Input
-									id='customer'
-									name='customer'
+								<InputArea
+									id='subject'
+									name='subject'
 									placeholder='Subject'
 									label='Subject'
 									type='text'
 									value={subject}
-									disabled={true}
+									onChange={handleChange}
+									disabled={false}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<table className='w-full'>
-									<thead></thead>
-									<tbody>
-										<tr>
-											<td className='w-[50%]'>
-												<Input
-													id='customer'
-													name='customer'
-													placeholder='Equipment'
-													label='Equipment'
-													type='text'
-													value={equipment}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-											<td className='w-[25%]'>
-												<Input
-													id='customer'
-													name='customer'
-													placeholder='Equipment'
-													label='Model'
-													type='text'
-													value={equipmentModel}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-											<td className='w-[25%]'>
-												<Input
-													id='quantity'
-													name='quantity'
-													placeholder='Quantity'
-													label='Quantity'
-													type='number'
-													value={quantity}
-													onChange={handleChange}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+								<Input
+									id='equipment'
+									name='equipment'
+									placeholder='Equipment'
+									label='Equipment'
+									type='text'
+									value={values.equipment}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='model'
+									name='model'
+									placeholder='Model'
+									label='Model'
+									type='text'
+									value={values.model}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='qty'
+									name='qty'
+									placeholder='Quantity'
+									label='Quantity'
+									type='number'
+									value={values.qty}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='ioem'
+									name='ioem'
+									placeholder='O E M'
+									label='O E M'
+									type='text'
+									value={values.ioem}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<table className='w-full'>
-									<thead></thead>
-									<tbody>
-										<tr>
-											<td className='w-[50%]'>
-												<Input
-													id='ioem'
-													name='ioem'
-													placeholder='O E M'
-													label='O E M'
-													type='text'
-													value={values.ioem}
-													onChange={handleChange}
-													disabled={false}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-											<td className='w-[25%]'>
-												<Input
-													id='isr'
-													name='isr'
-													placeholder='Serial Number'
-													label='Serial Number'
-													type='text'
-													value={values.isr}
-													onChange={handleChange}
-													disabled={false}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-											<td className='w-[25%]'>
-												<Input
-													id='itn'
-													name='itn'
-													placeholder='Tag Number'
-													label='Tag Number'
-													type='text'
-													value={values.itn}
-													onChange={handleChange}
-													disabled={false}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+								<Input
+									id='isr'
+									name='isr'
+									placeholder='Serial Number'
+									label='Serial Number'
+									type='text'
+									value={values.isr}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='itn'
+									name='itn'
+									placeholder='Tag Number'
+									label='Tag Number'
+									type='text'
+									value={values.itn}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 							<div className='w-full'>
 								<InputArea
 									id='introduction'
@@ -500,11 +473,12 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 											<div key={i}>
 												<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 													<div className='w-full'>
-														<InputSelect
+														<Input
 															id={`srimgdetail.${i}.name_part`}
 															name={`srimgdetail.${i}.name_part`}
-															placeholder='Part Name'
-															label='Part Name'
+															placeholder='Name Part'
+															label='Name Part'
+															type='text'
 															onChange={(event: any) => {
 																setFieldValue(
 																	`srimgdetail.${i}.name_part`,
@@ -514,22 +488,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 															required={true}
 															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														>
-															<option defaultValue='' selected>
-																Choose Name Part
-															</option>
-															{part.length === 0 ? (
-																<option value=''>No Data Part</option>
-															) : (
-																part.map((res: any, i: number) => {
-																	return (
-																		<option value={res.nama_part} key={i}>
-																			{res.nama_part}
-																		</option>
-																	);
-																})
-															)}
-														</InputSelect>
+														/>
 													</div>
 													<div className='w-full'>
 														<Input

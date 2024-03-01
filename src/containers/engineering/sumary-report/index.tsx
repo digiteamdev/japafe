@@ -166,17 +166,17 @@ export const SummaryReport = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{res.timeschedule.wor.job_no}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.timeschedule.wor.date_of_order).format("DD-MM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4 text-center'>
 										{res.timeschedule.wor.customerPo.quotations.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{res.timeschedule.wor.subject}
+									<td className='px-6 py-4 text-center'>
+										{res.timeschedule.wor.customerPo.quotations.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

@@ -366,6 +366,20 @@ export const ViewSchedule = ({
 			}
 		}
 	};
+
+	const calculatePlanning = (date: any) => {
+		let bobot: number = 0
+		aktivitas.map( (res:any, i:number) => {
+			let datePlanning = Math.floor(new Date(res.endday).getTime() / 1000)
+			if( i !== 0){
+				if( datePlanning <= date ){
+					bobot = bobot + res.bobot
+				}
+				console.log(date)
+			}
+		})
+		return `${bobot}%`
+	}
 	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
@@ -511,54 +525,82 @@ export const ViewSchedule = ({
 											})}
 										</tr>
 										{aktivitas.map((res: any, i: number) => {
-											return (
-												<tr key={i}>
-													<td className='border border-black text-center w-[2%]'>
-														{i === 0 ? '' : i}
-													</td>
-													<td className='border border-black text-center w-[20%]'>
-														{ i === 0 ? res.name : res.work_scope_item.item}
-													</td>
-													{res.gapleft > 0 ? (
-														<td
-															className='border border-black border-r-0'
-															colSpan={res.gapleft}
-														>
-															<div></div>
+											if(i !== 0){
+												return (
+													<tr key={i}>
+														<td className='border border-black text-center w-[2%]'>
+															{i === 0 ? '' : i}
 														</td>
-													) : null}
-													<td
-														className={`border border-black ${
-															res.gapleft > 0 ? "border-l-0" : ""
-														} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
-														colSpan={ i === 0 ? res.duration : res.days}
-													>
-														<div
-															className={`${
-																res.id === "Task"
-																	? "bg-orange-500"
-																	: "bg-yellow-500"
-															} w-full h-3 rounded-lg cursor-pointer`}
-															data-te-toggle='tooltip'
-															title={`
-																		Activity: ${ i === 0 ? res.name : res.work_scope_item.item} \nStart Date: ${moment(res.start).format(
-																"DD MMMM yyyy"
-															)}\nEnd Date: ${moment(res.end).format(
-																"DD MMMM yyyy"
-															)}\nDuration: ${res.days} day\nProgress: ${res.progress}%`}
-														></div>
-													</td>
-													{res.gaprigth > 0 ? (
-														<td
-															className='border border-black border-l-0'
-															colSpan={res.gaprigth}
-														>
-															<div></div>
+														<td className='border border-black text-center w-[20%]'>
+															{ i === 0 ? res.name : res.work_scope_item.item}
 														</td>
-													) : null}
-												</tr>
-											);
+														{res.gapleft > 0 ? (
+															<td
+																className='border border-black border-r-0'
+																colSpan={res.gapleft}
+															>
+																<div></div>
+															</td>
+														) : null}
+														<td
+															className={`border border-black ${
+																res.gapleft > 0 ? "border-l-0" : ""
+															} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
+															colSpan={ i === 0 ? res.duration : res.days}
+														>
+															<div
+																className={`${
+																	res.id === "Task"
+																		? "bg-orange-500"
+																		: "bg-yellow-500"
+																} w-full h-3 rounded-lg cursor-pointer`}
+																data-te-toggle='tooltip'
+																title={`
+																			Activity: ${ i === 0 ? res.name : res.work_scope_item.item} \nStart Date: ${moment(res.start).format(
+																	"DD MMMM yyyy"
+																)}\nEnd Date: ${moment(res.end).format(
+																	"DD MMMM yyyy"
+																)}\nDuration: ${res.days} day\nProgress: ${res.progress}%`}
+															></div>
+														</td>
+														{res.gaprigth > 0 ? (
+															<td
+																className='border border-black border-l-0'
+																colSpan={res.gaprigth}
+															>
+																<div></div>
+															</td>
+														) : null}
+													</tr>
+												)
+											}
 										})}
+										<tr>
+											<td className="mt-2 text-center border border-black" colSpan={2}>Planning</td>
+											{listDate.map((res: any, i: number) => {
+												return (
+													<td
+														className='border border-black text-center bg-blue-500'
+														key={i}
+													>
+														{ calculatePlanning(Math.floor(res / 1000)) }
+													</td>
+												);
+											})}
+										</tr>
+										<tr>
+											<td className="mt-2 text-center border border-black" colSpan={2}>Actual</td>
+											{listDate.map((res: any, i: number) => {
+												return (
+													<td
+														className='border border-black text-center bg-green-500'
+														key={i}
+													>
+														10%
+													</td>
+												);
+											})}
+										</tr>
 									</tbody>
 								</table>
 							</Section>
