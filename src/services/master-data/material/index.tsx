@@ -12,6 +12,7 @@ export const SearchMaterialType = (page: number, perpage: number, search: string
 export const AddMaterial = (data: any) => Axios.post(process.env.BASE_URL+'/masterMaterial', data);
 export const GetMaterial = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/masterMaterial?page=${page}&limit=${perpage}`);
 export const GetAllMaterial = () => Axios.get(process.env.BASE_URL+`/masterMaterial`);
+export const GetAllMaterialBom = () => Axios.get(process.env.BASE_URL+`/bomMaterial`);
 export const EditMaterial = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/masterMaterial/${id}`, data);
 export const DeleteMaterial = (id: string) => Axios.delete(process.env.BASE_URL+`/masterMaterial/${id}`);
 export const SearchMaterial = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/masterMaterial?page=${page}&limit=${perpage}&search=${search}`);

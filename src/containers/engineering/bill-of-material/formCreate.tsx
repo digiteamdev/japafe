@@ -13,9 +13,10 @@ import {
 	AddBillOfMaterial,
 	GetAllMaterial,
 	GetAllMaterialType,
+	GetAllPart,
 } from "../../../services";
 import { toast } from "react-toastify";
-import { Plus } from "react-feather";
+import { Plus, Trash2 } from "react-feather";
 import { FormCreateMaterial } from "./formCreateMaterial";
 import moment from "moment";
 
@@ -31,14 +32,7 @@ interface data {
 	model: string;
 	qty: number;
 	equipment: string;
-	bom_detail: any
-}
-
-interface dataMaterial {
-	material_name: string;
-	kd_group: string;
-	satuan: string;
-	detail: string;
+	bom_detail: any;
 }
 
 export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
@@ -61,19 +55,14 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 		model: "",
 		qty: 0,
 		equipment: "",
-		bom_detail: []
-	});
-	const [dataMaterial, setDataMaterial] = useState<dataMaterial>({
-		material_name: "",
-		kd_group: "",
-		satuan: "",
-		detail: "",
+		bom_detail: [],
 	});
 
 	useEffect(() => {
 		getSummary();
 		getMaterial();
 		getMaterialType();
+		getPart();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -160,13 +149,15 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 			model: datas.model,
 			qty: datas.qty,
 			equipment: datas.equipment,
-			bom_detail: [{
-				part: "",
-				material: "",
-				satuan: "",
-				jumlah: 0,
-				dimanesi: ""
-			}],
+			bom_detail: [
+				{
+					partId: "",
+					materialId: "",
+					satuan: "",
+					jumlah: 0,
+					dimanesi: "",
+				},
+			],
 		});
 	};
 
@@ -189,13 +180,38 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	};
 
 	const getMaterial = async () => {
+		let listMaterials: any = [];
 		try {
 			const response = await GetAllMaterial();
 			if (response.data) {
-				setListMaterial(response.data.result);
+				response.data.result.map((res: any) => {
+					listMaterials.push({
+						label: `${res.material_name} (${res.grup_material.material_name})`,
+						value: res,
+					});
+				});
 			}
+			setListMaterial(listMaterials);
 		} catch (error) {
 			setListMaterial([]);
+		}
+	};
+
+	const getPart = async () => {
+		let listParts: any = [];
+		try {
+			const response = await GetAllPart();
+			if (response.data) {
+				response.data.result.map((res: any) => {
+					listParts.push({
+						label: `${res.nama_part} (${res.keterangan_part})`,
+						value: res,
+					});
+				});
+			}
+			setListPart(listParts);
+		} catch (error) {
+			setListPart([]);
 		}
 	};
 
@@ -229,6 +245,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 				partId: res.partId,
 				materialId: res.materialId,
 				dimensi: res.dimensi,
+				qty: parseInt(res.jumlah)
 			});
 		});
 		let body = {
@@ -287,7 +304,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{isFormMaterial ? (
 				<FormCreateMaterial content={content} showModal={hideFormMaterial} />
 			) : (
@@ -365,7 +382,7 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 										placeholder='Customer Name'
 										label='Customer'
 										type='text'
-										value={ values.customer }
+										value={values.customer}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -432,185 +449,202 @@ export const FormCreateBillOfMaterial = ({ content, showModal }: props) => {
 									/>
 								</div>
 							</Section>
-							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-								<div className='w-full'>
-									<InputSelect
-										id='part'
-										name='part'
-										placeholder='Part'
-										label='Part'
-										onChange={(event: any) => {
-											if (event.target.value !== "no data") {
-												let data = JSON.parse(event.target.value);
-												setPart(data.name);
-												setPartId(data.id);
-											} else {
-												setPart("");
-												setPartId("");
-											}
-										}}
-										required={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									>
-										<option defaultValue='no data' selected>
-											Choose Part
-										</option>
-										{listPart.length === 0 ? (
-											<option value='no data'>No Data Part</option>
-										) : (
-											listPart.map((res: any, i: number) => {
-												return (
-													<option value={JSON.stringify(res)} key={i}>
-														{res.name}
-													</option>
-												);
-											})
-										)}
-									</InputSelect>
-								</div>
-								<div className='w-full'>
-									<a
-										className='inline-flex text-green-500 pt-8 pl-4 text-lg cursor-pointer'
-										onClick={() => {
-											if (partId === "") {
-												toast.warning("Please Choice Part", {
-													position: "top-center",
-													autoClose: 5000,
-													hideProgressBar: true,
-													closeOnClick: true,
-													pauseOnHover: true,
-													draggable: true,
-													progress: undefined,
-													theme: "colored",
-												});
-											} else {
-												addDetail(values);
-											}
-										}}
-									>
-										<Plus size={18} className='mr-1 mt-1' /> Add Part
-									</a>
-								</div>
-							</Section>
 							<FieldArray
 								name='bom_detail'
 								render={(arrayPart) => (
 									<>
 										{values.bom_detail.map((res: any, i: number) => (
-											<Section
-												key={i}
-												className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
-											>
-												<div className='w-full'>
-													<Input
-														id={`bom_detail.${i}.part`}
-														name={`bom_detail.${i}.part`}
-														placeholder='Part'
-														label='Part'
-														type='text'
-														value={res.part}
-														disabled={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`bom_detail.${i}.materialId`}
-														name={`bom_detail.${i}.materialId`}
-														placeholder='Material'
-														label='Material'
-														onChange={(event: any) => {
-															if (
-																event.target.value !== "Choose Material" &&
-																event.target.value !== "create"
-															) {
-																let data = JSON.parse(event.target.value);
+											<div key={i}>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+													<div className='w-full'>
+														{/* <Input
+															id={`bom_detail.${i}.part`}
+															name={`bom_detail.${i}.part`}
+															placeholder='Part'
+															label='Part'
+															type='text'
+															value={res.part}
+															disabled={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/> */}
+														<InputSelectSearch
+															datas={listPart}
+															id={`bom_detail.${i}.partId`}
+															name={`bom_detail.${i}.partId`}
+															placeholder='Part'
+															label='Part'
+															onChange={(e: any) => {
+																setFieldValue(
+																	`bom_detail.${i}.partId`,
+																	e.value.id
+																);
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														{/* <InputSelect
+															id={`bom_detail.${i}.materialId`}
+															name={`bom_detail.${i}.materialId`}
+															placeholder='Material'
+															label='Material'
+															onChange={(event: any) => {
+																if (
+																	event.target.value !== "Choose Material" &&
+																	event.target.value !== "create"
+																) {
+																	let data = JSON.parse(event.target.value);
+																	setFieldValue(
+																		`bom_detail.${i}.materialId`,
+																		data.id
+																	);
+																	setFieldValue(
+																		`bom_detail.${i}.material`,
+																		data.material_name
+																	);
+																	setFieldValue(
+																		`bom_detail.${i}.satuan`,
+																		data.satuan
+																	);
+																} else if (event.target.value === "create") {
+																	setFieldValue(`bom_detail.${i}.materialId`, "");
+																	setFieldValue(`bom_detail.${i}.material`, "");
+																	setFieldValue(`bom_detail.${i}.satuan`, "");
+																	showFormMaterial(values);
+																} else {
+																	setFieldValue(`bom_detail.${i}.materialId`, "");
+																	setFieldValue(`bom_detail.${i}.material`, "");
+																	setFieldValue(`bom_detail.${i}.satuan`, "");
+																}
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														>
+															<option defaultValue='' selected>
+																Choose Material
+															</option>
+															{listMaterial.length === 0 ? (
+																<option value=''>No Data Material</option>
+															) : (
+																listMaterial.map((res: any, i: number) => {
+																	return (
+																		<option value={JSON.stringify(res)} key={i}>
+																			{res.material_name} ({" "}
+																			{res.grup_material.material_name} )
+																		</option>
+																	);
+																})
+															)}
+															<option value='create'>Add Material</option>
+														</InputSelect> */}
+														<InputSelectSearch
+															datas={listMaterial}
+															id={`bom_detail.${i}.materialId`}
+															name={`bom_detail.${i}.materialId`}
+															placeholder='Material'
+															label='Material'
+															onChange={(e: any) => {
 																setFieldValue(
 																	`bom_detail.${i}.materialId`,
-																	data.id
-																);
-																setFieldValue(
-																	`bom_detail.${i}.material`,
-																	data.material_name
+																	e.value.id
 																);
 																setFieldValue(
 																	`bom_detail.${i}.satuan`,
-																	data.satuan
+																	e.value.satuan
 																);
-															} else if (event.target.value === "create") {
-																setFieldValue(`bom_detail.${i}.materialId`, "");
-																setFieldValue(`bom_detail.${i}.material`, "");
-																setFieldValue(`bom_detail.${i}.satuan`, "");
-																showFormMaterial(values);
-															} else {
-																setFieldValue(`bom_detail.${i}.materialId`, "");
-																setFieldValue(`bom_detail.${i}.material`, "");
-																setFieldValue(`bom_detail.${i}.satuan`, "");
-															}
-														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option defaultValue='' selected>
-															Choose Material
-														</option>
-														{listMaterial.length === 0 ? (
-															<option value=''>No Data Material</option>
-														) : (
-															listMaterial.map((res: any, i: number) => {
-																return (
-																	<option value={JSON.stringify(res)} key={i}>
-																		{res.material_name} ({" "}
-																		{res.grup_material.material_name} )
-																	</option>
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`bom_detail.${i}.satuan`}
+															name={`bom_detail.${i}.satuan`}
+															placeholder='Satuan'
+															label='Satuan'
+															type='text'
+															value={res.satuan}
+															disabled={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`bom_detail.${i}.jumlah`}
+															name={`bom_detail.${i}.jumlah`}
+															placeholder='Jumlah'
+															label='Jumlah'
+															type='text'
+															pattern='\d*'
+															value={res.jumlah}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`bom_detail.${i}.jumlah`,
+																	e.target.value
 																);
-															})
-														)}
-														<option value='create'>Add Material</option>
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`bom_detail.${i}.satuan`}
-														name={`bom_detail.${i}.satuan`}
-														placeholder='Satuan'
-														label='Satuan'
-														type='text'
-														value={res.satuan}
-														disabled={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`bom_detail.${i}.jumlah`}
-														name={`bom_detail.${i}.jumlah`}
-														placeholder='Jumlah'
-														label='Jumlah'
-														type='text'
-														value={res.jumlah}
-														disabled={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`bom_detail.${i}.dimensi`}
-														name={`bom_detail.${i}.dimensi`}
-														placeholder='Dimensi'
-														label='Dimensi'
-														type='text'
-														onChange={handleChange}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
+															}}
+															disabled={false}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`bom_detail.${i}.dimensi`}
+															name={`bom_detail.${i}.dimensi`}
+															placeholder='Dimensi'
+															label='Dimensi'
+															type='text'
+															value={res.dimensi}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`bom_detail.${i}.dimensi`,
+																	e.target.value
+																);
+															}}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='w-full'>
+													{i === values.bom_detail.length - 1 ? (
+														<a
+															className='inline-flex text-green-500 mr-6 cursor-pointer'
+															onClick={() => {
+																arrayPart.push({
+																	partId: "",
+																	materialId: "",
+																	satuan: "",
+																	jumlah: 0,
+																	dimanesi: "",
+																},);
+															}}
+														>
+															<Plus size={18} className='mr-1 mt-1' /> Add
+															Part
+														</a>
+													) : null}
+													{values.bom_detail.length !== 1 ? (
+														<a
+															className='inline-flex text-red-500 cursor-pointer mt-1'
+															onClick={() => {
+																arrayPart.remove(i);
+															}}
+														>
+															<Trash2 size={18} className='mr-1 mt-1' /> Remove
+															Detail
+														</a>
+													) : null}
+												</Section>
+											</div>
 										))}
 									</>
 								)}

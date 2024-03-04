@@ -11,3 +11,4 @@ export const DeleteEquipment = (id: string) => Axios.delete(process.env.BASE_URL
 export const AddEquipmentPart = (data: any) => Axios.post(process.env.BASE_URL+'/part', data);
 export const EditEquipmentPart = (data: any) => Axios.put(process.env.BASE_URL+'/part', data);
 export const DeleteEquipmentPart = (id: string) => Axios.delete(process.env.BASE_URL+`/part/${id}`);
+export const GetAllPart = () => Axios.get(process.env.BASE_URL+`/bomPart`);

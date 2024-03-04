@@ -172,16 +172,16 @@ export const BillOfMaterial = () => {
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.srimg.timeschedule.summary).format("DD-MM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='px-6 py-4 text-center'>
 										{res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.srimg.timeschedule.wor.subject}
+									<td className='x-6 py-4 text-center'>
+										{res.srimg.timeschedule.wor.customerPo.quotations.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md mx-1'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -189,7 +189,7 @@ export const BillOfMaterial = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -197,7 +197,7 @@ export const BillOfMaterial = () => {
 												}}
 											>
 												<Edit color='white' />
-											</Button>
+											</Button> */}
 											<Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
