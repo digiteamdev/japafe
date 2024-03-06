@@ -875,7 +875,7 @@ export const FormEditDispatch = ({
 							render={(arrayDetail) => (
 								<>
 									{values.dispatchDetail.map((res: any, i: number) => (
-										<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+										<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2' key={i}>
 											<div className='w-full'>
 												<InputArea
 													id='aktivitas'
