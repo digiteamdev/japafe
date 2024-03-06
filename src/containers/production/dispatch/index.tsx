@@ -36,10 +36,8 @@ export const Dispatch = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No Job" },
-		{ name: "Id Dispatch" },
-		{ name: "Dispatch Date" },
-		{ name: "Equipment" },
 		{ name: "Customer" },
+		{ name: "Subject" },
 		{ name: "Action" }
 	];
 
@@ -205,6 +203,7 @@ export const Dispatch = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log("as",res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -213,16 +212,10 @@ export const Dispatch = () => {
 									<td className='whitespace-nowrap px-6 py-4'>
 										{ res.srimg.timeschedule.wor.job_no }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.id_dispatch }
+									<td className='px-6 py-4'>
+										{ res.srimg.timeschedule.wor.customerPo.quotations.subject }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ moment(res.dispacth_date).format("DD-MMMM-YYYY") }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ showEquipment(res.srimg.timeschedule.wor.customerPo.quotations.eqandpart) }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4'>
 										{ res.srimg.timeschedule.wor.customerPo.quotations.Customer.name }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>

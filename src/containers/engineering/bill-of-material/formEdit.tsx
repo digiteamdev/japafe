@@ -21,26 +21,7 @@ interface props {
 
 interface data {
 	srId: string;
-	bom_detail: [
-		{
-			bomId: string;
-			id: string;
-			partId: string;
-			part: string;
-			materialId: string;
-			material: string;
-			satuan: string;
-			jumlah: string;
-			dimensi: string;
-		}
-	];
-}
-
-interface dataMaterial {
-	material_name: string;
-	kd_group: string;
-	satuan: string;
-	detail: string;
+	bom_detail: any;
 }
 
 export const FormEditBillOfMaterial = ({
@@ -63,25 +44,7 @@ export const FormEditBillOfMaterial = ({
 	const [listDetailRemove, setListDetailRemove] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		srId: "",
-		bom_detail: [
-			{
-				bomId: "",
-				id: "",
-				partId: "",
-				part: "",
-				materialId: "",
-				material: "",
-				satuan: "",
-				jumlah: "",
-				dimensi: "",
-			},
-		],
-	});
-	const [dataMaterial, setDataMaterial] = useState<dataMaterial>({
-		material_name: "",
-		kd_group: "",
-		satuan: "",
-		detail: "",
+		bom_detail: [],
 	});
 
 	useEffect(() => {
@@ -96,23 +59,23 @@ export const FormEditBillOfMaterial = ({
 		let equipment: any = [];
 		let part: any = [];
 		let listQtyDetail: any = [];
-		dataSelected.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
-			(res: any) => {
-				if (!equipment.includes(res.equipment.nama)) {
-					equipment.push(res.equipment.nama);
-				}
-			}
-		);
-		dataSelected.srimg.srimgdetail.map((res: any) => {
-			part.push({
-				id: res.id,
-				name: res.name_part,
-			});
-			listQtyDetail.push({
-				name_part: res.name_part,
-				qty: res.qty,
-			});
-		});
+		// dataSelected.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
+		// 	(res: any) => {
+		// 		if (!equipment.includes(res.equipment.nama)) {
+		// 			equipment.push(res.equipment.nama);
+		// 		}
+		// 	}
+		// );
+		// dataSelected.srimg.srimgdetail.map((res: any) => {
+		// 	part.push({
+		// 		id: res.id,
+		// 		name: res.name_part,
+		// 	});
+		// 	listQtyDetail.push({
+		// 		name_part: res.name_part,
+		// 		qty: res.qty,
+		// 	});
+		// });
 		dataSelected.bom_detail.map((res: any) => {
 			listPartDetail.push({
 				bomId: res.bomId,

@@ -3,12 +3,9 @@ import moment from "moment";
 import { Section } from "../../../components";
 import { Printer } from "react-feather";
 import { PdfDispatch } from "./pdfDispatch";
-import {
-	DispatchDetailStart,
-	DispatchDetailFinish
-} from "../../../services";
+import { DispatchDetailStart, DispatchDetailFinish } from "../../../services";
 import { toast } from "react-toastify";
-import { getId } from '../../../configs/session';
+import { getId } from "../../../configs/session";
 
 interface props {
 	content: string;
@@ -17,14 +14,13 @@ interface props {
 }
 
 export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
-
 	const [dataPart, setDataPart] = useState<any>([]);
 	const [activeTabs, setActiveTabs] = useState<any>("");
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [dataDetail, setDataDetail] = useState<any>(null);
 
 	useEffect(() => {
-		setPart();
+		// setPart();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -45,13 +41,13 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfDispatch
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
+			{/* <PdfDispatch
 				isModal={isModal}
 				dataDispatch={dataSelected}
 				dataDetail={dataDetail}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<h1 className='font-bold text-xl'>Dispatch</h1>
@@ -60,10 +56,32 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 							<table className='w-full'>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Id Dispatch
+										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.id_dispatch}
+										{dataSelected.srimg.timeschedule.wor.job_no}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Customer
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{
+											dataSelected.srimg.timeschedule.wor.customerPo.quotations
+												.Customer.name
+										}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Subject
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{
+											dataSelected.srimg.timeschedule.wor.customerPo.quotations
+												.subject
+										}
 									</td>
 								</tr>
 								<tr>
@@ -76,34 +94,16 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Job No
+										Equipment
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.timeschedule.wor.job_no} - (
-										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
-										)
-									</td>
-								</tr>
-								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-										Equipment / Part
-									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
-											(res: any, i: number) => {
-												return (
-													<p key={i}>
-														{res.equipment.nama + " / " + res.eq_part.nama_part}
-													</p>
-												);
-											}
-										)}
+										{dataSelected.srimg.equipment} - {dataSelected.srimg.model}
 									</td>
 								</tr>
 							</table>
 						</div>
 					</Section>
-					{dataPart.map((res: any, i: number) => (
+					{/* {dataPart.map((res: any, i: number) => (
 						<button
 							key={i}
 							className={`text-base font-semibold my-2 mr-4 ${
@@ -115,82 +115,61 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 						>
 							{res}
 						</button>
-					))}
+					))} */}
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-						<button
+						{/* <button
 							className={`w-[70px] text-justify rounded-md border border-transparent bg-blue-500 hover:bg-blue-400 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(activeTabs, true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<div className='w-full'>
 							<table className='w-full'>
 								<thead className='text-center'>
 									<tr>
 										<th className='border border-black border-collapse'>
-											Work Center
+											Aktivitas
 										</th>
 										<th className='border border-black border-collapse'>
-											Start Date
+											Start - end
 										</th>
 										<th className='border border-black border-collapse'>
 											Actual
 										</th>
 										<th className='border border-black border-collapse'>
+											Departemen
+										</th>
+										<th className='border border-black border-collapse'>
 											Operator
 										</th>
-										<th className='border border-black border-collapse'>
-											Approved By
-										</th>
-										<th className='border border-black border-collapse'>
-											Finish Date
-										</th>
-										{/* <th className='border border-black border-collapse'></th> */}
 									</tr>
 								</thead>
 								<tbody>
-									{dataSelected.dispatchDetail
-										.filter((part: any) => {
-											return part.part === activeTabs;
-										})
-										.map((res: any, i: number) => {
+									{dataSelected.dispatchDetail.map(
+										(res: any, i: number) => {
 											return (
 												<tr key={i}>
-													<td className='border border-black border-collapse pl-2'>
-														{res.workCenter.name}
+													<td className='border border-black border-collapse text-center'>
+														{ res.aktivitas.work_scope_item.item }
 													</td>
-													<td className='border border-black border-collapse pl-2'>
-														{moment(res.start).format("DD-MMMM-YYYY")}
+													<td className='border border-black border-collapse text-center'>
+														{ moment(res.aktivitas.startday).format('DD-MM-YYYY') } - { moment(res.aktivitas.endday).format('DD-MM-YYYY') }
 													</td>
-													<td className='border border-black border-collapse pl-2'>
-														{ res.actual === null ? '' : moment(res.actual).format("DD-MMMM-YYYY")}
+													<td className='border border-black border-collapse text-center'>
+														{ res.aktivitas.actual_start === null ? "-" : `${moment(res.aktivitas.actual_start).format('DD-MM-YYYY')} - ${moment(res.aktivitas.actual_finish).format('DD-MM-YYYY')}` }
 													</td>
-													<td className='border border-black border-collapse pl-2'>
-														{res.Employee === null ? '' : res.Employee.employee_name }
+													<td className='border border-black border-collapse text-center'>
+														{ res.sub_depart.name }
 													</td>
-													<td className='border border-black border-collapse pl-2'>
-														{res.approvebyID !== null ? res.approve.employee_name : '-' }
+													<td className='border border-black border-collapse text-center'>
+														{ res.operator.length > 0 ? "-" : "-" }
 													</td>
-													<td className='border border-black border-collapse pl-2'>
-														{res.finish === null
-															? ""
-															: moment(res.finish).format("DD-MMMM-YYYY")}
-													</td>
-													{/* <td className='border border-black border-collapse pl-2'>
-														{ res.approvebyID === null ? (
-															<button
-																className={`px-2 my-1.5 text-justify rounded-md border border-transparent ${res.actual === null ? 'bg-green-500 hover:bg-green-400' : 'bg-red-500 hover:bg-red-400' } text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-																onClick={() => res.actual === null ? startDetail(res.id) : finishDetail(res.id) }
-															>
-																{ res.actual === null ? "Start" : "Finish" }
-															</button>
-														) : '' }
-													</td> */}
 												</tr>
 											);
-										})}
+										}
+									)}
 								</tbody>
 							</table>
 						</div>

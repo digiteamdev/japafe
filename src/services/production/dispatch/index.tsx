@@ -11,3 +11,4 @@ export const DeleteDispatchDetail = (id: string) => Axios.delete(process.env.BAS
 export const DispatchDetailStart = (id: string,data: any) => Axios.put(process.env.BASE_URL+`/dispacthstart/${id}`, data);
 export const DispatchDetailFinish = (id: string,data: any) => Axios.put(process.env.BASE_URL+`/dispacthfinish/${id}`, data);
 export const GetSummaryDispatch = () => Axios.get(process.env.BASE_URL+`/sumarryDispacth`);
+export const DispatchOperatorStart = (data: any) => Axios.post(process.env.BASE_URL+`/operatorStart`, data);

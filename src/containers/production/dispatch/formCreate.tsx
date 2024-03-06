@@ -5,6 +5,7 @@ import {
 	InputSelect,
 	InputSelectSearch,
 	InputDate,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
@@ -32,17 +33,14 @@ interface data {
 	id_dispatch: string;
 	dispacth_date: any;
 	remark: string;
-	dispatchDetail: [
-		{
-			workId: string;
-			subdepId: string;
-			aktivitasID: string;
-			start: any;
-			startActivity: any;
-			operatorID: string;
-			part: string;
-		}
-	];
+	job_no: string;
+	subject: string;
+	startDate: any;
+	finishDate: any;
+	equipment: string;
+	model: string;
+	qty: number;
+	dispatchDetail: any;
 }
 
 interface dataWorkerCenter {
@@ -73,17 +71,14 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 		id_dispatch: "",
 		dispacth_date: new Date(),
 		remark: "",
-		dispatchDetail: [
-			{
-				workId: "",
-				aktivitasID: "",
-				subdepId: "",
-				start: null,
-				startActivity: null,
-				operatorID: "",
-				part: "",
-			},
-		],
+		job_no: "",
+		subject: "",
+		startDate: new Date(),
+		finishDate: new Date(),
+		equipment: "",
+		model: "",
+		qty: 0,
+		dispatchDetail: [],
 	});
 	const [dataWorkerCenter, setDataWorkerCenter] = useState<dataWorkerCenter>({
 		name: "",
@@ -618,9 +613,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasSchedulle.push({
 						value: res,
-						label: `${res.id_summary} - ${
-							res.timeschedule.wor.job_no
-						}`,
+						label: `${res.id_summary} - ${res.timeschedule.wor.job_no}`,
 					});
 				});
 				setListSchedule(datasSchedulle);
@@ -631,13 +624,20 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	const getDepart = async () => {
+		let depart: any = [];
 		try {
 			const response = await GetAllDepartement();
 			if (response.data) {
-				setListDepart(response.data.result);
+				response.data.result.map((res: any) => {
+					depart.push({
+						label: res.name,
+						value: res.id,
+					});
+				});
 			}
+			setListDepart(depart);
 		} catch (error) {
-			setListDepart([]);
+			setListDepart(depart);
 		}
 	};
 
@@ -666,25 +666,16 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	const addDispatch = async (payload: any) => {
 		setIsLoading(true);
 		let dataDetail: any = [];
-		detail.map((res: any) => {
+		payload.dispatchDetail.map((res: any) => {
 			dataDetail.push({
-				workId: res.workId,
-				subdepId: res.subdepId,
+				date_dispatch: res.date_dispatch,
+				timeschId: res.timeschId,
 				aktivitasID: res.aktivitasID,
-				start: res.start,
-				// operatorID: res.operatorID,
-				part: res.part,
+				subdepId: res.subdepId,
 			});
 		});
-		let dataBody = {
-			srId: payload.summaryId,
-			id_dispatch: generateIdNum(),
-			dispacth_date: payload.dispacth_date,
-			remark: payload.remark,
-			dispatchDetail: dataDetail,
-		};
 		try {
-			const response = await AddDispatch(dataBody);
+			const response = await AddDispatch({dispatchDetail:dataDetail});
 			if (response.data) {
 				toast.success("Add Dispatch Success", {
 					position: "top-center",
@@ -752,7 +743,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{isFormCreateWorkerCenter ? (
 				<Formik
 					initialValues={dataWorkerCenter}
@@ -896,28 +887,57 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										placeholder='Shedulle'
 										label='Id Schedulle'
 										onChange={(e: any) => {
-											let equipment: any = [];
-											let part: any = [];
-											let lastEquipment: string = "";
-											e.value.timeschedule.wor.customerPo.quotations.eqandpart.map(
-												(res: any) => {
-													if (lastEquipment !== res.equipment.nama) {
-														equipment.push(res.equipment.nama);
-													}
-													lastEquipment = res.equipment.nama;
-												}
+											let detail: any = [];
+											setFieldValue("job_no", e.value.timeschedule.wor.job_no);
+											setFieldValue(
+												"subject",
+												e.value.timeschedule.wor.customerPo.quotations.subject
 											);
-											e.value.srimgdetail.map((res: any) => {
-												part.push(res);
+											setFieldValue(
+												"startDate",
+												e.value.timeschedule.wor.date_of_order
+											);
+											setFieldValue(
+												"finishDate",
+												e.value.timeschedule.wor.delivery_date
+											);
+											setFieldValue("equipment", e.value.equipment);
+											setFieldValue("model", e.value.model);
+											setFieldValue("qty", e.value.qty);
+											e.value.timeschedule.aktivitas.map((res: any) => {
+												detail.push({
+													date_dispatch: new Date(),
+													timeschId: e.value.timeschedule.id,
+													aktivitasID: res.id,
+													aktivitas: res.work_scope_item.item,
+													start: moment(res.startday).format("DD-MMMM-YYYY"),
+													end: moment(res.endday).format("DD-MMMM-YYYY"),
+													subdepId: "",
+												});
 											});
-											setJobNo(e.value.timeschedule.wor.job_no);
-											setSubject(e.value.timeschedule.wor.subject);
-											setDateWor(e.value.timeschedule.wor.date_wor);
-											setDateFinish(e.value.timeschedule.wor.delivery_date);
-											setEquipment(equipment.toString());
-											setPart(part);
-											setListActivity(e.value.timeschedule.aktivitas);
-											setFieldValue("summaryId", e.value.id);
+											setFieldValue("dispatchDetail", detail);
+											// let equipment: any = [];
+											// let part: any = [];
+											// let lastEquipment: string = "";
+											// e.value.timeschedule.wor.customerPo.quotations.eqandpart.map(
+											// 	(res: any) => {
+											// 		if (lastEquipment !== res.equipment.nama) {
+											// 			equipment.push(res.equipment.nama);
+											// 		}
+											// 		lastEquipment = res.equipment.nama;
+											// 	}
+											// );
+											// e.value.srimgdetail.map((res: any) => {
+											// 	part.push(res);
+											// });
+											// setJobNo(e.value.timeschedule.wor.job_no);
+											// setSubject(e.value.timeschedule.wor.subject);
+											// setDateWor(e.value.timeschedule.wor.date_wor);
+											// setDateFinish(e.value.timeschedule.wor.delivery_date);
+											// setEquipment(equipment.toString());
+											// setPart(part);
+											// setListActivity(e.value.timeschedule.aktivitas);
+											// setFieldValue("summaryId", e.value.id);
 											// if (event.target.value !== "no data") {
 											// 	let data = JSON.parse(event.target.value);
 											// }
@@ -949,7 +969,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										placeholder='Job No'
 										label='Job No'
 										type='text'
-										value={jobNo}
+										value={values.job_no}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -959,15 +979,15 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 							</Section>
 							<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
-									<Input
+									<InputArea
 										id='subject'
 										name='subject'
 										placeholder='Subject'
 										label='Subject'
-										type='text'
-										value={subject}
-										disabled={true}
 										required={true}
+										disabled={true}
+										value={values.subject}
+										row={2}
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
@@ -976,8 +996,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									<InputDate
 										id='date_of_summary'
 										label='Start Date'
-										value={dateWor === "" ? new Date() : dateWor}
+										value={values.startDate}
 										withLabel={true}
+										disabled={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 									/>
@@ -986,11 +1007,9 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									<InputDate
 										id='date_of_summary'
 										label='Finish Date'
-										value={dateFinish === "" ? new Date() : dateFinish}
-										onChange={(value: any) =>
-											setFieldValue("date_of_summary", value)
-										}
+										value={values.finishDate}
 										withLabel={true}
+										disabled={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 									/>
@@ -1004,7 +1023,7 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										placeholder='Equipment'
 										label='Equipment'
 										type='text'
-										value={equipment}
+										value={values.equipment}
 										disabled={true}
 										required={true}
 										withLabel={true}
@@ -1012,6 +1031,34 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 									/>
 								</div>
 								<div className='w-full'>
+									<Input
+										id='date_wor'
+										name='date_wor'
+										placeholder='Model'
+										label='Model'
+										type='text'
+										value={values.model}
+										disabled={true}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='date_wor'
+										name='date_wor'
+										placeholder='Qty'
+										label='Quantity'
+										type='number'
+										value={values.qty.toString()}
+										disabled={true}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								{/* <div className='w-full'>
 									<InputSelect
 										id='part'
 										name='part'
@@ -1056,8 +1103,79 @@ export const FormCreateDispatch = ({ content, showModal }: props) => {
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
-								</div>
+								</div> */}
 							</Section>
+							<FieldArray
+								name='dispatchDetail'
+								render={(arrayDetail) => (
+									<>
+										{values.dispatchDetail.map((res: any, i: number) => (
+											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+												<div className='w-full'>
+													<InputArea
+														id='aktivitas'
+														name='aktivitas'
+														placeholder='Aktivitas'
+														label='Aktivitas'
+														required={true}
+														disabled={true}
+														value={res.aktivitas}
+														row={2}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id='startDate'
+														name='startDate'
+														placeholder='Start Date'
+														label='Start Date'
+														type='text'
+														value={res.start}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id='endDate'
+														name='endDate'
+														placeholder='End Date'
+														label='End Date'
+														type='text'
+														value={res.end}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputSelectSearch
+														datas={listDepart}
+														id={`dispatchDetail.${i}.subdepId`}
+														name={`dispatchDetail.${i}.subdepId`}
+														placeholder='Departemen'
+														label='Departemen'
+														onChange={(e: any) => {
+															setFieldValue(
+																`dispatchDetail.${i}.subdepId`,
+																e.value
+															);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+													/>
+												</div>
+											</Section>
+										))}
+									</>
+								)}
+							/>
 							<div className={`w-full mt-4 ${isShowDetail ? "" : "hidden"}`}>
 								<h4 className='text-lg font-bold mt-3'>Part : {partName}</h4>
 								{detail

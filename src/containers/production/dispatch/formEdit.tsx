@@ -1,22 +1,26 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect, InputDate } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelectSearch,
+	InputDate,
+	InputArea,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
 import {
-	GetAllSchedule,
 	GetAllDepartement,
 	GetAllWorkerCenter,
 	GetAllEmployee,
 	GetSummaryDispatch,
-	EditDispatch,
-	EditDispatchDetail,
-	DeleteDispatchDetail,
 	DispatchDetailStart,
 	DispatchDetailFinish,
+	DispatchOperatorStart,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
 import { getId } from "../../../configs/session";
+import moment from "moment";
 
 interface props {
 	content: string;
@@ -25,10 +29,19 @@ interface props {
 }
 
 interface data {
-	srId: string;
+	summaryId: string;
 	id_dispatch: string;
+	customer: string;
 	dispacth_date: any;
 	remark: string;
+	job_no: string;
+	subject: string;
+	startDate: any;
+	finishDate: any;
+	equipment: string;
+	model: string;
+	qty: number;
+	dispatchDetail: any;
 }
 
 export const FormEditDispatch = ({
@@ -54,10 +67,19 @@ export const FormEditDispatch = ({
 	const [tabsPart, setTabsPart] = useState<any>([]);
 	const [detail, setDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		srId: "",
+		summaryId: "",
 		id_dispatch: "",
+		customer: "",
 		dispacth_date: new Date(),
 		remark: "",
+		job_no: "",
+		subject: "",
+		startDate: new Date(),
+		finishDate: new Date(),
+		equipment: "",
+		model: "",
+		qty: 0,
+		dispatchDetail: [],
 	});
 
 	useEffect(() => {
@@ -70,69 +92,56 @@ export const FormEditDispatch = ({
 	}, []);
 
 	const settingData = () => {
-		let equipment: any = [];
-		let part: any = [];
-		let lastEquipment: string = "";
-		let arrPart: any = [];
-		let arrDetail: any = [];
-		setData({
-			srId: dataDispatch.srId,
-			id_dispatch: dataDispatch.id_dispatch,
-			dispacth_date: dataDispatch.dispacth_date,
-			remark: dataDispatch.remark,
-		});
-		dataDispatch.srimg.timeschedule.wor.customerPo.quotations.eqandpart.map(
-			(res: any) => {
-				if (lastEquipment !== res.equipment.nama) {
-					equipment.push(res.equipment.nama);
-				}
-				lastEquipment = res.equipment.nama;
-			}
-		);
-		dataDispatch.srimg.srimgdetail.map((res: any, i: number) => {
-			if (i === 0) {
-				setStatus(res.choice);
-			}
-			part.push(res);
-		});
+		let detail: any = [];
 		dataDispatch.dispatchDetail.map((res: any) => {
-			if (arrPart.length === 0) {
-				setPartName(res.part);
-				arrPart.push(res.part);
-			} else if (!arrPart.includes(res.part)) {
-				arrPart.push(res.part);
-			}
+			console.log(res);
+			detail.push({
+				idDispatch: res.id,
+				date_dispatch: res.date_dispatch,
+				timeschId: res.timeschId,
+				aktivitasID: res.aktivitasId,
+				aktivitas: res.aktivitas.work_scope_item.item,
+				start: moment(res.aktivitas.startday).format("DD-MMMM-YYYY"),
+				end: moment(res.aktivitas.endday).format("DD-MMMM-YYYY"),
+				subdepId: res.subdepId,
+				employeeId:
+					res.operator.length === 0
+						? ""
+						: res.operator[res.operator.length - 1].employeeId,
+				operatorSelected:
+					res.operator.length === 0
+						? []
+						: {
+								label:
+									res.operator[res.operator.length - 1].Employee.employee_name,
+								value: res.operator[res.operator.length - 1].Employee,
+						  },
+				operator: res.operator,
+				depart: [
+					{
+						label: res.sub_depart.name,
+						value: res.sub_depart,
+					},
+				],
+			});
 		});
-		arrPart.map((res: any) => {
-			dataDispatch.dispatchDetail
-				.filter((part: any) => {
-					return part.part === res;
-				})
-				.map((res: any, i: number) => {
-					arrDetail.push({
-						id: res.id,
-						dispacthID: dataDispatch.id,
-						index: i,
-						aktivitasID: res.aktivitas.id,
-						actual: res.actual,
-						approvebyID: res.approvebyID,
-						workId: res.workCenter.id,
-						subdepId: res.sub_depart.id,
-						start: res.start,
-						operatorID: res.operatorID,
-						part: res.part,
-					});
-				});
+		setData({
+			summaryId: "",
+			id_dispatch: "",
+			customer:
+				dataDispatch.srimg.timeschedule.wor.customerPo.quotations.Customer.name,
+			dispacth_date: new Date(),
+			remark: "",
+			job_no: dataDispatch.srimg.timeschedule.wor.job_no,
+			subject:
+				dataDispatch.srimg.timeschedule.wor.customerPo.quotations.subject,
+			startDate: dataDispatch.srimg.timeschedule.wor.date_of_order,
+			finishDate: dataDispatch.srimg.timeschedule.wor.delivery_date,
+			equipment: dataDispatch.srimg.equipment,
+			model: dataDispatch.srimg.model,
+			qty: 0,
+			dispatchDetail: detail,
 		});
-		setTabsPart(arrPart);
-		setDetail(arrDetail);
-		setEquipment(equipment.toString());
-		setPart(part);
-		setDateFinish(dataDispatch.srimg.timeschedule.wor.delivery_date);
-		setJobNo(dataDispatch.srimg.timeschedule.wor.job_no);
-		setSubject(dataDispatch.srimg.timeschedule.wor.subject);
-		setDateWor(dataDispatch.srimg.timeschedule.wor.date_wor);
-		setListActivity(dataDispatch.srimg.timeschedule.aktivitas);
 	};
 
 	const handleOnChanges = (event: any) => {
@@ -555,215 +564,6 @@ export const FormEditDispatch = ({
 		}
 	};
 
-	const handleChangeStartDate = (data: any, id: any) => {
-		let dataDetail = detail;
-		let idx = id.split("_");
-		if (dataDetail.length > 0) {
-			let arrDetail = dataDetail.filter((detail: any) => {
-				return detail.part === partName;
-			});
-			let arrDetailOther = dataDetail.filter((detail: any) => {
-				return detail.part !== partName;
-			});
-			if (arrDetail.length > 0) {
-				arrDetail.map((res: any, i: number) => {
-					if (parseInt(idx[1]) === res.index) {
-						arrDetailOther.push({
-							id: res.id,
-							dispacthID: dataDispatch.id,
-							index: res.index,
-							aktivitasID: res.aktivitasID,
-							actual: res.actual,
-							approvebyID: res.approvebyID,
-							workId: res.workId,
-							subdepId: res.subdepId,
-							start: new Date(data),
-							operatorID: res.operatorID,
-							part: res.part,
-						});
-					} else {
-						arrDetailOther.push({
-							id: res.id,
-							dispacthID: dataDispatch.id,
-							index: res.index,
-							aktivitasID: res.aktivitasID,
-							actual: res.actual,
-							approvebyID: res.approvebyID,
-							workId: res.workId,
-							subdepId: res.subdepId,
-							start: new Date(res.start),
-							operatorID: res.operatorID,
-							part: res.part,
-						});
-					}
-				});
-				dataDetail = arrDetailOther;
-			} else {
-				dataDetail.push({
-					id: "",
-					dispacthID: dataDispatch.id,
-					index: 0,
-					aktivitasID: "",
-					actual: "",
-					approvebyID: "",
-					workId: "",
-					subdepId: "",
-					start: new Date(data),
-					operatorID: "",
-					part: partName,
-				});
-			}
-		} else {
-			dataDetail.push({
-				id: "",
-				dispacthID: dataDispatch.id,
-				index: 0,
-				aktivitasID: "",
-				actual: "",
-				approvebyID: "",
-				workId: "",
-				subdepId: "",
-				start: new Date(data),
-				operatorID: "",
-				part: partName,
-			});
-		}
-		setDetail(dataDetail);
-	};
-
-	const addDetail = () => {
-		let dataDetail = detail;
-		let arrDetail = dataDetail.filter((detail: any) => {
-			return detail.part === partName;
-		});
-		if (dataDetail.length > 0) {
-			let arrDetailOther = dataDetail.filter((detail: any) => {
-				return detail.part !== partName;
-			});
-			if (arrDetail.length > 0) {
-				arrDetail.map((res: any, i: number) => {
-					arrDetailOther.push({
-						id: res.id,
-						dispacthID: dataDispatch.id,
-						index: res.index,
-						workId: res.workId,
-						aktivitasID: res.aktivitasID,
-						actual: res.actual,
-						approvebyID: res.approvebyID,
-						subdepId: res.subdepId,
-						start: res.start,
-						operatorID: res.operatorID,
-						part: res.part,
-					});
-				});
-				dataDetail = arrDetailOther;
-			} else {
-				dataDetail.push({
-					id: "",
-					dispacthID: dataDispatch.id,
-					index: arrDetail.length,
-					aktivitasID: "",
-					actual: "",
-					approvebyID: "",
-					workId: "",
-					subdepId: "",
-					start: new Date(),
-					operatorID: "",
-					part: partName,
-				});
-			}
-		}
-		dataDetail.push({
-			id: "",
-			dispacthID: dataDispatch.id,
-			index: arrDetail.length,
-			aktivitasID: "",
-			actual: "",
-			approvebyID: "",
-			workId: "",
-			subdepId: "",
-			start: new Date(),
-			operatorID: "",
-			part: partName,
-		});
-		setDetail(dataDetail);
-	};
-
-	const removeDetail = (i: number) => {
-		let dataDetail = detail;
-		let newDataDetail: any = [];
-		let removeDetail = dataDetail.filter((detail: any) => {
-			return detail.index !== i && detail.part === partName;
-		});
-		let removeDetailTable = dataDetail.filter((detail: any) => {
-			return detail.index === i && detail.part === partName;
-		});
-		let otherDetail = dataDetail.filter((detail: any) => {
-			return detail.part !== partName;
-		});
-		newDataDetail = otherDetail;
-		removeDetail.map((res: any, i: number) => {
-			newDataDetail.push({
-				id: res.id,
-				dispacthID: dataDispatch.id,
-				index: i,
-				aktivitasID: res.aktivitasID,
-				actual: res.actual,
-				approvebyID: res.approvebyID,
-				workId: res.workId,
-				subdepId: res.subdepId,
-				start: res.start,
-				operatorID: res.operatorID,
-				part: res.part,
-			});
-		});
-		if (removeDetailTable[0].id !== "") {
-			deleteDispacthDetail(removeDetailTable[0].id);
-		}
-		setDetail(newDataDetail);
-	};
-
-	const deleteDispacthDetail = async (id: string) => {
-		try {
-			const response = await DeleteDispatchDetail(id);
-			if (response.status === 201) {
-				showModal(true, content, true);
-				toast.success("Delete Dispatch Detail Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Delete Dispatch Detail Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		} catch (error) {
-			toast.error("Delete Dispatch Detail Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
-	};
-
 	const getSchedule = async () => {
 		try {
 			const response = await GetSummaryDispatch();
@@ -778,13 +578,20 @@ export const FormEditDispatch = ({
 	};
 
 	const getDepart = async () => {
+		let depart: any = [];
 		try {
 			const response = await GetAllDepartement();
 			if (response.data) {
-				setListDepart(response.data.result);
+				response.data.result.map((res: any) => {
+					depart.push({
+						label: res.name,
+						value: res.id,
+					});
+				});
 			}
+			setListDepart(depart);
 		} catch (error) {
-			setListDepart([]);
+			setListDepart(depart);
 		}
 	};
 
@@ -810,28 +617,29 @@ export const FormEditDispatch = ({
 		}
 	};
 
-	const editDispatch = async (payload: any) => {
-		setIsLoading(true);
-		let dataDetail: any = [];
-		detail.map((res: any) => {
-			dataDetail.push({
-				id: res.id,
-				dispacthID: dataDispatch.id,
-				workId: res.workId,
-				subdepId: res.subdepId,
-				start: res.start,
-				aktivitasID: res.aktivitasID,
-				approvebyID: res.approvebyID,
-				operatorID: res.operatorID,
-				part: res.part,
-			});
+	const listEmployes = (id: string) => {
+		let dataEmploye: any = [];
+		listEmploye.map((res: any) => {
+			if (res.subdepartId === id) {
+				dataEmploye.push({
+					label: res.employee_name,
+					value: res,
+				});
+			}
 		});
-		try {
-			const response = await EditDispatch(dataDispatch.id, payload);
-			if (response.data) {
-				const res = await EditDispatchDetail(dataDetail);
-				if (res.data) {
-					toast.success("Edit Dispatch Success", {
+		return dataEmploye;
+	};
+
+	const startAktivitas = async (data: any, so: boolean) => {
+		let body: any = {
+			actual_start: new Date(),
+			so: so,
+		};
+		if (so) {
+			try {
+				const response = await DispatchDetailStart(data.idDispatch, body);
+				if (response.data) {
+					toast.success("SO Activity Success", {
 						position: "top-center",
 						autoClose: 5000,
 						hideProgressBar: true,
@@ -841,11 +649,79 @@ export const FormEditDispatch = ({
 						progress: undefined,
 						theme: "colored",
 					});
-					showModal(false, content, true);
 				}
+			} catch (error) {
+				toast.error("SO Activity Failed", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} else {
+			try {
+				const response = await DispatchDetailStart(data.idDispatch, body);
+				if (response.data) {
+					let bodyStart: any = {
+						dispatchDetailId: data.idDispatch,
+						employeeId: data.employeeId,
+						start: new Date(),
+					};
+					const start = await DispatchOperatorStart(bodyStart);
+					if (start.data) {
+						toast.success("Start Activity Success", {
+							position: "top-center",
+							autoClose: 5000,
+							hideProgressBar: true,
+							closeOnClick: true,
+							pauseOnHover: true,
+							draggable: true,
+							progress: undefined,
+							theme: "colored",
+						});
+					}
+				}
+			} catch (error) {
+				toast.error("Start Activity Failed", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		}
+	};
+
+	const changeShift = async (data: any) => {
+		let body: any = {
+			dispatchDetailId: data.idDispatch,
+			employeeId: data.employeeId,
+			start: new Date(),
+		};
+		try {
+			const start = await DispatchOperatorStart(body);
+			if (start.data) {
+				toast.success("Change Shift Activity Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
 			}
 		} catch (error) {
-			toast.error("Edit Dispatch Failed", {
+			toast.error("Change Shift Activity Failed", {
 				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: true,
@@ -856,132 +732,18 @@ export const FormEditDispatch = ({
 				theme: "colored",
 			});
 		}
-		setIsLoading(false);
 	};
 
-	const startDetail = async (id: string, so: boolean, index: number) => {
-		let dataDetail = detail;
-		let operator_id = (document.getElementById(`operator_${index}`) as HTMLInputElement).value;
-		let dataBody = {
-			actual: new Date(),
-			so: so,
-			operatorID: operator_id
-		};
-		let arrDetail = dataDetail.filter((detail: any) => {
-			return detail.part === partName;
-		});
-		if (dataDetail.length > 0) {
-			let arrDetailOther = dataDetail.filter((detail: any) => {
-				return detail.part !== partName;
-			});
-			if (arrDetail.length > 0) {
-				arrDetail.map((res: any, i: number) => {
-					arrDetailOther.push({
-						id: res.id,
-						dispacthID: dataDispatch.id,
-						index: res.index,
-						aktivitasID: res.aktivitasID,
-						actual: id === res.id ? new Date() : res.actual,
-						approvebyID: res.approvebyID,
-						workId: res.workId,
-						subdepId: res.subdepId,
-						start: res.start,
-						operatorID: res.operatorID,
-						part: res.part,
-					});
-				});
-				dataDetail = arrDetailOther;
-			}
-		}
-		try {
-			const response = await DispatchDetailStart(id, dataBody);
-			if (response.status === 201) {
-				setDetail(dataDetail);
-				toast.success("Start Dispatch Detail Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Start Dispatch Detail Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		} catch (error) {
-			toast.error("Start Dispatch Detail Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
-	};
-
-	const finishDetail = async (id: string) => {
-		let dataBody = {
+	const finishActivity = async (data: any) => {
+		let body: any = {
 			finish: new Date(),
 			approvebyID: getId(),
+			operatorId: null
 		};
-		let dataDetail = detail;
-		let arrDetail = dataDetail.filter((detail: any) => {
-			return detail.part === partName;
-		});
-		if (dataDetail.length > 0) {
-			let arrDetailOther = dataDetail.filter((detail: any) => {
-				return detail.part !== partName;
-			});
-			if (arrDetail.length > 0) {
-				arrDetail.map((res: any, i: number) => {
-					arrDetailOther.push({
-						id: res.id,
-						dispacthID: dataDispatch.id,
-						index: res.index,
-						aktivitasID: res.aktivitasID,
-						actual: res.actual,
-						approvebyID: res.approvebyID,
-						workId: res.workId,
-						subdepId: res.subdepId,
-						start: res.start,
-						operatorID: res.operatorID,
-						part: res.part,
-					});
-				});
-				dataDetail = arrDetailOther;
-			}
-		}
 		try {
-			const response = await DispatchDetailFinish(id, dataBody);
-			if (response.status === 201) {
-				setDetail(dataDetail);
-				showModal(false, content, true);
-				toast.success("Finish Dispatch Detail Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			} else {
-				toast.error("Finish Dispatch Detail Failed", {
+			const response = await DispatchDetailFinish(data.idDispatch, body);
+			if (response.data) {
+				toast.success("Finish Activity Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -993,9 +755,9 @@ export const FormEditDispatch = ({
 				});
 			}
 		} catch (error) {
-			toast.error("Finish Dispatch Detail Failed", {
+			toast.error("Finish Activity Failed", {
 				position: "top-center",
-				autoClose: 5000,
+				autoClose: 1000,
 				hideProgressBar: true,
 				closeOnClick: true,
 				pauseOnHover: true,
@@ -1007,12 +769,12 @@ export const FormEditDispatch = ({
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={sumarySchema}
 				onSubmit={(values) => {
-					editDispatch(values);
+					console.log(values);
 				}}
 				enableReinitialize
 			>
@@ -1028,109 +790,45 @@ export const FormEditDispatch = ({
 						<h1 className='text-xl font-bold mt-3'>Dispatch</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputDate
-									id='dispacth_date'
-									label='Date Prepare'
-									value={
-										values.dispacth_date === null
-											? new Date()
-											: values.dispacth_date
-									}
-									onChange={(value: any) =>
-										setFieldValue("dispacth_date", value)
-									}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputSelect
-									id='srId'
-									name='srId'
-									placeholder='Summary'
-									label='Summary Report'
-									onChange={(event: any) => {
-										if (event.target.value !== "no data") {
-											let data = JSON.parse(event.target.value);
-											setFieldValue("srId", data.id);
-										}
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose Summary Report
-									</option>
-									{listSchedule.length === 0 ? (
-										<option value='no data'>No Data Summary Report</option>
-									) : (
-										listSchedule.map((res: any, i: number) => {
-											return (
-												<option
-													value={JSON.stringify(res)}
-													key={i}
-													selected={res.id === dataDispatch.srId}
-												>
-													{res.id_summary} - {res.timeschedule.wor.job_no}
-												</option>
-											);
-										})
-									)}
-								</InputSelect>
-							</div>
-							<div className='w-full'>
 								<Input
 									id='job_no'
 									name='job_no'
 									placeholder='Job No'
 									label='Job No'
 									type='text'
-									value={jobNo}
+									value={values.job_no}
 									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
 							<div className='w-full'>
 								<Input
+									id='customer'
+									name='customer'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={values.customer}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputArea
 									id='subject'
 									name='subject'
 									placeholder='Subject'
 									label='Subject'
-									type='text'
-									value={subject}
-									disabled={true}
 									required={true}
+									disabled={true}
+									value={values.subject}
+									row={2}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='date_of_summary'
-									label='Start Date'
-									value={dateWor === "" ? new Date() : new Date(dateWor)}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='date_of_summary'
-									label='Finish Date'
-									value={dateFinish === "" ? new Date() : new Date(dateFinish)}
-									onChange={(value: any) =>
-										setFieldValue("date_of_summary", value)
-									}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 						</Section>
@@ -1142,7 +840,7 @@ export const FormEditDispatch = ({
 									placeholder='Equipment'
 									label='Equipment'
 									type='text'
-									value={equipment}
+									value={values.equipment}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -1150,281 +848,146 @@ export const FormEditDispatch = ({
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
-									id='part'
-									name='part'
-									placeholder='Part'
-									label='Part'
-									required={true}
+								<InputDate
+									id='date_of_summary'
+									label='Start Date'
+									value={values.startDate}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose Part
-									</option>
-									{part.length === 0 ? (
-										<option value='no data'>No Data Part</option>
-									) : (
-										part.map((res: any, i: number) => {
-											return (
-												<option
-													value={JSON.stringify(res)}
-													key={i}
-													selected={res.name_part === partName}
-												>
-													{res.name_part}
-												</option>
-											);
-										})
-									)}
-								</InputSelect>
+									disabled={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+								/>
 							</div>
 							<div className='w-full'>
-								<Input
-									id='status'
-									name='status'
-									placeholder='Status'
-									label='Status'
-									type='text'
-									value={status}
-									disabled={true}
-									required={true}
+								<InputDate
+									id='date_of_summary'
+									label='Finish Date'
+									value={values.finishDate}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									disabled={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 						</Section>
-						<div className={`w-full mt-4 ${isShowDetail ? "" : "hidden"}`}>
-							<h4 className='text-lg font-bold mt-3'>Part : {partName}</h4>
-							{detail
-								.filter((tab: any) => {
-									return tab.part === partName;
-								})
-								.map((dataDetail: any, idx: number, data: any) => (
-									<div key={idx}>
-										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+						<FieldArray
+							name='dispatchDetail'
+							render={(arrayDetail) => (
+								<>
+									{values.dispatchDetail.map((res: any, i: number) => (
+										<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 											<div className='w-full'>
-												<InputSelect
-													id={`worker_${idx}`}
-													name='worker'
-													placeholder='Worker Center'
-													label='Worker Center'
+												<InputArea
+													id='aktivitas'
+													name='aktivitas'
+													placeholder='Aktivitas'
+													label='Aktivitas'
 													required={true}
+													disabled={true}
+													value={res.aktivitas}
+													row={2}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Worker Center
-													</option>
-													{listWorkerCenter.length === 0 ? (
-														<option value='no data'>
-															No Data Worker Center
-														</option>
-													) : (
-														listWorkerCenter.map((res: any, i: number) => {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={res.id === dataDetail.workId}
-																>
-																	{res.name}
-																</option>
-															);
-														})
-													)}
-												</InputSelect>
-											</div>
-											<div className='w-full'>
-												<InputSelect
-													id={`aktivitasID_${idx}`}
-													name='aktivitasID'
-													placeholder='Activity'
-													label='Activity'
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Activity
-													</option>
-													{listActivity.length === 0 ? (
-														<option value='no data'>No Data Activity</option>
-													) : (
-														listActivity.map((res: any, i: number) => {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={res.id === dataDetail.aktivitasID}
-																>
-																	{res.masterAktivitas.name}
-																</option>
-															);
-														})
-													)}
-												</InputSelect>
-											</div>
-											<div className='w-full'>
-												<InputDate
-													id={`start_${idx}`}
-													label='Start Date'
-													value={new Date(dataDetail.start)}
-													onChange={(e: any) => {
-														handleChangeStartDate(e, `start_${idx}`);
-													}}
-													minDate={dateWor}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-													classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 												/>
 											</div>
 											<div className='w-full'>
-												<InputSelect
-													id={`departemen_${idx}`}
-													name='departemen'
-													placeholder='Departemen'
-													label='Departemen'
+												<Input
+													id='startDate'
+													name='startDate'
+													placeholder='Start Date'
+													label='Start Date'
+													type='text'
+													value={res.start}
+													disabled={true}
 													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Departement
-													</option>
-													{listDepart.length === 0 ? (
-														<option value='no data'>No Data Part</option>
-													) : (
-														listDepart.map((res: any, i: number) => {
-															return (
-																<option
-																	value={JSON.stringify(res)}
-																	key={i}
-																	selected={res.id === dataDetail.subdepId}
-																>
-																	{res.name}
-																</option>
-															);
-														})
-													)}
-												</InputSelect>
+												/>
 											</div>
 											<div className='w-full'>
-												<InputSelect
-													id={`operator_${idx}`}
-													name={`operator_${idx}`}
-													placeholder='Operator'
-													label='Operator'
+												<InputSelectSearch
+													datas={listDepart}
+													id={`dispatchDetail.${i}.subdepId`}
+													name={`dispatchDetail.${i}.subdepId`}
+													placeholder='Departemen'
+													label='Departemen'
+													value={res.depart}
+													onChange={(e: any) => {
+														setFieldValue(
+															`dispatchDetail.${i}.subdepId`,
+															e.value
+														);
+														setFieldValue(`dispatchDetail.${i}.depart`, e);
+													}}
 													required={true}
 													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='no data' selected>
-														Choose Operator
-													</option>
-													{listEmploye.length === 0 ? (
-														<option value='no data'>No Operator</option>
-													) : (
-														listEmploye
-															.filter((employe: any) => {
-																return (
-																	employe.sub_depart.id === dataDetail.subdepId
-																);
-															})
-															.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		selected={res.id === dataDetail.operatorID}
-																	>
-																		{res.employee_name}
-																	</option>
-																);
-															})
-													)}
-												</InputSelect>
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+												/>
 											</div>
-											<div className='w-full p-5'>
-												{dataDetail.approvebyID === null ||
-												dataDetail.approvebyID === "" ? (
+											<div className='w-full'>
+												<InputSelectSearch
+													datas={listEmployes(res.subdepId)}
+													id={`dispatchDetail.${i}.employeeId`}
+													name={`dispatchDetail.${i}.employeeId`}
+													placeholder='Operator'
+													label='Operator'
+													value={res.operatorSelected}
+													onChange={(e: any) => {
+														setFieldValue(
+															`dispatchDetail.${i}.employeeId`,
+															e.value.id
+														);
+														setFieldValue(
+															`dispatchDetail.${i}.operatorSelected`,
+															e
+														);
+													}}
+													withLabel={true}
+													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+												/>
+											</div>
+											<div className='w-full pt-7'>
+												{res.operator.length === 0 ? (
 													<div className='flex'>
 														<button
 															type='button'
-															className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent ${
-																dataDetail.actual === null ||
-																dataDetail.actual === ""
-																	? "bg-green-500 hover:bg-green-400"
-																	: "bg-red-500 hover:bg-red-400"
-															} text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-															onClick={() =>
-																dataDetail.actual === null ||
-																dataDetail.actual === ""
-																	? startDetail(dataDetail.id, false, idx)
-																	: finishDetail(dataDetail.id)
-															}
+															className='bg-green-500 hover:bg-green-300 text-white py-1 px-1 mr-1 rounded-md'
+															onClick={() => startAktivitas(res, false)}
 														>
-															{dataDetail.actual === null ||
-															dataDetail.actual === ""
-																? "Start"
-																: "Finish"}
+															Start
 														</button>
-														{dataDetail.actual === null ||
-														dataDetail.actual === "" ? (
-															<button
-																type='button'
-																className={`p-2 w-full my-1.5 text-center rounded-md border border-transparent bg-blue-500 hover:bg-blue-400 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-																onClick={() =>
-																	dataDetail.actual === null ||
-																	dataDetail.actual === ""
-																		? startDetail(dataDetail.id, true, idx)
-																		: finishDetail(dataDetail.id)
-																}
-															>
-																SO
-															</button>
-														) : null}
+														<button
+															type='button'
+															className='bg-blue-500 hover:bg-blue-300 text-white py-1 px-1 rounded-md'
+															onClick={() => startAktivitas(res, true)}
+														>
+															SO
+														</button>
 													</div>
 												) : (
-													""
-													// <Input
-													// 	id='approve'
-													// 	name='approve'
-													// 	placeholder='Approve'
-													// 	label='Approve By'
-													// 	type='text'
-													// 	value={dataDetail.approve.employee_name}
-													// 	disabled={true}
-													// 	required={true}
-													// 	withLabel={true}
-													// 	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													// />
+													<>
+														<button
+															type='button'
+															className='bg-orange-500 hover:bg-orange-300 text-white py-1 px-1 rounded-md mx-1 my-1'
+															onClick={() => changeShift(res)}
+														>
+															Change Shift
+														</button>
+														<button
+															type='button'
+															className='bg-red-500 hover:bg-red-300 text-white py-1 px-1 rounded-md'
+															onClick={() => finishActivity(res)}
+														>
+															Finish
+														</button>
+													</>
 												)}
 											</div>
 										</Section>
-										{idx === data.length - 1 ? (
-											<a
-												className='inline-flex text-green-500 mr-6 cursor-pointer'
-												onClick={() => {
-													addDetail();
-												}}
-											>
-												<Plus size={18} className='mr-1 mt-1' /> Add Detail
-											</a>
-										) : null}
-										{data.length !== 1 ? (
-											<a
-												className='inline-flex text-red-500 cursor-pointer mt-1'
-												onClick={() => {
-													removeDetail(idx);
-												}}
-											>
-												<Trash2 size={18} className='mr-1 mt-1' /> Remove Detail
-											</a>
-										) : null}
-									</div>
-								))}
-						</div>
+									))}
+								</>
+							)}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

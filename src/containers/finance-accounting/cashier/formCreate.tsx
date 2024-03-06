@@ -321,6 +321,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setIsDirrect(false);
 										} else {
 											setIsDirrect(true);
+											let listJournal: any = [];
+											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
+												(res: any) => {
+													listJournal.push({
+														coa: { label: res.coa.coa_name, value: res.coa },
+														coa_id: res.coa_id,
+														coa_name: res.coa.coa_name,
+														status_transaction: res.status_transaction,
+														grandtotal: e.value.id_kontrabon === undefined
+														? e.value.grand_tot
+														: e.value.grandtotal,
+													});
+												}
+											);
 											setFieldValue(
 												"pay_to",
 												e.value.id_kontrabon === undefined
@@ -466,6 +480,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
+											setFieldValue("journal_cashier", listJournal);
 										}
 									}}
 									required={true}
@@ -520,12 +535,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											totals = parseInt(e.target.value.replace(/\./g, ""));
 											setTotal(totals);
-											setTotalAmount((totals + ppn + pph) - disc);
-											setFieldValue("total", (totals + ppn + pph) - disc);
+											setTotalAmount(totals + ppn + pph - disc);
+											setFieldValue("total", totals + ppn + pph - disc);
 										} else {
 											setTotal(0);
-											setTotalAmount((0 + ppn + pph) - disc);
-											setFieldValue("total", (0 + ppn + pph) - disc);
+											setTotalAmount(0 + ppn + pph - disc);
+											setFieldValue("total", 0 + ppn + pph - disc);
 										}
 									}}
 									disabled={isDirrect}
@@ -547,12 +562,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											ppns = parseInt(e.target.value.replace(/\./g, ""));
 											setPpn(ppns);
-											setTotalAmount((total + ppns + pph) - disc);
-											setFieldValue("total", (total + ppns + pph) - disc);
+											setTotalAmount(total + ppns + pph - disc);
+											setFieldValue("total", total + ppns + pph - disc);
 										} else {
 											setPpn(0);
-											setTotalAmount((total + 0 + pph) - disc);
-											setFieldValue("total", (total + 0 + pph) - disc);
+											setTotalAmount(total + 0 + pph - disc);
+											setFieldValue("total", total + 0 + pph - disc);
 										}
 									}}
 									required={true}
@@ -575,12 +590,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											pphs = parseInt(e.target.value.replace(/\./g, ""));
 											setPph(pphs);
-											setTotalAmount((total + ppn + pphs) - disc);
-											setFieldValue("total", (total + ppn + pphs) - disc);
+											setTotalAmount(total + ppn + pphs - disc);
+											setFieldValue("total", total + ppn + pphs - disc);
 										} else {
 											setPph(0);
-											setTotalAmount((total + ppn + 0) - disc);
-											setFieldValue("total", (total + ppn + 0) - disc);
+											setTotalAmount(total + ppn + 0 - disc);
+											setFieldValue("total", total + ppn + 0 - disc);
 										}
 									}}
 									required={true}
@@ -603,12 +618,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											discs = parseInt(e.target.value.replace(/\./g, ""));
 											setDisc(discs);
-											setTotalAmount((total + ppn + pph) - discs);
-											setFieldValue("total", (total + ppn + pph) - discs);
+											setTotalAmount(total + ppn + pph - discs);
+											setFieldValue("total", total + ppn + pph - discs);
 										} else {
 											setDisc(0);
 											setTotalAmount(total + ppn + pph - 0);
-											setFieldValue("total", (total + ppn + pph) - 0);
+											setFieldValue("total", total + ppn + pph - 0);
 										}
 									}}
 									required={true}
@@ -645,8 +660,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									onChange={(e: any) => {
 										setFieldValue("status_payment", e.target.value);
 										setFieldValue("account_name", "");
-										setFieldValue("bank_name", "")
-										setFieldValue("rekening","")
+										setFieldValue("bank_name", "");
+										setFieldValue("rekening", "");
 									}}
 									required={true}
 									withLabel={true}
@@ -721,6 +736,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 							name='journal_cashier'
 							render={(arrays) =>
 								values.journal_cashier.map((result: any, i: number) => {
+									console.log(result);
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2'>
@@ -731,6 +747,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														id={`journal_cashier.${i}.coa_id`}
 														name={`journal_cashier.${i}.coa_id`}
 														label='Coa'
+														value={result.coa}
 														onChange={(e: any) => {
 															setFieldValue(
 																`journal_cashier.${i}.coa_name`,
@@ -739,6 +756,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 															setFieldValue(
 																`journal_cashier.${i}.coa_id`,
 																e.value.id
+															);
+															setFieldValue(
+																`journal_cashier.${i}.coa`,
+																e
 															);
 														}}
 														required={true}

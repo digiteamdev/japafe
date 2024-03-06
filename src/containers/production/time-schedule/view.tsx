@@ -375,7 +375,6 @@ export const ViewSchedule = ({
 				if( datePlanning <= date ){
 					bobot = bobot + res.bobot
 				}
-				console.log(date)
 			}
 		})
 		return `${bobot}%`
@@ -525,6 +524,7 @@ export const ViewSchedule = ({
 											})}
 										</tr>
 										{aktivitas.map((res: any, i: number) => {
+											console.log(res)
 											if(i !== 0){
 												return (
 													<tr key={i}>
@@ -543,7 +543,7 @@ export const ViewSchedule = ({
 															</td>
 														) : null}
 														<td
-															className={`border border-black ${
+															className={`border border-black p-2 ${
 																res.gapleft > 0 ? "border-l-0" : ""
 															} ${res.gaprigth > 0 ? "border-r-0" : ""}`}
 															colSpan={ i === 0 ? res.duration : res.days}
@@ -553,15 +553,15 @@ export const ViewSchedule = ({
 																	res.id === "Task"
 																		? "bg-orange-500"
 																		: "bg-yellow-500"
-																} w-full h-3 rounded-lg cursor-pointer`}
+																} w-full h-4 rounded-lg cursor-pointer text-center text-xs`}
 																data-te-toggle='tooltip'
 																title={`
 																			Activity: ${ i === 0 ? res.name : res.work_scope_item.item} \nStart Date: ${moment(res.start).format(
 																	"DD MMMM yyyy"
 																)}\nEnd Date: ${moment(res.end).format(
 																	"DD MMMM yyyy"
-																)}\nDuration: ${res.days} day\nProgress: ${res.progress}%`}
-															></div>
+																)}\nDuration: ${res.days} day`}
+															>{ res.bobot }%</div>
 														</td>
 														{res.gaprigth > 0 ? (
 															<td
@@ -596,7 +596,7 @@ export const ViewSchedule = ({
 														className='border border-black text-center bg-green-500'
 														key={i}
 													>
-														10%
+														0%
 													</td>
 												);
 											})}
