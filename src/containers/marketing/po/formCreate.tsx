@@ -33,6 +33,7 @@ interface data {
 	grand_tot: string;
 	total: string;
 	Deskription_CusPo: string;
+	price_po: any;
 	term_of_pay: [
 		{
 			limitpay: string;
@@ -74,6 +75,15 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		date_of_po: new Date(),
 		date_delivery: new Date(),
 		Deskription_CusPo: "",
+		price_po: [
+			{
+				description: "",
+				qty: 0,
+				unit: "",
+				unit_price: 0,
+				total_price: 0,
+			},
+		],
 		term_of_pay: [
 			{
 				limitpay: "",
@@ -103,103 +113,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			Math.floor(Math.random() * 10000) +
 			1;
 		setIdAutoNum(id);
-	};
-
-	const handleOnChanges = (event: any) => {
-		if (event.target.name === "quotation") {
-			if (event.target.value !== "Choose Quotation") {
-				let data = JSON.parse(event.target.value);
-				setCustomerName(data.Customer.name);
-				setDeskription(data.deskription);
-				setEquipment(data.eqandpart[0].equipment.nama);
-				setCountPart(data.eqandpart.length);
-				setQuoId(data.id);
-				setTaxPPH(data.Customer.pph);
-				setTaxPPN(data.Customer.ppn);
-			} else {
-				setCustomerName("");
-				setDeskription("");
-				setEquipment("");
-				setCountPart("");
-				setQuoId("");
-			}
-		} else if (event.target.name.includes("qty")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				quantity = event.target.value,
-				htmlPrice = document.getElementById(
-					`Deskription_CusPo.${index}.price`
-				) as HTMLInputElement,
-				htmlDiscount = document.getElementById(
-					`Deskription_CusPo.${index}.discount`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				price: any = htmlPrice.value === "" ? 0 : htmlPrice.value,
-				discount: any = htmlDiscount.value === "" ? 0 : htmlDiscount.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("price")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				price = event.target.value,
-				htmlQuantity = document.getElementById(
-					`Deskription_CusPo.${index}.qty`
-				) as HTMLInputElement,
-				htmlDiscount = document.getElementById(
-					`Deskription_CusPo.${index}.discount`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				quantity: any = htmlQuantity.value === "" ? 0 : htmlQuantity.value,
-				discount: any = htmlDiscount.value === "" ? 0 : htmlDiscount.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("discount")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				discount = event.target.value,
-				htmlQuantity = document.getElementById(
-					`Deskription_CusPo.${index}.qty`
-				) as HTMLInputElement,
-				htmlPrice = document.getElementById(
-					`Deskription_CusPo.${index}.price`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				quantity: any = htmlQuantity.value === "" ? 0 : htmlQuantity.value,
-				price: any = htmlPrice.value === "" ? 0 : htmlPrice.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("percent")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				percent = event.target.value,
-				htmlTotalTerm = document.getElementById(
-					`term_of_pay.${index}.price`
-				) as HTMLInputElement,
-				totalTerm: any = (parseInt(grandTotal()) * percent) / 100;
-			htmlTotalTerm.value = formatRupiah(totalTerm.toString());
-		} else if (event.target.name === "tax") {
-			if (event.target.value === "ppn") {
-				setTypeTax("ppn");
-				setTax(taxPPN);
-			} else if (event.target.value === "pph") {
-				setTypeTax("pph");
-				setTax(taxPPH);
-			} else if (event.target.value === "ppn_and_pph") {
-				setTypeTax("ppn_and_pph");
-				setTax(taxPPN + taxPPH);
-			} else {
-				setTypeTax("");
-				setTax(0);
-			}
-		} else if (event.target.name === "upload_doc") {
-			setPoFile(event.target.files[0]);
-		}
 	};
 
 	const totalPrice = (data: any) => {
@@ -256,7 +169,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		const htmlGrandTotal = document.getElementById(
 			"grand_tot"
 		) as HTMLInputElement;
-		const desc: any = [];
+		const price: any = [];
 		const term: any = [];
 		let vattotal: string = "0";
 		// let descEmpty: boolean = false;
@@ -320,6 +233,16 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		} else if (payload.tax === "ppn_and_pph") {
 			vattotal = (parseInt(vat("ppn")) + parseInt(vat("pph"))).toString();
 		}
+
+		payload.price_po.map((res: any) => {
+			price.push({
+				description: res.description,
+				qty: parseInt(res.qty),
+				unit: res.unit,
+				unit_price: parseInt(res.unit_price),
+				total_price: parseInt(res.total_price),
+			});
+		});
 		// const dataBody = {
 		// 	id_po: payload.id_po,
 		// 	po_num_auto: idAutoNum,
@@ -345,6 +268,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		form.append("upload_doc", poFile);
 		form.append("date_delivery", payload.date_delivery);
 		form.append("term_of_pay", JSON.stringify(term));
+		form.append("price_po", JSON.stringify(price));
 		form.append("vat", vattotal);
 		form.append("grand_tot", grandTotal());
 		form.append("total", total.toString());
@@ -416,7 +340,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form onChange={handleOnChanges}>
+					<Form>
 						<h1 className='text-xl font-bold mt-3'>Customer PO</h1>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
@@ -462,6 +386,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										setQuoId(e.value.id);
 										setTaxPPH(e.value.Customer.pph);
 										setTaxPPN(e.value.Customer.ppn);
+										setFieldValue("price_po", e.value.price_quotation);
 										setFieldValue(
 											"Deskription_CusPo",
 											e.value.Quotations_Detail
@@ -591,7 +516,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 						)}
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-[-10px]'>
 							<h1 className='text-xl font-bold mt-3'>Term Of Payment</h1>
-							{listPriceQuotation.map((res: any, i: number) => {
+							{/* {listPriceQuotation.map((res: any, i: number) => {
 								return (
 									<div key={i}>
 										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
@@ -644,7 +569,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 													label='Unit Price'
 													type='text'
 													value={formatRupiah(res.unit_price.toString())}
-													disabled={true}
+													disabled={false}
 													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -667,8 +592,155 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										</Section>
 									</div>
 								);
-							})}
-							{values.tax === "ppn" ? (
+							})} */}
+							<FieldArray
+								name='price_po'
+								render={(arrayPrice) => (
+									<>
+										{values.price_po.map((res: any, i: number) => (
+											<div key={i}>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
+													<div className='w-full'>
+														<InputArea
+															id={`price_po.${i}.description`}
+															name={`price_po.${i}.description`}
+															placeholder='Description'
+															label='Description'
+															required={true}
+															value={res.description}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`price_po.${i}.description`,
+																	e.target.value
+																);
+															}}
+															row={2}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.qty`}
+															name={`price_po.${i}.qty`}
+															placeholder='Quantity'
+															label='Quantity'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.qty.toString())}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`price_po.${i}.qty`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	e.target.value * res.total_price
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.unit`}
+															name={`price_po.${i}.unit`}
+															placeholder='Unit'
+															label='Unit'
+															type='text'
+															value={res.unit}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`price_po.${i}.unit`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.unit_price`}
+															name={`price_po.${i}.unit_price`}
+															placeholder='Unit Price'
+															label='Unit Price'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.unit_price.toString())}
+															onChange={(e: any) => {
+																let price = e.target.value.replaceAll(".", "");
+																setFieldValue(
+																	`price_po.${i}.unit_price`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	parseInt(res.qty) * parseInt(price)
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.total_price`}
+															name={`price_po.${i}.total_price`}
+															placeholder='Total Price'
+															label='Total Price'
+															type='text'
+															value={formatRupiah(res.total_price.toString())}
+															disabled={true}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='flex'>
+													{i === values.price_po.length - 1 ? (
+														<a
+															className='flex mt-1 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+															onClick={() =>
+																arrayPrice.push({
+																	description: "",
+																	qty: 0,
+																	unit: "",
+																	unit_price: 0,
+																	total_price: 0,
+																})
+															}
+														>
+															<Plus size={23} className='mt-1' />
+															Add
+														</a>
+													) : null}
+													{values.price_po.length !== 1 ? (
+														<a
+															className='flex ml-4 mt-1 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+															onClick={() => {
+																arrayPrice.remove(i);
+															}}
+														>
+															<Trash2 size={22} className='mt-1 mr-1' />
+															Remove
+														</a>
+													) : null}
+												</Section>
+											</div>
+										))}
+									</>
+								)}
+							/>
+							{/* {values.tax === "ppn" ? (
 								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='col-span-4 text-right'>
 										<p className='mt-4'>PPN</p>
@@ -763,7 +835,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-							</Section>
+							</Section> */}
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (

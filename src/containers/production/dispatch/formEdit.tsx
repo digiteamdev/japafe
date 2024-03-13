@@ -736,12 +736,13 @@ export const FormEditDispatch = ({
 
 	const finishActivity = async (data: any) => {
 		let body: any = {
-			finish: new Date(),
-			approvebyID: getId(),
-			operatorId: null
+			// finish: new Date(),
+			actual_finish: new Date(),
+			// approvebyID: getId(),
+			// operatorId: null
 		};
 		try {
-			const response = await DispatchDetailFinish(data.idDispatch, body);
+			const response = await DispatchDetailFinish(data.aktivitasID, body);
 			if (response.data) {
 				toast.success("Finish Activity Success", {
 					position: "top-center",
@@ -964,7 +965,7 @@ export const FormEditDispatch = ({
 															SO
 														</button>
 													</div>
-												) : (
+												) : res.aktivitas.actual_finish === null ? (
 													<>
 														<button
 															type='button'
@@ -981,7 +982,7 @@ export const FormEditDispatch = ({
 															Finish
 														</button>
 													</>
-												)}
+												) : ""}
 											</div>
 										</Section>
 									))}
