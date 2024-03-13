@@ -150,7 +150,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				});
 			});
 			if (data.taxPsrDmr === "ppn") {
-				ppn = taxAmount(bill, data.supplier.ppn);
+				ppn = taxAmount(bill, data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn);
 				billPaid = taxAmount(
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
@@ -165,15 +165,15 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
 				);
-				pph = taxAmount(bill, data.supplier.pph);
+				pph = taxAmount(bill, data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph);
 				if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
 					setTotalAmount(billPaid - disc);
 				} else {
 					setTotalAmount(billPaid - disc + pph);
 				}
 			} else if (data.taxPsrDmr === "ppn_and_pph") {
-				ppn = taxAmount(bill, data.supplier.ppn);
-				pph = taxAmount(bill, data.supplier.pph);
+				ppn = taxAmount(bill, data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn);
+				pph = taxAmount(bill, data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph);
 				billPaid = taxAmount(
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
@@ -223,7 +223,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			setBillAmount(bill);
 			setBillPaid(billPaid);
 			setDisc(disc);
-			setSuplier(data.supplier.supplier_name);
+			setSuplier(data.supplier ? data.supplier.supplier_name : data.detailMr[0].supplier.supplier_name);
 			setPercent(
 				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
 			);

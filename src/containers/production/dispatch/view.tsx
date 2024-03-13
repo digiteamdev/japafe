@@ -125,7 +125,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 								<Printer size={16} className='mr-1' /> Print
 							</div>
 						</button> */}
-						<div className='w-full'>
+						<div className='w-full text-sm'>
 							<table className='w-full'>
 								<thead className='text-center'>
 									<tr>
@@ -158,13 +158,19 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 														{ moment(res.aktivitas.startday).format('DD-MM-YYYY') } - { moment(res.aktivitas.endday).format('DD-MM-YYYY') }
 													</td>
 													<td className='border border-black border-collapse text-center'>
-														{ res.aktivitas.actual_start === null ? "-" : `${moment(res.aktivitas.actual_start).format('DD-MM-YYYY')} - ${moment(res.aktivitas.actual_finish).format('DD-MM-YYYY')}` }
+														{ res.aktivitas.actual_start === null ? "-" : `${moment(res.aktivitas.actual_start).format('DD-MM-YY, h:mm:ss a')}` } { res.aktivitas.actual_finish === null ? "-" : ` - ${moment(res.aktivitas.actual_finish).format('DD-MM-YY, h:mm:ss a')}` }
 													</td>
 													<td className='border border-black border-collapse text-center'>
 														{ res.sub_depart.name }
 													</td>
 													<td className='border border-black border-collapse text-center'>
-														{ res.operator.length > 0 ? "-" : "-" }
+														{ res.operator.map( (res: any, i: number) => {
+															return(
+																<p>{ res.Employee.employee_name } { res.start !== null ? (
+																	`( ${moment(res.start).format('DD-MM-YY, h:mm:ss a')} ${ res.finish !== null ? ( ` - ${moment(res.finish).format('DD-MM-YY, h:mm:ss a') }`) : "" } )`
+																) : null } </p>
+															)
+														})}
 													</td>
 												</tr>
 											);
