@@ -166,7 +166,7 @@ export const ViewDispatch = ({ content, dataSelected, showModal }: props) => {
 													<td className='border border-black border-collapse text-center'>
 														{ res.operator.map( (res: any, i: number) => {
 															return(
-																<p>{ res.Employee.employee_name } { res.start !== null ? (
+																<p key={i}>{ res.Employee.employee_name } { res.start !== null ? (
 																	`( ${moment(res.start).format('DD-MM-YY, h:mm:ss a')} ${ res.finish !== null ? ( ` - ${moment(res.finish).format('DD-MM-YY, h:mm:ss a') }`) : "" } )`
 																) : null } </p>
 															)
