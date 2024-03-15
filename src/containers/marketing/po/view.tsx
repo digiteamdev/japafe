@@ -21,6 +21,14 @@ export const ViewPo = ({ dataSelected }: props) => {
 		return Math.ceil(pph);
 	};
 
+	const grandTotal = (data: any) => {
+		let total: number = 0
+		data.map( (res: any) => {
+			total = total + res.total_price
+		})
+		return total
+	}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -284,7 +292,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 									</tr>
 								</thead>
 								<tbody>
-									{dataSelected.quotations.price_quotation.map(
+									{dataSelected.price_po.map(
 										(res: any, i: number) => (
 											<tr key={i}>
 												<td className='pl-2 w-[40%] border border-black text-center'>
@@ -363,7 +371,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 											Grand Total
 										</td>
 										<td className='pl-2 border border-black text-center'>
-											{formatRupiah(dataSelected.grand_tot.toString())}
+											{formatRupiah(grandTotal(dataSelected.price_po).toString())}
 										</td>
 									</tr>
 								</tbody>

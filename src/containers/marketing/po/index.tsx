@@ -183,10 +183,10 @@ export const Po = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4'>
 										{res.id_po === '' ? '-' : res.id_po}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='px-6 py-4'>
 										{res.quotations.quo_num}
 									</td>
 									<td className='px-6 py-4'>

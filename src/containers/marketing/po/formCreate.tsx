@@ -552,7 +552,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.qty.toString())}
 															onChange={(e: any) => {
-																let price = res.unit_price.replaceAll(".", "");
+																let price = res.unit_price.toString().replaceAll(".", "");
 																setFieldValue(
 																	`price_po.${i}.qty`,
 																	e.target.value
