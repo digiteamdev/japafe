@@ -51,7 +51,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val)
 	}
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfWor isModal={isModal} data={dataSelected} showModalPdf={showModalPdf}/>

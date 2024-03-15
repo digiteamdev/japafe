@@ -200,7 +200,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 												<div className='grid grid-cols-6'>
 													<div className='w-full col-span-2'>PO No</div>
 													<div className='w-full col-span-4 border border-l-0 border-t-0 border-r-0 border-b-slate-400'>
-														: {data.customerPo.po_num_auto}
+														: {data.customerPo.id_po}
 													</div>
 												</div>
 												<div className='grid grid-cols-7'>

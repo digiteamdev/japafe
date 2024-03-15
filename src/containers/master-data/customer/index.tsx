@@ -31,7 +31,7 @@ export const Customer = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
+		// { name: "No" },
 		{ name: "Customer Name" },
 		{ name: "Phone" },
 		{ name: "Email" },
@@ -177,10 +177,10 @@ export const Customer = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+									{/* <td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
 										{i + 1}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>{res.name}</td>
+									</td> */}
+									<td className='px-6 py-4'>{res.name}</td>
 									<td className='whitespace-nowrap px-6 py-4'>
 										{res.contact.length > 0
 											? `+62${res.contact[0].phone}`

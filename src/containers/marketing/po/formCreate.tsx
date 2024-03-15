@@ -312,7 +312,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					dataQuotation.push({
 						value: res,
-						label: `${res.quo_auto} - ${res.Customer.name}`,
+						label: `${res.quo_num} - ${res.Customer.name}`,
 					});
 				});
 				setListQuotation(dataQuotation);
@@ -418,29 +418,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 						</Section>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputSelect
-									id='tax'
-									name='tax'
-									placeholder='tax'
-									label='Tax'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option defaultValue='' selected>
-										Choose tax
-									</option>
-									<option value='nontax'>None</option>
-									<option value='ppn'>PPN</option>
-									<option value='pph'>PPH</option>
-									<option value='ppn_and_pph'>PPN And PPH</option>
-								</InputSelect>
-								{errors.tax && touched.tax ? (
-									<span className='text-red-500 text-xs'>{errors.tax}</span>
-								) : null}
-							</div>
-							<div className='w-full'>
 								<InputDate
 									id='date'
 									label='Date'
@@ -472,6 +449,29 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
+							</div>
+							<div className='w-full'>
+								<InputSelect
+									id='tax'
+									name='tax'
+									placeholder='tax'
+									label='Tax'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option defaultValue='' selected>
+										Choose tax
+									</option>
+									<option value='nontax'>None</option>
+									<option value='ppn'>PPN</option>
+									<option value='pph'>PPH</option>
+									<option value='ppn_and_pph'>PPN And PPH</option>
+								</InputSelect>
+								{errors.tax && touched.tax ? (
+									<span className='text-red-500 text-xs'>{errors.tax}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -516,83 +516,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 						)}
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-[-10px]'>
 							<h1 className='text-xl font-bold mt-3'>Term Of Payment</h1>
-							{/* {listPriceQuotation.map((res: any, i: number) => {
-								return (
-									<div key={i}>
-										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
-											<div className='w-full'>
-												<InputArea
-													id='desc'
-													name='desc'
-													placeholder='Description'
-													label='Description'
-													required={true}
-													value={res.description}
-													row={2}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='qty'
-													name='qty'
-													placeholder='Quantity'
-													label='Quantity'
-													type='text'
-													value={formatRupiah(res.qty.toString())}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='unit'
-													name='unit'
-													placeholder='Unit'
-													label='Unit'
-													type='text'
-													value={res.unit}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='unit_price'
-													name='unit_price'
-													placeholder='Unit Price'
-													label='Unit Price'
-													type='text'
-													value={formatRupiah(res.unit_price.toString())}
-													disabled={false}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='total_price'
-													name='total_price'
-													placeholder='Total Price'
-													label='Total Price'
-													type='text'
-													value={formatRupiah(res.total_price.toString())}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-										</Section>
-									</div>
-								);
-							})} */}
 							<FieldArray
 								name='price_po'
 								render={(arrayPrice) => (
@@ -629,13 +552,14 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.qty.toString())}
 															onChange={(e: any) => {
+																let price = res.unit_price.replaceAll(".", "");
 																setFieldValue(
 																	`price_po.${i}.qty`,
 																	e.target.value
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	e.target.value * res.total_price
+																	e.target.value * parseInt(price)
 																);
 															}}
 															disabled={false}

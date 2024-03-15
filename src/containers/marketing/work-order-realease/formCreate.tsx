@@ -98,12 +98,16 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				value: "each",
 			},
 			{
+				label: "lot",
+				value: "lot",
+			},
+			{
 				label: "set",
 				value: "set",
 			},
 			{
-				label: "lot",
-				value: "lot",
+				label: "spot",
+				value: "spot",
 			},
 			{
 				label: "unit",

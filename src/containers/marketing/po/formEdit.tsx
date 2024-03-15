@@ -38,7 +38,7 @@ interface dataPo {
 	date_delivery: any;
 	file: any;
 	term_of_pay: any;
-	price_quotation: any;
+	price_po: any;
 	delete: any;
 	upload_doc: any;
 	Deskription_CusPo: string;
@@ -76,7 +76,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		Deskription_CusPo: "",
 		upload_doc: null,
 		term_of_pay: [],
-		price_quotation: [],
+		price_po: [],
 		delete: [],
 		date_of_po: new Date(),
 		date_delivery: new Date(),
@@ -90,7 +90,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 
 	const settingData = () => {
 		let dataTerm: any = [];
-		console.log(dataPo);
 
 		if (dataPo.term_of_pay.length > 0) {
 			dataPo.term_of_pay.map((res: any) => {
@@ -130,7 +129,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			term_of_pay: dataTerm,
 			delete: [],
 			upload_doc: dataPo.upload_doc,
-			price_quotation: dataPo.quotations.price_quotation,
+			price_po: dataPo.price_po,
 		});
 		// setEquipment(dataPo.quotations.eqandpart[0].equipment.nama);
 		// setSubject(dataPo.quotations.deskription);
@@ -279,6 +278,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setIsLoading(true);
 		const form = new FormData();
 		let term_pay: any = [];
+		let price: any = [];
 		payload.term_of_pay.map((res: any) => {
 			term_pay.push({
 				id: res.id,
@@ -288,6 +288,16 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				price: res.price,
 				date_limit: res.date_limit,
 				note: res.note,
+			});
+		});
+
+		payload.price_po.map((res: any) => {
+			price.push({
+				cuspoId: res.cuspoId,
+				description: res.description,
+				qty: parseInt(res.qty),
+				unit_price: parseInt(res.unit_price),
+				total_price: parseInt(res.total_price),
 			});
 		});
 
@@ -317,6 +327,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			form.append("vat", "0");
 		}
 		form.append("total", total.toString());
+		form.append("price_po", JSON.stringify(price));
 		form.append("term_of_pay", JSON.stringify(term_pay));
 		form.append("delete", JSON.stringify(payload.delete));
 
@@ -525,11 +536,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 											>
 												Change File
 											</p>
-											<input
+											<Input
 												id='quo_img'
 												name='upload_doc'
 												placeholder='File'
 												type='file'
+												accept='image/*, .pdf'
 												className='hidden'
 											/>
 										</div>
@@ -577,83 +589,163 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 						)}
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-[-10px]'>
 							<h1 className='text-xl font-bold mt-3'>Term Of Payment</h1>
-							{values.price_quotation.map((res: any, i: number) => {
-								return (
-									<div key={i}>
-										<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
-											<div className='w-full'>
-												<InputArea
-													id='desc'
-													name='desc'
-													placeholder='Description'
-													label='Description'
-													required={true}
-													value={res.description}
-													row={2}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
+							<FieldArray
+								name='price_po'
+								render={(arrayPrice) => (
+									<>
+										{values.price_po.map((res: any, i: number) => (
+											<div key={i}>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
+													<div className='w-full'>
+														<InputArea
+															id={`price_po.${i}.description`}
+															name={`price_po.${i}.description`}
+															placeholder='Description'
+															label='Description'
+															required={true}
+															value={res.description}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`price_po.${i}.description`,
+																	e.target.value
+																);
+															}}
+															row={2}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.qty`}
+															name={`price_po.${i}.qty`}
+															placeholder='Quantity'
+															label='Quantity'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.qty.toString())}
+															onChange={(e: any) => {
+																let price = res.unit_price.replaceAll(".", "");
+																setFieldValue(
+																	`price_po.${i}.qty`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	e.target.value * parseInt(price)
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.unit`}
+															name={`price_po.${i}.unit`}
+															placeholder='Unit'
+															label='Unit'
+															type='text'
+															value={res.unit}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`price_po.${i}.unit`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.unit_price`}
+															name={`price_po.${i}.unit_price`}
+															placeholder='Unit Price'
+															label='Unit Price'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.unit_price.toString())}
+															onChange={(e: any) => {
+																let price = e.target.value.replaceAll(".", "");
+																setFieldValue(
+																	`price_po.${i}.unit_price`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	parseInt(res.qty) * parseInt(price)
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.total_price`}
+															name={`price_po.${i}.total_price`}
+															placeholder='Total Price'
+															label='Total Price'
+															type='text'
+															value={formatRupiah(res.total_price.toString())}
+															disabled={true}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='flex'>
+													{i === values.price_po.length - 1 ? (
+														<a
+															className='flex mt-1 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+															onClick={() =>
+																arrayPrice.push({
+																	id: "",
+																	cuspoId: "",
+																	description: "",
+																	qty: 0,
+																	unit: "",
+																	unit_price: 0,
+																	total_price: 0,
+																})
+															}
+														>
+															<Plus size={23} className='mt-1' />
+															Add
+														</a>
+													) : null}
+													{values.price_po.length !== 1 ? (
+														<a
+															className='flex ml-4 mt-1 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+															onClick={() => {
+																let priceDelete: any = values.delete;
+																if (res.id !== "") {
+																	priceDelete.push({
+																		id: res.id,
+																	});
+																}
+																setFieldValue("delete", priceDelete);
+																arrayPrice.remove(i);
+															}}
+														>
+															<Trash2 size={22} className='mt-1 mr-1' />
+															Remove
+														</a>
+													) : null}
+												</Section>
 											</div>
-											<div className='w-full'>
-												<Input
-													id='qty'
-													name='qty'
-													placeholder='Quantity'
-													label='Quantity'
-													type='text'
-													value={formatRupiah(res.qty.toString())}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='unit'
-													name='unit'
-													placeholder='Unit'
-													label='Unit'
-													type='text'
-													value={res.unit}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='unit_price'
-													name='unit_price'
-													placeholder='Unit Price'
-													label='Unit Price'
-													type='text'
-													value={formatRupiah(res.unit_price.toString())}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<Input
-													id='total_price'
-													name='total_price'
-													placeholder='Total Price'
-													label='Total Price'
-													type='text'
-													value={formatRupiah(res.total_price.toString())}
-													disabled={true}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-										</Section>
-									</div>
-								);
-							})}
+										))}
+									</>
+								)}
+							/>
 							{values.tax === "ppn" ? (
 								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='col-span-4 text-right'>
@@ -732,7 +824,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									</Section>
 								</>
 							) : null}
-							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+							{/* <Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='col-span-4 text-right'>
 									<p className='mt-4'>Grand Total</p>
 								</div>
@@ -749,7 +841,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-							</Section>
+							</Section> */}
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (
