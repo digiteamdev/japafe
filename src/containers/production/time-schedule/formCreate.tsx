@@ -444,6 +444,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			}
 		}
 		if(total_bobot > 100){
+			total_bobot = bobot
 			toast.error("Total Bobot can't be more than 100", {
 				position: "top-center",
 				autoClose: 5000,

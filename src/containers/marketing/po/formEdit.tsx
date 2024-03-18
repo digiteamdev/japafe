@@ -314,7 +314,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		form.append("date_of_po", payload.date_of_po);
 		form.append("date_delivery", payload.date_delivery);
 		form.append("date_delivery", payload.date_delivery);
-		form.append("upload_doc", "");
 		form.append("grand_tot", grandTotal.toString());
 		if (payload.tax === "ppn") {
 			form.append("vat", vatPrice("ppn"));

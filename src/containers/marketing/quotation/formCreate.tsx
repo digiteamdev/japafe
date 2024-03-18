@@ -116,6 +116,14 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				value: "each",
 			},
 			{
+				label: "hours",
+				value: "hours",
+			},
+			{
+				label: "Kg",
+				value: "Kg",
+			},
+			{
 				label: "lot",
 				value: "lot",
 			},

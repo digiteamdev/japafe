@@ -91,6 +91,14 @@ export const FormEditQuotation = ({
 				value: "each",
 			},
 			{
+				label: "hours",
+				value: "hours",
+			},
+			{
+				label: "Kg",
+				value: "Kg",
+			},
+			{
 				label: "lot",
 				value: "lot",
 			},
