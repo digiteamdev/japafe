@@ -84,7 +84,7 @@ export const Customer = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search);
+			const response = await SearchCustomer(page, limit, search, cekDivisiMarketing());
 			if (response.data) {
 				setData(response.data.result);
 			}

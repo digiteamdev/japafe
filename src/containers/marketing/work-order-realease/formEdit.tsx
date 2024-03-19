@@ -12,6 +12,7 @@ import { GetAllPo, GetAllEmployeDepart, EditWor } from "../../../services";
 // import { worSchema } from "../../../schema/marketing/work-order-release/worSchema";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
+import { cekDivisiMarketing } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -217,7 +218,7 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 			},
 		];
 		try {
-			const response = await GetAllPo();
+			const response = await GetAllPo(cekDivisiMarketing());
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					datasPo.push({
