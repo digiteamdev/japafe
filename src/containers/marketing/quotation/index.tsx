@@ -101,7 +101,7 @@ export const Quotation = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchQuotation(page, limit, search);
+			const response = await SearchQuotation(page, limit, search, cekDivisiMarketing());
 			if (response.data) {
 				setData(response.data.result);
 			}

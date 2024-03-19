@@ -389,7 +389,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										setQuoId(e.value.id);
 										setTaxPPH(e.value.Customer.pph);
 										setTaxPPN(e.value.Customer.ppn);
-										// console.log(e.value.price_quotation)
 										setFieldValue("price_po", e.value.price_quotation);
 										setFieldValue(
 											"Deskription_CusPo",
@@ -526,7 +525,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									<>
 										{values.price_po.map((res: any, i: number) => (
 											<div key={i}>
-												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 													<div className='w-full'>
 														<InputArea
 															id={`price_po.${i}.description`}

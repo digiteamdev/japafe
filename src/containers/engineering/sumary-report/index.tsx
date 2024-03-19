@@ -6,7 +6,7 @@ import { BookOpen, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSummaryReport } from "./formCreate";
 import { ViewSummaryReport } from "./view";
 import { FormEditSummaryReport } from "./formEdit";
-import { GetSummary, SearchPo, DeleteSummary  } from "../../../services";
+import { GetSummary, SearchSummary, DeleteSummary  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
 
@@ -70,7 +70,7 @@ export const SummaryReport = () => {
 	const searchPo = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search);
+			const response = await SearchSummary(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
