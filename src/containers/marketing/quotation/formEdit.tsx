@@ -87,32 +87,36 @@ export const FormEditQuotation = ({
 		settingData();
 		let data: any = [
 			{
-				label: "each",
-				value: "each",
+				label: "Days",
+				value: "Days",
 			},
 			{
-				label: "hours",
-				value: "hours",
+				label: "Each",
+				value: "Each",
+			},
+			{
+				label: "Hours",
+				value: "Hours",
 			},
 			{
 				label: "Kg",
 				value: "Kg",
 			},
 			{
-				label: "lot",
-				value: "lot",
+				label: "Lot",
+				value: "Lot",
 			},
 			{
-				label: "set",
-				value: "set",
+				label: "Set",
+				value: "Set",
 			},
 			{
-				label: "spot",
-				value: "spot",
+				label: "Spot",
+				value: "Spot",
 			},
 			{
-				label: "unit",
-				value: "unit",
+				label: "Unit",
+				value: "Unit",
 			},
 			{
 				label: "Input",

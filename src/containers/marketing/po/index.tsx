@@ -1,29 +1,38 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import { removeToken } from "../../../configs/session";
-import { SectionTitle, Content, Modal, Table, Button, ModalDelete, Pagination } from "../../../components";
+import {
+	SectionTitle,
+	Content,
+	Modal,
+	Table,
+	Button,
+	ModalDelete,
+	Pagination,
+} from "../../../components";
 import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePo } from "./formCreate";
 import { ViewPo } from "./view";
 import { FormEditPo } from "./formEdit";
-import { GetAllCustomer, GetPo, SearchPo, DeletePo  } from "../../../services";
-import { toast } from "react-toastify"
+import { GetAllCustomer, GetPo, SearchPo, DeletePo } from "../../../services";
+import { toast } from "react-toastify";
+import { cekDivisiMarketing } from "../../../utils"
 
 export const Po = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
-    const [dataCustomer, setDataCustomer] = useState<any>([]);
+	const [dataCustomer, setDataCustomer] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
+		{ name: "Job No" },
 		{ name: "PO/SO/SPK Num" },
 		{ name: "Quotation Num" },
 		{ name: "Customer" },
@@ -32,8 +41,8 @@ export const Po = () => {
 	];
 
 	useEffect(() => {
-		getPo(page, perPage);
-        getCustomer();
+		getPo(page, perPage, cekDivisiMarketing());
+		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -43,42 +52,42 @@ export const Po = () => {
 		// if(!val){
 		// 	setDataSelected({id: '',name: ''})
 		// }
-		if(reload){
-			getPo(page, perPage);
+		if (reload) {
+			getPo(page, perPage, cekDivisiMarketing());
 		}
 	};
 
 	const getCustomer = async () => {
 		try {
-			const response = await GetAllCustomer();
+			const response = await GetAllCustomer(cekDivisiMarketing());
 			if (response.data) {
 				setDataCustomer(response.data.result);
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 	};
 
-	const getPo = async (page: number, perpage: number) => {
+	const getPo = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPo(page, perpage);
+			const response = await GetPo(page, perpage, divisi);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -87,7 +96,7 @@ export const Po = () => {
 	const searchPo = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search);
+			const response = await SearchPo(page, limit, search, cekDivisiMarketing());
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -100,7 +109,7 @@ export const Po = () => {
 	const deletePo = async (id: string) => {
 		try {
 			const response = await DeletePo(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Customer PO Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -111,7 +120,7 @@ export const Po = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPo(1, 10);
+				getPo(1, 10, cekDivisiMarketing());
 			}
 		} catch (error) {
 			toast.error("Delete Customer PO Failed", {
@@ -178,23 +187,21 @@ export const Po = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res);
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='px-6 py-4'>
-										{res.id_po === '' ? '-' : res.id_po}
+										{res.wor.length === 0 ? "-" : res.wor[0].job_no}
 									</td>
 									<td className='px-6 py-4'>
-										{res.quotations.quo_num}
+										{res.id_po === "" ? "-" : res.id_po}
 									</td>
-									<td className='px-6 py-4'>
-										{res.quotations.Customer.name}
-									</td>
-									<td className='px-6 py-4'>
-										{res.quotations.subject}
-									</td>
+									<td className='px-6 py-4'>{res.quotations.quo_num}</td>
+									<td className='px-6 py-4'>{res.quotations.Customer.name}</td>
+									<td className='px-6 py-4'>{res.quotations.subject}</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
 											<Button
@@ -207,26 +214,26 @@ export const Po = () => {
 												<Eye color='white' />
 											</Button>
 											{/* { res.wor.length === 0 ? ( */}
-												<>
-													<Button
-														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true,'edit', false);
-														}}
-													>
-														<Edit color='white' />
-													</Button>
-													<Button
-														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true, "delete", false);
-														}}
-													>
-														<Trash2 color='white' />
-													</Button>
-												</>
+											<>
+												<Button
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "edit", false);
+													}}
+												>
+													<Edit color='white' />
+												</Button>
+												<Button
+													className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "delete", false);
+													}}
+												>
+													<Trash2 color='white' />
+												</Button>
+											</>
 											{/* ) : null } */}
 										</div>
 									</td>
@@ -235,20 +242,18 @@ export const Po = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getPo(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getPo(value, perPage, cekDivisiMarketing());
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -260,17 +265,25 @@ export const Po = () => {
 				/>
 			) : (
 				<Modal
-				title='Customer PO'
-				isModal={isModal}
-				content={modalContent}
-				showModal={showModal}
-			>
+					title='Customer PO'
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+				>
 					{modalContent === "view" ? (
 						<ViewPo dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
-						<FormCreatePo content={modalContent} showModal={showModal} dataCustomer={dataCustomer} />
+						<FormCreatePo
+							content={modalContent}
+							showModal={showModal}
+							dataCustomer={dataCustomer}
+						/>
 					) : (
-						<FormEditPo content={modalContent} showModal={showModal} dataPo={dataSelected}/>
+						<FormEditPo
+							content={modalContent}
+							showModal={showModal}
+							dataPo={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

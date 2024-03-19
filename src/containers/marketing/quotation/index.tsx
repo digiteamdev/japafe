@@ -22,6 +22,7 @@ import {
 } from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { cekDivisiMarketing } from "../../../utils"
 
 export const Quotation = () => {
 	const router = useRouter();
@@ -41,11 +42,12 @@ export const Quotation = () => {
 		{ name: "Customer" },
 		{ name: "Contact" },
 		{ name: "Date" },
+		{ name: "Subject" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getQuatation(page, perPage);
+		getQuatation(page, perPage, cekDivisiMarketing());
 		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -57,13 +59,13 @@ export const Quotation = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getQuatation(page, perPage);
+			getQuatation(page, perPage, cekDivisiMarketing());
 		}
 	};
 
 	const getCustomer = async () => {
 		try {
-			const response = await GetAllCustomer();
+			const response = await GetAllCustomer(cekDivisiMarketing());
 			if (response.data) {
 				setDataCustomer(response.data.result);
 			}
@@ -72,10 +74,10 @@ export const Quotation = () => {
 		}
 	};
 
-	const getQuatation = async (page: number, perpage: number) => {
+	const getQuatation = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetQuotation(page, perpage);
+			const response = await GetQuotation(page, perpage, divisi);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -123,7 +125,7 @@ export const Quotation = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getQuatation(1, 10);
+				getQuatation(1, 10, cekDivisiMarketing());
 			}
 		} catch (error) {
 			toast.error("Delete Quotation Failed", {
@@ -195,10 +197,10 @@ export const Quotation = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+									<td className='px-6 py-4 w-[5%] text-center'>
 										{res.quo_num}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='px-6 py-4 text-center'>
 										{res.Customer.name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
@@ -206,6 +208,9 @@ export const Quotation = () => {
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.date).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='px-6 py-4 text-center'>
+										{res.subject}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
@@ -255,7 +260,7 @@ export const Quotation = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getQuatation(value, perPage);
+							getQuatation(value, perPage, cekDivisiMarketing());
 						}}
 					/>
 				) : null}

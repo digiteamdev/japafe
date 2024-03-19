@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import { FormCreateEquipment } from "./formCreateEquipment";
 import { FormCreateCustomer } from "./formCreateCustomer";
 import { Plus, Trash2 } from "react-feather";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, cekDivisiMarketing } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -112,32 +112,36 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		getCustomer();
 		let data: any = [
 			{
-				label: "each",
-				value: "each",
+				label: "Days",
+				value: "Days",
 			},
 			{
-				label: "hours",
-				value: "hours",
+				label: "Each",
+				value: "Each",
+			},
+			{
+				label: "Hours",
+				value: "Hours",
 			},
 			{
 				label: "Kg",
 				value: "Kg",
 			},
 			{
-				label: "lot",
-				value: "lot",
+				label: "Lot",
+				value: "Lot",
 			},
 			{
-				label: "set",
-				value: "set",
+				label: "Set",
+				value: "Set",
 			},
 			{
-				label: "spot",
-				value: "spot",
+				label: "Spot",
+				value: "Spot",
 			},
 			{
-				label: "unit",
-				value: "unit",
+				label: "Unit",
+				value: "Unit",
 			},
 			{
 				label: "Input",
@@ -217,6 +221,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		form.append("quo_img", imgQuotation);
 		form.append("date", new Date().toUTCString());
 		form.append("Quotations_Detail", payload.Quotations_Detail);
+		form.append("job_operational", cekDivisiMarketing());
 		form.append("price_quotation", JSON.stringify(payload.price_quotation));
 		form.append("note_payment", payload.note_payment);
 		form.append("term_payment", payload.term_payment);
@@ -265,7 +270,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 	const getCustomer = async () => {
 		let dataCustomers: any = [];
 		try {
-			const response = await GetAllCustomer();
+			const response = await GetAllCustomer(cekDivisiMarketing());
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					dataCustomers.push({

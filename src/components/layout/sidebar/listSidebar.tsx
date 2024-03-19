@@ -162,7 +162,7 @@ export const ListNav = [
 		id: "marketing",
 		link: "/marketing",
 		title: "Marketing",
-		role: "ADMINISTRATOR, MARKETING",
+		role: "ADMINISTRATOR, MARKETING SWASTA, MARKETING BUMN",
 		subMenu: [
 			{
 				id: "customer",
@@ -552,13 +552,13 @@ export const ListNav = [
 		title: "Production",
 		role: "ADMINISTRATOR,Ppic",
 		subMenu: [
-			{
-				id: "shift",
-				link: "/production/shift",
-				title: "Shift",
+			// {
+			// 	id: "shift",
+			// 	link: "/production/shift",
+			// 	title: "Shift",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "dispatch",
 				link: "/production/dispatch",

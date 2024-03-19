@@ -234,7 +234,7 @@ console.log(dataSelected)
 												<td className="border border-black text-center">
 													{ i + 1 }
 												</td>
-												<td className="border border-black text-center">
+												<td className="border border-black pl-2">
 													{ res.item }
 												</td>
 												<td className="border border-black text-center">

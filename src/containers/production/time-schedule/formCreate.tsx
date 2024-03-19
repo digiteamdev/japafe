@@ -145,6 +145,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let listDates: any = [];
 		let datasActivity: any = [];
 		let countHoliday = 0;
+		let countMoth = monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
 		let durationDay = countDay(data.date_of_order, data.delivery_date);
 		if (holiday === "yes") {
 			for (var i = 0; i < durationDay; i++) {
@@ -187,15 +188,15 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				widthHoliday: 60 * (durationDay - countHoliday),
 			},
 		]);
+		showDate(data.date_of_order, data.delivery_date);
 		setNumMonth(
-			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1
+			countMoth
 		);
 		showMonth(
-			monthDiff(new Date(data.date_of_order), new Date(data.delivery_date)) + 1,
+			countMoth,
 			data.date_of_order,
 			data.delivery_date
 		);
-		showDate(data.date_of_order, data.delivery_date);
 		data.work_scope_item.map((res: any) => {
 			datasActivity.push({
 				value: res,
@@ -869,7 +870,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 				if (idx === 0) {
 					let unixTime = Math.floor(new Date(start).getTime() / 1000);
 					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
-					if (mothDate === getMonthName(new Date(starDate).getMonth() + i)) {
+					if (mothDate === getMonthName(new Date(start).getMonth() + i)) {
 						countDate = countDate + 1;
 					}
 				} else {
@@ -877,13 +878,13 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 						new Date(start).getTime() / 1000 + 86400 * idx
 					);
 					let mothDate = getMonthName(new Date(unixTime * 1000).getMonth());
-					if (mothDate === getMonthName(new Date(starDate).getMonth() + i)) {
+					if (mothDate === getMonthName(new Date(start).getMonth() + i)) {
 						countDate = countDate + 1;
 					}
 				}
 			}
 			listMoths.push({
-				moth: getMonthName(new Date(starDate).getMonth() + i),
+				moth: getMonthName(new Date(start).getMonth() + i),
 				countDate: countDate,
 			});
 		}
@@ -1151,6 +1152,8 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 										placeholder='Job No'
 										label='Job No'
 										onChange={(e: any) => {
+											setBobot(0)
+											setTotalBobot(0)
 											selectWor(e.value);
 											setFieldValue("worId", e.value.id);
 										}}
@@ -1409,6 +1412,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 														Activity
 													</td>
 													{listMoth.map((res: any, i: number) => {
+														console.log(res)
 														return (
 															<td
 																className='border border-black text-center'

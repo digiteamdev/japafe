@@ -13,6 +13,7 @@ import { Plus, Trash2 } from "react-feather";
 import provinceJson from "../../../assets/data/kodepos.json";
 import { AddCustomer } from "../../../services";
 import { toast } from "react-toastify";
+import { cekDivisiMarketing } from "../../../utils"
 
 interface props {
 	content: string;
@@ -248,6 +249,7 @@ export const FormCreateCustomer = ({ content, showModal }: props) => {
 				pph: payload.pph,
 				address: payload.address,
 				contact: payload.contact,
+				job_operational: cekDivisiMarketing()
 			};
 			try {
 				const response = await AddCustomer(dataBody);

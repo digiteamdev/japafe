@@ -19,10 +19,11 @@ export const Dashboard = () => {
 	}, [])
 
 	const getCustomer = async () => {
+		let totalCustomer: number = 0
 		try {
-			const response = await GetCustomer(1,10);
+			const response = await GetCustomer(1,10, 'S');
 			if (response.data) {
-				setTotalCustomer(response.data.totalData);
+				totalCustomer = response.data.totalData;
 			}
 		} catch (error:any) {
 			if(error.response.data.login){
@@ -32,6 +33,20 @@ export const Dashboard = () => {
 				router.push('/');
 			}
 		}
+		try {
+			const response = await GetCustomer(1,10, 'B');
+			if (response.data) {
+				totalCustomer = totalCustomer + response.data.totalData;
+			}
+		} catch (error:any) {
+			if(error.response.data.login){
+				setTotalCustomer(0);
+			}else{
+				removeToken();
+				router.push('/');
+			}
+		}
+		setTotalCustomer(totalCustomer)
 	};
 
 	const getEmploye = async () => {

@@ -17,6 +17,7 @@ import { FormEditWor } from "./formEdit";
 import { GetWor, SearchWor, DeleteWor } from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { cekDivisiMarketing } from "@/src/utils";
 
 export const Wor = () => {
 	const router = useRouter();
@@ -41,13 +42,13 @@ export const Wor = () => {
 	];
 
 	useEffect(() => {
-		getWor(page, perPage);
+		getWor(page, perPage, cekDivisiMarketing());
 		let jabatan = getPosition();
 		let roleUsers: any = getRole();
 		if (roleUsers !== undefined) {
 			let roleUser = JSON.parse(roleUsers);
 			for (var i = 0; i < roleUser.length; i++) {
-				if (roleUser[i].role.role_name === "MARKETING") {
+				if (roleUser[i].role.role_name === "MARKETING SWASTA" || roleUser[i].role.role_name === "MARKETING BUMN" ) {
 					setRoleMarketing(true);
 					break;
 				}
@@ -66,14 +67,14 @@ export const Wor = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getWor(page, perPage);
+			getWor(page, perPage, cekDivisiMarketing());
 		}
 	};
 
-	const getWor = async (page: number, perpage: number) => {
+	const getWor = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetWor(page, perpage);
+			const response = await GetWor(page, perpage, divisi);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -93,7 +94,7 @@ export const Wor = () => {
 	const searchwor = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchWor(page, limit, search);
+			const response = await SearchWor(page, limit, search, cekDivisiMarketing());
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -117,7 +118,7 @@ export const Wor = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getWor(1, 10);
+				getWor(1, 10, cekDivisiMarketing());
 			}
 		} catch (error) {
 			toast.error("Delete Work Order Release Failed", {
@@ -306,7 +307,7 @@ export const Wor = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getWor(value, perPage);
+							getWor(value, perPage, cekDivisiMarketing());
 						}}
 					/>
 				) : null}

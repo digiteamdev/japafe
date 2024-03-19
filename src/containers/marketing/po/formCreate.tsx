@@ -13,6 +13,7 @@ import { AddPo, GetAllQuotation } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
 import { formatRupiah } from "@/src/utils";
+import { cekDivisiMarketing } from "../../../utils"
 
 interface props {
 	content: string;
@@ -81,6 +82,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				qty: 0,
 				unit: "",
 				unit_price: 0,
+				discount: 0,
 				total_price: 0,
 			},
 		],
@@ -267,6 +269,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		form.append("date_of_po", payload.date_of_po);
 		form.append("upload_doc", poFile);
 		form.append("date_delivery", payload.date_delivery);
+		form.append("job_operational", cekDivisiMarketing());
 		form.append("term_of_pay", JSON.stringify(term));
 		form.append("price_po", JSON.stringify(price));
 		form.append("vat", vattotal);
@@ -307,7 +310,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 	const getQuatation = async () => {
 		let dataQuotation: any = [];
 		try {
-			const response = await GetAllQuotation();
+			const response = await GetAllQuotation(cekDivisiMarketing());
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					dataQuotation.push({
@@ -386,6 +389,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										setQuoId(e.value.id);
 										setTaxPPH(e.value.Customer.pph);
 										setTaxPPN(e.value.Customer.ppn);
+										// console.log(e.value.price_quotation)
 										setFieldValue("price_po", e.value.price_quotation);
 										setFieldValue(
 											"Deskription_CusPo",
@@ -522,7 +526,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									<>
 										{values.price_po.map((res: any, i: number) => (
 											<div key={i}>
-												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
+												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 													<div className='w-full'>
 														<InputArea
 															id={`price_po.${i}.description`}
@@ -614,6 +618,32 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>
+													{/* <div className='w-full'>
+														<Input
+															id={`price_po.${i}.discount`}
+															name={`price_po.${i}.discount`}
+															placeholder='Discount'
+															label='Discount'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.discount.toString())}
+															onChange={(e: any) => {
+																let price = res.unit_price.toString().replaceAll(".", "");
+																setFieldValue(
+																	`price_po.${i}.qty`,
+																	e.target.value
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	e.target.value * parseInt(price)
+																);
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div> */}
 													<div className='w-full'>
 														<Input
 															id={`price_po.${i}.total_price`}
@@ -639,6 +669,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																	qty: 0,
 																	unit: "",
 																	unit_price: 0,
+																	discount: 0,
 																	total_price: 0,
 																})
 															}

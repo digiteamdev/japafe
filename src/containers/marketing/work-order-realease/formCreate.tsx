@@ -12,6 +12,7 @@ import { worSchema } from "../../../schema/marketing/work-order-release/worSchem
 import { AddWor, GetAllEmployeDepart, GetAllPo } from "../../../services";
 import { toast } from "react-toastify";
 import { Plus, Trash2 } from "react-feather";
+import { cekDivisiMarketing } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -94,32 +95,36 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		getEmploye();
 		let data: any = [
 			{
-				label: "each",
-				value: "each",
+				label: "Days",
+				value: "Days",
 			},
 			{
-				label: "hours",
-				value: "hours",
+				label: "Each",
+				value: "Each",
+			},
+			{
+				label: "Hours",
+				value: "Hours",
 			},
 			{
 				label: "Kg",
 				value: "Kg",
 			},
 			{
-				label: "lot",
-				value: "lot",
+				label: "Lot",
+				value: "Lot",
 			},
 			{
-				label: "set",
-				value: "set",
+				label: "Set",
+				value: "Set",
 			},
 			{
-				label: "spot",
-				value: "spot",
+				label: "Spot",
+				value: "Spot",
 			},
 			{
-				label: "unit",
-				value: "unit",
+				label: "Unit",
+				value: "Unit",
 			},
 			{
 				label: "Input",
@@ -181,7 +186,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 		dataBody.append("file_list", file);
 		dataBody.append("noted", payload.noted);
 		dataBody.append("status", payload.status);
-		dataBody.append("job_operational", payload.job_operational);
+		dataBody.append("job_operational", cekDivisiMarketing());
 		dataBody.append("work_scope_item", JSON.stringify(payload.work_scope));
 		try {
 			const response = await AddWor(dataBody);
@@ -216,7 +221,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	const getPo = async () => {
 		let datasPo: any = [];
 		try {
-			const response = await GetAllPo();
+			const response = await GetAllPo(cekDivisiMarketing());
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					datasPo.push({
@@ -272,7 +277,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Work Order Release</h1>
-						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date'
@@ -284,7 +289,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<InputSelect
 									id='job_operational'
 									name='job_operational'
@@ -306,7 +311,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										{errors.job_operational}
 									</span>
 								) : null}
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listPo}

@@ -15,7 +15,8 @@ import { ViewCustomer } from "./view";
 import { FormEditCustomer } from "./fromEdit";
 import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken } from "../../../configs/session";
+import { removeToken, getRole } from "../../../configs/session";
+import { cekDivisiMarketing } from "../../../utils"
 
 export const Customer = () => {
 
@@ -39,7 +40,8 @@ export const Customer = () => {
 	];
 
 	useEffect(() => {
-		getCustomer(page, perPage);
+		let divisi = cekDivisiMarketing()	
+		getCustomer(page, perPage, divisi);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,14 +52,15 @@ export const Customer = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCustomer(page, perPage);
+			let divisi = cekDivisiMarketing()
+			getCustomer(page, perPage, divisi);
 		}
 	};
 
-	const getCustomer = async (page: number, perpage: number) => {
+	const getCustomer = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCustomer(page, perpage);
+			const response = await GetCustomer(page, perpage, divisi);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -105,7 +108,8 @@ export const Customer = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getCustomer(1, 10);
+				let divisi = cekDivisiMarketing()
+				getCustomer(1, 10, divisi);
 			}
 		} catch (error) {
 			toast.error("Delete Customer Failed", {
@@ -231,8 +235,9 @@ export const Customer = () => {
 							siblingCount={1} 
 							totalCount={countData} 
 							onChangePage={(value: any) => {
+								let divisi = cekDivisiMarketing()
 								setCurrentPage(value);
-								getCustomer(value, perPage);
+								getCustomer(value, perPage, divisi);
 							}}
 						/>
 					) : null

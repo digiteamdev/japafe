@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import { getRole } from "../configs/session";
+
 const currentYear = new Date().getFullYear();
 const range = (start: number, stop: number, step: number) =>
 	Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
@@ -140,3 +142,19 @@ export const pembilang = (nilai: any) => {
 
 	return temp;
 };
+
+export const cekDivisiMarketing = () => {
+	let roles = getRole();
+	let divisi = "B"
+	if (roles !== undefined) {
+		let role = JSON.parse(roles)
+		role.map((res:any) => {
+			if(res.role.role_name === "MARKETING SWASTA"){
+				divisi = "S"
+			}else if(res.role.role_name === "MARKETING BUMN"){
+				divisi = "B"
+			}
+		})
+	}
+	return divisi
+}
