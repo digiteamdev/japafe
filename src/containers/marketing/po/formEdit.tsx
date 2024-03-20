@@ -170,108 +170,32 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		}
 	};
 
-	const handleOnChanges = (event: any) => {
-		if (event.target.name === "quotation") {
-			if (event.target.value !== "Choose Quotation") {
-				let data = JSON.parse(event.target.value);
-				setCustomer(data.Customer.name);
-				setSubject(data.deskription);
-				setEquipment(data.eqandpart[0].equipment.nama);
-				setCountPart(data.eqandpart.length);
-				setQuoId(data.id);
-			} else {
-				setCustomer("");
-				setSubject("");
-				setEquipment("");
-				setCountPart("");
-				setQuoId("");
-			}
-		} else if (event.target.name.includes("qty")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				quantity = event.target.value,
-				htmlPrice = document.getElementById(
-					`Deskription_CusPo.${index}.price`
-				) as HTMLInputElement,
-				htmlDiscount = document.getElementById(
-					`Deskription_CusPo.${index}.discount`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				price: any = htmlPrice.value === "" ? 0 : htmlPrice.value,
-				discount: any = htmlDiscount.value === "" ? 0 : htmlDiscount.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("price")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				price = event.target.value,
-				htmlQuantity = document.getElementById(
-					`Deskription_CusPo.${index}.qty`
-				) as HTMLInputElement,
-				htmlDiscount = document.getElementById(
-					`Deskription_CusPo.${index}.discount`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				quantity: any = htmlQuantity.value === "" ? 0 : htmlQuantity.value,
-				discount: any = htmlDiscount.value === "" ? 0 : htmlDiscount.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("discount")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				discount = event.target.value,
-				htmlQuantity = document.getElementById(
-					`Deskription_CusPo.${index}.qty`
-				) as HTMLInputElement,
-				htmlPrice = document.getElementById(
-					`Deskription_CusPo.${index}.price`
-				) as HTMLInputElement,
-				htmlTotal = document.getElementById(
-					`Deskription_CusPo.${index}.total`
-				) as HTMLInputElement,
-				quantity: any = htmlQuantity.value === "" ? 0 : htmlQuantity.value,
-				price: any = htmlPrice.value === "" ? 0 : htmlPrice.value,
-				total: any = quantity * price - discount;
-			htmlTotal.value = total;
-		} else if (event.target.name.includes("percent")) {
-			const nameSplit = event.target.name.split("."),
-				index = nameSplit[1],
-				percent = event.target.value,
-				htmlTotalTerm = document.getElementById(
-					`term_of_pay.${index}.price`
-				) as HTMLInputElement,
-				total: any = grandTotal,
-				totalTerm: any = (parseInt(total) * percent) / 100;
-			setTotalTerm(totalTerm);
-			htmlTotalTerm.value = totalTerm.toString();
-		} else if (event.target.name === "tax") {
-			if (event.target.value === "ppn") {
-				setTax(taxPPN);
-				setGrandTotal(parseInt(vatPrice("ppn")) + total);
-			} else if (event.target.value === "pph") {
-				setTax(taxPPH);
-				setGrandTotal(parseInt(vatPrice("pph")) + total);
-			} else if (event.target.value === "ppn_and_pph") {
-				setTax(taxPPN + taxPPH);
-				setGrandTotal(
-					parseInt(vatPrice("ppn")) + parseInt(vatPrice("pph")) + total
-				);
-			} else {
-				setTax(0);
-				setGrandTotal(total);
-			}
-		} else if (event.target.name === "upload_doc") {
-			setImgQuotation(event.target.files[0]);
-		}
-	};
-
 	const showUpload = (id: any) => {
 		const inputan = document.getElementById(id);
 		inputan?.click();
+	};
+
+	const grandTotalChange = (data: any, totalPrice: number, i: number, tax: string) => {
+		let totalHarga = 0
+		data.map( (res: any, idx: number) => {
+			if( i === idx){
+				totalHarga += totalPrice
+			}else{
+				totalHarga += res.total_price
+			}
+		})
+		if (tax === "ppn") {
+			const grandtotal: number = totalHarga + totalPPN;
+			setGrandTotal(grandtotal);
+		} else if (tax === "pph") {
+			const grandtotal: number = totalHarga + totalPPH;
+			setGrandTotal(grandtotal);
+		} else if (tax === "ppn_and_pph") {
+			const grandtotal: number = totalHarga + totalPPN + totalPPH;
+			setGrandTotal(grandtotal);
+		} else {
+			setGrandTotal(totalHarga);
+		}
 	};
 
 	const editPo = async (payload: any) => {
@@ -297,6 +221,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				description: res.description,
 				qty: parseInt(res.qty),
 				unit_price: parseInt(res.unit_price),
+				discount: parseInt(res.discount),
 				total_price: parseInt(res.total_price),
 			});
 		});
@@ -379,7 +304,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form onChange={handleOnChanges}>
+					<Form>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -594,7 +519,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									<>
 										{values.price_po.map((res: any, i: number) => (
 											<div key={i}>
-												<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2'>
+												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 													<div className='w-full'>
 														<InputArea
 															id={`price_po.${i}.description`}
@@ -624,15 +549,20 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.qty.toString())}
 															onChange={(e: any) => {
-																let price = res.unit_price.replaceAll(".", "");
+																let qty = e.target.value.toString().replaceAll(".", "");
+																let unitPrice = res.unit_price.toString().replaceAll(".", "");
+																let discount = res.discount.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100
 																setFieldValue(
 																	`price_po.${i}.qty`,
-																	e.target.value
+																	qty
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	e.target.value * parseInt(price)
+																	totalPrice - totalDisc
 																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
 															}}
 															disabled={false}
 															required={true}
@@ -670,15 +600,51 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.unit_price.toString())}
 															onChange={(e: any) => {
-																let price = e.target.value.replaceAll(".", "");
+																let qty = res.qty.toString().replaceAll(".", "");
+																let unitPrice = e.target.value.toString().replaceAll(".", "");
+																let discount = res.discount.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100
 																setFieldValue(
 																	`price_po.${i}.unit_price`,
-																	e.target.value
+																	unitPrice
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	parseInt(res.qty) * parseInt(price)
+																	totalPrice - totalDisc
 																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
+															}}
+															disabled={false}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`price_po.${i}.discount`}
+															name={`price_po.${i}.discount`}
+															placeholder='Discount'
+															label='Discount (%)'
+															type='text'
+															pattern='\d*'
+															value={formatRupiah(res.discount.toString())}
+															onChange={(e: any) => {
+																let qty = res.qty.toString().replaceAll(".", "");
+																let unitPrice = res.unit_price.toString().replaceAll(".", "");
+																let discount = e.target.value.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100 
+																setFieldValue(
+																	`price_po.${i}.discount`,
+																	discount
+																);
+																setFieldValue(
+																	`price_po.${i}.total_price`,
+																	totalPrice - totalDisc
+																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
 															}}
 															disabled={false}
 															required={true}
@@ -823,7 +789,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									</Section>
 								</>
 							) : null}
-							{/* <Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='col-span-4 text-right'>
 									<p className='mt-4'>Grand Total</p>
 								</div>
@@ -840,7 +806,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-							</Section> */}
+							</Section>
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (

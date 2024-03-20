@@ -164,45 +164,35 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		}
 	};
 
+	const grandTotalChange = (data: any, totalPrice: number, i: number) => {
+		let totalHarga = 0
+		data.map( (res: any, idx: number) => {
+			if( i === idx){
+				totalHarga += totalPrice
+			}else{
+				totalHarga += res.total_price
+			}
+		})
+		if (typeTax === "ppn") {
+			const grandtotal: number = totalHarga + totalPPN;
+			setTotal(grandtotal);
+		} else if (typeTax === "pph") {
+			const grandtotal: number = totalHarga + totalPPH;
+			setTotal(grandtotal);
+		} else if (typeTax === "ppn_and_pph") {
+			const grandtotal: number = totalHarga + totalPPN + totalPPH;
+			setTotal(grandtotal);
+		} else {
+			setTotal(totalHarga);
+		}
+	};
+
 	const addPo = async (payload: any) => {
 		setIsLoading(true);
-		const htmlTotals = document.getElementById("total") as HTMLInputElement;
-		const htmlVat = document.getElementById("vat") as HTMLInputElement;
-		const htmlGrandTotal = document.getElementById(
-			"grand_tot"
-		) as HTMLInputElement;
 		const price: any = [];
 		const term: any = [];
 		let vattotal: string = "0";
-		// let descEmpty: boolean = false;
 		let termOFPaymentEmpty: boolean = false;
-		// payload.Deskription_CusPo.map((res: any, i: number) => {
-		// 	if (res.description === "") {
-		// 		toast.warning("Description not empty", {
-		// 			position: "top-center",
-		// 			autoClose: 5000,
-		// 			hideProgressBar: true,
-		// 			closeOnClick: true,
-		// 			pauseOnHover: true,
-		// 			draggable: true,
-		// 			progress: undefined,
-		// 			theme: "colored",
-		// 		});
-		// 		descEmpty = true;
-		// 	} else {
-		// 		const htmlTotal = document.getElementById(
-		// 			`Deskription_CusPo.${i}.total`
-		// 		) as HTMLInputElement;
-		// 		desc.push({
-		// 			description: res.description,
-		// 			qty: res.qty,
-		// 			unit: res.unit,
-		// 			price: res.price,
-		// 			discount: res.discount === "" ? 0 : res.discount,
-		// 			total: parseInt(htmlTotal.value),
-		// 		});
-		// 	}
-		// });
 		payload.term_of_pay.map((res: any, i: number) => {
 			if (res.limitpay === "") {
 				toast.warning("Term Of Payment not empty", {
@@ -242,6 +232,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				qty: parseInt(res.qty),
 				unit: res.unit,
 				unit_price: parseInt(res.unit_price),
+				discount: parseInt(res.discount),
 				total_price: parseInt(res.total_price),
 			});
 		});
@@ -525,7 +516,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									<>
 										{values.price_po.map((res: any, i: number) => (
 											<div key={i}>
-												<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 													<div className='w-full'>
 														<InputArea
 															id={`price_po.${i}.description`}
@@ -555,15 +546,20 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.qty.toString())}
 															onChange={(e: any) => {
-																let price = res.unit_price.toString().replaceAll(".", "");
+																let qty = e.target.value.toString().replaceAll(".", "");
+																let unitPrice = res.unit_price.toString().replaceAll(".", "");
+																let discount = res.discount.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100
 																setFieldValue(
 																	`price_po.${i}.qty`,
-																	e.target.value
+																	qty
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	e.target.value * parseInt(price)
+																	totalPrice - totalDisc
 																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
 															}}
 															disabled={false}
 															required={true}
@@ -601,15 +597,20 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.unit_price.toString())}
 															onChange={(e: any) => {
-																let price = e.target.value.replaceAll(".", "");
+																let qty = res.qty.toString().replaceAll(".", "");
+																let unitPrice = e.target.value.toString().replaceAll(".", "");
+																let discount = res.discount.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100
 																setFieldValue(
 																	`price_po.${i}.unit_price`,
-																	e.target.value
+																	unitPrice
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	parseInt(res.qty) * parseInt(price)
+																	totalPrice - totalDisc
 																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
 															}}
 															disabled={false}
 															required={true}
@@ -617,32 +618,37 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>
-													{/* <div className='w-full'>
+													<div className='w-full'>
 														<Input
 															id={`price_po.${i}.discount`}
 															name={`price_po.${i}.discount`}
 															placeholder='Discount'
-															label='Discount'
+															label='Discount (%)'
 															type='text'
 															pattern='\d*'
 															value={formatRupiah(res.discount.toString())}
 															onChange={(e: any) => {
-																let price = res.unit_price.toString().replaceAll(".", "");
+																let qty = res.qty.toString().replaceAll(".", "");
+																let unitPrice = res.unit_price.toString().replaceAll(".", "");
+																let discount = e.target.value.toString().replaceAll(".", "");
+																let totalPrice = qty * unitPrice;
+																let totalDisc = totalPrice * discount / 100 
 																setFieldValue(
-																	`price_po.${i}.qty`,
-																	e.target.value
+																	`price_po.${i}.discount`,
+																	discount
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	e.target.value * parseInt(price)
+																	totalPrice - totalDisc
 																);
+																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
 															}}
 															disabled={false}
 															required={true}
 															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
-													</div> */}
+													</div>
 													<div className='w-full'>
 														<Input
 															id={`price_po.${i}.total_price`}
@@ -694,7 +700,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									</>
 								)}
 							/>
-							{/* {values.tax === "ppn" ? (
+							{values.tax === "ppn" ? (
 								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='col-span-4 text-right'>
 										<p className='mt-4'>PPN</p>
@@ -789,7 +795,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
 								</div>
-							</Section> */}
+							</Section>
 							<FieldArray
 								name='term_of_pay'
 								render={(arrayTerm) => (
