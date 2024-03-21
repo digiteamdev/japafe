@@ -560,9 +560,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
 															}}
 															disabled={false}
 															required={true}
@@ -611,9 +611,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
 															}}
 															disabled={false}
 															required={true}
@@ -642,9 +642,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i, values.tax)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
 															}}
 															disabled={false}
 															required={true}

@@ -136,11 +136,11 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		// const htmlTotal = document.getElementById("total") as HTMLInputElement;
 		if (taxType === "ppn") {
 			const jumlahTax = (total * taxPPN) / 100;
-			setTotalPPN(jumlahTax);
-			return jumlahTax.toString();
+			setTotalPPN(Math.ceil(jumlahTax));
+			return Math.ceil(jumlahTax).toString();
 		} else if (taxType === "pph") {
 			const jumlahTax = (total * taxPPH) / 100;
-			setTotalPPH(jumlahTax);
+			setTotalPPH(Math.ceil(jumlahTax));
 			return jumlahTax.toString();
 		} else {
 			setTotalPPN(0);
@@ -149,18 +149,40 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		}
 	};
 
-	const grandTotal = () => {
-		if (typeTax === "ppn") {
+	const grandTotal = (tax: string) => {
+		if (tax === "ppn") {
 			const grandtotal: number = total + totalPPN;
 			return grandtotal.toString();
-		} else if (typeTax === "pph") {
+		} else if (tax === "pph") {
 			const grandtotal: number = total + totalPPH;
 			return grandtotal.toString();
-		} else if (typeTax === "ppn_and_pph") {
+		} else if (tax === "ppn_and_pph") {
 			const grandtotal: number = total + totalPPN + totalPPH;
 			return grandtotal.toString();
 		} else {
 			return total.toString();
+		}
+	};
+
+	const grandTotalTerm = (percent: string,tax: string) => {
+		if(percent){
+			if (tax === "ppn") {
+				const grandtotal: number = total + totalPPN;
+				let totalTerm = (grandtotal * parseInt(percent)) / 100 
+				return Math.ceil(totalTerm).toString();
+			} else if (tax === "pph") {
+				const grandtotal: number = total + totalPPH;
+				let totalTerm = (grandtotal * parseInt(percent)) / 100 
+				return Math.ceil(totalTerm).toString();
+			} else if (tax === "ppn_and_pph") {
+				const grandtotal: number = total + totalPPN + totalPPH;
+				let totalTerm = (grandtotal	 * parseInt(percent)) / 100 
+				return Math.ceil(totalTerm).toString();
+			} else {
+				return total.toString();
+			}
+		}else{
+			return "0"
 		}
 	};
 
@@ -264,7 +286,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		form.append("term_of_pay", JSON.stringify(term));
 		form.append("price_po", JSON.stringify(price));
 		form.append("vat", vattotal);
-		form.append("grand_tot", grandTotal());
+		form.append("grand_tot", total.toString());
 		form.append("total", total.toString());
 		try {
 			if (!termOFPaymentEmpty) {
@@ -557,9 +579,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i)
 															}}
 															disabled={false}
 															required={true}
@@ -608,9 +630,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i)
 															}}
 															disabled={false}
 															required={true}
@@ -639,9 +661,9 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
-																	totalPrice - totalDisc
+																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - totalDisc), i)
+																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i)
 															}}
 															disabled={false}
 															required={true}
@@ -711,7 +733,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 											name='ppn'
 											placeholder='PPN'
 											type='text'
-											value={vat("ppn")}
+											value={ formatRupiah(vat("ppn")) }
 											disabled={true}
 											required={true}
 											withLabel={false}
@@ -730,7 +752,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 											name='pph'
 											placeholder='PPH'
 											type='text'
-											value={vat("pph")}
+											value={ formatRupiah(vat("pph"))}
 											disabled={true}
 											required={true}
 											withLabel={false}
@@ -750,7 +772,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 												name='ppn'
 												placeholder='PPN'
 												type='text'
-												value={vat("ppn")}
+												value={ formatRupiah(vat("ppn"))}
 												disabled={true}
 												required={true}
 												withLabel={false}
@@ -768,7 +790,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 												name='pph'
 												placeholder='PPH'
 												type='text'
-												value={vat("pph")}
+												value={ formatRupiah(vat("pph"))}
 												disabled={true}
 												required={true}
 												withLabel={false}
@@ -788,7 +810,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 										name='qty'
 										placeholder='Grand Total'
 										type='text'
-										value={formatRupiah(grandTotal())}
+										value={formatRupiah(grandTotal(values.tax))}
 										disabled={true}
 										required={true}
 										withLabel={false}
@@ -846,22 +868,22 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																		const nameSplit = e.target.name.split("."),
 																			index = nameSplit[1],
 																			percent = e.target.value,
-																			htmlTotalTerm = document.getElementById(
-																				`term_of_pay.${index}.price`
-																			) as HTMLInputElement,
+																			// htmlTotalTerm = document.getElementById(
+																			// 	`term_of_pay.${index}.price`
+																			// ) as HTMLInputElement,
 																			totalTerm: any =
-																				(parseInt(grandTotal()) * percent) /
+																				(parseInt(grandTotal(values.tax)) * percent) /
 																				100;
-																		htmlTotalTerm.value = formatRupiah(
-																			totalTerm.toString()
-																		);
+																		// htmlTotalTerm.value = formatRupiah(
+																		// 	Math.ceil(totalTerm).toString()
+																		// );
 																		setFieldValue(
 																			`term_of_pay.${i}.percent`,
 																			e.target.value
 																		);
 																		setFieldValue(
 																			`term_of_pay.${i}.price`,
-																			totalTerm
+																			Math.ceil(totalTerm)
 																		);
 																	}}
 																	required={true}
@@ -876,6 +898,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 																	placeholder='10000'
 																	label='Noted'
 																	type='text'
+																	value={ formatRupiah(grandTotalTerm(res.percent, values.tax)) }
 																	disabled={true}
 																	required={true}
 																	withLabel={false}

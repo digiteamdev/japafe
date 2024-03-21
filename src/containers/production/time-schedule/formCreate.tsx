@@ -142,6 +142,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	const selectWor = (data: any) => {
+		console.log(data)
 		let listDates: any = [];
 		let datasActivity: any = [];
 		let countHoliday = 0;
@@ -1412,7 +1413,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 														Activity
 													</td>
 													{listMoth.map((res: any, i: number) => {
-														console.log(res)
 														return (
 															<td
 																className='border border-black text-center'

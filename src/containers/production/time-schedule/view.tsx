@@ -178,7 +178,7 @@ export const ViewSchedule = ({
 		let listDatesHoliday: any = [];
 		let rangeDay = countDay(
 			dataSelected.wor.date_of_order,
-			dataSelected.wor.delivery_date
+			dataSelected.wor.delivery_date 
 		);
 		for (var i = 0; i < rangeDay; i++) {
 			if (i === 0) {
@@ -370,7 +370,7 @@ export const ViewSchedule = ({
 	const calculatePlanning = (date: any) => {
 		let bobot: number = 0
 		aktivitas.map( (res:any, i:number) => {
-			let datePlanning = Math.floor(new Date(res.endday).getTime() / 1000)
+			let datePlanning = Math.floor(new Date(res.startday).getTime() / 1000)
 			if( i !== 0){
 				if( datePlanning <= date ){
 					bobot = bobot + res.bobot
