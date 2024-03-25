@@ -187,7 +187,6 @@ export const Po = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res);
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'

@@ -371,7 +371,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 											Grand Total
 										</td>
 										<td className='pl-2 border border-black text-center'>
-											{formatRupiah(grandTotal(dataSelected.price_po).toString())}
+											{formatRupiah(dataSelected.grand_tot.toString())}
 										</td>
 									</tr>
 								</tbody>

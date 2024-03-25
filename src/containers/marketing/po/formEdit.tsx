@@ -285,6 +285,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setIsLoading(false);
 	};
 
+	const handleOnChanges = (event: any) => {
+		if (event.target.name === "upload_doc") {
+			setImgQuotation(event.target.files[0]);
+		}
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
@@ -304,7 +310,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form>
+					<Form  onChange={handleOnChanges}>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
