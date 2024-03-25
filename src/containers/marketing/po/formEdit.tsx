@@ -146,12 +146,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	const vatPrice = (taxType: string) => {
 		if (taxType === "ppn") {
 			const jumlahTax = (total * taxPPN) / 100;
-			setTotalPPN(jumlahTax);
-			return jumlahTax.toString();
+			setTotalPPN(Math.ceil(jumlahTax));
+			return Math.ceil(jumlahTax).toString();
 		} else if (taxType === "pph") {
 			const jumlahTax = (total * taxPPH) / 100;
-			setTotalPPH(jumlahTax);
-			return jumlahTax.toString();
+			setTotalPPH(Math.ceil(jumlahTax));
+			return Math.ceil(jumlahTax).toString();
 		} else {
 			setTotalPPN(0);
 			setTotalPPH(0);

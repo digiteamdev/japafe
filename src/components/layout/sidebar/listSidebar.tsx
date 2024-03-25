@@ -635,13 +635,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "bom-dimension",
-				link: "/engineering/bom-dimension",
-				title: "BOM Dimension",
+			// {
+			// 	id: "bom-dimension",
+			// 	link: "/engineering/bom-dimension",
+			// 	title: "BOM Dimension",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "drawing",
 				link: "/engineering/drawing",

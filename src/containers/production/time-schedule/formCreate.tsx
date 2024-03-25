@@ -142,7 +142,6 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 	};
 
 	const selectWor = (data: any) => {
-		console.log(data)
 		let listDates: any = [];
 		let datasActivity: any = [];
 		let countHoliday = 0;
@@ -446,7 +445,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			}
 		}
 		if(total_bobot > 100){
-			total_bobot = bobot
+			setTotalBobot(totalBobot)
 			toast.error("Total Bobot can't be more than 100", {
 				position: "top-center",
 				autoClose: 5000,
