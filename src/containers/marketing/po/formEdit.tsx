@@ -184,14 +184,19 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				totalHarga += res.total_price
 			}
 		})
+		setTotal(totalHarga)
 		if (tax === "ppn") {
-			const grandtotal: number = totalHarga + totalPPN;
+			const jumlahTax = (totalHarga * taxPPN) / 100;
+			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "pph") {
-			const grandtotal: number = totalHarga + totalPPH;
+			const jumlahTax = (totalHarga * taxPPH) / 100;
+			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "ppn_and_pph") {
-			const grandtotal: number = totalHarga + totalPPN + totalPPH;
+			const jumlahTaxPPH = (totalHarga * taxPPH) / 100;
+			const jumlahTaxPPN = (totalHarga * taxPPN) / 100;
+			const grandtotal: number = totalHarga + Math.ceil(jumlahTaxPPN) + Math.ceil(jumlahTaxPPH);
 			setGrandTotal(grandtotal);
 		} else {
 			setGrandTotal(totalHarga);
@@ -217,12 +222,13 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 
 		payload.price_po.map((res: any) => {
 			price.push({
+				id: res.id,
 				cuspoId: res.cuspoId,
 				description: res.description,
-				qty: parseInt(res.qty),
-				unit_price: parseInt(res.unit_price),
-				discount: parseInt(res.discount),
-				total_price: parseInt(res.total_price),
+				qty: res.qty,
+				unit_price: res.unit_price,
+				discount: res.discount,
+				total_price: res.total_price,
 			});
 		});
 
@@ -683,6 +689,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																	cuspoId: "",
 																	description: "",
 																	qty: 0,
+																	discount: 0,
 																	unit: "",
 																	unit_price: 0,
 																	total_price: 0,

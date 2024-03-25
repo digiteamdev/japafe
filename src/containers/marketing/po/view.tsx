@@ -28,7 +28,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 		})
 		return total
 	}
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -287,6 +287,9 @@ export const ViewPo = ({ dataSelected }: props) => {
 											Unit Price
 										</th>
 										<th className='pl-2 w-[10%] border border-black text-center'>
+											Discount
+										</th>
+										<th className='pl-2 w-[10%] border border-black text-center'>
 											Total Price
 										</th>
 									</tr>
@@ -308,6 +311,9 @@ export const ViewPo = ({ dataSelected }: props) => {
 													{formatRupiah(res.unit_price.toString())}
 												</td>
 												<td className='pl-2 w-[10%] border border-black text-center'>
+													{res.discount}%
+												</td>
+												<td className='pl-2 w-[10%] border border-black text-center'>
 													{formatRupiah(res.total_price.toString())}
 												</td>
 											</tr>
@@ -317,7 +323,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 										<tr>
 											<td
 												className='pr-2 border border-black text-right'
-												colSpan={4}
+												colSpan={5}
 											>
 												PPN {dataSelected.quotations.Customer.ppn}%
 											</td>
@@ -329,7 +335,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 										<tr>
 											<td
 												className='pr-2 border border-black text-right'
-												colSpan={4}
+												colSpan={5}
 											>
 												PPH {dataSelected.quotations.Customer.pph}%
 											</td>
@@ -342,7 +348,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 											<tr>
 												<td
 													className='pr-2 border border-black text-right'
-													colSpan={4}
+													colSpan={5}
 												>
 													PPN {dataSelected.quotations.Customer.ppn}%
 												</td>
@@ -353,7 +359,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 											<tr>
 												<td
 													className='pr-2 border border-black text-right'
-													colSpan={4}
+													colSpan={5}
 												>
 													PPH {dataSelected.quotations.Customer.pph}%
 												</td>
@@ -366,7 +372,7 @@ export const ViewPo = ({ dataSelected }: props) => {
 									<tr>
 										<td
 											className='pr-2 border border-black text-right'
-											colSpan={4}
+											colSpan={5}
 										>
 											Grand Total
 										</td>
