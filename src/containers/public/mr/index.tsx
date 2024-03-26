@@ -35,7 +35,6 @@ export const Mr = () => {
 		{ name: "MR No" },
 		{ name: "MR Date" },
 		{ name: "Departement" },
-		{ name: "User" },
 		{ name: "Action" },
 	];
 
@@ -237,9 +236,6 @@ export const Mr = () => {
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{res.user.employee.sub_depart.name}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.user.employee.employee_name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

@@ -152,7 +152,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			const response = await GetBom();
 			if (response) {
 				response.data.result.map((res: any) => {
-					console.log(res)
 					datasWor.push({
 						value: res,
 						label: `${res.srimg.timeschedule.wor.job_no} - ${res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}`,
