@@ -8,27 +8,26 @@ interface props {
 }
 
 export const ViewPo = ({ dataSelected }: props) => {
-	
 	const ppn = () => {
+		let disc = (dataSelected.total * dataSelected.discount) / 100;
 		let ppn: number =
-			(dataSelected.total * dataSelected.quotations.Customer.ppn) / 100;
+			((dataSelected.total - Math.ceil(disc)) *
+				dataSelected.quotations.Customer.ppn) /
+			100;
 		return Math.ceil(ppn);
 	};
 
 	const pph = () => {
+		let disc = (dataSelected.total * dataSelected.discount) / 100;
 		let pph: number =
-			(dataSelected.total * dataSelected.quotations.Customer.pph) / 100;
+			((dataSelected.total - Math.ceil(disc)) *
+				dataSelected.quotations.Customer.pph) /
+			100;
 		return Math.ceil(pph);
 	};
 
-	const grandTotal = (data: any) => {
-		let total: number = 0
-		data.map( (res: any) => {
-			total = total + res.total_price
-		})
-		return total
-	}
-console.log(dataSelected)
+	const discount = () => {}
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -93,7 +92,7 @@ console.log(dataSelected)
 											Tax
 										</td>
 										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.tax}
+											{dataSelected.tax.toUpperCase()}
 										</td>
 									</tr>
 									<tr>
@@ -287,43 +286,79 @@ console.log(dataSelected)
 											Unit Price
 										</th>
 										<th className='pl-2 w-[10%] border border-black text-center'>
-											Discount
-										</th>
-										<th className='pl-2 w-[10%] border border-black text-center'>
 											Total Price
 										</th>
 									</tr>
 								</thead>
 								<tbody>
-									{dataSelected.price_po.map(
-										(res: any, i: number) => (
-											<tr key={i}>
-												<td className='pl-2 w-[40%] border border-black text-center'>
-													{res.description}
-												</td>
-												<td className='pl-2 w-[10%] border border-black text-center'>
-													{res.qty}
-												</td>
-												<td className='pl-2 w-[10%] border border-black text-center'>
-													{res.unit}
-												</td>
-												<td className='pl-2 w-[10%] border border-black text-center'>
-													{formatRupiah(res.unit_price.toString())}
-												</td>
-												<td className='pl-2 w-[10%] border border-black text-center'>
-													{res.discount}%
-												</td>
-												<td className='pl-2 w-[10%] border border-black text-center'>
-													{formatRupiah(res.total_price.toString())}
-												</td>
-											</tr>
-										)
-									)}
+									{dataSelected.price_po.map((res: any, i: number) => (
+										<tr key={i}>
+											<td className='pl-2 w-[40%] border border-black text-center'>
+												{res.description}
+											</td>
+											<td className='pl-2 w-[10%] border border-black text-center'>
+												{res.qty}
+											</td>
+											<td className='pl-2 w-[10%] border border-black text-center'>
+												{res.unit}
+											</td>
+											<td className='pl-2 w-[10%] border border-black text-center'>
+												{formatRupiah(res.unit_price.toString())}
+											</td>
+											<td className='pl-2 w-[10%] border border-black text-center'>
+												{formatRupiah(res.total_price.toString())}
+											</td>
+										</tr>
+									))}
+									<tr>
+										<td
+											className='pr-2 border border-black text-right'
+											colSpan={4}
+										>
+											Sub Total
+										</td>
+										<td className='pl-2 border border-black text-center'>
+											{formatRupiah(dataSelected.total.toString())}
+										</td>
+									</tr>
+									<tr>
+										<td
+											className='pr-2 border border-black text-right'
+											colSpan={4}
+										>
+											Discount
+										</td>
+										<td className='pl-2 border border-black text-center'>
+											{dataSelected.discount}%
+										</td>
+									</tr>
+									<tr>
+										<td
+											className='pr-2 border border-black text-right'
+											colSpan={4}
+										>
+											Jumlah Discount
+										</td>
+										<td className='pl-2 border border-black text-center'>
+											{formatRupiah(((dataSelected.total * dataSelected.discount) / 100).toString())}
+										</td>
+									</tr>
+									<tr>
+										<td
+											className='pr-2 border border-black text-right'
+											colSpan={4}
+										>
+											Total
+										</td>
+										<td className='pl-2 border border-black text-center'>
+											{formatRupiah((dataSelected.total - ((dataSelected.total * dataSelected.discount) / 100)).toString())}
+										</td>
+									</tr>
 									{dataSelected.tax === "ppn" ? (
 										<tr>
 											<td
 												className='pr-2 border border-black text-right'
-												colSpan={5}
+												colSpan={4}
 											>
 												PPN {dataSelected.quotations.Customer.ppn}%
 											</td>
@@ -335,7 +370,7 @@ console.log(dataSelected)
 										<tr>
 											<td
 												className='pr-2 border border-black text-right'
-												colSpan={5}
+												colSpan={4}
 											>
 												PPH {dataSelected.quotations.Customer.pph}%
 											</td>
@@ -348,7 +383,7 @@ console.log(dataSelected)
 											<tr>
 												<td
 													className='pr-2 border border-black text-right'
-													colSpan={5}
+													colSpan={4}
 												>
 													PPN {dataSelected.quotations.Customer.ppn}%
 												</td>
@@ -359,7 +394,7 @@ console.log(dataSelected)
 											<tr>
 												<td
 													className='pr-2 border border-black text-right'
-													colSpan={5}
+													colSpan={4}
 												>
 													PPH {dataSelected.quotations.Customer.pph}%
 												</td>
@@ -372,7 +407,7 @@ console.log(dataSelected)
 									<tr>
 										<td
 											className='pr-2 border border-black text-right'
-											colSpan={5}
+											colSpan={4}
 										>
 											Grand Total
 										</td>
@@ -384,9 +419,7 @@ console.log(dataSelected)
 							</table>
 							<table>
 								<thead></thead>
-								<tbody>
-									
-								</tbody>
+								<tbody></tbody>
 							</table>
 						</div>
 					</Section>

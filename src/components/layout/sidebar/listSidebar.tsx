@@ -347,6 +347,12 @@ export const ListNav = [
 				title: "Material",
 				subMenu: null,
 			},
+			{
+				id: "warehouse",
+				link: "/purchasing-logistic/warehouse",
+				title: "Warehouse",
+				subMenu: null,
+			},
 		],
 	},
 	{

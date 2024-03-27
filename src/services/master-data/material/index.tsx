@@ -19,3 +19,6 @@ export const SearchMaterial = (page: number, perpage: number, search: string) =>
 
 //Material Stock
 export const AddMaterialStock = (data: any) => Axios.post(process.env.BASE_URL+'/stockMaterial', data);
+
+//Material new
+export const AddMaterialNew = (data: any) => Axios.post(process.env.BASE_URL+'/masterMaterialNew', data);

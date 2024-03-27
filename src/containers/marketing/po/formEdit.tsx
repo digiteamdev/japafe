@@ -29,6 +29,7 @@ interface dataPo {
 	id: string;
 	id_po: string;
 	po_num_auto: string;
+	job_no: string;
 	quo_id: string;
 	customer: string;
 	tax: string;
@@ -39,6 +40,7 @@ interface dataPo {
 	file: any;
 	term_of_pay: any;
 	price_po: any;
+	discount: number;
 	delete: any;
 	upload_doc: any;
 	Deskription_CusPo: string;
@@ -56,6 +58,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	const [total, setTotal] = useState<number>(0);
 	const [vat, setVat] = useState<number>(0);
 	const [grandTotal, setGrandTotal] = useState<number>(0);
+	const [jumlahDisc, setJumlahDisc] = useState<number>(0);
 	const [totalTerm, setTotalTerm] = useState<number>(0);
 	const [customer, setCustomer] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
@@ -68,11 +71,13 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		id_po: "",
 		po_num_auto: "",
 		quo_id: "",
+		job_no: "",
 		customer: "",
 		file: null,
 		tax: "",
 		subject: "",
 		noted: "",
+		discount: 0,
 		Deskription_CusPo: "",
 		upload_doc: null,
 		term_of_pay: [],
@@ -112,13 +117,15 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				date_limit: new Date(),
 			});
 		}
-
+		let disc = (dataPo.total * parseFloat(dataPo.discount)) / 100;
 		setData({
 			id: dataPo.id,
 			id_po: dataPo.id_po,
 			po_num_auto: dataPo.po_num_auto,
 			quo_id: dataPo.quo_id,
+			job_no: dataPo.job_no,
 			tax: dataPo.tax,
+			discount: dataPo.discount,
 			noted: dataPo.noted,
 			subject: dataPo.quotations.subject,
 			customer: dataPo.quotations.Customer.name,
@@ -140,18 +147,20 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setTaxPPN(dataPo.quotations.Customer.ppn);
 		setTotal(dataPo.total);
 		setGrandTotal(dataPo.grand_tot);
+		setJumlahDisc(disc)
 		// setVat(dataPo.vat);
 	};
 
-	const vatPrice = (taxType: string) => {
+	const vatPrice = (taxType: string, discount: number) => {
+		let disc = (total * discount) / 100;
 		if (taxType === "ppn") {
-			const jumlahTax = (total * taxPPN) / 100;
+			const jumlahTax = ((total - Math.ceil(disc)) * taxPPN) / 100;
 			setTotalPPN(Math.ceil(jumlahTax));
 			return Math.ceil(jumlahTax).toString();
 		} else if (taxType === "pph") {
-			const jumlahTax = (total * taxPPH) / 100;
+			const jumlahTax = ((total - Math.ceil(disc)) * taxPPH) / 100;
 			setTotalPPH(Math.ceil(jumlahTax));
-			return Math.ceil(jumlahTax).toString();
+			return jumlahTax.toString();
 		} else {
 			setTotalPPN(0);
 			setTotalPPH(0);
@@ -175,31 +184,81 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		inputan?.click();
 	};
 
-	const grandTotalChange = (data: any, totalPrice: number, i: number, tax: string) => {
-		let totalHarga = 0
-		data.map( (res: any, idx: number) => {
-			if( i === idx){
-				totalHarga += totalPrice
-			}else{
-				totalHarga += res.total_price
+	const grandTotalChange = (
+		data: any,
+		totalPrice: number,
+		i: number,
+		tax: string,
+		discount: number
+	) => {
+		let totalHarga = 0;
+		data.map((res: any, idx: number) => {
+			if (i === idx) {
+				totalHarga += totalPrice;
+			} else {
+				totalHarga += res.total_price;
 			}
-		})
-		setTotal(totalHarga)
+		});
+		let disc = (total * discount) / 100;
+		setTotal(totalHarga);
 		if (tax === "ppn") {
-			const jumlahTax = (totalHarga * taxPPN) / 100;
+			const jumlahTax = ((totalHarga - Math.ceil(disc)) * taxPPN) / 100;
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "pph") {
-			const jumlahTax = (totalHarga * taxPPH) / 100;
+			const jumlahTax = ((totalHarga - Math.ceil(disc)) * taxPPH) / 100;
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "ppn_and_pph") {
-			const jumlahTaxPPH = (totalHarga * taxPPH) / 100;
-			const jumlahTaxPPN = (totalHarga * taxPPN) / 100;
-			const grandtotal: number = totalHarga + Math.ceil(jumlahTaxPPN) + Math.ceil(jumlahTaxPPH);
+			const jumlahTaxPPH = ((totalHarga - Math.ceil(disc)) * taxPPH) / 100;
+			const jumlahTaxPPN = ((totalHarga - Math.ceil(disc)) * taxPPN) / 100;
+			const grandtotal: number =
+				totalHarga + Math.ceil(jumlahTaxPPN) + Math.ceil(jumlahTaxPPH);
 			setGrandTotal(grandtotal);
 		} else {
-			setGrandTotal(totalHarga);
+			setGrandTotal(totalHarga - Math.ceil(disc));
+		}
+	};
+
+	const grandTotals = (tax: string, discount: number) => {
+		let disc = (total * discount) / 100;
+		console.log(disc, total);
+		if (tax === "ppn") {
+			const grandtotal: number = total - Math.ceil(disc) + totalPPN;
+			return grandtotal.toString();
+		} else if (tax === "pph") {
+			const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+			return grandtotal.toString();
+		} else if (tax === "ppn_and_pph") {
+			const grandtotal: number = total - Math.ceil(disc) + totalPPN + totalPPH;
+			return grandtotal.toString();
+		} else {
+			return (total - Math.ceil(disc)).toString();
+		}
+	};
+
+	const grandTotalTerm = (percent: string, tax: string, discount: number) => {
+		let disc = (total * discount) / 100;
+		if (percent) {
+			if (tax === "ppn") {
+				const grandtotal: number = total - Math.ceil(disc) + totalPPN;
+				let totalTerm = (grandtotal * parseInt(percent)) / 100;
+				return Math.ceil(totalTerm).toString();
+			} else if (tax === "pph") {
+				const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+				let totalTerm = (grandtotal * parseInt(percent)) / 100;
+				return Math.ceil(totalTerm).toString();
+			} else if (tax === "ppn_and_pph") {
+				const grandtotal: number =
+					total - Math.ceil(disc) + totalPPN + totalPPH;
+				let totalTerm = (grandtotal * parseInt(percent)) / 100;
+				return Math.ceil(totalTerm).toString();
+			} else {
+				let totalTerm = ((total - Math.ceil(disc)) * parseInt(percent)) / 100;
+				return totalTerm.toString();
+			}
+		} else {
+			return "0";
 		}
 	};
 
@@ -240,18 +299,21 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		}
 		form.append("id_po", payload.id_po);
 		form.append("po_num_auto", payload.po_num_auto);
+		form.append("job_no", payload.job_no);
 		form.append("quo_id", payload.quo_id);
 		form.append("tax", payload.tax);
 		form.append("noted", payload.noted);
 		form.append("date_of_po", payload.date_of_po);
+		form.append("discount", payload.discount);
 		form.append("date_delivery", payload.date_delivery);
-		form.append("grand_tot", grandTotal.toString());
+		form.append("grand_tot", grandTotals(payload.tax, payload.discount));
 		if (payload.tax === "ppn") {
-			form.append("vat", vatPrice("ppn"));
+			form.append("vat", vatPrice("ppn", payload.discount));
 		} else if (payload.tax === "pph") {
-			form.append("vat", vatPrice("pph"));
+			form.append("vat", vatPrice("pph", payload.discount));
 		} else if (payload.tax === "ppn_and_pph") {
-			let totalVat = vatPrice("ppn") + vatPrice("pph");
+			let totalVat =
+				vatPrice("ppn", payload.discount) + vatPrice("pph", payload.discount);
 			form.append("vat", totalVat);
 		} else {
 			form.append("vat", "0");
@@ -316,7 +378,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form  onChange={handleOnChanges}>
+					<Form onChange={handleOnChanges}>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -334,12 +396,13 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 							</div>
 							<div className='w-full'>
 								<Input
-									id='quo_auto'
-									name='quo_auto'
-									placeholder='Po Id'
-									label='PO Id'
+									id='job_no'
+									name='job_no'
+									placeholder='Job No'
+									label='Job No'
 									type='text'
-									value={values.po_num_auto}
+									onChange={handleChange}
+									value={values.job_no}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -531,7 +594,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									<>
 										{values.price_po.map((res: any, i: number) => (
 											<div key={i}>
-												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 													<div className='w-full'>
 														<InputArea
 															id={`price_po.${i}.description`}
@@ -561,20 +624,29 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.qty.toString())}
 															onChange={(e: any) => {
-																let qty = e.target.value.toString().replaceAll(".", "");
-																let unitPrice = res.unit_price.toString().replaceAll(".", "");
-																let discount = res.discount.toString().replaceAll(".", "");
+																let qty = e.target.value
+																	.toString()
+																	.replaceAll(".", "");
+																let unitPrice = res.unit_price
+																	.toString()
+																	.replaceAll(".", "");
+																let discount = res.discount
+																	.toString()
+																	.replaceAll(".", "");
 																let totalPrice = qty * unitPrice;
-																let totalDisc = totalPrice * discount / 100
-																setFieldValue(
-																	`price_po.${i}.qty`,
-																	qty
-																);
+																let totalDisc = (totalPrice * discount) / 100;
+																setFieldValue(`price_po.${i}.qty`, qty);
 																setFieldValue(
 																	`price_po.${i}.total_price`,
 																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
+																grandTotalChange(
+																	values.price_po,
+																	totalPrice - Math.ceil(totalDisc),
+																	i,
+																	values.tax,
+																	values.discount
+																);
 															}}
 															disabled={false}
 															required={true}
@@ -612,11 +684,17 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.unit_price.toString())}
 															onChange={(e: any) => {
-																let qty = res.qty.toString().replaceAll(".", "");
-																let unitPrice = e.target.value.toString().replaceAll(".", "");
-																let discount = res.discount.toString().replaceAll(".", "");
+																let qty = res.qty
+																	.toString()
+																	.replaceAll(".", "");
+																let unitPrice = e.target.value
+																	.toString()
+																	.replaceAll(".", "");
+																let discount = res.discount
+																	.toString()
+																	.replaceAll(".", "");
 																let totalPrice = qty * unitPrice;
-																let totalDisc = totalPrice * discount / 100
+																let totalDisc = (totalPrice * discount) / 100;
 																setFieldValue(
 																	`price_po.${i}.unit_price`,
 																	unitPrice
@@ -625,7 +703,13 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																	`price_po.${i}.total_price`,
 																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
+																grandTotalChange(
+																	values.price_po,
+																	totalPrice - Math.ceil(totalDisc),
+																	i,
+																	values.tax,
+																	values.discount
+																);
 															}}
 															disabled={false}
 															required={true}
@@ -633,7 +717,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>
-													<div className='w-full'>
+													{/* <div className='w-full'>
 														<Input
 															id={`price_po.${i}.discount`}
 															name={`price_po.${i}.discount`}
@@ -643,11 +727,17 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 															pattern='\d*'
 															value={formatRupiah(res.discount.toString())}
 															onChange={(e: any) => {
-																let qty = res.qty.toString().replaceAll(".", "");
-																let unitPrice = res.unit_price.toString().replaceAll(".", "");
-																let discount = e.target.value.toString().replaceAll(".", "");
+																let qty = res.qty
+																	.toString()
+																	.replaceAll(".", "");
+																let unitPrice = res.unit_price
+																	.toString()
+																	.replaceAll(".", "");
+																let discount = e.target.value
+																	.toString()
+																	.replaceAll(".", "");
 																let totalPrice = qty * unitPrice;
-																let totalDisc = totalPrice * discount / 100 
+																let totalDisc = (totalPrice * discount) / 100;
 																setFieldValue(
 																	`price_po.${i}.discount`,
 																	discount
@@ -656,14 +746,20 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																	`price_po.${i}.total_price`,
 																	totalPrice - Math.ceil(totalDisc)
 																);
-																grandTotalChange(values.price_po, (totalPrice - Math.ceil(totalDisc)), i, values.tax)
+																grandTotalChange(
+																	values.price_po,
+																	totalPrice - Math.ceil(totalDisc),
+																	i,
+																	values.tax,
+																	values.discount
+																);
 															}}
 															disabled={false}
 															required={true}
 															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
-													</div>
+													</div> */}
 													<div className='w-full'>
 														<Input
 															id={`price_po.${i}.total_price`}
@@ -724,6 +820,87 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									</>
 								)}
 							/>
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='col-span-4 text-right'>
+									<p className='mt-4'>Sub Total</p>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='discount'
+										name='discount'
+										placeholder='Discount'
+										type='text'
+										pattern='\d*'
+										value={formatRupiah(total.toString())}
+										disabled={true}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='col-span-4 text-right'>
+									<p className='mt-4'>Discount (%)</p>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='discount'
+										name='discount'
+										placeholder='Discount'
+										type='text'
+										pattern='\d*'
+										onChange={(e: any) => {
+											let disc = (total * parseFloat(e.target.value)) / 100;
+											setFieldValue("discount", e.target.value);
+											setJumlahDisc(disc);
+										}}
+										value={values.discount.toString()}
+										disabled={false}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='col-span-4 text-right'>
+									<p className='mt-4'>Jumlah Disc</p>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='discount'
+										name='discount'
+										placeholder='Discount'
+										type='text'
+										pattern='\d*'
+										value={formatRupiah(jumlahDisc.toString())}
+										disabled={false}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='col-span-4 text-right'>
+									<p className='mt-4'>Total</p>
+								</div>
+								<div className='w-full'>
+									<Input
+										id='discount'
+										name='discount'
+										placeholder='Discount'
+										type='text'
+										pattern='\d*'
+										value={formatRupiah((total - jumlahDisc).toString())}
+										disabled={true}
+										required={true}
+										withLabel={false}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
 							{values.tax === "ppn" ? (
 								<Section className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='col-span-4 text-right'>
@@ -735,7 +912,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 											name='ppn'
 											placeholder='PPN'
 											type='text'
-											value={formatRupiah(vatPrice("ppn"))}
+											value={formatRupiah(vatPrice("ppn", values.discount))}
 											disabled={true}
 											required={true}
 											withLabel={false}
@@ -754,7 +931,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 											name='pph'
 											placeholder='PPH'
 											type='text'
-											value={formatRupiah(vatPrice("pph"))}
+											value={formatRupiah(vatPrice("pph", values.discount))}
 											disabled={true}
 											required={true}
 											withLabel={false}
@@ -774,7 +951,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 												name='ppn'
 												placeholder='PPN'
 												type='text'
-												value={formatRupiah(vatPrice("ppn"))}
+												value={formatRupiah(vatPrice("ppn", values.discount))}
 												disabled={true}
 												required={true}
 												withLabel={false}
@@ -792,7 +969,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 												name='pph'
 												placeholder='PPH'
 												type='text'
-												value={formatRupiah(vatPrice("pph"))}
+												value={formatRupiah(vatPrice("pph", values.discount))}
 												disabled={true}
 												required={true}
 												withLabel={false}
@@ -812,7 +989,9 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 										name='qty'
 										placeholder='Grand Total'
 										type='text'
-										value={formatRupiah(grandTotal.toString())}
+										value={formatRupiah(
+											grandTotals(values.tax, values.discount)
+										)}
 										disabled={true}
 										required={true}
 										withLabel={false}
@@ -872,21 +1051,22 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																		const nameSplit = e.target.name.split("."),
 																			index = nameSplit[1],
 																			percent = e.target.value,
-																			htmlTotalTerm = document.getElementById(
-																				`term_of_pay.${index}.price`
-																			) as HTMLInputElement,
 																			totalTerm: any =
-																				(grandTotal * percent) / 100;
-																		htmlTotalTerm.value = formatRupiah(
-																			totalTerm.toString()
-																		);
+																				(parseInt(
+																					grandTotals(
+																						values.tax,
+																						values.discount
+																					)
+																				) *
+																					percent) /
+																				100;
 																		setFieldValue(
 																			`term_of_pay.${i}.percent`,
 																			e.target.value
 																		);
 																		setFieldValue(
 																			`term_of_pay.${i}.price`,
-																			totalTerm
+																			Math.ceil(totalTerm)
 																		);
 																	}}
 																	required={true}
@@ -901,7 +1081,13 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 																	placeholder='10000'
 																	label='Noted'
 																	type='text'
-																	value={formatRupiah(res.price.toString())}
+																	value={formatRupiah(
+																		grandTotalTerm(
+																			res.percent,
+																			values.tax,
+																			values.discount
+																		)
+																	)}
 																	disabled={true}
 																	required={true}
 																	withLabel={false}

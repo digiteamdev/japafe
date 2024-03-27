@@ -131,21 +131,9 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		let datasWor: any = [
 			{
 				value: [{
-					job_no: year.toString().substring(2,4) + 200 
+					job_no: "Internal" 
 				}],
-				label: year.toString().substring(2,4) + 200 + " - Adm & Office"
-			},
-			{
-				value: [{
-					job_no: year.toString().substring(2,4) + 210 
-				}],
-				label: year.toString().substring(2,4) + 210 + " - Maintance"
-			},
-			{
-				value: [{
-					job_no: year.toString().substring(2,4) + 220 
-				}],
-				label: year.toString().substring(2,4) + 220 + " - Trainning & Studying"
+				label: "Internal"
 			},
 		];
 		try {
@@ -501,7 +489,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 						}) => (
 							<Form onChange={handleOnChanges}>
 								<h1 className='text-xl font-bold mt-3'>Material Request</h1>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='departement'
@@ -552,8 +540,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 											)}
 										</InputSelectSea> */}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='date'
@@ -568,6 +554,8 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
+								</Section>
+								{/* <Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='user'
@@ -582,7 +570,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-								</Section>
+								</Section> */}
 								{isMaterial ? (
 									<div>
 										<h5 className='text-xl font-bold mt-3'>Material</h5>
@@ -662,8 +650,8 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 												values.detailMr.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-																<div className='w-full'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+																{/* <div className='w-full'>
 																	<Input
 																		id='job No'
 																		name='job No'
@@ -676,7 +664,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
-																</div>
+																</div> */}
 																<div className='w-full'>
 																	<InputSelect
 																		id={`detailMr.${i}.material`}
@@ -729,7 +717,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																								res.id === result.material
 																							}
 																						>
-																							{res.name} ({res.grup_material})
+																							{res.name}
 																						</option>
 																					);
 																				}

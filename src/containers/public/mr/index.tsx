@@ -33,6 +33,7 @@ export const Mr = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "MR No" },
+		{ name: "No Job" },
 		{ name: "MR Date" },
 		{ name: "Departement" },
 		{ name: "Action" },
@@ -221,6 +222,7 @@ export const Mr = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-md ${bgMr(
@@ -230,6 +232,9 @@ export const Mr = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{res.no_mr}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.job_no}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.date_mr).format("DD-MM-YYYY")}

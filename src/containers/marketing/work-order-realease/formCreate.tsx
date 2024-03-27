@@ -162,7 +162,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 	const addWor = async (payload: any) => {
 		setIsLoading(true);
 		const dataBody = new FormData();
-		dataBody.append("job_no", "");
+		dataBody.append("job_no", payload.job_no);
 		dataBody.append("date_wor", payload.date_wor);
 		dataBody.append("cuspoId", customerId);
 		dataBody.append("subject", payload.subject);
@@ -277,7 +277,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Work Order Release</h1>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date'
@@ -341,10 +341,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 											});
 										});
 										setFieldValue("work_scope", scopeWork);
-										// setEquipment(
-										// 	e.value.quotations.eqandpart[0].equipment.nama
-										// );
-										// setValueContract(e.value.total);
+										setFieldValue("job_no", e.value.job_no)
 									}}
 									required={true}
 									withLabel={true}
@@ -368,6 +365,20 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 								{errors.cuspoId && touched.cuspoId ? (
 									<span className='text-red-500 text-xs'>{errors.cuspoId}</span>
 								) : null}
+							</div>
+							<div className='w-full'>
+								<Input
+									id='job_no'
+									name='job_no'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={values.job_no}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
 							<div className='w-full'>
 								<Input

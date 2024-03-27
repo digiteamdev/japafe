@@ -240,9 +240,9 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 										Material Name
 									</th>
 									<th className='border border-black text-center'>
-										Material Spesifikasi
+										Quantity
 									</th>
-									<th className='border border-black text-center'>Quantity</th>
+									<th className='border border-black text-center'>Satuan</th>
 									<th className='border border-black text-center'>Note</th>
 								</tr>
 							</thead>
@@ -254,13 +254,13 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 												{dataSelected.job_no}
 											</td>
 											<td className='border border-black text-center'>
-												{res.Material_Stock.Material_master.material_name}
-											</td>
-											<td className='border border-black text-center'>
-												{res.Material_Stock.spesifikasi}
+												{res.Material_Stock.Material_master.material_name} {res.Material_Stock.spesifikasi}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qty}
+											</td>
+											<td className='border border-black text-center'>
+												{ res.Material_Stock.Material_master.satuan }
 											</td>
 											<td className='border border-black text-center'>
 												{res.note}

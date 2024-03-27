@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
@@ -8,41 +8,37 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination,
+	Pagination
 } from "../../../components";
-import { FileText, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreatePo } from "./formCreate";
-import { ViewPo } from "./view";
-import { FormEditPo } from "./formEdit";
-import { GetAllCustomer, GetPo, SearchPo, DeletePo } from "../../../services";
+import { Box, Eye, Edit, Trash2 } from "react-feather";
+import { FormCreateWarehouse } from "./formCreate";
+// import { ViewMaterial } from "./view";
+// import { FormEditMaterial } from './formEdit';
+import { GetMaterial, SearchMaterial, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
-import { cekDivisiMarketing } from "../../../utils"
 
-export const Po = () => {
+export const Warehouse = () => {
+
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
+	const [modalContent, setModalContent] = useState<string>("add");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
-	const [dataSelected, setDataSelected] = useState<any>(false);
-	const [dataCustomer, setDataCustomer] = useState<any>([]);
-	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-	const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Job No" },
-		{ name: "PO/SO/SPK Num" },
-		{ name: "Quotation Num" },
-		{ name: "Customer" },
-		{ name: "Subject" },
+		{ name: "Material Name" },
+		{ name: "Spesifikasi" },
+		{ name: "Satuan" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getPo(page, perPage, cekDivisiMarketing());
-		getCustomer();
+		getMaterial(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,50 +49,38 @@ export const Po = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPo(page, perPage, cekDivisiMarketing());
+			getMaterial(page, perPage);
 		}
 	};
 
-	const getCustomer = async () => {
-		try {
-			const response = await GetAllCustomer(cekDivisiMarketing());
-			if (response.data) {
-				setDataCustomer(response.data.result);
-			}
-		} catch (error: any) {
-			if (error.response.data.login) {
-				setData([]);
-			} else {
-				removeToken();
-				router.push("/");
-			}
-		}
-	};
-
-	const getPo = async (page: number, perpage: number, divisi: string) => {
+	const getMaterial = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPo(page, perpage, divisi);
+			const response = await GetMaterial(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil(response.data.totalData / perpage));
+				setTotalPage(Math.ceil( response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if (error.response.data.login) {
+			if(error.response.data.login){
 				setData([]);
-			} else {
+			}else{
 				removeToken();
-				router.push("/");
+				router.push('/');
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchPo = async (page: number, limit: number, search: string) => {
+	const searchMaterial = async (
+		page: number,
+		limit: number,
+		search: string
+	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPo(page, limit, search, cekDivisiMarketing());
+			const response = await SearchMaterial(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -106,11 +90,11 @@ export const Po = () => {
 		setIsLoading(false);
 	};
 
-	const deletePo = async (id: string) => {
+	const deleteMaterial = async (id: string) => {
 		try {
-			const response = await DeletePo(id);
-			if (response.data) {
-				toast.success("Delete Customer PO Success", {
+			const response = await DeleteMaterial(id);
+			if(response.data){
+				toast.success("Delete Material Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -120,10 +104,10 @@ export const Po = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPo(1, 10, cekDivisiMarketing());
+				getMaterial(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Customer PO Failed", {
+			toast.error("Delete Material Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -140,15 +124,15 @@ export const Po = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Customer PO'
+				title='Warehouse'
 				total={countData}
-				icon={<FileText className='w-[36px] h-[36px]' />}
+				icon={<Box className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Customer PO'
+				title='Warehouse'
 				print={true}
 				showModal={showModal}
-				search={searchPo}
+				search={searchMaterial}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -192,16 +176,19 @@ export const Po = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='px-6 py-4'>
-										{res.job_no}
+									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
+										{ res.kd_material }
 									</td>
-									<td className='px-6 py-4'>
-										{res.id_po === "" ? "-" : res.id_po}
+									<td className='whitespace-nowrap px-6 py-4'>
+										{ res.material_name }
 									</td>
-									<td className='px-6 py-4'>{res.quotations.quo_num}</td>
-									<td className='px-6 py-4'>{res.quotations.Customer.name}</td>
-									<td className='px-6 py-4'>{res.quotations.subject}</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{ res.grup_material.material_name }
+									</td>
+									<td className='whitespace-nowrap px-6 py-4'>
+										{ res.satuan }
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
@@ -212,28 +199,24 @@ export const Po = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* { res.wor.length === 0 ? ( */}
-											<>
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "edit", false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-												<Button
-													className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "delete", false);
-													}}
-												>
-													<Trash2 color='white' />
-												</Button>
-											</>
-											{/* ) : null } */}
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true,'edit', false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											<Button
+												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "delete", false);
+												}}
+											>
+												<Trash2 color='white' />
+											</Button>
 										</div>
 									</td>
 								</tr>
@@ -241,18 +224,20 @@ export const Po = () => {
 						})
 					)}
 				</Table>
-				{totalPage > 1 ? (
-					<Pagination
-						currentPage={currentPage}
-						pageSize={perPage}
-						siblingCount={1}
-						totalCount={countData}
-						onChangePage={(value: any) => {
-							setCurrentPage(value);
-							getPo(value, perPage, cekDivisiMarketing());
-						}}
-					/>
-				) : null}
+				{
+					totalPage > 1 ? (
+						<Pagination 
+							currentPage={currentPage} 
+							pageSize={perPage} 
+							siblingCount={1} 
+							totalCount={countData} 
+							onChangePage={(value: any) => {
+								setCurrentPage(value);
+								getMaterial(value, perPage);
+							}}
+						/>
+					) : null
+				}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -260,30 +245,24 @@ export const Po = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deletePo}
+					onDelete={deleteMaterial}
 				/>
 			) : (
 				<Modal
-					title='Customer PO'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-						<ViewPo dataSelected={dataSelected} />
+				title='Material'
+				isModal={isModal}
+				content={modalContent}
+				showModal={showModal}
+			>
+				{modalContent === "view" ? (
+                    <></>
+					// <ViewMaterial dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
-						<FormCreatePo
-							content={modalContent}
-							showModal={showModal}
-							dataCustomer={dataCustomer}
-						/>
-					) : (
-						<FormEditPo
-							content={modalContent}
-							showModal={showModal}
-							dataPo={dataSelected}
-						/>
-					)}
+                        <FormCreateWarehouse content={modalContent} showModal={showModal} />
+				) : (
+                    <></>
+					// <FormEditMaterial content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+				)}
 				</Modal>
 			)}
 		</div>
