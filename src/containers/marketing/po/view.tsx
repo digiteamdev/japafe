@@ -26,8 +26,6 @@ export const ViewPo = ({ dataSelected }: props) => {
 		return Math.ceil(pph);
 	};
 
-	const discount = () => {}
-
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -416,10 +414,6 @@ export const ViewPo = ({ dataSelected }: props) => {
 										</td>
 									</tr>
 								</tbody>
-							</table>
-							<table>
-								<thead></thead>
-								<tbody></tbody>
 							</table>
 						</div>
 					</Section>

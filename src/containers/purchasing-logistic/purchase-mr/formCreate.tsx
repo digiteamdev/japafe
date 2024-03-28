@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
@@ -12,6 +17,7 @@ import moment from "moment";
 import { getIdUser } from "../../../configs/session";
 import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
 import { Disclosure } from "@headlessui/react";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -59,6 +65,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any) => {
+					console.log(res);
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
@@ -69,7 +76,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						disc: res.disc,
 						currency: "IDR",
 						total: res.Material_Stock.harga * res.qtyAppr,
-						material: res.Material_Stock.spesifikasi,
+						material: `${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`,
 						qty: res.qtyAppr,
 						note: res.note,
 						price: res.price,
@@ -101,12 +108,19 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	};
 
 	const getSupplier = async () => {
+		let listSup: any = [];
 		try {
 			const response = await GetAllSupplier();
 			if (response) {
-				setListSupplier(response.data.result);
+				response.data.result.map((res: any) => {
+					listSup.push({
+						label: res.supplier_name,
+						value: res,
+					});
+				});
 			}
 		} catch (error) {}
+		setListSupplier(listSup);
 	};
 
 	const generateIdNum = () => {
@@ -266,6 +280,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							name='detailMr'
 							render={(arrayMr) =>
 								values.detailMr.map((result: any, i: number) => {
+									console.log(result);
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
@@ -298,40 +313,19 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													/>
 												</div>
 												<div className='w-full'>
-													<InputSelect
-														id={`detailMr.${i}.supId`}
-														name={`detailMr.${i}.supId`}
-														placeholder='Suplier'
-														label='Suplier'
+													<InputSelectSearch
+														datas={listSupplier}
+														id='supId'
+														name='supId'
+														placeholder='Supplier'
+														label='Supplier'
 														onChange={(e: any) => {
-															setFieldValue(
-																`detailMr.${i}.supId`,
-																e.target.value
-															);
+															setFieldValue(`detailMr.${i}.supId`, e.value.id);
 														}}
 														required={true}
 														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Suplier
-														</option>
-														{listSupplier.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listSupplier.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		selected={res.id === result.supId}
-																	>
-																		{res.supplier_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+													/>
 												</div>
 												<div className='w-full'>
 													<Input
@@ -376,31 +370,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 												</div>
 											</Section>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-												{/* <div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.currency`}
-																		name={`detailMr.${i}.currency`}
-																		placeholder='Currency'
-																		label='Currency'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.Currency`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='IDR' selected>
-																			IDR
-																		</option>
-																		<option value='EUR'>EUR</option>
-																		<option value='SGD'>SGD</option>
-																		<option value='USD'>USD</option>
-																		<option value='YEN'>YEN</option>
-																	</InputSelect>
-																</div> */}
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.note`}
@@ -421,21 +390,18 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.price`}
 														placeholder='Price'
 														label='Price'
-														type='number'
-														value={result.price}
+														type='text'
+														pattern='\d*'
+														value={formatRupiah(result.price.toString())}
 														onChange={(e: any) => {
+															let price: number = e.target.value
+																.toString()
+																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(
-																	e.target.value,
-																	result.qty,
-																	result.disc
-																)
+																totalHarga(price, result.qty, result.disc)
 															);
-															setFieldValue(
-																`detailMr.${i}.price`,
-																e.target.value
-															);
+															setFieldValue(`detailMr.${i}.price`, price);
 														}}
 														required={true}
 														withLabel={true}
@@ -448,22 +414,19 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.disc`}
 														placeholder='Discount'
 														label='Discount'
-														type='number'
+														type='text'
+														pattern='\d*'
 														onChange={(e: any) => {
+															let discount: number = e.target.value
+																.toString()
+																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(
-																	result.price,
-																	result.qty,
-																	e.target.value
-																)
+																totalHarga(result.price, result.qty, discount)
 															);
-															setFieldValue(
-																`detailMr.${i}.disc`,
-																e.target.value
-															);
+															setFieldValue(`detailMr.${i}.disc`, discount);
 														}}
-														value={result.disc}
+														value={formatRupiah(result.disc.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -475,8 +438,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.total`}
 														placeholder='Total Price'
 														label='Total Price'
-														type='number'
-														value={result.total}
+														type='text'
+														value={formatRupiah(result.total.toString())}
 														disabled={true}
 														required={true}
 														withLabel={true}

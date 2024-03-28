@@ -10,7 +10,7 @@ interface props {
 export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 	
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
 				<>
 					<h1 className='font-bold text-xl'>Material Request</h1>

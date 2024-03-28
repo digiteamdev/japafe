@@ -212,7 +212,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 											`${e.value.supplier.addresses_sup} - ${e.value.supplier.cities}`
 										);
 										setSuplierPhone(
-											`+62${e.value.supplier.SupplierContact[0].phone}`
+											`${e.value.supplier.SupplierContact.length === 0 ? "" : `+62${e.value.supplier.SupplierContact[0].phone}`}`
 										);
 										setSuplierFax(
 											e.value.supplier.fax
@@ -356,7 +356,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 															placeholder='Material Name'
 															label='Material Name'
 															type='text'
-															value={res.Material_Stock.spesifikasi}
+															value={`${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`}
 															disabled={true}
 															required={true}
 															withLabel={true}

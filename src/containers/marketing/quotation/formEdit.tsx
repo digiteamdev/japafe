@@ -91,8 +91,8 @@ export const FormEditQuotation = ({
 				value: "Days",
 			},
 			{
-				label: "Each",
-				value: "Each",
+				label: "Ea",
+				value: "Ea",
 			},
 			{
 				label: "Hours",

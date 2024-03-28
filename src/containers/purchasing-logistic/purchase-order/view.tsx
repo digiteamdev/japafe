@@ -120,14 +120,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 			} else {
 				return (
 					<div>
-						<button
+						{/* <button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -142,14 +142,14 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 		} else {
 			return (
 				<div>
-					<button
+					{/* <button
 						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 						onClick={() => showModalPdf(true)}
 					>
 						<div className='flex px-1 py-1'>
 							<Printer size={16} className='mr-1' /> Print
 						</div>
-					</button>
+					</button> */}
 				</div>
 			);
 		}
@@ -161,11 +161,11 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfPo
+			{/* <PdfPo
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -198,7 +198,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										Suplier
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{`${dataSelected.supplier.supplier_name} - ${dataSelected.supplier.addresses_sup}, ${dataSelected.supplier.districts}, ${dataSelected.supplier.cities}, ${dataSelected.supplier.provinces}`}
+										{dataSelected.supplier.supplier_name}
 									</td>
 								</tr>
                                 <tr>
@@ -206,7 +206,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										Suplier Contact
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-                                        { dataSelected.supplier.SupplierContact[0].contact_person } - +62{ dataSelected.supplier.SupplierContact[0].phone }
+                                        { dataSelected.supplier.SupplierContact.length === 0 ? "" : dataSelected.supplier.SupplierContact[0].contact_person } - { dataSelected.supplier.SupplierContact.length === 0 ? "" : `+62${dataSelected.supplier.SupplierContact[0].phone}` }
 									</td>
 								</tr>
 								<tr>

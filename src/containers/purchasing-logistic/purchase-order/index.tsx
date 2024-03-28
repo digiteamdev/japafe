@@ -31,10 +31,10 @@ export const PurchasePO = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "PO Number" },
+		{ name: "No MR" },
+		{ name: "Job No" },
 		{ name: "Date PO" },
 		{ name: "Suplier" },
-		{ name: "Contact" },
 		{ name: "Action" },
 	];
 
@@ -178,16 +178,16 @@ export const PurchasePO = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.id_so}
+										{res.detailMr[0].mr.no_mr}
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{res.detailMr[0].mr.job_no}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{res.detailMr[0].supplier.supplier_name}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.detailMr[0].supplier.SupplierContact[0].contact_person}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

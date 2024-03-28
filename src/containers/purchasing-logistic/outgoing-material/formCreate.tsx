@@ -307,7 +307,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 											setFieldValue(`mr.${i}.idMr`, res.mr.no_mr);
 											setFieldValue(
 												`mr.${i}.materialName`,
-												res.Material_Stock.spesifikasi
+												`${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`
 											);
 											setFieldValue(
 												`mr.${i}.job_no`,

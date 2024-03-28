@@ -206,14 +206,14 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "pph") {
-			const jumlahTax = ((totalHarga - Math.ceil(disc)) * taxPPH) / 100;
+			const jumlahTax = ((totalHarga - Math.ceil(disc)) - taxPPH) / 100;
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "ppn_and_pph") {
 			const jumlahTaxPPH = ((totalHarga - Math.ceil(disc)) * taxPPH) / 100;
 			const jumlahTaxPPN = ((totalHarga - Math.ceil(disc)) * taxPPN) / 100;
 			const grandtotal: number =
-				totalHarga + Math.ceil(jumlahTaxPPN) + Math.ceil(jumlahTaxPPH);
+				totalHarga + Math.ceil(jumlahTaxPPN) - Math.ceil(jumlahTaxPPH);
 			setGrandTotal(grandtotal);
 		} else {
 			setGrandTotal(totalHarga - Math.ceil(disc));
@@ -227,10 +227,10 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			const grandtotal: number = total - Math.ceil(disc) + totalPPN;
 			return grandtotal.toString();
 		} else if (tax === "pph") {
-			const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+			const grandtotal: number = total - Math.ceil(disc) - totalPPH;
 			return grandtotal.toString();
 		} else if (tax === "ppn_and_pph") {
-			const grandtotal: number = total - Math.ceil(disc) + totalPPN + totalPPH;
+			const grandtotal: number = total - Math.ceil(disc) + totalPPN - totalPPH;
 			return grandtotal.toString();
 		} else {
 			return (total - Math.ceil(disc)).toString();
@@ -245,12 +245,12 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else if (tax === "pph") {
-				const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+				const grandtotal: number = total - Math.ceil(disc) - totalPPH;
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else if (tax === "ppn_and_pph") {
 				const grandtotal: number =
-					total - Math.ceil(disc) + totalPPN + totalPPH;
+					total - Math.ceil(disc) + totalPPN - totalPPH;
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else {

@@ -145,10 +145,10 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			const grandtotal: number = total - Math.ceil(disc) + totalPPN;
 			return grandtotal.toString();
 		} else if (tax === "pph") {
-			const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+			const grandtotal: number = total - Math.ceil(disc) - totalPPH;
 			return grandtotal.toString();
 		} else if (tax === "ppn_and_pph") {
-			const grandtotal: number = total - Math.ceil(disc) + totalPPN + totalPPH;
+			const grandtotal: number = total - Math.ceil(disc) + totalPPN - totalPPH;
 			return grandtotal.toString();
 		} else {
 			return (total - Math.ceil(disc)).toString();
@@ -163,12 +163,12 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else if (tax === "pph") {
-				const grandtotal: number = total - Math.ceil(disc) + totalPPH;
+				const grandtotal: number = total - Math.ceil(disc) - totalPPH;
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else if (tax === "ppn_and_pph") {
 				const grandtotal: number =
-					total - Math.ceil(disc) + totalPPN + totalPPH;
+					total - Math.ceil(disc) + totalPPN - totalPPH;
 				let totalTerm = (grandtotal * parseInt(percent)) / 100;
 				return Math.ceil(totalTerm).toString();
 			} else {
@@ -193,10 +193,10 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 			const grandtotal: number = totalHarga + totalPPN;
 			setTotal(grandtotal);
 		} else if (typeTax === "pph") {
-			const grandtotal: number = totalHarga + totalPPH;
+			const grandtotal: number = totalHarga - totalPPH;
 			setTotal(grandtotal);
 		} else if (typeTax === "ppn_and_pph") {
-			const grandtotal: number = totalHarga + totalPPN + totalPPH;
+			const grandtotal: number = totalHarga + totalPPN - totalPPH;
 			setTotal(grandtotal);
 		} else {
 			setTotal(totalHarga);

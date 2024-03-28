@@ -368,27 +368,27 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "job-cost-manhour",
-				link: "/director/job-cost-manhour",
-				title: "Job Cost & Man Hour",
+			// {
+			// 	id: "job-cost-manhour",
+			// 	link: "/director/job-cost-manhour",
+			// 	title: "Job Cost & Man Hour",
 
-				subMenu: null,
-			},
-			{
-				id: "cash-advance-list",
-				link: "/director/cash-advance-list",
-				title: "Cash Advance List",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "cash-advance-list",
+			// 	link: "/director/cash-advance-list",
+			// 	title: "Cash Advance List",
 
-				subMenu: null,
-			},
-			{
-				id: "payment-schedule",
-				link: "/director/payment-schedule",
-				title: "Payment Schedule",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "payment-schedule",
+			// 	link: "/director/payment-schedule",
+			// 	title: "Payment Schedule",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 		],
 	},
 	{
@@ -397,13 +397,13 @@ export const ListNav = [
 		title: "Finance & Accounting",
 		role: "ADMINISTRATOR,FINANCE & ACC",
 		subMenu: [
-			{
-				id: "open-close-cashier",
-				link: "/finance-accounting/open-close-cashier",
-				title: "Open/Close Cashier",
+			// {
+			// 	id: "open-close-cashier",
+			// 	link: "/finance-accounting/open-close-cashier",
+			// 	title: "Open/Close Cashier",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "cashier",
 				link: "/finance-accounting/cashier",
@@ -411,13 +411,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "general-payment",
-				link: "/finance-accounting/general-payment",
-				title: "General Payment",
+			// {
+			// 	id: "general-payment",
+			// 	link: "/finance-accounting/general-payment",
+			// 	title: "General Payment",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "kontra-bon",
 				link: "/finance-accounting/kontra-bon",
@@ -439,76 +439,76 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "memorial-joural",
-				link: "/finance-accounting/memorial-joural",
-				title: "Memorial Journal",
+			// {
+			// 	id: "memorial-joural",
+			// 	link: "/finance-accounting/memorial-joural",
+			// 	title: "Memorial Journal",
 
-				subMenu: null,
-			},
-			{
-				id: "accountability-approval",
-				link: "/finance-accounting/accountability-approval",
-				title: "Accountability Approval",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "accountability-approval",
+			// 	link: "/finance-accounting/accountability-approval",
+			// 	title: "Accountability Approval",
 
-				subMenu: null,
-			},
-			{
-				id: "transactions-per-day",
-				link: "/finance-accounting/transactions-per-day",
-				title: "Transactions Per Day",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "transactions-per-day",
+			// 	link: "/finance-accounting/transactions-per-day",
+			// 	title: "Transactions Per Day",
 
-				subMenu: null,
-			},
-			{
-				id: "transactions-per-account",
-				link: "/finance-accounting/transactions-per-account",
-				title: "Transactions Per Account",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "transactions-per-account",
+			// 	link: "/finance-accounting/transactions-per-account",
+			// 	title: "Transactions Per Account",
 
-				subMenu: null,
-			},
-			{
-				id: "cash-advance-control",
-				link: "/finance-accounting/cash-advance-control",
-				title: "Cash Advance Control",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "cash-advance-control",
+			// 	link: "/finance-accounting/cash-advance-control",
+			// 	title: "Cash Advance Control",
 
-				subMenu: null,
-			},
-			{
-				id: "purchasing-control",
-				link: "/finance-accounting/purchasing-control",
-				title: "Purchasing Control",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "purchasing-control",
+			// 	link: "/finance-accounting/purchasing-control",
+			// 	title: "Purchasing Control",
 
-				subMenu: null,
-			},
-			{
-				id: "general-control",
-				link: "/finance-accounting/general-control",
-				title: "General Control",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "general-control",
+			// 	link: "/finance-accounting/general-control",
+			// 	title: "General Control",
 
-				subMenu: null,
-			},
-			{
-				id: "update-patycash",
-				link: "/finance-accounting/update-patycash",
-				title: "Update Patycash",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "update-patycash",
+			// 	link: "/finance-accounting/update-patycash",
+			// 	title: "Update Patycash",
 
-				subMenu: null,
-			},
-			{
-				id: "purchasing-report",
-				link: "/finance-accounting/purchasing-report",
-				title: "Purchasing Report",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "purchasing-report",
+			// 	link: "/finance-accounting/purchasing-report",
+			// 	title: "Purchasing Report",
 
-				subMenu: null,
-			},
-			{
-				id: "closing-form",
-				link: "/finance-accounting/closing-form",
-				title: "Closing Form",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "closing-form",
+			// 	link: "/finance-accounting/closing-form",
+			// 	title: "Closing Form",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 		],
 	},
 	{
@@ -586,33 +586,33 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "worker-center",
-				link: "/production/worker-center",
-				title: "Worker Center",
+			// {
+			// 	id: "worker-center",
+			// 	link: "/production/worker-center",
+			// 	title: "Worker Center",
 
-				subMenu: null,
-			},
-			{
-				id: "job-status",
-				link: "/production/job-status",
-				title: "Job Status",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "job-status",
+			// 	link: "/production/job-status",
+			// 	title: "Job Status",
 
-				subMenu: null,
-			},
-			{
-				id: "mr-sr-status",
-				link: "/production/mr-sr-status",
-				title: "MR/SR Status",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "mr-sr-status",
+			// 	link: "/production/mr-sr-status",
+			// 	title: "MR/SR Status",
 
-				subMenu: null,
-			},
-			{
-				id: "activity",
-				link: "/production/activity",
-				title: "Activity",
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "activity",
+			// 	link: "/production/activity",
+			// 	title: "Activity",
+			// 	subMenu: null,
+			// },
 			{
 				id: "equipment-part",
 				link: "/production/equipment-part",

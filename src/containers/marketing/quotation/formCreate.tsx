@@ -116,8 +116,8 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				value: "Days",
 			},
 			{
-				label: "Each",
-				value: "Each",
+				label: "Ea",
+				value: "Ea",
 			},
 			{
 				label: "Hours",

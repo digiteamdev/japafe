@@ -13,6 +13,7 @@ import moment from "moment";
 import { getIdUser } from "../../../configs/session";
 import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
 import { Disclosure } from "@headlessui/react";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -200,7 +201,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
@@ -400,20 +401,23 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.price`}
 														placeholder='Price'
 														label='Price'
-														type='number'
-														value={result.price}
+														type='text'
+														pattern='\d*'
+														value={formatRupiah(result.price.toString())}
 														onChange={(e: any) => {
+															let price: number = e.target.value.toString()
+															.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
-																	e.target.value,
+																	price,
 																	result.qty,
 																	result.disc
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.price`,
-																e.target.value
+																price
 															);
 														}}
 														required={true}
@@ -427,22 +431,25 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.disc`}
 														placeholder='Discount'
 														label='Discount'
-														type='number'
+														type='text'
+														pattern='\d*'
 														onChange={(e: any) => {
+															let discount: number = e.target.value.toString()
+															.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
 																	result.price,
 																	result.qty,
-																	e.target.value
+																	discount
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.disc`,
-																e.target.value
+																discount
 															);
 														}}
-														value={result.disc}
+														value={formatRupiah(result.disc.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -454,8 +461,9 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.total`}
 														placeholder='Total Price'
 														label='Total Price'
-														type='number'
-														value={result.total}
+														type='text'
+														pattern='\d*'
+														value={formatRupiah(result.total.toString())}
 														disabled={true}
 														required={true}
 														withLabel={true}

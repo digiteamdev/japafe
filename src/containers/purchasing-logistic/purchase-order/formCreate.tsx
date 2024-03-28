@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
@@ -84,12 +89,17 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];
+				let dataListSupplier: any = [];
 				let dataSuplier: any = [];
 
 				response.data.result.map((res: any) => {
 					res.detailMr.map((result: any) => {
 						if (!suplier.includes(result.supplier.supplier_name)) {
 							suplier.push(result.supplier.supplier_name);
+							dataListSupplier.push({
+								label: result.supplier.supplier_name,
+								value: result.supplier,
+							});
 							dataSuplier.push(result.supplier);
 						}
 						detail.push({
@@ -102,7 +112,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							disc: result.disc,
 							currency: res.currency,
 							total: result.total,
-							material: result.Material_Stock.spesifikasi,
+							material: `${result.Material_Stock.Material_master.material_name} ${result.Material_Stock.spesifikasi}`,
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,
@@ -110,7 +120,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						});
 					});
 				});
-				setListSupplier(suplier);
+				setListSupplier(dataListSupplier);
 				setListDataSupplier(dataSuplier);
 				setListMr(detail);
 			}
@@ -137,7 +147,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		let currency: string = "";
 		let tax: string = "non_tax";
 		let termOfPay: any = [];
-		let totalPercent: number = 0
+		let totalPercent: number = 0;
 		payload.detailMr.map((res: any) => {
 			(currency = res.currency), (tax = res.taxpr);
 			detail.push({
@@ -146,7 +156,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		});
 		payload.termOfPayment.map((res: any) => {
 			let prices: any = res.price.replace(/[$.]/g, "");
-			totalPercent = totalPercent + parseInt(res.percent)
+			totalPercent = totalPercent + parseInt(res.percent);
 			termOfPay.push({
 				limitpay: res.limitpay,
 				percent: parseInt(res.percent),
@@ -167,7 +177,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			detailMrID: detail,
 			detailSrID: null,
 		};
-		if(totalPercent === 100){
+		if (totalPercent === 100) {
 			try {
 				const response = await AddPoMr(data);
 				if (response.data) {
@@ -195,7 +205,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 					theme: "colored",
 				});
 			}
-		}else if(totalPercent < 100){
+		} else if (totalPercent < 100) {
 			toast.warning("Term Of Pay not yet 100%", {
 				position: "top-center",
 				autoClose: 5000,
@@ -206,7 +216,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 				progress: undefined,
 				theme: "colored",
 			});
-		}else{
+		} else {
 			toast.warning("Term Of Pay exceed 100%", {
 				position: "top-center",
 				autoClose: 5000,
@@ -223,72 +233,54 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "suplier") {
-			if (event.target.value !== "no data") {
-				listDataSuplier.map((res: any) => {
-					if (res.supplier_name === event.target.value) {
-						let detail: any = [];
-						let total: number = 0;
-						let totalTax: number = 0;
-						let tax: boolean = false;
-						let termOfPayment: any = [
-							{
-								limitpay: "Normal",
-								percent: 0,
-								price: 0,
-								invoice: "",
-							},
-						];
-						listMr.map((mr: any) => {
-							if (mr.supId === res.id) {
-								detail.push(mr);
-								setCurrency(mr.currency);
-								total = total + mr.total;
-								if (mr.taxpr === "ppn") {
-									tax = true;
-								}
+			listDataSuplier.map((res: any) => {
+				if (res.supplier_name === event.target.value) {
+					let detail: any = [];
+					let total: number = 0;
+					let totalTax: number = 0;
+					let tax: boolean = false;
+					let termOfPayment: any = [
+						{
+							limitpay: "Normal",
+							percent: 0,
+							price: 0,
+							invoice: "",
+						},
+					];
+					listMr.map((mr: any) => {
+						if (mr.supId === res.id) {
+							detail.push(mr);
+							setCurrency(mr.currency);
+							total = total + mr.total;
+							if (mr.taxpr === "ppn") {
+								tax = true;
 							}
-						});
-						if (tax) {
-							totalTax = (total * res.ppn) / 100;
-							setCountTax(res.ppn);
-							setTax(formatRupiah(totalTax.toString()));
 						}
-						let grandTotal: number = total + totalTax;
-						setTotal(formatRupiah(total.toString()));
-						setGrandTotal(formatRupiah(grandTotal.toString()));
-						setContact(res.SupplierContact[0].contact_person);
-						setPhone(`+62${res.SupplierContact[0].phone}`);
-						setAddress(res.addresses_sup);
-						setSuplierId(res.id);
-						setData({
-							dateOfPO: data.dateOfPO,
-							idPO: data.idPO,
-							ref: "",
-							note: "",
-							supplierId: "",
-							dp: 0,
-							termOfPayment: termOfPayment,
-							detailMr: detail,
-						});
+					});
+					if (tax) {
+						totalTax = (total * res.ppn) / 100;
+						setCountTax(res.ppn);
+						setTax(formatRupiah(totalTax.toString()));
 					}
-				});
-			} else {
-				setData({
-					dateOfPO: data.dateOfPO,
-					idPO: data.idPO,
-					ref: "",
-					note: "",
-					supplierId: "",
-					dp: 0,
-					termOfPayment: [],
-					detailMr: [],
-				});
-				setCurrency("");
-				setContact("");
-				setPhone("");
-				setAddress("");
-				setSuplierId("");
-			}
+					let grandTotal: number = total + totalTax;
+					setTotal(formatRupiah(total.toString()));
+					setGrandTotal(formatRupiah(grandTotal.toString()));
+					setContact(res.SupplierContact[0].contact_person);
+					setPhone(`+62${res.SupplierContact[0].phone}`);
+					setAddress(res.addresses_sup);
+					setSuplierId(res.id);
+					setData({
+						dateOfPO: data.dateOfPO,
+						idPO: data.idPO,
+						ref: "",
+						note: "",
+						supplierId: "",
+						dp: 0,
+						termOfPayment: termOfPayment,
+						detailMr: detail,
+					});
+				}
+			});
 		}
 	};
 
@@ -349,30 +341,62 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								<InputSelectSearch
+									datas={listSupplier}
 									id='suplier'
 									name='suplier'
-									placeholder='Suplier'
-									label='Suplier'
+									placeholder='Supplier'
+									label='Supplier'
+									onChange={(e: any) => {
+										let detail: any = [];
+										let total: number = 0;
+										let totalTax: number = 0;
+										let tax: boolean = false;
+										let termOfPayment: any = [
+											{
+												limitpay: "Normal",
+												percent: 0,
+												price: 0,
+												invoice: "",
+											},
+										];
+										listMr.map((mr: any) => {
+											if (mr.supId === e.value.id) {
+												detail.push(mr);
+												setCurrency(mr.currency);
+												total = total + mr.total;
+												if (mr.taxpr === "ppn") {
+													tax = true;
+												}
+											}
+										});
+										if (tax) {
+											totalTax = (total * e.value.ppn) / 100;
+											setCountTax(e.value.ppn);
+											setTax(formatRupiah(totalTax.toString()));
+										}
+										let grandTotal: number = total + totalTax;
+										setTotal(formatRupiah(total.toString()));
+										setGrandTotal(formatRupiah(grandTotal.toString()));
+										setContact(e.value.SupplierContact.length === 0 ? "" : e.value.SupplierContact[0].contact_person);
+										setPhone(`+62${e.value.SupplierContact.length === 0 ? "" :e.value.SupplierContact[0].phone}`);
+										setAddress(e.value.addresses_sup);
+										setSuplierId(e.value.id);
+										setData({
+											dateOfPO: data.dateOfPO,
+											idPO: data.idPO,
+											ref: "",
+											note: "",
+											supplierId: "",
+											dp: 0,
+											termOfPayment: termOfPayment,
+											detailMr: detail,
+										});
+									}}
 									required={true}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='no data' selected>
-										Choose Suplier
-									</option>
-									{listSupplier.length === 0 ? (
-										<option value='no data'>No data</option>
-									) : (
-										listSupplier.map((res: any, i: number) => {
-											return (
-												<option value={res} key={i}>
-													{res}
-												</option>
-											);
-										})
-									)}
-								</InputSelect>
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -637,8 +661,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 										<Input
 											id='price'
 											name='price'
-											placeholder='Prince'
-											label='Prince'
+											placeholder='Price'
+											label='Price'
 											type='text'
 											value={formatRupiah(result.price.toString())}
 											disabled={true}
@@ -746,7 +770,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 										/>
 									</div>
 								</Section>
-								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
+								{/* <Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
 									<div className='w-full'></div>
 									<div className='w-full'></div>
 									<div className='w-full'></div>
@@ -767,7 +791,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-								</Section>
+								</Section> */}
 							</div>
 						) : null}
 						{values.detailMr.length === 0 ? null : (
