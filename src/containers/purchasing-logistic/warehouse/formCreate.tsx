@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Section, Input, InputArea } from "../../../components";
 import { Formik, Form } from "formik";
 import { warehouseSchema } from "../../../schema/purchasing-logistic/warehouse/warehouseSchema";
-import {
-	AddMaterialNew,
-} from "../../../services";
+import { AddMaterialNew } from "../../../services";
 import { toast } from "react-toastify";
 import { formatRupiah } from "@/src/utils";
 
@@ -35,14 +33,18 @@ export const FormCreateWarehouse = ({ content, showModal }: props) => {
 
 	const addMaterial = async (data: any) => {
 		setIsLoading(true);
-        let dataBody: any = {
-            name: data.name,
-            spesifikasi: data.spesifikasi,
-            satuan: data.satuan,
-            jumlah_stock: parseInt(data.jumlah_stock),
-            harga: parseInt(data.harga),
-            note: data.note,
-        }
+		let dataBody: any = {
+			name: data.name,
+			spesifikasi: data.spesifikasi,
+			satuan: data.satuan,
+			jumlah_Stock: parseInt(data.jumlah_stock.toString()
+			.replaceAll(".", "")),
+			harga: parseInt(data.harga.toString()
+			.replaceAll(".", "")),
+			note: data.note,
+			date_in: new Date(),
+			date_out: null,
+		};
 		try {
 			const response = await AddMaterialNew(dataBody);
 			if (response.data) {
@@ -83,13 +85,7 @@ export const FormCreateWarehouse = ({ content, showModal }: props) => {
 				}}
 				enableReinitialize
 			>
-				{({
-					handleChange,
-					handleSubmit,
-					errors,
-					touched,
-					values,
-				}) => (
+				{({ handleChange, handleSubmit, errors, touched, values }) => (
 					<Form>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
@@ -155,7 +151,7 @@ export const FormCreateWarehouse = ({ content, showModal }: props) => {
 									pattern='\d*'
 									placeholder='Stock'
 									label='Stock'
-                                    value={formatRupiah(values.jumlah_stock.toString())}
+									value={formatRupiah(values.jumlah_stock.toString())}
 									onChange={handleChange}
 									required={true}
 									withLabel={true}
@@ -175,7 +171,7 @@ export const FormCreateWarehouse = ({ content, showModal }: props) => {
 									placeholder='Price'
 									label='Price'
 									pattern='\d*'
-                                    value={formatRupiah(values.harga.toString())}
+									value={formatRupiah(values.harga.toString())}
 									onChange={handleChange}
 									required={true}
 									withLabel={true}

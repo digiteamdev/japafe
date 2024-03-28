@@ -14,8 +14,9 @@ import { Box, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateWarehouse } from "./formCreate";
 // import { ViewMaterial } from "./view";
 // import { FormEditMaterial } from './formEdit';
-import { GetMaterial, SearchMaterial, DeleteMaterial } from "../../../services";
+import { GetMaterialNew, SearchMaterial, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
+import { formatRupiah } from "@/src/utils";
 
 export const Warehouse = () => {
 
@@ -32,8 +33,9 @@ export const Warehouse = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Material Name" },
-		{ name: "Spesifikasi" },
 		{ name: "Satuan" },
+		{ name: "Stock" },
+		{ name: "Price" },
 		{ name: "Action" },
 	];
 
@@ -56,7 +58,7 @@ export const Warehouse = () => {
 	const getMaterial = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMaterial(page, perpage);
+			const response = await GetMaterialNew(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -177,16 +179,16 @@ export const Warehouse = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{ res.kd_material }
+										{ res.name } { res.spesifikasi }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.material_name }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
-										{ res.grup_material.material_name }
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{ res.satuan }
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{ res.jumlah_Stock }
+									</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>
+										{ formatRupiah(res.harga.toString()) }
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
 										<div>

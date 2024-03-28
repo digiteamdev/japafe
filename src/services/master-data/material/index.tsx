@@ -21,4 +21,5 @@ export const SearchMaterial = (page: number, perpage: number, search: string) =>
 export const AddMaterialStock = (data: any) => Axios.post(process.env.BASE_URL+'/stockMaterial', data);
 
 //Material new
-export const AddMaterialNew = (data: any) => Axios.post(process.env.BASE_URL+'/masterMaterialNew', data);
+export const AddMaterialNew = (data: any) => Axios.post(process.env.BASE_URL+'/materialMaster', data);
+export const GetMaterialNew = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/materialMaster?page=${page}&limit=${perpage}`);

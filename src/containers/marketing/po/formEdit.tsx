@@ -5,6 +5,7 @@ import {
 	InputSelect,
 	InputDate,
 	InputArea,
+	InputSelectSearch,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { poSchema } from "../../../schema/marketing/po/PoSchema";
@@ -147,7 +148,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		setTaxPPN(dataPo.quotations.Customer.ppn);
 		setTotal(dataPo.total);
 		setGrandTotal(dataPo.grand_tot);
-		setJumlahDisc(disc)
+		setJumlahDisc(disc);
 		// setVat(dataPo.vat);
 	};
 
@@ -169,9 +170,17 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 	};
 
 	const getQuatation = async () => {
+		// let listQuo: any = [];
 		try {
 			const response = await GetAllQuotationEdit(dataPo.quo_id);
 			if (response.data) {
+				// response.data.result.map((res: any) => {
+				// 	console.log(res);
+				// 	listQuo.push({
+				// 		label: res.quo_num + "-" + res.Customer.name,
+				// 		value: res,
+				// 	});
+				// });
 				setListQuotation(response.data.result);
 			}
 		} catch (error) {
@@ -206,7 +215,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "pph") {
-			const jumlahTax = ((totalHarga - Math.ceil(disc)) - taxPPH) / 100;
+			const jumlahTax = (totalHarga - Math.ceil(disc) - taxPPH) / 100;
 			const grandtotal: number = totalHarga + Math.ceil(jumlahTax);
 			setGrandTotal(grandtotal);
 		} else if (tax === "ppn_and_pph") {
@@ -222,7 +231,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 
 	const grandTotals = (tax: string, discount: number) => {
 		let disc = (total * discount) / 100;
-		console.log(disc, total);
 		if (tax === "ppn") {
 			const grandtotal: number = total - Math.ceil(disc) + totalPPN;
 			return grandtotal.toString();
@@ -409,6 +417,35 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
+								{/* <InputSelectSearch
+									datas={listQuotation}
+									id='quotation'
+									name='quotation'
+									placeholder='Quotation'
+									label='Quotation'
+									onChange={(e: any) => {
+										let total: number = 0;
+										setCustomerName(e.value.Customer.name);
+										setDeskription(e.value.subject);
+										setEquipment(e.value.eqandpart[0].equipment.nama);
+										setListPriceQuotation(e.value.price_quotation);
+										setQuoId(e.value.id);
+										setTaxPPH(e.value.Customer.pph);
+										setTaxPPN(e.value.Customer.ppn);
+										setFieldValue("price_po", e.value.price_quotation);
+										setFieldValue(
+											"Deskription_CusPo",
+											e.value.Quotations_Detail
+										);
+										e.value.price_quotation.map((res: any) => {
+											total = total + res.total_price;
+										});
+										setTotal(total);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/> */}
 								<InputSelect
 									id='quotation'
 									name='quotation'
@@ -431,7 +468,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 													key={i}
 													selected={res.id === values.quo_id ? true : false}
 												>
-													{res.quo_auto} - {res.Customer.name}
+													{res.quo_num} - {res.Customer.name}
 												</option>
 											);
 										})

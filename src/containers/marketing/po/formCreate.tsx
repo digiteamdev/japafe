@@ -203,6 +203,12 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		}
 	};
 
+	const handleOnChanges = (event: any) => {
+		if (event.target.name === "upload_doc") {
+			setPoFile(event.target.files[0]);
+		}
+	};
+
 	const addPo = async (payload: any) => {
 		setIsLoading(true);
 		const price: any = [];
@@ -355,7 +361,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form>
+					<Form onChange={handleOnChanges}>
 						<h1 className='text-xl font-bold mt-3'>Customer PO</h1>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
