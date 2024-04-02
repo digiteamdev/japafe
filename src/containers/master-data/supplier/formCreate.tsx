@@ -366,6 +366,8 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									</option>
 									<option value='Material_Supplier'>Material Supplier</option>
 									<option value='Service_Vendor'>Service Vendor</option>
+									<option value='Toserba'>Toserba</option>
+									<option value='Ecommerce'>E-Commerce</option>
 								</InputSelect>
 								{errors.type_supplier && touched.type_supplier ? (
 									<span className='text-red-500 text-xs'>

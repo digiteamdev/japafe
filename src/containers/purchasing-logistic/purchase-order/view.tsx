@@ -29,7 +29,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 	const Total = () => {
 		let jumlahTotal: any = 0;
 		dataSelected.detailMr.map((res: any) => {
-			jumlahTotal = jumlahTotal + res.total;
+			jumlahTotal = jumlahTotal + (res.price * res.qty);
 		});
 		return jumlahTotal.toString();
 	};
@@ -219,6 +219,30 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Delivery Time
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{ dataSelected.delivery_time }
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Payment Method
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{ dataSelected.payment_method }
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Franco
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{ dataSelected.franco }
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
@@ -280,7 +304,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 												{formatRupiah(res.disc.toString())}
 											</td>
 											<td className='border border-black text-center'>
-												{formatRupiah(res.total.toString())}
+												{formatRupiah(Total())}
 											</td>
 										</tr>
 									);

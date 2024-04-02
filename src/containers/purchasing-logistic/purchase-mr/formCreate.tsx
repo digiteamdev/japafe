@@ -65,13 +65,18 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any) => {
-					console.log(res);
+					console.log(res)
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
 						user: res.mr.user.employee.employee_name,
 						supId: res.supId,
+						supplier: {
+							label: res.supplier.supplier_name,
+							value: res.supplier
+						},
 						taxpr: res.taxpr,
+						ppn: res.supplier.ppn,
 						job_no: res.mr.job_no,
 						disc: res.disc,
 						currency: "IDR",
@@ -135,9 +140,15 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		return id;
 	};
 
-	const totalHarga = (harga: number, qty: number, disc: number) => {
+	const totalHarga = (harga: number, qty: number, disc: number, ppn: number, total: boolean, tax: boolean) => {
+		console.log(tax)
 		let totalHarga = harga * qty - disc;
-		return totalHarga;
+		let Ppn: any = tax ? (totalHarga * ppn) / 100 : 0;
+		if(total){
+			return totalHarga + Math.ceil(Ppn);
+		}else{
+			return Math.ceil(Ppn);
+		}
 	};
 
 	const purchaseMr = async (payload: data) => {
@@ -193,7 +204,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
@@ -280,7 +291,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							name='detailMr'
 							render={(arrayMr) =>
 								values.detailMr.map((result: any, i: number) => {
-									console.log(result);
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
@@ -319,6 +329,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														name='supId'
 														placeholder='Supplier'
 														label='Supplier'
+														value={result.supplier}
 														onChange={(e: any) => {
 															setFieldValue(`detailMr.${i}.supId`, e.value.id);
 														}}
@@ -343,6 +354,22 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={result.note}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
 														id={`detailMr.${i}.qty`}
 														name={`detailMr.${i}.qty`}
 														placeholder='Qty'
@@ -355,7 +382,10 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																totalHarga(
 																	result.price,
 																	e.target.value,
-																	result.disc
+																	result.disc,
+																	result.ppn,
+																	true,
+																	values.taxPsrDmr === 'ppn' ? true : false
 																)
 															);
 															setFieldValue(
@@ -363,22 +393,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																e.target.value
 															);
 														}}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.note`}
-														name={`detailMr.${i}.note`}
-														placeholder='Note'
-														label='Note'
-														type='text'
-														value={result.note}
-														disabled={true}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -399,7 +413,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(price, result.qty, result.disc)
+																totalHarga(price, result.qty, result.disc, result.ppn, true,values.taxPsrDmr === 'ppn' ? true : false)
 															);
 															setFieldValue(`detailMr.${i}.price`, price);
 														}}
@@ -422,11 +436,25 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(result.price, result.qty, discount)
+																totalHarga(result.price, result.qty, discount, result.ppn, true,values.taxPsrDmr === 'ppn' ? true : false)
 															);
 															setFieldValue(`detailMr.${i}.disc`, discount);
 														}}
 														value={formatRupiah(result.disc.toString())}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.total`}
+														name={`detailMr.${i}.total`}
+														placeholder='PPN'
+														label='PPN'
+														type='text'
+														value={formatRupiah(totalHarga(result.price, result.qty, result.disc, result.ppn, false,values.taxPsrDmr === 'ppn' ? true : false).toString())}
+														disabled={true}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -446,7 +474,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-												<div className='w-full'>
+												{/* <div className='w-full'>
 													<Input
 														id={`detailMr.${i}.user`}
 														name={`detailMr.${i}.user`}
@@ -459,7 +487,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
-												</div>
+												</div> */}
 											</Section>
 											<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500 pb-2'>
 												<div className='w-full'>

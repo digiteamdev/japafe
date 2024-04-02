@@ -6,7 +6,6 @@ import {
 	InputSelectSearch,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
 import {
 	GetEmployeById,
 	GetBom,

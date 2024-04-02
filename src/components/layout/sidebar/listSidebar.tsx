@@ -222,7 +222,7 @@ export const ListNav = [
 	{
 		id: "purchasing-logistic",
 		link: "/purchasing-logistic",
-		title: "Purchasing & Logistic",
+		title: "Purchasing",
 		role: "ADMINISTRATOR,PURCHASING",
 		subMenu: [
 			{
@@ -245,13 +245,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "spj-purchase",
-				link: "/purchasing-logistic/spj-purchase",
-				title: "SPJ Purchase",
+			// {
+			// 	id: "spj-purchase",
+			// 	link: "/purchasing-logistic/spj-purchase",
+			// 	title: "SPJ Purchase",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "purchase-mr",
 				link: "/purchasing-logistic/purchase-mr",
@@ -294,13 +294,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "purchase-receive",
-				link: "/purchasing-logistic/purchase-receive",
-				title: "Purchase Receive",
+			// {
+			// 	id: "purchase-receive",
+			// 	link: "/purchasing-logistic/purchase-receive",
+			// 	title: "Purchase Receive",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			// {
 			// 	id: "service-receive",
 			// 	link: "/purchasing-logistic/service-receive",
@@ -308,52 +308,112 @@ export const ListNav = [
 
 			// 	subMenu: null,
 			// },
+			// {
+			// 	id: "outgoing-material",
+			// 	link: "/purchasing-logistic/outgoing-material",
+			// 	title: "Outgoing Material",
+
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "delivery-order",
+			// 	link: "/purchasing-logistic/delivery-order",
+			// 	title: "Delivery Order",
+
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material-remaind-use",
+			// 	link: "/purchasing-logistic/material-remaind-use",
+			// 	title: "Material Remain Use",
+
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "equipment-part",
+			// 	link: "/purchasing-logistic/equipment-part",
+			// 	title: "Equipment & Part",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material-type",
+			// 	link: "/purchasing-logistic/material-type",
+			// 	title: "Material Type",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material",
+			// 	link: "/purchasing-logistic/material",
+			// 	title: "Material",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "warehouse",
+			// 	link: "/purchasing-logistic/warehouse",
+			// 	title: "Warehouse",
+			// 	subMenu: null,
+			// },
+		],
+	},
+	{
+		id: "general-affair",
+		link: "/general-affair",
+		title: "General Affair & Logistic",
+		role: "ADMINISTRATOR,PURCHASING",
+		subMenu: [
+			{
+				id: "purchase-receive",
+				link: "/general-affair/purchase-receive",
+				title: "Purchase Receive",
+
+				subMenu: null,
+			},
 			{
 				id: "outgoing-material",
-				link: "/purchasing-logistic/outgoing-material",
+				link: "/general-affair/outgoing-material",
 				title: "Outgoing Material",
 
 				subMenu: null,
 			},
 			{
 				id: "delivery-order",
-				link: "/purchasing-logistic/delivery-order",
+				link: "/general-affair/delivery-order",
 				title: "Delivery Order",
 
 				subMenu: null,
 			},
 			{
 				id: "material-remaind-use",
-				link: "/purchasing-logistic/material-remaind-use",
+				link: "/general-affair/material-remaind-use",
 				title: "Material Remain Use",
 
 				subMenu: null,
 			},
 			{
 				id: "equipment-part",
-				link: "/purchasing-logistic/equipment-part",
+				link: "/general-affair/equipment-part",
 				title: "Equipment & Part",
 				subMenu: null,
 			},
 			{
 				id: "material-type",
-				link: "/purchasing-logistic/material-type",
+				link: "/general-affair/material-type",
 				title: "Material Type",
 				subMenu: null,
 			},
 			{
 				id: "material",
-				link: "/purchasing-logistic/material",
+				link: "/general-affair/material",
 				title: "Material",
 				subMenu: null,
 			},
 			{
 				id: "warehouse",
-				link: "/purchasing-logistic/warehouse",
+				link: "/general-affair/warehouse",
 				title: "Warehouse",
 				subMenu: null,
 			},
-		],
+		]
 	},
 	{
 		id: "director",

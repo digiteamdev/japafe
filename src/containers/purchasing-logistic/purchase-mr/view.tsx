@@ -42,7 +42,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 		setDataSuplier(dataSuplier);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
+	console.log(dataSelected)
 	const Total = (suplier: string) => {
 		let jumlahTotal: any = 0;
 		dataSelected.detailMr
@@ -50,10 +50,15 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 				return fil.supplier.supplier_name === suplier;
 			})
 			.map((res: any) => {
-				jumlahTotal = jumlahTotal + res.total;
+				jumlahTotal = (res.price * res.qty) + jumlahTotal;
 			});
 		return jumlahTotal.toString();
 	};
+
+	const totalPrice = (price: number, qty: number, disc: number) => {
+		let totalPrice = (price * qty) - disc
+		return Math.ceil(totalPrice)
+	}
 
 	const Ppn = (suplier: string, type: string) => {
 		let supplierPPN: number = 0;
@@ -279,6 +284,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 															return fil.supplier.supplier_name === res;
 														})
 														.map((result: any, idx: number) => {
+															console.log(result)
 															return (
 																<tr key={idx}>
 																	<td className='border border-black text-center'>
@@ -304,7 +310,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 																		{formatRupiah(result.disc.toString())}
 																	</td>
 																	<td className='border border-black text-center'>
-																		{formatRupiah(result.total.toString())}
+																		{formatRupiah(totalPrice(result.price, result.qty,result.disc).toString())}
 																	</td>
 																</tr>
 															);

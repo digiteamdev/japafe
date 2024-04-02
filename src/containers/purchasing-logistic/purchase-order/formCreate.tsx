@@ -4,6 +4,7 @@ import {
 	Input,
 	InputSelect,
 	InputSelectSearch,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
@@ -30,6 +31,9 @@ interface data {
 	ref: string;
 	note: string;
 	supplierId: string;
+	delivery_time: string;
+	franco: string;
+	payment_method: string;
 	dp: any;
 	termOfPayment: any;
 	detailMr: any;
@@ -57,6 +61,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		idPO: "",
 		ref: "",
 		supplierId: "",
+		delivery_time: "",
+		franco: "",
+		payment_method: "",
 		dp: 0,
 		note: "",
 		termOfPayment: [],
@@ -71,6 +78,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			ref: "",
 			supplierId: "",
 			note: "",
+			delivery_time: "",
+			franco: "",
+			payment_method: "",
 			dp: 0,
 			termOfPayment: [],
 			detailMr: [],
@@ -174,6 +184,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			term_of_pay_po_so: termOfPay,
 			taxPsrDmr: tax,
 			currency: currency,
+			delivery_time: payload.delivery_time,
+			franco: payload.franco,
+			payment_method: payload.payment_method,
 			detailMrID: detail,
 			detailSrID: null,
 		};
@@ -231,6 +244,10 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
+	const totalPrice = (price: number, qty: number) => {
+		return price * qty;
+	};
+
 	const handleOnChanges = (event: any) => {
 		if (event.target.name === "suplier") {
 			listDataSuplier.map((res: any) => {
@@ -274,6 +291,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						idPO: data.idPO,
 						ref: "",
 						note: "",
+						delivery_time: "",
+						franco: "",
+						payment_method: "",
 						supplierId: "",
 						dp: 0,
 						termOfPayment: termOfPayment,
@@ -311,8 +331,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 					values,
 				}) => (
 					<Form onChange={handleOnChanges}>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							{/* <div className='w-full'>
 								<Input
 									id='idPurchase'
 									name='idPurchase'
@@ -325,7 +345,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<Input
 									id='datePR'
@@ -364,7 +384,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											if (mr.supId === e.value.id) {
 												detail.push(mr);
 												setCurrency(mr.currency);
-												total = total + mr.total;
+												total = total + mr.price * mr.qty;
 												if (mr.taxpr === "ppn") {
 													tax = true;
 												}
@@ -378,8 +398,18 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 										let grandTotal: number = total + totalTax;
 										setTotal(formatRupiah(total.toString()));
 										setGrandTotal(formatRupiah(grandTotal.toString()));
-										setContact(e.value.SupplierContact.length === 0 ? "" : e.value.SupplierContact[0].contact_person);
-										setPhone(`+62${e.value.SupplierContact.length === 0 ? "" :e.value.SupplierContact[0].phone}`);
+										setContact(
+											e.value.SupplierContact.length === 0
+												? ""
+												: e.value.SupplierContact[0].contact_person
+										);
+										setPhone(
+											`+62${
+												e.value.SupplierContact.length === 0
+													? ""
+													: e.value.SupplierContact[0].phone
+											}`
+										);
 										setAddress(e.value.addresses_sup);
 										setSuplierId(e.value.id);
 										setData({
@@ -388,6 +418,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											ref: "",
 											note: "",
 											supplierId: "",
+											delivery_time: "",
+											franco: "",
+											payment_method: "",
 											dp: 0,
 											termOfPayment: termOfPayment,
 											detailMr: detail,
@@ -398,8 +431,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='contact'
@@ -428,6 +459,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='address'
@@ -442,8 +475,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='ref'
@@ -481,6 +512,53 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									type='text'
 									value={values.note}
 									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<InputArea
+									id='delivery_time'
+									name='delivery_time'
+									placeholder='Delivery time'
+									label='Delivery Time'
+									type='text'
+									value={values.delivery_time}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputArea
+									id='payment_method'
+									name='payment_method'
+									placeholder='Payment Method'
+									label='Payment Method'
+									type='text'
+									value={values.payment_method}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputArea
+									id='franco'
+									name='franco'
+									placeholder='Franco'
+									label='Franco'
+									type='text'
+									value={values.franco}
+									onChange={handleChange}
+									disabled={false}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -692,7 +770,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											placeholder='Total'
 											label='Total'
 											type='text'
-											value={formatRupiah(result.total.toString())}
+											value={formatRupiah(
+												totalPrice(result.price, result.qty).toString()
+											)}
 											disabled={true}
 											required={true}
 											withLabel={true}
