@@ -17,6 +17,7 @@ import { GetPurchaseSR, SearchPurchaseSR, DeletePurchaseMR } from "../../../serv
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const PurchaseSR = () => {
 
@@ -131,6 +132,8 @@ export const PurchaseSR = () => {
 			<Content
 				title='Purchase Service Request'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPurchaseSR}
 			>

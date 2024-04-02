@@ -1,18 +1,23 @@
 import { Printer, FilePlus, Search } from "react-feather";
 import { ReactNode } from "react";
+import { InputSelect } from "../input/inputSelect";
 
 interface props {
 	title?: string;
 	print?: boolean;
+	marketing?: boolean;
 	showModal: (val: boolean, content: string, realod: boolean) => void;
 	search: (page: number, perpage: number, search: string) => void;
+	changeDivisi: (data: string) => void;
 	children: ReactNode;
 }
 
 export const Content = ({
 	title,
 	print,
+	marketing,
 	showModal,
+	changeDivisi,
 	search,
 	children,
 }: props) => {
@@ -41,13 +46,32 @@ export const Content = ({
 							</button>
 						) : null}
 					</div> */}
+					{marketing ? (
+						<div className='lg:w-[35%] md:w-[35%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
+							<InputSelect
+								id=''
+								name=''
+								placeholder='Material'
+								label='Material'
+								onChange={(event: any) => {
+									changeDivisi(event.target.value)
+								}}
+								required={true}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+							>
+								<option value="S">SWASTA</option>
+								<option value="B">BUMN</option>
+							</InputSelect>
+						</div>
+					) : null}
 					<div className='lg:w-[35%] md:w-[35%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
 						{print ? (
 							<button
 								className='bg-primary-100 hover:bg-primary-50 text-black py-2 px-4 rounded-lg inline-flex justify-center border border-primary-300 w-full'
 								onClick={() => showModal(true, "add", false)}
 							>
-								<FilePlus size={18} className="mt-[5px]" />
+								<FilePlus size={18} className='mt-[5px]' />
 								<span className='ml-2'>New {title}</span>
 							</button>
 						) : null}

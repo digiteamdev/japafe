@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { ViewWorkerCenter } from './view';
 import { FormEditWorkerCenter } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 interface data {
 	id: string;
@@ -153,6 +154,8 @@ export const WorkerCenter = () => {
 			<Content
 				title='Worker Center'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchWorkerCenter}
 			>

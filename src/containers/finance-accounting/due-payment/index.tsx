@@ -19,7 +19,7 @@ import {
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewDuePayment } from './view';
 // import { FormEditKontraBon } from "./formEdit";
 
@@ -149,6 +149,8 @@ export const DuePayment = () => {
 			<Content
 				title='Due Payment'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchKontraBon}
 			>

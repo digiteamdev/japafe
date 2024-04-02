@@ -16,6 +16,7 @@ import { ViewMaterial } from "./view";
 import { FormEditMaterial } from './formEdit';
 import { GetMaterial, SearchMaterial, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 export const Material = () => {
 
@@ -132,6 +133,8 @@ export const Material = () => {
 			<Content
 				title='Material'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterial}
 			>

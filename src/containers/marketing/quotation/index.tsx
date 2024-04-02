@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { removeToken } from "../../../configs/session";
+import { removeToken, getPosition } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -9,6 +9,7 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	InputSelect,
 } from "../../../components";
 import { BookOpen, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateQuotation } from "./formCreate";
@@ -22,12 +23,15 @@ import {
 } from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
-import { cekDivisiMarketing } from "../../../utils"
+import { cekDivisiMarketing } from "../../../utils";
+import { Posting } from "../../finance-accounting";
 
 export const Quotation = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isDropdown, setIsDropdown] = useState<any>(false);
+	const [divisiMarketing, setDivisiMarketing] = useState<string>("");
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
@@ -47,10 +51,18 @@ export const Quotation = () => {
 	];
 
 	useEffect(() => {
-		getQuatation(page, perPage, cekDivisiMarketing());
+		let position = getPosition()
+		if(position === 'Director' || position === 'Manager'){
+			setIsDropdown(true)
+		}
+		if(divisiMarketing !== ""){
+			getQuatation(page, perPage, divisiMarketing);
+		}else{
+			setDivisiMarketing(cekDivisiMarketing())
+		}
 		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [divisiMarketing]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -59,7 +71,7 @@ export const Quotation = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getQuatation(page, perPage, cekDivisiMarketing());
+			getQuatation(page, perPage, divisiMarketing);
 		}
 	};
 
@@ -74,7 +86,11 @@ export const Quotation = () => {
 		}
 	};
 
-	const getQuatation = async (page: number, perpage: number, divisi: string) => {
+	const getQuatation = async (
+		page: number,
+		perpage: number,
+		divisi: string
+	) => {
 		setIsLoading(true);
 		try {
 			const response = await GetQuotation(page, perpage, divisi);
@@ -101,7 +117,12 @@ export const Quotation = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchQuotation(page, limit, search, cekDivisiMarketing());
+			const response = await SearchQuotation(
+				page,
+				limit,
+				search,
+				cekDivisiMarketing()
+			);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -125,7 +146,7 @@ export const Quotation = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getQuatation(1, 10, cekDivisiMarketing());
+				getQuatation(1, 10, divisiMarketing);
 			}
 		} catch (error) {
 			toast.error("Delete Quotation Failed", {
@@ -142,6 +163,10 @@ export const Quotation = () => {
 		setIsModal(false);
 	};
 
+	const changeDivisi = (data: string) => {
+		setDivisiMarketing(data)
+	} 
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -152,6 +177,8 @@ export const Quotation = () => {
 			<Content
 				title='Quotation'
 				print={true}
+				marketing={isDropdown}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchQuotation}
 			>
@@ -200,18 +227,14 @@ export const Quotation = () => {
 									<td className='px-6 py-4 w-[5%] text-center'>
 										{res.quo_num}
 									</td>
-									<td className='px-6 py-4 text-center'>
-										{res.Customer.name}
-									</td>
+									<td className='px-6 py-4 text-center'>{res.Customer.name}</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{`+62${res.CustomerContact.phone}`}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
 										{moment(res.date).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='px-6 py-4 text-center'>
-										{res.subject}
-									</td>
+									<td className='px-6 py-4 text-center'>{res.subject}</td>
 									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
 										<div>
 											<Button
@@ -260,7 +283,7 @@ export const Quotation = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getQuatation(value, perPage, cekDivisiMarketing());
+							getQuatation(value, perPage, divisiMarketing);
 						}}
 					/>
 				) : null}

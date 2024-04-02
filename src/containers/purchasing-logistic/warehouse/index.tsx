@@ -16,7 +16,7 @@ import { FormCreateWarehouse } from "./formCreate";
 // import { FormEditMaterial } from './formEdit';
 import { GetMaterialNew, SearchMaterial, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 
 export const Warehouse = () => {
 
@@ -133,6 +133,8 @@ export const Warehouse = () => {
 			<Content
 				title='Warehouse'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterial}
 			>

@@ -19,7 +19,7 @@ import {
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewCashier } from './view';
 import { FormEditCashier } from "./formEdit";
 
@@ -150,6 +150,8 @@ export const Cashier = () => {
 			<Content
 				title='Cashier'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchCashier}
 			>

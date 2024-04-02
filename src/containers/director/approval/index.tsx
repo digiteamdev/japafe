@@ -22,7 +22,7 @@ import {
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { formatRupiah } from "../../../utils/index";
+import { formatRupiah, changeDivisi } from "../../../utils/index";
 
 export const ApprovalList = () => {
 	const router = useRouter();
@@ -135,6 +135,8 @@ export const ApprovalList = () => {
 		return formatRupiah(totalHarga.toString());
 	};
 
+
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -145,6 +147,8 @@ export const ApprovalList = () => {
 			<Content
 				title='Approval List'
 				print={false}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPurchaseApproval}
 			>

@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { ViewDepartement } from './view';
 import { FormEditDepartement } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 interface data {
 	id: string;
@@ -153,6 +154,8 @@ export const Departement = () => {
 			<Content
 				title='Departemen'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchDepartement}
 			>

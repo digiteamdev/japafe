@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { removeToken } from "../../../configs/session";
+import { getPosition, removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -22,6 +22,8 @@ export const Po = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isDropdown, setIsDropdown] = useState<any>(false);
+	const [divisiMarketing, setDivisiMarketing] = useState<string>("");
 	const [countData, setCountData] = useState<number>(0);
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
@@ -41,10 +43,18 @@ export const Po = () => {
 	];
 
 	useEffect(() => {
-		getPo(page, perPage, cekDivisiMarketing());
+		let position = getPosition()
+		if(position === 'Director' || position === 'Manager'){
+			setIsDropdown(true)
+		}
+		if(divisiMarketing !== ""){
+			getPo(page, perPage, divisiMarketing);
+		}else{
+			setDivisiMarketing(cekDivisiMarketing())
+		}
 		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [divisiMarketing]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -53,7 +63,7 @@ export const Po = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPo(page, perPage, cekDivisiMarketing());
+			getPo(page, perPage, divisiMarketing);
 		}
 	};
 
@@ -120,7 +130,7 @@ export const Po = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPo(1, 10, cekDivisiMarketing());
+				getPo(1, 10, divisiMarketing);
 			}
 		} catch (error) {
 			toast.error("Delete Customer PO Failed", {
@@ -137,6 +147,10 @@ export const Po = () => {
 		setIsModal(false);
 	};
 
+	const changeDivisi = (data: string) => {
+		setDivisiMarketing(data)
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -147,6 +161,8 @@ export const Po = () => {
 			<Content
 				title='Customer PO'
 				print={true}
+				marketing={isDropdown}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPo}
 			>
@@ -249,7 +265,7 @@ export const Po = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getPo(value, perPage, cekDivisiMarketing());
+							getPo(value, perPage, divisiMarketing);
 						}}
 					/>
 				) : null}

@@ -8,6 +8,7 @@ import { GetUser, DeleteUser, SearchUser } from "../../../services";
 import { toast } from "react-toastify";
 import { ViewUser } from './view';
 import { FormEditUser } from './formEdit';
+import { changeDivisi } from "@/src/utils";
 
 export const Register = () => {
 
@@ -138,6 +139,8 @@ export const Register = () => {
 			<Content
 				title='User'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchUser}
 			>

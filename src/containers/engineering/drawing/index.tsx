@@ -9,6 +9,7 @@ import { FormEditDrawing } from "./formEdit";
 import { GetDrawing, SearchDrawing, DeleteSummary  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const Drawing = () => {
 
@@ -121,6 +122,8 @@ export const Drawing = () => {
 			<Content
 				title='Drawing'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPo}
 			>

@@ -158,3 +158,7 @@ export const cekDivisiMarketing = () => {
 	}
 	return divisi
 }
+
+export const changeDivisi = (data: string) => {
+	return data
+}

@@ -8,6 +8,7 @@ import { ViewEquipment } from "./view";
 import { FormEditEquipment } from "./formEdit"
 import { DeleteEquipment, GetEquipment, SearchEquipment } from "../../../services";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 export const Equipment = () => {
 
@@ -124,6 +125,8 @@ export const Equipment = () => {
 			<Content
 				title='Equipment & Part'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchEquipment}
 			>

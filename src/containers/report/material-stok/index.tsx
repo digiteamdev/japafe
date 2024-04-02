@@ -14,7 +14,7 @@ import { FormCreateMaterialStok } from "./formCreate";
 import { ViewMaterial } from "./view";
 import { GetMaterialStock, SearchMaterialStock } from "../../../services";
 import { removeToken } from "../../../configs/session";
-import { formatRupiah } from '../../../utils/index'
+import { changeDivisi, formatRupiah } from '../../../utils/index'
 
 export const MaterialStok = () => {
 
@@ -137,6 +137,8 @@ export const MaterialStok = () => {
 			<Content
 				title='Material Stock'
 				print={showCreate}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

@@ -17,6 +17,7 @@ import { GetPoMr, SearchPoMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const PurchasePO = () => {
 	const router = useRouter();
@@ -132,6 +133,8 @@ export const PurchasePO = () => {
 			<Content
 				title='Purchase Order Material Request'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPurchaseMR}
 			>

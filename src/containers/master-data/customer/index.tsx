@@ -16,7 +16,7 @@ import { FormEditCustomer } from "./fromEdit";
 import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken, getRole } from "../../../configs/session";
-import { cekDivisiMarketing } from "../../../utils"
+import { cekDivisiMarketing, changeDivisi } from "../../../utils"
 
 export const Customer = () => {
 
@@ -136,6 +136,8 @@ export const Customer = () => {
 			<Content
 				title='Customer'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchCustomer}
 			>

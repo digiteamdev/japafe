@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { ViewDispatch } from './view';
 import { FormEditDispatch } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 export const Dispatch = () => {
 	const router = useRouter();
@@ -163,6 +164,8 @@ export const Dispatch = () => {
 			<Content
 				title='Dispatch'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchDispatch}
 			>

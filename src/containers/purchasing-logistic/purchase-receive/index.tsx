@@ -16,6 +16,7 @@ import { ViewPurchaseReceive } from "./view";
 import { GetAllReceive, SearchReceive, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const PurchaseReceive = () => {
 	const router = useRouter();
@@ -131,6 +132,8 @@ export const PurchaseReceive = () => {
 			<Content
 				title='Purchase Receive'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPurchaseReceive}
 			>

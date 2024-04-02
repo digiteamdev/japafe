@@ -16,6 +16,7 @@ import { ViewSpjCashAdvance } from "./view";
 import { GetSpjCahsAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
+import { changeDivisi } from "@/src/utils";
 
 export const SpjCashAdvance = () => {
 
@@ -132,6 +133,8 @@ export const SpjCashAdvance = () => {
 			<Content
 				title='SPJ Cash Advance'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchCashAdvance}
 			>

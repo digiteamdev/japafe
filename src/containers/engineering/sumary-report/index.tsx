@@ -9,6 +9,7 @@ import { FormEditSummaryReport } from "./formEdit";
 import { GetSummary, SearchSummary, DeleteSummary  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const SummaryReport = () => {
 
@@ -121,6 +122,8 @@ export const SummaryReport = () => {
 			<Content
 				title='Summary Report'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPo}
 			>

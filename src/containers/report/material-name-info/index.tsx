@@ -22,6 +22,7 @@ import {
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import React from "react";
+import { changeDivisi } from "@/src/utils";
 
 export const MaterialNameInfo = () => {
 	const router = useRouter();
@@ -135,6 +136,8 @@ export const MaterialNameInfo = () => {
 			<Content
 				title='Material Name Info'
 				print={false}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

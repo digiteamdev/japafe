@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { ViewSchedule } from './view';
 import { FormEditSchedule } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 export const Schedule = () => {
 	const router = useRouter();
@@ -163,6 +164,8 @@ export const Schedule = () => {
 			<Content
 				title='Time Schedule'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchSchedule}
 			>

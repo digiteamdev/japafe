@@ -9,6 +9,7 @@ import { FormEditBillOfMaterial } from "./formEdit";
 import { GetBillOfMaterial, SearchBillOfMaterial, DeleteBillOfMaterial  } from "../../../services";
 import { toast } from "react-toastify"
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const BillOfMaterial = () => {
 
@@ -121,6 +122,8 @@ export const BillOfMaterial = () => {
 			<Content
 				title='Bill Of Material'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchPo}
 			>

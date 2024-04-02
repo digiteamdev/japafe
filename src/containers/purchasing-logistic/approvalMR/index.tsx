@@ -17,6 +17,7 @@ import { GetApprovalRequest, SearchApprovalRequest, DeleteMR } from "../../../se
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
+import { changeDivisi } from "@/src/utils";
 
 export const ApprovalMr = () => {
 
@@ -132,6 +133,8 @@ export const ApprovalMr = () => {
 			<Content
 				title='Approval Material Request'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchApprovalMr}
 			>

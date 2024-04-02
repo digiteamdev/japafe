@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { ViewChartOfAccount } from './view';
 import { FormEditCoa } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 interface data {
 	id: string;
@@ -154,6 +155,8 @@ export const ChartOfAccount = () => {
 			<Content
 				title='Chart Of Account'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchCoa}
 			>

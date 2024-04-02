@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { ViewHoliday } from './view';
 import { FormEditHoliday } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 interface data {
 	id: string;
@@ -155,6 +156,8 @@ export const Holiday = () => {
 			<Content
 				title='Holiday'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchHoliday}
 			>

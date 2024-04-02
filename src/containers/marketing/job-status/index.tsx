@@ -14,6 +14,7 @@ import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { GetWorJobStatus, SearchJobStatus } from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 export const JobStatus = () => {
 	const router = useRouter();
@@ -92,6 +93,8 @@ export const JobStatus = () => {
 			<Content
 				title='Job Status'
 				print={false}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchwor}
 			>

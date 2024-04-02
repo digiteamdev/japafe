@@ -18,7 +18,7 @@ import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 
 export const OutgoingMaterial = () => {
 
@@ -135,6 +135,8 @@ export const OutgoingMaterial = () => {
 			<Content
 				title='Outgoing Material'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchOutgoingMaterial}
 			>

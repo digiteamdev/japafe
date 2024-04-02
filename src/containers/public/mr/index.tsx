@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
+import { changeDivisi } from "@/src/utils";
 
 export const Mr = () => {
 	const router = useRouter();
@@ -182,6 +183,8 @@ export const Mr = () => {
 			<Content
 				title='Material Request'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

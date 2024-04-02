@@ -15,7 +15,7 @@ import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
 import { GetAllPosting, SearchPosting } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewPosting } from './view';
 // import { FormEditCashier } from "./formEdit";
 
@@ -99,6 +99,8 @@ export const Posting = () => {
 			<Content
 				title='Posting'
 				print={false}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchCashier}
 			>

@@ -21,6 +21,7 @@ import {
 	DeleteEmploye,
 } from "../../../services";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 interface dataDepartement {
 	id: string;
@@ -183,6 +184,8 @@ export const Employe = () => {
 			<Content
 				title='Employe'
 				print={ roleHRD }
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchEmploye}
 			>

@@ -19,7 +19,7 @@ import {
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewKontraBon } from './view';
 import { FormEditKontraBon } from "./formEdit";
 
@@ -151,6 +151,8 @@ export const KontraBon = () => {
 			<Content
 				title='Kontra Bon'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchKontraBon}
 			>

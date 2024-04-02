@@ -16,6 +16,7 @@ import { ViewSuplier } from "./view";
 import { FormEditSuplier } from './formEdit'
 import { GetSupplier, SearchSupplier, DeleteSupplier } from "../../../services";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 export const Supplier = () => {
 
@@ -132,6 +133,8 @@ export const Supplier = () => {
 			<Content
 				title='Supplier'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchSupplier}
 			>

@@ -23,6 +23,8 @@ export const Wor = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isDropdown, setIsDropdown] = useState<any>(false);
+	const [divisiMarketing, setDivisiMarketing] = useState<string>("");
 	const [countData, setCountData] = useState<number>(0);
 	const [roleMarketing, setRoleMarketing] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
@@ -42,7 +44,15 @@ export const Wor = () => {
 	];
 
 	useEffect(() => {
-		getWor(page, perPage, cekDivisiMarketing());
+		let position = getPosition()
+		if(position === 'Director' || position === 'Manager'){
+			setIsDropdown(true)
+		}
+		if(divisiMarketing !== ""){
+			getWor(page, perPage, divisiMarketing);
+		}else{
+			setDivisiMarketing(cekDivisiMarketing())
+		}
 		let jabatan = getPosition();
 		let roleUsers: any = getRole();
 		if (roleUsers !== undefined) {
@@ -58,7 +68,7 @@ export const Wor = () => {
 			setPosition(jabatan);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [divisiMarketing]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -67,7 +77,7 @@ export const Wor = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getWor(page, perPage, cekDivisiMarketing());
+			getWor(page, perPage, divisiMarketing);
 		}
 	};
 
@@ -118,7 +128,7 @@ export const Wor = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getWor(1, 10, cekDivisiMarketing());
+				getWor(1, 10, divisiMarketing);
 			}
 		} catch (error) {
 			toast.error("Delete Work Order Release Failed", {
@@ -135,6 +145,10 @@ export const Wor = () => {
 		setIsModal(false);
 	};
 
+	const changeDivisi = (data: string) => {
+		setDivisiMarketing(data)
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -145,6 +159,8 @@ export const Wor = () => {
 			<Content
 				title='Work Order Release'
 				print={roleMarketing}
+				marketing={isDropdown}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchwor}
 			>
@@ -307,7 +323,7 @@ export const Wor = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getWor(value, perPage, cekDivisiMarketing());
+							getWor(value, perPage, divisiMarketing);
 						}}
 					/>
 				) : null}

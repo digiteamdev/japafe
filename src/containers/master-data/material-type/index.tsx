@@ -16,6 +16,7 @@ import { ViewMaterialType } from "./view";
 import { FormEditMaterialType } from './formEdit'
 import { GetMaterialType, SearchMaterialType, DeleteMaterialType } from "../../../services";
 import { toast } from "react-toastify";
+import { changeDivisi } from "@/src/utils";
 
 export const MaterialType = () => {
 
@@ -130,6 +131,8 @@ export const MaterialType = () => {
 			<Content
 				title='Material Type'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialType}
 			>

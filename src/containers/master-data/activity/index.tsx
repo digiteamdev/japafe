@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify";
 import { ViewActivity } from './view';
 import { FormEditActivity } from "./formEdit";
+import { changeDivisi } from "@/src/utils";
 
 interface data {
 	id: string;
@@ -153,6 +154,8 @@ export const Activity = () => {
 			<Content
 				title='Activity'
 				print={true}
+				marketing={false}
+				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchActivity}
 			>
