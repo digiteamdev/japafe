@@ -76,7 +76,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 						disc: res.disc,
 						currency: "IDR",
 						total: res.Material_Stock.harga * res.qtyAppr,
-						material: res.Material_Stock.spesifikasi,
+						material: `${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`,
 						qty: res.qtyAppr,
 						note: res.note,
 						price: res.Material_Stock.harga,
@@ -219,7 +219,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 					values,
 				}) => (
 					<Form>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='idPurchase'
@@ -234,7 +234,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='datePR'
 									name='datePR'
@@ -247,7 +247,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listSupplier}
@@ -264,8 +264,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputSelect
 									id='currency'
@@ -287,21 +285,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 								</InputSelect>
 							</div>
 							<div className='w-full'>
-								<InputSelect
-									id='taxPsrDmr'
-									name='taxPsrDmr'
-									placeholder='Tax'
-									label='Tax'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='ppn'>PPN</option>
-									<option value='non_ppn'>Non PPN</option>
-								</InputSelect>
-							</div>
-							<div className='w-full'>
 								<InputArea
 									id='note'
 									name='note'
@@ -317,13 +300,30 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'> */}
+							{/* <div className='w-full'>
+								<InputSelect
+									id='taxPsrDmr'
+									name='taxPsrDmr'
+									placeholder='Tax'
+									label='Tax'
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								>
+									<option value='ppn'>PPN</option>
+									<option value='non_ppn'>Non PPN</option>
+								</InputSelect>
+							</div> */}
+						{/* </Section> */}
 						<FieldArray
 							name='detailMr'
 							render={(arrayMr) =>
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.no_mr`}
@@ -354,6 +354,36 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={result.note}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.user`}
+														name={`detailMr.${i}.user`}
+														placeholder='Request By'
+														label='Request By'
+														type='text'
+														value={result.user}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
+												<div className='w-full'>
+													<Input
 														id={`detailMr.${i}.qty`}
 														name={`detailMr.${i}.qty`}
 														placeholder='Qty'
@@ -381,22 +411,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<Input
-														id={`detailMr.${i}.note`}
-														name={`detailMr.${i}.note`}
-														placeholder='Note'
-														label='Note'
-														type='text'
-														value={result.note}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-											</Section>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b border-b-gray-500 pb-2'>
-												<div className='w-full'>
-													<Input
 														id={`detailMr.${i}.price`}
 														name={`detailMr.${i}.price`}
 														placeholder='Price'
@@ -405,20 +419,14 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														pattern='\d*'
 														value={formatRupiah(result.price.toString())}
 														onChange={(e: any) => {
-															let price: number = e.target.value.toString()
-															.replaceAll(".", "");
+															let price: number = e.target.value
+																.toString()
+																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(
-																	price,
-																	result.qty,
-																	result.disc
-																)
+																totalHarga(price, result.qty, result.disc)
 															);
-															setFieldValue(
-																`detailMr.${i}.price`,
-																price
-															);
+															setFieldValue(`detailMr.${i}.price`, price);
 														}}
 														required={true}
 														withLabel={true}
@@ -434,20 +442,14 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														type='text'
 														pattern='\d*'
 														onChange={(e: any) => {
-															let discount: number = e.target.value.toString()
-															.replaceAll(".", "");
+															let discount: number = e.target.value
+																.toString()
+																.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
-																totalHarga(
-																	result.price,
-																	result.qty,
-																	discount
-																)
+																totalHarga(result.price, result.qty, discount)
 															);
-															setFieldValue(
-																`detailMr.${i}.disc`,
-																discount
-															);
+															setFieldValue(`detailMr.${i}.disc`, discount);
 														}}
 														value={formatRupiah(result.disc.toString())}
 														required={true}
@@ -464,20 +466,6 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 														type='text'
 														pattern='\d*'
 														value={formatRupiah(result.total.toString())}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.user`}
-														name={`detailMr.${i}.user`}
-														placeholder='Request By'
-														label='Request By'
-														type='text'
-														value={result.user}
 														disabled={true}
 														required={true}
 														withLabel={true}

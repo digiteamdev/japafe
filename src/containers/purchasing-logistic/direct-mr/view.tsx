@@ -287,8 +287,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																		{
 																			result.Material_Stock.Material_master
 																				.material_name
-																		}{" "}
-																		/ {result.Material_Stock.spesifikasi}
+																		}{" "}{result.Material_Stock.spesifikasi}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{result.qtyAppr}
