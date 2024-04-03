@@ -57,7 +57,7 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 			);
 		}
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfQuotation
@@ -216,20 +216,31 @@ export const ViewQuotation = ({ dataSelected }: props) => {
 							</table>
 						</div>
 					</Section>
-					<Section className='grid grid-cols-1 mt-2'>
+					{ dataSelected.job_operational === 'S' ? (
+						<Section className='grid grid-cols-1 mt-2'>
 						<p>
-							Note Payment :{" "}
+							Note :{" "}
 							<span className='whitespace-pre'>
-								{dataSelected.note_payment}
-							</span>
-						</p>
-						<p>
-							Term Payment :{" "}
-							<span className='whitespace-pre'>
-								{dataSelected.term_payment}
+								{dataSelected.note}
 							</span>
 						</p>
 					</Section>
+					) : (
+						<Section className='grid grid-cols-1 mt-2'>
+							<p>
+								Note Payment :{" "}
+								<span className='whitespace-pre'>
+									{dataSelected.note_payment}
+								</span>
+							</p>
+							<p>
+								Term Payment :{" "}
+								<span className='whitespace-pre'>
+									{dataSelected.term_payment}
+								</span>
+							</p>
+						</Section>
+					) }
 				</>
 			) : null}
 		</div>

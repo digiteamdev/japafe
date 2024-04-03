@@ -34,6 +34,7 @@ interface data {
 	waranti: string;
 	quo_img: string;
 	date: Date;
+	note: string;
 	note_payment: string;
 	term_payment: string;
 	Quotations_Detail: string;
@@ -81,6 +82,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		estimated_delivery: "",
 		attention: "",
 		waranti: "",
+		note: "",
 		quo_img: "",
 		date: new Date(),
 		note_payment: "",
@@ -223,7 +225,7 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 		form.append("price_quotation", JSON.stringify(payload.price_quotation));
 		form.append("note_payment", payload.note_payment);
 		form.append("term_payment", payload.term_payment);
-
+		form.append("note", payload.note);
 		try {
 			const response = await AddQuotation(form);
 			if (response) {
@@ -724,34 +726,52 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 									</>
 								)}
 							/>
-							<Section className='grid lg:grid-cols-2 sm:grid-cols-1 gap-2 mt-2'>
-								<div className='w-full'>
-									<InputArea
-										id='note_payment'
-										name='note_payment'
-										placeholder='Note Payment'
-										label='Note Payment'
-										required={true}
-										onChange={handleChange}
-										row={2}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-								</div>
-								<div className='w-full'>
-									<InputArea
-										id='term_payment'
-										name='term_payment'
-										placeholder='Term Payment'
-										label='Term Payment'
-										required={true}
-										onChange={handleChange}
-										row={2}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-								</div>
-							</Section>
+							{ cekDivisiMarketing() === 'S' ? (
+								<Section className='grid grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<InputArea
+											id='note'
+											name='note'
+											placeholder='Note'
+											label='Note'
+											required={true}
+											onChange={handleChange}
+											row={2}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 resize-y'
+										/>
+									</div>
+								</Section>
+							) : (
+								<Section className='grid lg:grid-cols-2 sm:grid-cols-1 gap-2 mt-2'>
+									<div className='w-full'>
+										<InputArea
+											id='note_payment'
+											name='note_payment'
+											placeholder='Note Payment'
+											label='Note Payment'
+											required={true}
+											onChange={handleChange}
+											row={2}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<InputArea
+											id='term_payment'
+											name='term_payment'
+											placeholder='Term Payment'
+											label='Term Payment'
+											required={true}
+											onChange={handleChange}
+											row={2}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							) }
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button

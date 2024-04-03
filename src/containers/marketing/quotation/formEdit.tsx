@@ -40,6 +40,7 @@ interface dataQuotation {
 	Quotations_Detail: string;
 	deskription: string;
 	note_payment: string;
+	note: string;
 	term_payment: string;
 	quo_img: any;
 	price_quotation: any;
@@ -75,12 +76,13 @@ export const FormEditQuotation = ({
 		send_by: "",
 		Quotations_Detail: "",
 		note_payment: "",
+		note: "",
 		term_payment: "",
 		deskription: "",
 		quo_img: null,
 		date: new Date(),
 		price_quotation: [],
-		delete: []
+		delete: [],
 	});
 
 	useEffect(() => {
@@ -145,12 +147,13 @@ export const FormEditQuotation = ({
 			subject: dataQuotation.subject,
 			Quotations_Detail: dataQuotation.Quotations_Detail,
 			deskription: dataQuotation.deskription,
+			note: dataQuotation.note,
 			note_payment: dataQuotation.note_payment,
 			term_payment: dataQuotation.term_payment,
 			quo_img: dataQuotation.quo_img,
 			date: new Date(dataQuotation.date),
 			price_quotation: dataPrice,
-			delete: []
+			delete: [],
 		});
 
 		setCustomerAddress(dataQuotation.Customer.address[0].address_workshop);
@@ -721,13 +724,13 @@ export const FormEditQuotation = ({
 														<a
 															className='flex ml-4 mt-8 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
 															onClick={() => {
-																let priceDelete: any = values.delete
-																if( res.id !== "" ){
+																let priceDelete: any = values.delete;
+																if (res.id !== "") {
 																	priceDelete.push({
-																		id: res.id
-																	})
+																		id: res.id,
+																	});
 																}
-																setFieldValue('delete', priceDelete)
+																setFieldValue("delete", priceDelete);
 																arrayPrice.remove(i);
 															}}
 														>
@@ -742,36 +745,55 @@ export const FormEditQuotation = ({
 								</>
 							)}
 						/>
-						<Section className='grid lg:grid-cols-2 sm:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputArea
-									id='note_payment'
-									name='note_payment'
-									placeholder='Note Payment'
-									label='Note Payment'
-									value={values.note_payment}
-									required={true}
-									onChange={handleChange}
-									row={2}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputArea
-									id='term_payment'
-									name='term_payment'
-									placeholder='Term Payment'
-									label='Term Payment'
-									value={values.term_payment}
-									required={true}
-									onChange={handleChange}
-									row={2}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						{dataQuotation.job_operational === "S" ? (
+							<Section className='grid grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<InputArea
+										id='note'
+										name='note'
+										placeholder='Note'
+										label='Note'
+										required={true}
+										value={values.note}
+										onChange={handleChange}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 resize-y'
+									/>
+								</div>
+							</Section>
+						) : (
+							<Section className='grid lg:grid-cols-2 sm:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<InputArea
+										id='note_payment'
+										name='note_payment'
+										placeholder='Note Payment'
+										label='Note Payment'
+										value={values.note_payment}
+										required={true}
+										onChange={handleChange}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<InputArea
+										id='term_payment'
+										name='term_payment'
+										placeholder='Term Payment'
+										label='Term Payment'
+										value={values.term_payment}
+										required={true}
+										onChange={handleChange}
+										row={2}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+							</Section>
+						)}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

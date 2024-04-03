@@ -18,8 +18,6 @@ import {
 	DispatchOperatorStart,
 } from "../../../services";
 import { toast } from "react-toastify";
-import { Plus, Trash2 } from "react-feather";
-import { getId } from "../../../configs/session";
 import moment from "moment";
 
 interface props {
@@ -94,7 +92,6 @@ export const FormEditDispatch = ({
 	const settingData = () => {
 		let detail: any = [];
 		dataDispatch.dispatchDetail.map((res: any) => {
-			console.log(res);
 			detail.push({
 				idDispatch: res.id,
 				date_dispatch: res.date_dispatch,
@@ -637,7 +634,7 @@ export const FormEditDispatch = ({
 		};
 		if (so) {
 			try {
-				const response = await DispatchDetailStart(data.idDispatch, body);
+				const response = await DispatchDetailStart(data.aktivitasID, body);
 				if (response.data) {
 					toast.success("SO Activity Success", {
 						position: "top-center",
@@ -775,7 +772,7 @@ export const FormEditDispatch = ({
 				initialValues={{ ...data }}
 				// validationSchema={sumarySchema}
 				onSubmit={(values) => {
-					console.log(values);
+					console.log(values)
 				}}
 				enableReinitialize
 			>
