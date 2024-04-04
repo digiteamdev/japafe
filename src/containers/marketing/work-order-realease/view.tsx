@@ -51,7 +51,7 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val)
 	}
-console.log(dataSelected)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<PdfWor isModal={isModal} data={dataSelected} showModalPdf={showModalPdf}/>
@@ -70,7 +70,7 @@ console.log(dataSelected)
 									<Printer size={16} className="mr-1"/> Print
 								</div>
 							</button>
-							{ position === "Manager" && role === "MARKETING" || position === "Supervisor" && role === "MARKETING" ? (
+							{ position === "Director" && role === "MARKETING" || position === "Manager" && role === "MARKETING" || position === "Supervisor" && role === "MARKETING" ? (
 								<button 
 								className={`justify-center rounded-full border border-transparent ${dataSelected.status === "" || dataSelected.status === 'unvalid' ? "bg-orange-500 hover:bg-orange-400" : "bg-gray-500 hover:bg-gray-400"} px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer`}
 								onClick={ () => validWor()}

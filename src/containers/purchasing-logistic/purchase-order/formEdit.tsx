@@ -5,8 +5,7 @@ import { GetAllPoMr, EditPoMr, DeletePoMr } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "react-feather";
-import { Disclosure } from "@headlessui/react";
+import { Trash2, Plus } from "react-feather";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
@@ -21,6 +20,9 @@ interface data {
 	ref: string;
 	note: string;
 	supplierId: string;
+	delivery_time: string;
+	franco: string;
+	payment_method: string;
 	dp: any;
 	termOfPayment: any;
 	detailMr: any;
@@ -54,6 +56,9 @@ export const FormEditPurchaseMr = ({
 		supplierId: "",
 		dp: 0,
 		note: "",
+		delivery_time: "",
+		franco: "",
+		payment_method: "",
 		termOfPayment: [],
 		detailMr: [],
 	});
@@ -98,6 +103,9 @@ export const FormEditPurchaseMr = ({
 				material: result.Material_Stock.spesifikasi,
 				qty: result.qtyAppr,
 				note: result.note,
+				delivery_time: result.delivery_time,
+				franco: result.franco,
+				payment_method: result.payment_method,
 				price: result.price,
 				job_no: result.mr.job_no,
 			});
@@ -121,12 +129,15 @@ export const FormEditPurchaseMr = ({
 			ref: dataSelected.your_reff,
 			supplierId: dataSelected.supplier.supplier_name,
 			note: dataSelected.note,
+			delivery_time: dataSelected.delivery_time,
+			franco: dataSelected.franco,
+			payment_method: dataSelected.payment_method,
 			dp: dataSelected.DP,
 			termOfPayment: termOfPayment,
 			detailMr: detail,
 		});
-		setContact(dataSelected.supplier.SupplierContact[0].contact_person);
-		setPhone(`+62${dataSelected.supplier.SupplierContact[0].phone}`);
+		setContact(dataSelected.supplier.SupplierContact[0] ? dataSelected.supplier.SupplierContact[0].contact_person : "");
+		setPhone(dataSelected.supplier.SupplierContact[0] ? `+62${dataSelected.supplier.SupplierContact[0]?.phone}` : '');
 		setAddress(dataSelected.supplier.addresses_sup);
 	};
 
@@ -185,6 +196,7 @@ export const FormEditPurchaseMr = ({
 
 	const editPurchaseOrder = async (payload: data) => {
 		setIsLoading(true);
+		console.log(payload)
 		let termOfPay: any = [];
 		payload.termOfPayment.map((res: any) => {
 			let prices: any = res.price.replace(/[$.]/g, "");
@@ -201,6 +213,9 @@ export const FormEditPurchaseMr = ({
 			id: dataSelected.id,
 			your_reff: payload.ref,
 			note: payload.note,
+			delivery_time: payload.delivery_time,
+			franco: payload.franco,
+			payment_method: payload.payment_method,
 			DP: payload.dp,
 			term_of_pay_po_so: termOfPay,
 		};
@@ -209,11 +224,9 @@ export const FormEditPurchaseMr = ({
 			const response = await EditPoMr(data);
 			if (response.data) {
 				if (listRemoveTerm.length > 0) {
-					let termOfPayRemove: any = 
-						{
-							termOfPayRemove: listRemoveTerm,
-						}
-					;
+					let termOfPayRemove: any = {
+						termOfPayRemove: listRemoveTerm,
+					};
 					await DeletePoMr(termOfPayRemove);
 				}
 				toast.success("Edit Purchase Order Material Request Success", {
@@ -287,6 +300,9 @@ export const FormEditPurchaseMr = ({
 							idPO: data.idPO,
 							ref: "",
 							note: "",
+							delivery_time: "",
+							franco: "",
+							payment_method: "",
 							supplierId: "",
 							dp: 0,
 							termOfPayment: termOfPayment,
@@ -300,6 +316,9 @@ export const FormEditPurchaseMr = ({
 					idPO: data.idPO,
 					ref: "",
 					note: "",
+					delivery_time: "",
+					franco: "",
+					payment_method: "",
 					supplierId: "",
 					dp: 0,
 					termOfPayment: [],
@@ -473,6 +492,53 @@ export const FormEditPurchaseMr = ({
 									type='text'
 									value={values.note}
 									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+						</Section>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+							<div className='w-full'>
+								<Input
+									id='delivery_time'
+									name='delivery_time'
+									placeholder='Delivery time'
+									label='Delivery time'
+									type='text'
+									value={values.delivery_time}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='payment_method'
+									name='payment_method'
+									placeholder='Payment Method'
+									label='Payment Method'
+									type='text'
+									value={values.payment_method}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='franco'
+									name='franco'
+									placeholder='Franco'
+									label='Franco'
+									type='text'
+									value={values.franco}
+									onChange={handleChange}
+									disabled={false}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

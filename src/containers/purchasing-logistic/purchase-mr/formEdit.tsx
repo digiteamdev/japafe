@@ -68,9 +68,7 @@ export const FormEditPurchaseMr = ({
 				qty: res.qtyAppr,
 				note: res.note,
 				note_revision: res.note_revision,
-				job_no: res.mr.wor.job_operational
-					? res.mr.wor.job_no_mr
-					: res.mr.wor.job_no,
+				job_no: res.mr.job_no,
 				no_mr: res.mr.no_mr,
 				user: res.mr.user.employee.employee_name,
 				price: res.price,

@@ -3,21 +3,17 @@ import {
 	Section,
 	Input,
 	InputSelect,
-	InputSelectSearch,
-	InputArea,
+	InputSelectSearch
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
-	GetAllSupplier,
 	GetAllPoMr,
-	GetAllCoa,
 	AddPoMr,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "react-feather";
-import { Disclosure } from "@headlessui/react";
+import { Trash2, Plus } from "react-feather";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
@@ -520,11 +516,11 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputArea
+								<Input
 									id='delivery_time'
 									name='delivery_time'
 									placeholder='Delivery time'
-									label='Delivery Time'
+									label='Delivery time'
 									type='text'
 									value={values.delivery_time}
 									onChange={handleChange}
@@ -535,7 +531,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputArea
+								<Input
 									id='payment_method'
 									name='payment_method'
 									placeholder='Payment Method'
@@ -550,7 +546,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<InputArea
+								<Input
 									id='franco'
 									name='franco'
 									placeholder='Franco'
