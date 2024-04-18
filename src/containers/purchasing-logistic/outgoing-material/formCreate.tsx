@@ -12,6 +12,7 @@ import {
 	GetAllCoa,
 	AddOutgoingMaterial,
 	GetOutgoingMaterialAll,
+	GetAllMaterialNew,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -111,14 +112,12 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 	const getMaterial = async () => {
 		try {
 			let list_material: any = [];
-			const response = await GetAllMaterial();
+			const response = await GetAllMaterialNew();
 			if (response) {
 				response.data.result.map((res: any) => {
-					res.Material_Stock.map((stock: any) => {
-						list_material.push({
-							label: `${res.material_name} - ${stock.spesifikasi}`,
-							value: stock,
-						});
+					list_material.push({
+						label: `${res.name} - ${res.spesifikasi}`,
+						value: res,
 					});
 				});
 			}
@@ -294,6 +293,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									label='ID Purchase Recieve'
 									onChange={(e: any) => {
 										e.value.detailMr.map((res: any, i: number) => {
+											console.log(res)
 											setFieldValue("pb", [
 												{
 													coa_id: null,
@@ -307,7 +307,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 											setFieldValue(`mr.${i}.idMr`, res.mr.no_mr);
 											setFieldValue(
 												`mr.${i}.materialName`,
-												`${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`
+												`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`
 											);
 											setFieldValue(
 												`mr.${i}.job_no`,
@@ -320,7 +320,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 											setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
 											setFieldValue(
 												`mr.${i}.stock`,
-												res.Material_Stock.jumlah_Stock
+												res.Material_Master.jumlah_Stock
 											);
 										});
 									}}
@@ -472,7 +472,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									values.mr.map((result: any, i: number) => {
 										return (
 											<div key={i}>
-												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
 													<div className='w-full'>
 														<Input
 															id={`mr.${i}.idMr`}

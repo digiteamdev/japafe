@@ -150,11 +150,11 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfSr
+			{/* <PdfSr
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -226,7 +226,6 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>Part Name</th>
 									<th className='border border-black text-center'>
 										Service Description
 									</th>
@@ -240,10 +239,7 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{res.part}
-											</td>
-											<td className='border border-black text-center'>
-												{res.workCenter.name}
+												{res.desc}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qty}

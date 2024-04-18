@@ -480,13 +480,9 @@ export const FormEditApproval = ({
 																								<tr key={idx}>
 																									<td className='border border-black text-center'>
 																										{
-																											result.Material_Stock
-																												.Material_master
-																												.material_name
-																										}{" "}
-																										/{" "}
-																										{
-																											result.Material_Stock
+																											result.Material_Master.name
+																										}{" "}{
+																											result.Material_Master
 																												.spesifikasi
 																										}
 																									</td>
@@ -495,7 +491,7 @@ export const FormEditApproval = ({
 																									</td>
 																									<td className='border border-black text-center'>
 																										{formatRupiah(
-																											result.Material_Stock.harga.toString()
+																											result.price.toString()
 																										)}
 																									</td>
 																									<td className='border border-black text-center'>
@@ -547,9 +543,6 @@ export const FormEditApproval = ({
 																				<thead>
 																					<tr>
 																						<th className='border border-black text-center'>
-																							Part / Item
-																						</th>
-																						<th className='border border-black text-center'>
 																							Service Description
 																						</th>
 																						<th className='border border-black text-center'>
@@ -575,10 +568,7 @@ export const FormEditApproval = ({
 																						return (
 																							<tr key={idx}>
 																								<td className='border border-black text-center'>
-																									{result.part}
-																								</td>
-																								<td className='border border-black text-center'>
-																									{result.workCenter.name}
+																									{result.desc}
 																								</td>
 																								<td className='border border-black text-center'>
 																									{result.qty}

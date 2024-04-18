@@ -13,7 +13,7 @@ export const Table = ({ header, children }: props) => {
 					{ header?.map( (res,i) => {
 						return (
 							// <th scope="col" className={`px-6 py-4 ${i === 0 || i === header.length - 1 ? 'text-center' : ''} text-md`} key={i}>{res.name}</th>
-							<th scope="col" className={`px-6 py-4 text-center text-md`} key={i}>{res.name}</th>
+							<th scope="col" className={`p-1 text-center text-md`} key={i}>{res.name}</th>
 						)
 					}) }
 				</tr>

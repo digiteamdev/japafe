@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import {
-	GetAllPoMr,
-    EditPoMr, DeletePoMr
-} from "../../../services";
+import { GetAllPoMr, EditPoMr, DeletePoMr } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { ChevronDown, ChevronUp, Trash2, Plus } from "react-feather";
-import { Disclosure } from "@headlessui/react";
+import { Trash2, Plus } from "react-feather";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
@@ -24,6 +20,7 @@ interface data {
 	ref: string;
 	note: string;
 	supplierId: string;
+	supplier: string;
 	dp: any;
 	termOfPayment: any;
 	detailMr: any;
@@ -51,12 +48,13 @@ export const FormEditPurchaseSr = ({
 	const [countTaxPpn, setCountTaxPpn] = useState<string>("");
 	const [countTaxPph, setCountTaxPph] = useState<string>("");
 	const [grandTotal, setGrandTotal] = useState<string>("");
-    const [listRemoveTerm, setListRemoveTerm] = useState<any>([]);
+	const [listRemoveTerm, setListRemoveTerm] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		dateOfPO: new Date(),
 		idPO: "",
 		ref: "",
 		supplierId: "",
+		supplier: "",
 		dp: 0,
 		note: "",
 		termOfPayment: [],
@@ -69,8 +67,6 @@ export const FormEditPurchaseSr = ({
 		if (idUser !== undefined) {
 			setUserId(idUser);
 		}
-		setIdPR(generateIdNum());
-		// getSrPo();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -78,7 +74,8 @@ export const FormEditPurchaseSr = ({
 		let detail: any = [];
 		let termOfPayment: any = [];
 		let total: number = 0;
-		let totalTax: number = 0;
+		let totalTaxPpn: number = 0;
+		let totalTaxPph: number = 0;
 		let tax: boolean = false;
 		let taxSo: string = "";
 
@@ -103,15 +100,13 @@ export const FormEditPurchaseSr = ({
 				disc: result.disc,
 				currency: result.currency,
 				total: result.total,
-				service: result.workCenter.name,
-				part: result.part,
+				desc: result.desc,
 				qty: result.qtyAppr,
 				note: result.note,
 				price: result.price,
 				job_no: result.sr.job_no,
 			});
-			total = total + result.total;
-			setCurrency(result.currency);
+			setCurrency(dataSelected.currency);
 			total = total + result.total;
 			if (
 				result.taxPsrDmr === "ppn" ||
@@ -123,94 +118,43 @@ export const FormEditPurchaseSr = ({
 			}
 		});
 		if (tax && taxSo === "ppn") {
-			totalTax = (total * dataSelected.supplier.ppn) / 100;
+			totalTaxPpn = (total * dataSelected.supplier.ppn) / 100;
 			setCountTaxPpn(`PPN ${dataSelected.supplier.ppn}`);
-			setTaxPpn(formatRupiah(totalTax.toString()));
+			setTaxPpn(formatRupiah(totalTaxPpn.toString()));
 		} else if (tax && taxSo === "pph") {
-			totalTax = (total * dataSelected.supplier.pph) / 100;
+			totalTaxPph = (total * dataSelected.supplier.pph) / 100;
 			setCountTaxPph(`PPH ${dataSelected.supplier.pph}`);
-			setTaxPph(formatRupiah(totalTax.toString()));
+			setTaxPph(formatRupiah(totalTaxPph.toString()));
 		} else if (tax && taxSo === "ppn_and_pph") {
-			totalTax = (total * dataSelected.supplier.ppn) / 100;
+			totalTaxPpn = (total * dataSelected.supplier.ppn) / 100;
 			setCountTaxPpn(`PPN ${dataSelected.supplier.ppn}`);
-			setTaxPpn(formatRupiah(totalTax.toString()));
+			setTaxPpn(formatRupiah(totalTaxPpn.toString()));
 
-			totalTax = (total * dataSelected.supplier.pph) / 100;
+			totalTaxPph = (total * dataSelected.supplier.pph) / 100;
 			setCountTaxPph(`PPH ${dataSelected.supplier.pph}`);
-			setTaxPph(formatRupiah(totalTax.toString()));
+			setTaxPph(formatRupiah(totalTaxPph.toString()));
 		}
-		let grandTotal: number = total + totalTax;
+		let grandTotal: number = total + totalTaxPpn - totalTaxPph;
 		setTotal(formatRupiah(total.toString()));
 		setGrandTotal(formatRupiah(grandTotal.toString()));
-		setContact(dataSelected.supplier.SupplierContact[0].contact_person);
-		setPhone(`+62${dataSelected.supplier.SupplierContact[0].phone}`);
+		setContact(dataSelected.supplier.SupplierContact[0]?.contact_person);
+		setPhone(
+			dataSelected.supplier.SupplierContact.length > 0
+				? `+62${dataSelected.supplier.SupplierContact[0]?.phone}`
+				: ""
+		);
 		setAddress(dataSelected.supplier.addresses_sup);
 		setData({
 			dateOfPO: dataSelected.date_prepared,
 			idPO: dataSelected.id_so,
 			ref: dataSelected.your_reff,
-			supplierId: dataSelected.supplier.supplier_name,
+			supplierId: dataSelected.supplier.id,
+			supplier: dataSelected.supplier.supplier_name,
 			note: dataSelected.note,
 			dp: dataSelected.DP,
 			termOfPayment: termOfPayment,
 			detailMr: detail,
 		});
-	};
-
-	const getSrPo = async () => {
-		try {
-			const response = await GetAllPoMr("PSR");
-			if (response) {
-				let detail: any = [];
-				let suplier: any = [];
-				let dataSuplier: any = [];
-
-				response.data.result.map((res: any) => {
-					res.SrDetail.map((result: any) => {
-						if (!suplier.includes(result.supplier.supplier_name)) {
-							suplier.push(result.supplier.supplier_name);
-							dataSuplier.push(result.supplier);
-						}
-						detail.push({
-							id: result.id,
-							no_mr: result.sr.no_sr,
-							user: result.sr.user.employee.employee_name,
-							supId: result.supId,
-							taxpr: result.taxPsrDmr,
-							akunId: result.akunId,
-							disc: result.disc,
-							currency: result.currency,
-							total: result.total,
-							service: result.workCenter.name,
-							part: result.part,
-							qty: result.qtyAppr,
-							note: result.note,
-							price: result.price,
-							job_no: result.sr.wor.job_operational
-								? result.sr.wor.job_no_mr
-								: result.sr.wor.job_no,
-						});
-					});
-				});
-				setListSupplier(suplier);
-				setListDataSupplier(dataSuplier);
-				setListMr(detail);
-			}
-		} catch (error) {
-			setListMr([]);
-		}
-	};
-
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"SO" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 10000);
-		return id;
 	};
 
 	const editPurchaseOrder = async (payload: data) => {
@@ -238,12 +182,10 @@ export const FormEditPurchaseSr = ({
 		try {
 			const response = await EditPoMr(data);
 			if (response.data) {
-                if (listRemoveTerm.length > 0) {
-					let termOfPayRemove: any = 
-						{
-							termOfPayRemove: listRemoveTerm,
-						}
-					;
+				if (listRemoveTerm.length > 0) {
+					let termOfPayRemove: any = {
+						termOfPayRemove: listRemoveTerm,
+					};
 					await DeletePoMr(termOfPayRemove);
 				}
 				toast.success("Purchase Order Material Request Success", {
@@ -273,91 +215,6 @@ export const FormEditPurchaseSr = ({
 		setIsLoading(false);
 	};
 
-	const handleOnChanges = (event: any) => {
-		// if (event.target.name === "suplier") {
-		// 	if (event.target.value !== "no data") {
-		// 		listDataSuplier.map((res: any) => {
-		// 			if (res.supplier_name === event.target.value) {
-		// 				let detail: any = [];
-		// 				let total: number = 0;
-		// 				let totalTax: number = 0;
-		// 				let tax: boolean = false;
-		// 				let taxSo: string = "";
-		// 				let termOfPayment: any = [
-		// 					{
-		// 						limitpay: "Normal",
-		// 						percent: 0,
-		// 						price: 0,
-		// 						invoice: "",
-		// 					},
-		// 				];
-		// 				listMr.map((mr: any) => {
-		// 					if (mr.supId === res.id) {
-		// 						detail.push(mr);
-		// 						setCurrency(mr.currency);
-		// 						total = total + mr.total;
-		// 						if (
-		// 							mr.taxpr === "ppn" ||
-		// 							mr.taxpr === "pph" ||
-		// 							mr.taxpr === "ppn_and_pph"
-		// 						) {
-		// 							tax = true;
-		// 							taxSo = mr.taxpr;
-		// 						}
-		// 					}
-		// 				});
-		// 				if (tax && taxSo === "ppn") {
-		// 					totalTax = (total * res.ppn) / 100;
-		// 					setCountTaxPpn(`PPN ${res.ppn}`);
-		// 					setTax(formatRupiah(totalTax.toString()));
-		// 				} else if (tax && taxSo === "pph") {
-		// 					totalTax = (total * res.pph) / 100;
-		// 					setCountTax(`PPH ${res.pph}`);
-		// 					setTax(formatRupiah(totalTax.toString()));
-		// 				} else if (tax && taxSo === "ppn_and_pph") {
-		// 					totalTax = (total * (res.ppn + res.pph)) / 100;
-		// 					setCountTax(`PPN and PPH ${res.ppn + res.pph}`);
-		// 					setTax(formatRupiah(totalTax.toString()));
-		// 				}
-		// 				let grandTotal: number = total + totalTax;
-		// 				setTotal(formatRupiah(total.toString()));
-		// 				setGrandTotal(formatRupiah(grandTotal.toString()));
-		// 				setContact(res.SupplierContact[0].contact_person);
-		// 				setPhone(`+62${res.SupplierContact[0].phone}`);
-		// 				setAddress(res.addresses_sup);
-		// 				setSuplierId(res.id);
-		// 				setData({
-		// 					dateOfPO: data.dateOfPO,
-		// 					idPO: data.idPO,
-		// 					ref: "",
-		// 					note: "",
-		// 					supplierId: "",
-		// 					dp: 0,
-		// 					termOfPayment: termOfPayment,
-		// 					detailMr: detail,
-		// 				});
-		// 			}
-		// 		});
-		// 	} else {
-		// 		setData({
-		// 			dateOfPO: data.dateOfPO,
-		// 			idPO: data.idPO,
-		// 			ref: "",
-		// 			note: "",
-		// 			supplierId: "",
-		// 			dp: 0,
-		// 			termOfPayment: [],
-		// 			detailMr: [],
-		// 		});
-		// 		setCurrency("");
-		// 		setContact("");
-		// 		setPhone("");
-		// 		setAddress("");
-		// 		setSuplierId("");
-		// 	}
-		// }
-	};
-
 	const totalTermOfPayment = (data: any) => {
 		let total: number = 0;
 		let grandTotals: any = grandTotal.replace(/[$.]/g, "");
@@ -366,7 +223,7 @@ export const FormEditPurchaseSr = ({
 		return formatRupiah(total.toString());
 	};
 
-    const removeTerm = (id: string) => {
+	const removeTerm = (id: string) => {
 		let dataRemove: any = listRemoveTerm;
 		dataRemove.push({ id: id });
 		setListRemoveTerm(dataRemove);
@@ -390,22 +247,8 @@ export const FormEditPurchaseSr = ({
 					touched,
 					values,
 				}) => (
-					<Form onChange={handleOnChanges}>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='idPurchase'
-									name='idPurchase'
-									placeholder='ID Purchase'
-									label='ID Purchase'
-									type='text'
-									value={values.idPO}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
+					<Form>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='datePR'
@@ -427,15 +270,13 @@ export const FormEditPurchaseSr = ({
 									placeholder='Suplier'
 									label='Suplier'
 									type='text'
-									value={values.supplierId}
+									value={values.supplier}
 									disabled={true}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='contact'
@@ -464,6 +305,8 @@ export const FormEditPurchaseSr = ({
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='address'
@@ -478,8 +321,6 @@ export const FormEditPurchaseSr = ({
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='ref'
@@ -689,7 +530,7 @@ export const FormEditPurchaseSr = ({
 						{values.detailMr.map((result: any, i: number) => {
 							return (
 								<Section
-									className='grid md:grid-cols-7 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'
+									className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'
 									key={i}
 								>
 									<div className='w-full'>
@@ -707,29 +548,15 @@ export const FormEditPurchaseSr = ({
 										/>
 									</div>
 									<div className='w-full'>
-										<Input
-											id='part'
-											name='part'
-											placeholder='Part/item'
-											label='Part/item'
-											type='text'
-											value={result.part}
-											disabled={true}
+										<InputArea
+											id='desc'
+											name='desc'
+											placeholder='Description'
+											label='Description'
+											value={result.desc}
 											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='service'
-											name='service'
-											placeholder='Service'
-											label='Service'
-											type='text'
-											value={result.service}
 											disabled={true}
-											required={true}
+											row={2}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
@@ -796,12 +623,8 @@ export const FormEditPurchaseSr = ({
 						{values.detailMr.length > 0 ? (
 							<div className='w-full'>
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>Total</p>
+									<div className='w-full col-span-5'>
+										<p className='text-xl mt-4 text-end'>Total ({currency})</p>
 									</div>
 									<div className='w-full'>
 										<Input
@@ -819,12 +642,8 @@ export const FormEditPurchaseSr = ({
 								</Section>
 								{countTaxPpn !== "" ? (
 									<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'>
-											<p className='text-xl mt-4 text-end'>{countTaxPpn}%</p>
+										<div className='w-full col-span-5'>
+											<p className='text-xl mt-4 text-end'>{countTaxPpn}%  ({currency})</p>
 										</div>
 										<div className='w-full'>
 											<Input
@@ -843,12 +662,8 @@ export const FormEditPurchaseSr = ({
 								) : null}
 								{countTaxPph !== "" ? (
 									<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'></div>
-										<div className='w-full'>
-											<p className='text-xl mt-4 text-end'>{countTaxPph}%</p>
+										<div className='w-full col-span-5'>
+											<p className='text-xl mt-4 text-end'>{countTaxPph}%  ({currency})</p>
 										</div>
 										<div className='w-full'>
 											<Input
@@ -866,12 +681,8 @@ export const FormEditPurchaseSr = ({
 									</Section>
 								) : null}
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>Grand Total</p>
+									<div className='w-full col-span-5'>
+										<p className='text-xl mt-4 text-end'>Grand Total  ({currency})</p>
 									</div>
 									<div className='w-full'>
 										<Input
@@ -881,28 +692,6 @@ export const FormEditPurchaseSr = ({
 											type='text'
 											value={grandTotal}
 											disabled={true}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section>
-								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>DP</p>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='dp'
-											name='dp'
-											placeholder='DP'
-											type='number'
-											value={values.dp}
-											onChange={handleChange}
 											required={true}
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import {
+	Section,
+	Input,
+	InputSelect,
+	InputArea,
+	InputSelectSearch,
+} from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetMRForApproval,
@@ -58,15 +64,14 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					detail.push({
 						id: res.id,
-						mrappr: res.mrappr,
+						srappr: res.srappr,
 						supId: res.supId,
-						part: res.part,
 						qty: res.qty,
-						service: res.workCenter.name,
 						note: res.note,
-						qtyAppr: res.qtyAppr,
+						desc: res.desc,
+						qtyAppr: res.qty,
 						no_sr: res.sr.no_sr,
-						job_no: res.job_no,
+						job_no: res.sr.job_no,
 						user: res.sr.user.employee.employee_name,
 					});
 				});
@@ -83,12 +88,19 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 	};
 
 	const getSupplier = async () => {
+		let list_supplier: any = [];
 		try {
 			const response = await GetAllSupplier();
 			if (response) {
-				setListSupplier(response.data.result);
+				response.data.result.map((res: any) => {
+					list_supplier.push({
+						label: res.supplier_name,
+						value: res,
+					});
+				});
 			}
 		} catch (error) {}
+		setListSupplier(list_supplier);
 	};
 
 	const generateIdNum = () => {
@@ -206,23 +218,21 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 								values.srDetail.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											{/* <Disclosure defaultOpen>
-												{({ open }) => (
-													<div>
-														<Disclosure.Button className='flex w-full justify-between rounded-lg bg-purple-100 px-4 py-2 text-left text-sm font-medium hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 mt-2'>
-															<h4 className='text-lg font-bold'>
-																Job No : {result.job_no}
-															</h4>
-															<h4 className='text-lg font-bold'>
-																{open ? <ChevronDown /> : <ChevronUp />}
-															</h4>
-														</Disclosure.Button>
-														<Disclosure.Panel>
-														</Disclosure.Panel>
-													</div>
-												)}
-											</Disclosure> */}
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`srDetail.${i}.job_no`}
+														name={`srDetail.${i}.job_no`}
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={result.job_no}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
 												<div className='w-full'>
 													<Input
 														id={`srDetail.${i}.no_sr`}
@@ -261,71 +271,36 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 													</InputSelect>
 												</div>
 												<div className='w-full'>
-													<InputSelect
+													<InputSelectSearch
+														datas={listSupplier}
 														id={`srDetail.${i}.supId`}
 														name={`srDetail.${i}.supId`}
 														placeholder='Vendor'
 														label='Vendor'
 														onChange={(e: any) => {
-															setFieldValue(
-																`srDetail.${i}.supId`,
-																e.target.value
-															);
+															setFieldValue(`srDetail.${i}.supId`, e.value.id);
 														}}
 														required={true}
 														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='no data' selected>
-															Choose Vendor
-														</option>
-														{listSupplier.length === 0 ? (
-															<option value='no data'>No data</option>
-														) : (
-															listSupplier.map((res: any, i: number) => {
-																return (
-																	<option
-																		value={res.id}
-																		key={i}
-																		// selected={res.id === result.material}
-																	>
-																		{res.supplier_name}
-																	</option>
-																);
-															})
-														)}
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`srDetail.${i}.part`}
-														name={`srDetail.${i}.part`}
-														placeholder='Part/Item'
-														label='Part/Item'
-														type='text'
-														value={result.part}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 													/>
 												</div>
 												<div className='w-full'>
-													<Input
-														id={`srDetail.${i}.service`}
-														name={`srDetail.${i}.service`}
-														placeholder='Service Description'
-														label='Service Description'
-														type='text'
-														value={result.service}
-														disabled={true}
+													<InputArea
+														id={`srDetail.${i}.desc`}
+														name={`SrDetail.${i}.desc`}
+														placeholder='Descripsi'
+														label='Descripsi'
+														value={result.desc}
 														required={true}
+														disabled={true}
+														row={2}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
 											</Section>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b border-b-gray-500 pb-2'>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
 												<div className='w-full'>
 													<Input
 														id={`srDetail.${i}.user`}

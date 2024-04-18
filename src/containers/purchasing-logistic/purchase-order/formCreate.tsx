@@ -118,7 +118,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 							disc: result.disc,
 							currency: res.currency,
 							total: result.total,
-							material: `${result.Material_Stock.Material_master.material_name} ${result.Material_Stock.spesifikasi}`,
+							material: `${result.Material_Master.name} ${result.Material_Master.spesifikasi}`,
 							qty: result.qtyAppr,
 							note: result.note,
 							price: result.price,

@@ -61,7 +61,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
 										Phone
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										+62{dataSelected.supplier.SupplierContact[0].phone}
+										+62{dataSelected.supplier.SupplierContact[0]?.phone}
 									</td>
 								</tr>
                                 <tr>
@@ -102,7 +102,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                                 { res.mr.job_no }
                                             </td>
                                             <td className="border border-black p-2 text-center">
-                                                { res.Material_Stock.spesifikasi }
+                                                {`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
                                             </td>
                                             <td className="border border-black p-2 text-center">
                                                 { res.qtyAppr }

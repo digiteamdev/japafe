@@ -29,25 +29,24 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 	const Total = () => {
 		let jumlahTotal: any = 0;
 		dataSelected.detailMr.map((res: any) => {
-			jumlahTotal = jumlahTotal + (res.price * res.qty);
+			jumlahTotal = jumlahTotal + res.price * res.qty;
 		});
 		return jumlahTotal.toString();
 	};
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		let totalPPN: any =
-			(totalBayar * dataSelected.supplier.ppn) / 100;
+		let totalPPN: any = (totalBayar * dataSelected.supplier.ppn) / 100;
 		return totalPPN.toString();
 	};
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
-		if(dataSelected.taxPsrDmr === 'ppn'){
+		if (dataSelected.taxPsrDmr === "ppn") {
 			let totalPPN: any = Ppn();
 			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
 			return total;
-		}else{
+		} else {
 			let total: any = parseInt(totalBayar);
 			return total;
 		}
@@ -160,7 +159,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{/* <PdfPo
 				isModal={isModal}
 				data={dataSelected}
@@ -178,83 +177,90 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Purchase Order
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_so}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Purchase Order
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.supplier.supplier_name}
 									</td>
 								</tr>
-                                <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier Contact
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-                                        { dataSelected.supplier.SupplierContact.length === 0 ? "" : dataSelected.supplier.SupplierContact[0].contact_person } - { dataSelected.supplier.SupplierContact.length === 0 ? "" : `+62${dataSelected.supplier.SupplierContact[0].phone}` }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.supplier.SupplierContact.length === 0
+											? ""
+											: dataSelected.supplier.SupplierContact[0]
+													.contact_person}{" "}
+										-{" "}
+										{dataSelected.supplier.SupplierContact.length === 0
+											? ""
+											: `+62${dataSelected.supplier.SupplierContact[0].phone}`}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Referensi
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.your_reff}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Delivery Time
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.delivery_time }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.delivery_time}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Payment Method
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.payment_method }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.payment_method}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Franco
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.franco }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.franco}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.status_manager ? "Valid" : "Unvalid" }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.status_manager ? "Valid" : "Unvalid"}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid director
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.status_manager_director }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.status_manager_director}
 									</td>
 								</tr>
 							</table>
@@ -264,13 +270,11 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>
-										Id Purchase MR
-									</th>
+									<th className='border border-black text-center'>Job no</th>
+									<th className='border border-black text-center'>No MR</th>
 									<th className='border border-black text-center'>
 										Date Purchase MR
 									</th>
-									<th className='border border-black text-center'>Job no</th>
 									<th className='border border-black text-center'>Material</th>
 									<th className='border border-black text-center'>Qty</th>
 									<th className='border border-black text-center'>Price</th>
@@ -283,16 +287,16 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
+												{res.mr.job_no}
+											</td>
+											<td className='border border-black text-center'>
 												{res.mr.no_mr}
 											</td>
 											<td className='border border-black text-center'>
 												{moment(res.mr.date_mr).format("DD-MMMM-YYYY")}
 											</td>
 											<td className='border border-black text-center'>
-												{res.mr.job_no}
-											</td>
-											<td className='border border-black text-center'>
-												{`${res.Material_Stock.Material_master.material_name} - ${res.Material_Stock.spesifikasi}`}
+												{`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qtyAppr}
@@ -320,7 +324,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 										{formatRupiah(Total())}
 									</td>
 								</tr>
-								{ dataSelected.taxPsrDmr === 'ppn' ? (
+								{dataSelected.taxPsrDmr === "ppn" ? (
 									<tr>
 										<td
 											colSpan={7}
@@ -332,7 +336,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 											{formatRupiah(Ppn())}
 										</td>
 									</tr>
-								) : null }
+								) : null}
 								<tr>
 									<td
 										colSpan={7}
@@ -355,16 +359,18 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 							</p>
 						</div>
 						<div className='w-full'>
-							<p>Term & Condition : { dataSelected.note }</p>
+							<p>Term & Condition : {dataSelected.note}</p>
 						</div>
 						<div className='w-full'>
 							{dataSelected.term_of_pay_po_so.map((res: any, i: number) => {
 								return (
 									<div className='flex w-full' key={i}>
-										<p className="pr-4">{ res.limitpay }</p>
-                                        <p className="pr-4">{ res.percent }%</p>
-                                        <p className="pr-4">({ formatRupiah(res.price.toString()) })</p>
-                                        <p className="pr-4">Invoice : {res.invoice}</p>
+										<p className='pr-4'>{res.limitpay}</p>
+										<p className='pr-4'>{res.percent}%</p>
+										<p className='pr-4'>
+											({formatRupiah(res.price.toString())})
+										</p>
+										<p className='pr-4'>Invoice : {res.invoice}</p>
 									</div>
 								);
 							})}

@@ -227,24 +227,24 @@ export const Mr = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-md ${bgMr(
-										res.statusMr
-									)}`}
+									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-md`}
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className={`whitespace-nowrap p-2 text-center ${bgMr(
+										res.statusMr
+									)}`}>
 										{res.no_mr}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{res.job_no}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{moment(res.date_mr).format("DD-MM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{res.user.employee.sub_depart.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap p-2 w-[10%]'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'

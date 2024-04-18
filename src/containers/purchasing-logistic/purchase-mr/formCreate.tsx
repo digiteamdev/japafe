@@ -65,7 +65,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any) => {
-					console.log(res)
 					detail.push({
 						id: res.id,
 						no_mr: res.mr.no_mr,
@@ -80,8 +79,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						job_no: res.mr.job_no,
 						disc: res.disc,
 						currency: "IDR",
-						total: res.Material_Stock.harga * res.qtyAppr,
-						material: `${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`,
+						total: res.Material_Master.harga * res.qtyAppr,
+						material: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
 						qty: res.qtyAppr,
 						note: res.note,
 						price: res.price,
@@ -141,7 +140,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	};
 
 	const totalHarga = (harga: number, qty: number, disc: number, ppn: number, total: boolean, tax: boolean) => {
-		console.log(tax)
 		let totalHarga = harga * qty - disc;
 		let Ppn: any = tax ? (totalHarga * ppn) / 100 : 0;
 		if(total){
@@ -489,7 +487,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													/>
 												</div> */}
 											</Section>
-											<Section className='grid grid-cols-1 gap-2 border-b border-b-gray-500 pb-2'>
+											<Section className='grid grid-cols-1 gap-2 border-b-[3px] border-b-red-500 pb-2'>
 												<div className='w-full'>
 													{values.detailMr.length === 1 ? null : (
 														<a

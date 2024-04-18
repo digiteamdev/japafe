@@ -78,7 +78,6 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>Part Name</th>
 									<th className='border border-black text-center'>Material Name</th>
 									<th className='border border-black text-center'>Satuan</th>
 									<th className='border border-black text-center'>Quantity</th>
@@ -90,13 +89,10 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
-												{res.eq_part.nama_part}
+												{res.Material_Master.name} {res.Material_Master.spesifikasi}
 											</td>
 											<td className='border border-black text-center'>
-												{res.Material_master.material_name}
-											</td>
-											<td className='border border-black text-center'>
-												{res.Material_master.satuan}
+												{res.Material_Master.satuan}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qty}

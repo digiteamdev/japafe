@@ -9,17 +9,12 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { Send, Edit, Eye } from "react-feather";
-import { FormCreateApprovalMr } from "./formCreate";
-import { ViewApprovalMR } from "./view";
-import { FormEditApprovalMr } from "./formEdit";
-import { GetApprovalRequest, SearchApprovalRequest, DeleteMR } from "../../../services";
-import { toast } from "react-toastify";
+import { Tool} from "react-feather";
+import { GetMaterialNew, SearchMaterialNew } from "../../../services";
 import { removeToken } from "../../../configs/session";
-import moment from "moment";
-import { changeDivisi } from "@/src/utils";
+import { changeDivisi, formatRupiah } from '../../../utils/index'
 
-export const ApprovalMr = () => {
+export const MaterialStokMaketing = () => {
 
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
@@ -32,15 +27,21 @@ export const ApprovalMr = () => {
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [showCreate,setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
-		{ name: "ID Approval MR" },
-        { name: "Approval MR Date" },
-		{ name: "Approval By" },
-        { name: "Action" }
+		{ name: "Material Name" },
+		{ name: "Stock" },
+		{ name: "Satuan" },
+        { name: "Price" }
 	];
 
 	useEffect(() => {
-		getApprovalMr(page, perPage, "MP");
+		getMaterialStok(page, perPage);
+		let route = router.pathname;
+		let arrayRouter = route.split("/");
+		if(arrayRouter[1] === 'marketing'){
+			setShowCreate(false)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -51,14 +52,14 @@ export const ApprovalMr = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getApprovalMr(page, perPage, "MP");
+			getMaterialStok(page, perPage);
 		}
 	};
 
-	const getApprovalMr = async (page: number, perpage: number, type: string) => {
+	const getMaterialStok = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalRequest(page, perpage, type);
+			const response = await GetMaterialNew(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -75,14 +76,14 @@ export const ApprovalMr = () => {
 		setIsLoading(false);
 	};
 
-	const searchApprovalMr = async (
+	const searchMaterialStock = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchApprovalRequest(page, limit, search, "MP");
+			const response = await SearchMaterialNew(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -92,51 +93,51 @@ export const ApprovalMr = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
-		try {
-			const response = await DeleteMR(id);
-			if(response.data){
-				toast.success("Delete Material Request Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				getApprovalMr(1, 10, "MP");
-			}
-		} catch (error) {
-			toast.error("Delete Material Request Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
+	const deleteMaterialStock = async (id: string) => {
+		// try {
+		// 	const response = await DeleteCustomer(id);
+		// 	if(response.data){
+		// 		toast.success("Delete Customer Success", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 		getMaterialStok(1, 10);
+		// 	}
+		// } catch (error) {
+		// 	toast.error("Delete Customer Failed", {
+		// 		position: "top-center",
+		// 		autoClose: 5000,
+		// 		hideProgressBar: true,
+		// 		closeOnClick: true,
+		// 		pauseOnHover: true,
+		// 		draggable: true,
+		// 		progress: undefined,
+		// 		theme: "colored",
+		// 	});
+		// }
 		setIsModal(false);
 	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Approval Material Request'
+				title='Material Stock'
 				total={countData}
-				icon={<Send className='w-[36px] h-[36px]' />}
+				icon={<Tool className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Approval Material Request'
-				print={true}
+				title='Material Stock'
+				print={showCreate}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				showModal={showModal}
-				search={searchApprovalMr}
+				search={searchMaterialStock}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -175,45 +176,16 @@ export const ApprovalMr = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
+							console.log(res)
+                            return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idApprove }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
-									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
-										</div>
-									</td>
+									<td className='whitespace-nowrap p-1'>{ `${res.name} ${res.spesifikasi}` }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.jumlah_Stock }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.satuan }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ formatRupiah(res.harga.toString()) }</td>
 								</tr>
 							);
 						})
@@ -228,36 +200,12 @@ export const ApprovalMr = () => {
 							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getApprovalMr(value, perPage, "MP");
+								getMaterialStok(value, perPage);
 							}}
 						/>
 					) : null
 				}
 			</Content>
-			{modalContent === "delete" ? (
-				<ModalDelete
-					data={dataSelected}
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-					onDelete={deleteMR}
-				/>
-			) : (
-				<Modal
-					title='Approval Material Request'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-                        <ViewApprovalMR dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
-					) : modalContent === "add" ? (
-                        <FormCreateApprovalMr content={modalContent} showModal={showModal} />
-					) : (
-                        <FormEditApprovalMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
-				</Modal>
-			)}
 		</div>
 	);
 };

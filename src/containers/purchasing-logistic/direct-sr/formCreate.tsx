@@ -18,6 +18,7 @@ import moment from "moment";
 import { getIdUser } from "../../../configs/session";
 import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
 import { Disclosure } from "@headlessui/react";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -80,8 +81,7 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 						disc: res.disc,
 						currency: "IDR",
 						total: res.total,
-						material: res.part,
-						service: res.workCenter.name,
+						desc: res.desc,
 						qty: res.qtyAppr,
 						note: res.note,
 						price: 0,
@@ -330,7 +330,21 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.job_no`}
+														name={`detailMr.${i}.job_no`}
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={result.job_no}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.no_sr`}
@@ -346,47 +360,35 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 													/>
 												</div>
 												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.job_no`}
-														name={`detailMr.${i}.job_no`}
-														placeholder='Job No'
-														label='Job No'
-														type='text'
-														value={result.no_sr}
-														disabled={true}
+													<InputArea
+														id={`srDetail.${i}.desc`}
+														name={`SrDetail.${i}.desc`}
+														placeholder='Descripsi'
+														label='Descripsi'
+														value={result.desc}
 														required={true}
+														disabled={true}
+														row={2}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
 												<div className='w-full'>
 													<Input
-														id={`detailMr.${i}.material`}
-														name={`detailMr.${i}.material`}
-														placeholder='Part / Item'
-														label='Part / Item'
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
 														type='text'
-														value={result.material}
+														value={result.note}
 														disabled={true}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.service`}
-														name={`detailMr.${i}.service`}
-														placeholder='Description Service'
-														label='Description Service'
-														type='text'
-														value={result.service}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
+											</Section>
+											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.qty`}
@@ -414,44 +416,30 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
-											</Section>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
-												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.note`}
-														name={`detailMr.${i}.note`}
-														placeholder='Note'
-														label='Note'
-														type='text'
-														value={result.note}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.price`}
 														name={`detailMr.${i}.price`}
 														placeholder='Price'
 														label='Price'
-														type='number'
+														type='text'
+														pattern='\d*'
 														onChange={(e: any) => {
+															let price: number = e.target.value.toString().replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
-																	e.target.value,
+																	price,
 																	result.qty,
 																	result.disc
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.price`,
-																e.target.value
+																price
 															);
 														}}
-														value={result.price}
+														value={formatRupiah(result.price.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -463,22 +451,26 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.disc`}
 														placeholder='Discount'
 														label='Discount'
-														type='number'
+														type='text'
+														pattern="/d*"
 														onChange={(e: any) => {
+															let disc: number = e.target.value
+															.toString()
+															.replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
 																	result.price,
 																	result.qty,
-																	e.target.value
+																	disc
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.disc`,
-																e.target.value
+																disc
 															);
 														}}
-														value={result.disc}
+														value={formatRupiah(result.disc.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -490,14 +482,17 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.total`}
 														placeholder='Total Price'
 														label='Total Price'
-														type='number'
-														value={result.total}
+														type='text'
+														pattern="/d*"
+														value={formatRupiah(result.total.toString())}
 														disabled={true}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
+											</Section>
+											<Section className='grid grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
 												<div className='w-full'>
 													{values.detailMr.length === 1 ? null : (
 														<a

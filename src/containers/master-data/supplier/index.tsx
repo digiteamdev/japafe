@@ -32,7 +32,6 @@ export const Supplier = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
 		{ name: "Supplier Name" },
 		{ name: "Phone" },
 		{ name: "Email" },
@@ -143,7 +142,7 @@ export const Supplier = () => {
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
 							<td
 								colSpan={headerTabel?.length}
-								className='whitespace-nowrap px-6 py-4 text-center text-lg'
+								className='whitespace-nowrap p-1 text-center text-lg'
 							>
 								<svg
 									role='status'
@@ -177,27 +176,24 @@ export const Supplier = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.supplier_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.SupplierContact.length > 0
 											? `+62${res.SupplierContact[0].phone}`
 											: "-"}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.office_email}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap p-1 w-[10%]'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -206,7 +202,7 @@ export const Supplier = () => {
 												<Eye color='white' />
 											</Button>
 											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true,'edit', false);
@@ -215,7 +211,7 @@ export const Supplier = () => {
 												<Edit color='white' />
 											</Button>
 											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "delete", false);

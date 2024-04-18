@@ -4,6 +4,7 @@ import {
 	Input,
 	InputSelect,
 	InputSelectSearch,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { srSchema } from "../../../schema/public/sr/srSchema";
@@ -95,30 +96,10 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 			{
 				value: [
 					{
-						job_no: year.toString().substring(2, 4) + 200,
+						job_no: "Internal",
 					},
 				],
-				internal: true,
-				label: year.toString().substring(2, 4) + 200 + " - Adm & Office",
-			},
-			{
-				value: [
-					{
-						job_no: year.toString().substring(2, 4) + 210,
-					},
-				],
-				internal: true,
-				label: year.toString().substring(2, 4) + 210 + " - Maintance",
-			},
-			{
-				value: [
-					{
-						job_no: year.toString().substring(2, 4) + 220,
-					},
-				],
-				internal: true,
-				label:
-					year.toString().substring(2, 4) + 220 + " - Trainning & Studying",
+				label: "Internal",
 			},
 		];
 		try {
@@ -170,85 +151,14 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 		} catch (error) {}
 	};
 
-	// const handleOnChanges = (event: any) => {
-	// 	if (event.target.name === "worId") {
-	// 		if (event.target.value !== "no data") {
-	// 			let data = JSON.parse(event.target.value);
-	// 			let userID = getIdUser();
-	// 			let list_service: any = [];
-	// 			let list_part: any = [];
-	// 			if (data.srimg === undefined) {
-	// 				list_service.push({
-	// 					dispacthdetailId: null,
-	// 					workCenterId: "",
-	// 					description: "",
-	// 					part: "",
-	// 					unit: "",
-	// 					qty: 0,
-	// 					note: "",
-	// 				});
-	// 				setJobNo(data.job_no_mr);
-	// 				setSubject(data.subject);
-	// 				setCustomer(data.customerPo.quotations.Customer.name);
-	// 				setIsOperasional(true);
-	// 			} else {
-	// 				data.dispatchDetail.map((res: any) => {
-	// 					if (res.so) {
-	// 						data.srimg.srimgdetail.map((srimg: any) => {
-	// 							if (!list_part.includes(srimg.name_part)) {
-	// 								list_part.push(srimg.name_part);
-	// 							}
-	// 							if (srimg.name_part === res.part) {
-	// 								list_service.push({
-	// 									dispacthdetailId: res.id,
-	// 									workCenterId: res.workId,
-	// 									description: res.workCenter.name,
-	// 									part: res.part,
-	// 									unit: data.srimg.timeschedule.wor.unit,
-	// 									qty: srimg.qty,
-	// 									note: "",
-	// 								});
-	// 							}
-	// 						});
-	// 					}
-	// 				});
-	// 				setJobNo(data.srimg.timeschedule.wor.job_no);
-	// 				setSubject(data.srimg.timeschedule.wor.subject);
-	// 				setCustomer(
-	// 					data.srimg.timeschedule.wor.customerPo.quotations.Customer.name
-	// 				);
-	// 				setIsOperasional(false);
-	// 			}
-	// 			setData({
-	// 				dispacthIDS: data.srimg === undefined ? null : data.id,
-	// 				userId: userID,
-	// 				worId:
-	// 					data.srimg === undefined ? data.id : data.srimg.timeschedule.wor.id,
-	// 				date_sr: new Date(),
-	// 				SrDetail: list_service,
-	// 			});
-	// 			setListPartDispatch(list_part);
-	// 			setIsService(true);
-	// 		} else {
-	// 			setJobNo("");
-	// 			setSubject("");
-	// 			setCustomer("");
-	// 			setListPartDispatch([]);
-	// 			setIsOperasional(false);
-	// 			setIsService(false);
-	// 		}
-	// 	}
-	// };
-
 	const addSr = async (payload: data) => {
 		setIsLoading(true);
 		let listService: any = [];
 		payload.SrDetail.map((res: any) => {
 			listService.push({
 				dispacthdetailId: res.dispacthdetailId,
-				description: res.workCenterId,
+				desc: res.description,
 				note: res.note,
-				part: res.part,
 				qty: parseInt(res.qty),
 				unit: res.unit,
 			});
@@ -462,7 +372,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 						}) => (
 							<Form>
 								<h1 className='text-xl font-bold mt-3'>Service Request</h1>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='date_sr'
@@ -488,7 +398,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 												let list_service: any = [];
 												let list_part: any = [];
 												let userID = getIdUser();
-												if (e.internal) {
+												if (e.label === 'Internal') {
 													setJobNo(e.value[0].job_no);
 													setSubject("-");
 													setCustomer("-");
@@ -503,31 +413,51 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 													});
 													setIsOperasional(true);
 												} else {
+													console.log(e.value)
 													setJobNo(e.value.srimg.timeschedule.wor.job_no);
 													setSubject(e.value.srimg.timeschedule.wor.subject);
-													setCustomer(e.value.srimg.timeschedule.wor.customerPo.quotations.Customer.name);
+													setCustomer(
+														e.value.srimg.timeschedule.wor.customerPo.quotations
+															.Customer.name
+													);
 													e.value.dispatchDetail.map((res: any) => {
-														if (res.so) {
-															e.value.srimg.srimgdetail.map((srimg: any) => {
-																if (!list_part.includes(srimg.name_part)) {
-																	list_part.push(srimg.name_part);
-																}
-																if (srimg.name_part === res.part) {
-																	list_service.push({
-																		dispacthdetailId: res.id,
-																		workCenterId: res.workId,
-																		description: res.workCenter.name,
-																		part: res.part,
-																		unit: e.value.srimg.timeschedule.wor.unit,
-																		qty: srimg.qty,
-																		note: "",
-																	});
-																}
-															});
+														if(res.aktivitas.so){
+															list_service.push({
+																dispacthdetailId: res.id,
+																workCenterId: null,
+																description: res.aktivitas.work_scope_item.item,
+																part: null,
+																unit: res.aktivitas.work_scope_item.unit,
+																qty: res.aktivitas.work_scope_item.qty,
+																note: "",
+															})
 														}
-													});
-													setFieldValue("dispacthIDS", e.value.id)
-													setFieldValue("worId", e.value.srimg.timeschedule.worId)
+													})
+													// e.value.dispatchDetail.map((res: any) => {
+													// 	if (res.so) {
+													// 		e.value.srimg.srimgdetail.map((srimg: any) => {
+													// 			if (!list_part.includes(srimg.name_part)) {
+													// 				list_part.push(srimg.name_part);
+													// 			}
+													// 			if (srimg.name_part === res.part) {
+													// 				list_service.push({
+													// 					dispacthdetailId: res.id,
+													// 					workCenterId: res.workId,
+													// 					description: res.workCenter.name,
+													// 					part: res.part,
+													// 					unit: e.value.srimg.timeschedule.wor.unit,
+													// 					qty: srimg.qty,
+													// 					note: "",
+													// 				});
+													// 			}
+													// 		});
+													// 	}
+													// });
+													setFieldValue("dispacthIDS", e.value.id);
+													setFieldValue(
+														"worId",
+														e.value.srimg.timeschedule.worId
+													);
 													setListPartDispatch(list_part);
 													setIsService(true);
 												}
@@ -540,8 +470,6 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 										/>
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='customer'
@@ -579,104 +507,20 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 												values.SrDetail.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
-																	{result.dispacthdetailId === null ? (
-																		<InputSelectSearch
-																			datas={
-																				isOperasional
-																					? listPart
-																					: listPartDispatch
-																			}
-																			id={`detailSr.${i}.part`}
-																			name={`detailSr.${i}.part`}
-																			placeholder='Part'
-																			label='Part'
-																			onChange={(e: any) => {
-																				setFieldValue(
-																					`SrDetail.${i}.part`,
-																					e.value.nama_part
-																				);
-																			}}
-																			required={true}
-																			withLabel={true}
-																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-																		/>
-																	) : (
-																		// <InputSelect
-																		// 	id={`detailSr.${i}.part`}
-																		// 	name={`detailSr.${i}.part`}
-																		// 	placeholder='Part'
-																		// 	label='Part'
-																		// 	onChange={(e: any) =>
-																		// 		setFieldValue(
-																		// 			`SrDetail.${i}.part`,
-																		// 			e.target.value
-																		// 		)
-																		// 	}
-																		// 	required={true}
-																		// 	withLabel={true}
-																		// 	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																		// >
-																		// 	<option value='no data' selected>
-																		// 		Choose Part
-																		// 	</option>
-																		// 	{isOperasional
-																		// 		? listPart.map(
-																		// 				(res: any, idx: number) => {
-																		// 					return (
-																		// 						<option
-																		// 							value={res.nama_part}
-																		// 							key={idx}
-																		// 						>
-																		// 							{res.nama_part} -{" "}
-																		// 							{res.equipment.nama}
-																		// 						</option>
-																		// 					);
-																		// 				}
-																		// 		  )
-																		// 		: listPartDispatch.map(
-																		// 				(res: any, idx: number) => {
-																		// 					return (
-																		// 						<option value={res} key={idx}>
-																		// 							{res}
-																		// 						</option>
-																		// 					);
-																		// 				}
-																		// 		  )}
-																		// </InputSelect>
-																		<>
-																			<Input
-																				id='part'
-																				name='part'
-																				placeholder='Part'
-																				label='Part'
-																				type='text'
-																				value={result.part}
-																				disabled={true}
-																				required={true}
-																				withLabel={true}
-																				className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																			/>
-																		</>
-																	)}
-																</div>
-																<div className='w-full'>
-																	<InputSelectSearch
-																		datas={listWorkCenter}
-																		id={`detailSr.${i}.workCenterId`}
-																		name={`detailSr.${i}.workCenterId`}
-																		placeholder='Description'
-																		label='Description'
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`SrDetail.${i}.workCenterId`,
-																				e.value.id
-																			);
-																		}}
+																	<InputArea
+																		id={`SrDetail.${i}.description`}
+																		name={`SrDetail.${i}.description`}
+																		placeholder='Descripsi'
+																		label='Descripsi'
 																		required={true}
+																		onChange={(e:any) => {
+																			setFieldValue(`SrDetail.${i}.description`, e.target.value)
+																		}}
+																		row={2}
 																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
 																</div>
 																<div className='w-full'>
@@ -705,8 +549,8 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																</div>
 																<div className='w-full'>
 																	<Input
-																		id={`detailMr.${i}.unit`}
-																		name={`detailMr.${i}.unit`}
+																		id={`SrDetail.${i}.unit`}
+																		name={`SrDetail.${i}.unit`}
 																		placeholder='Unit'
 																		label='Unit'
 																		type='text'

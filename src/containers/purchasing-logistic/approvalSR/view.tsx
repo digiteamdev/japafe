@@ -18,26 +18,26 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Approval SR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.idApprove}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Approval SR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.dateApprove).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Approval By
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.user.employee.employee_name}
 									</td>
 								</tr>
@@ -51,12 +51,12 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 									<th className='border border-black text-center'>Job No</th>
 									<th className='border border-black text-center'>Type</th>
 									<th className='border border-black text-center'>Supplier</th>
-									<th className='border border-black text-center'>
-										Part / Item
-									</th>
 									<th className='border border-black text-center'>Service Description</th>
 									<th className='border border-black text-center'>
 										Qty
+									</th>
+									<th className='border border-black text-center'>
+										Qty Approve
 									</th>
 									<th className='border border-black text-center'>Note</th>
 								</tr>
@@ -75,13 +75,13 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 												{res.supplier.supplier_name}
 											</td>
 											<td className='border border-black text-center'>
-												{res.part}
-											</td>
-											<td className='border border-black text-center'>
-												{res.workCenter.name}
+												{res.desc}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qty}
+											</td>
+											<td className='border border-black text-center'>
+												{res.qtyAppr}
 											</td>
 											<td className='border border-black text-center'>
 												{res.note}

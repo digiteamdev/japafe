@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { srSchema } from "../../../schema/public/sr/srSchema";
 import {
@@ -8,7 +8,7 @@ import {
 	GetAllWorkerCenter,
 	EditSR,
 	GetAllEquipment,
-	DeleteSRDetail
+	DeleteSRDetail,
 } from "../../../services";
 import { getIdUser } from "../../../configs/session";
 import { Plus, Trash2 } from "react-feather";
@@ -89,13 +89,10 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 	const settingData = () => {
 		let listDetail: any = [];
 		dataSelected.SrDetail.map((res: any) => {
-			let part: any = res.part.split(" - ");
 			listDetail.push({
 				id: res.id,
 				dispacthdetailId: res.dispacthdetailId,
-				workCenterId: res.workCenter.id,
-				description: res.workCenter.name,
-				part: part[0],
+				description: res.desc,
 				unit: res.unit,
 				qty: res.qty,
 				note: res.unit,
@@ -112,11 +109,9 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 			SrDetail: listDetail,
 		});
 		setIsService(true);
-		setCustomer(
-			dataSelected.wor.customerPo.quotations.Customer.name
-		);
-		setJobNo(dataSelected.job_no)
-		setSubject(dataSelected.wor.subject);
+		setCustomer(dataSelected.wor?.customerPo.quotations.Customer.name);
+		setJobNo(dataSelected.job_no);
+		setSubject(dataSelected.wor?.subject);
 	};
 
 	const getDispatch = async (data: any) => {
@@ -236,9 +231,9 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 			});
 		});
 
-		listDeleteSR.map( (data:any) => {
-			deleteSr(data)
-		})
+		listDeleteSR.map((data: any) => {
+			deleteSr(data);
+		});
 
 		try {
 			const response = await EditSR(listService);
@@ -322,19 +317,19 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 	};
 
 	const removeDetail = (data: any) => {
-        let listDelete: any = listDeleteSR
-        if(data.id !== ""){
-            listDelete.push(data.id)
-        }
-		setListDeleteSR(listDelete)
-    }
+		let listDelete: any = listDeleteSR;
+		if (data.id !== "") {
+			listDelete.push(data.id);
+		}
+		setListDeleteSR(listDelete);
+	};
 
 	const deleteSr = async (id: string) => {
 		try {
 			await DeleteSRDetail(id);
-            return false
+			return false;
 		} catch (error) {
-            return false
+			return false;
 		}
 	};
 
@@ -457,7 +452,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 						}) => (
 							<Form onChange={handleOnChanges}>
 								<h1 className='text-xl font-bold mt-3'>Service Request</h1>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='date_sr'
@@ -485,47 +480,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
-										{/* <InputSelect
-											id='worId'
-											name='worId'
-											placeholder='Job No'
-											label='Job No'
-											onChange={(e: any) => {
-												if (e.target.value === "no data") {
-													setFieldValue("dispacthIDS", "");
-												} else {
-													let data = JSON.parse(e.target.value);
-													setFieldValue("dispacthIDS", data.id);
-												}
-											}}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										>
-											<option value='no data' selected>
-												Choose Job No WOR
-											</option>
-											{listWor.length === 0 ? (
-												<option value='no data'>No Data</option>
-											) : (
-												listWor.map((res: any, i: number) => {
-													return (
-														<option
-															value={JSON.stringify(res)}
-															key={i}
-															selected={res.id === values.dispacthIDS}
-														>
-															{res.srimg === undefined
-																? res.job_no_mr
-																: res.srimg.timeschedule.wor.job_no}
-														</option>
-													);
-												})
-											)}
-										</InputSelect> */}
 									</div>
-								</Section>
-								<Section className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='customer'
@@ -563,83 +518,25 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 												values.SrDetail.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-4 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
-																	<InputSelect
-																		id={`detailSr.${i}.part`}
-																		name={`detailSr.${i}.part`}
-																		placeholder='Part'
-																		label='Part'
-																		onChange={(e: any) =>
-																			setFieldValue(
-																				`SrDetail.${i}.part`,
-																				e.target.value
-																			)
-																		}
+																	<InputArea
+																		id={`SrDetail.${i}.description`}
+																		name={`SrDetail.${i}.description`}
+																		placeholder='Descripsi'
+																		label='Descripsi'
 																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Part
-																		</option>
-																		{listPart.map((res: any, idx: number) => {
-																			return (
-																				<option
-																					value={res.nama_part}
-																					key={idx}
-																					selected={
-																						res.nama_part === result.part
-																					}
-																				>
-																					{res.nama_part} - {res.equipment.nama}
-																				</option>
-																			);
-																		})}
-																	</InputSelect>
-																</div>
-																<div className='w-full'>
-																	<InputSelect
-																		id={`detailSr.${i}.workCenterId`}
-																		name={`detailSr.${i}.workCenterId`}
-																		placeholder='Deskription'
-																		label='Deskription'
+																		value={result.description}
 																		onChange={(e: any) => {
-																			if (e.target.value === "no data") {
-																				setFieldValue(
-																					`SrDetail.${i}.workCenterId`,
-																					null
-																				);
-																			} else {
-																				setFieldValue(
-																					`SrDetail.${i}.workCenterId`,
-																					e.target.value
-																				);
-																			}
+																			setFieldValue(
+																				`SrDetail.${i}.description`,
+																				e.target.value
+																			);
 																		}}
-																		required={true}
+																		row={2}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Deskription
-																		</option>
-																		{listWorkCenter.map(
-																			(res: any, idx: number) => {
-																				return (
-																					<option
-																						value={res.id}
-																						selected={
-																							res.id === result.workCenterId
-																						}
-																						key={idx}
-																					>
-																						{res.name}
-																					</option>
-																				);
-																			}
-																		)}
-																	</InputSelect>
+																	/>
 																</div>
 																<div className='w-full'>
 																	<Input
@@ -716,10 +613,8 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 																		onClick={() =>
 																			arraySr.push({
 																				id: "",
-																				dispacthdetailId: null,
-																				workCenterId: "",
+																				dispacthdetailId: "",
 																				description: "",
-																				part: "",
 																				unit: "",
 																				qty: "",
 																				note: "",
@@ -736,7 +631,7 @@ export const FormEditSr = ({ content, dataSelected, showModal }: props) => {
 																		className='flex ml-4 mt-2 text-[20px] text-red-600 hover:text-red-400 cursor-pointer'
 																		onClick={() => {
 																			removeDetail(result);
-																			arraySr.remove(i)
+																			arraySr.remove(i);
 																		}}
 																	>
 																		<Trash2 size={22} className='mt-1 mr-1' />

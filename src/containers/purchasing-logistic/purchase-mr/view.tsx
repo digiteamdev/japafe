@@ -42,7 +42,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 		setDataSuplier(dataSuplier);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	console.log(dataSelected)
+
 	const Total = (suplier: string) => {
 		let jumlahTotal: any = 0;
 		dataSelected.detailMr
@@ -200,14 +200,14 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
-			<PdfPr
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
+			{/* <PdfPr
 				isModal={isModal}
 				data={dataSelected}
 				dataPPN={dataPPN}
 				dataSuplier={dataSuplier}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -220,26 +220,26 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Purchase MR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.idPurchase}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Purchase MR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.dateOfPurchase).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.status_manager_pr ? "Valid" : "Unvalid"}
 									</td>
 								</tr>
@@ -256,7 +256,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 												<thead>
 													<tr>
 														<th className='border border-black text-center'>
-															Akun / Job no
+															Job no / No Mr
 														</th>
 														<th className='border border-black text-center'>
 															Material / Material Spesifikasi
@@ -284,18 +284,16 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 															return fil.supplier.supplier_name === res;
 														})
 														.map((result: any, idx: number) => {
-															console.log(result)
 															return (
 																<tr key={idx}>
 																	<td className='border border-black text-center'>
-																		{result.mr.job_no}
+																		{result.mr.job_no} / {result.mr.no_mr}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{
-																			result.Material_Stock.Material_master
-																				.material_name
-																		}{" "}
-																		/ {result.Material_Stock.spesifikasi}
+																			result.Material_Master
+																				.name
+																		}{" "}{result.Material_Master.spesifikasi}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{result.qtyAppr}
@@ -354,7 +352,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 											</table>
 										</div>
 									);
-							  })
+							})
 							: null}
 					</Section>
 				</>

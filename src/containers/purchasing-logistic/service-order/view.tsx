@@ -17,7 +17,7 @@ interface props {
 export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [position, setPosition] = useState<any>([]);
-	console.log(dataSelected)
+
 	useEffect(() => {
 		let positionAkun = getPosition();
 		if (positionAkun !== undefined) {
@@ -36,7 +36,8 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	const Ppn = () => {
 		let totalBayar: any = Total();
-		let totalPPN: any = (totalBayar * dataSelected.SrDetail[0].supplier.ppn) / 100;
+		let totalPPN: any =
+			(totalBayar * dataSelected.SrDetail[0].supplier.ppn) / 100;
 		return totalPPN.toString();
 	};
 
@@ -49,20 +50,21 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	const grandTotal = () => {
 		let totalBayar: any = Total();
-		if(dataSelected.taxPsrDmr === 'ppn'){
+		if (dataSelected.taxPsrDmr === "ppn") {
 			let totalPPN: any = Ppn();
 			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
 			return total;
-		}else if(dataSelected.taxPsrDmr === 'pph'){
+		} else if (dataSelected.taxPsrDmr === "pph") {
 			let totalPPH: any = Pph();
 			let total: any = parseInt(totalBayar) + parseInt(totalPPH);
 			return total;
-		}else if(dataSelected.taxPsrDmr === 'ppn_and_pph'){
+		} else if (dataSelected.taxPsrDmr === "ppn_and_pph") {
 			let totalPPH: any = Pph();
 			let totalPPN: any = Ppn();
-			let total: any = parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
+			let total: any =
+				parseInt(totalBayar) + parseInt(totalPPN) + parseInt(totalPPH);
 			return total;
-		}else {
+		} else {
 			let total: any = parseInt(totalBayar);
 			return total;
 		}
@@ -176,11 +178,11 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
-			<PdfSo
+			{/* <PdfSo
 				isModal={isModal}
 				data={dataSelected}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -193,60 +195,62 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Purchase Order
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_so}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Purchase Order
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{`${dataSelected.supplier.supplier_name} - ${dataSelected.supplier.addresses_sup}, ${dataSelected.supplier.districts}, ${dataSelected.supplier.cities}, ${dataSelected.supplier.provinces}`}
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.supplier.supplier_name}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier Contact
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.supplier.SupplierContact[0].contact_person} -
-										+62{dataSelected.supplier.SupplierContact[0].phone}
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.supplier.SupplierContact[0]?.contact_person} -
+										{dataSelected.supplier.SupplierContact.length > 0
+											? `+62${dataSelected.supplier.SupplierContact[0].phone}`
+											: ""}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Referensi
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.your_reff}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.status_manager ? "Valid" : "Unvalid"}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid director
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
-										{ dataSelected.status_manager_director }
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.status_manager_director}
 									</td>
 								</tr>
 							</table>
@@ -256,15 +260,13 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>
-										Id Purchase SR
-									</th>
+									<th className='border border-black text-center'>Job no</th>
+									<th className='border border-black text-center'>No SR</th>
 									<th className='border border-black text-center'>
 										Date Purchase SR
 									</th>
-									<th className='border border-black text-center'>Job no</th>
 									<th className='border border-black text-center'>
-										Part/Service
+										Description
 									</th>
 									<th className='border border-black text-center'>Qty</th>
 									<th className='border border-black text-center'>Price</th>
@@ -277,16 +279,16 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='border border-black text-center'>
+												{res.sr.job_no}
+											</td>
+											<td className='border border-black text-center'>
 												{res.sr.no_sr}
 											</td>
 											<td className='border border-black text-center'>
 												{moment(res.sr.date_sr).format("DD-MMMM-YYYY")}
 											</td>
 											<td className='border border-black text-center'>
-												{res.sr.job_no}
-											</td>
-											<td className='border border-black text-center'>
-												{`${res.part} / ${res.workCenter.name}`}
+												{res.desc}
 											</td>
 											<td className='border border-black text-center'>
 												{res.qtyAppr}

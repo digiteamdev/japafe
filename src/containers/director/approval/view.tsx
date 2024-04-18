@@ -321,10 +321,8 @@ export const ViewApprovalDirector = ({
 																				</td>
 																				<td className='border border-black text-center'>
 																					{
-																						result.Material_Stock
-																							.Material_master.material_name
-																					}{" "}
-																					/ {result.Material_Stock.spesifikasi}
+																						result.Material_Master.name
+																					}{" "}{result.Material_Master.spesifikasi}
 																				</td>
 																				<td className='border border-black text-center'>
 																					{result.qtyAppr}
@@ -334,7 +332,7 @@ export const ViewApprovalDirector = ({
 																				</td>
 																				<td className='border border-black text-center'>
 																					{formatRupiah(
-																						result.Material_Stock.harga.toString()
+																						result.price.toString()
 																					)}
 																				</td>
 																				<td className='border border-black text-center'>

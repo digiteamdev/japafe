@@ -194,13 +194,13 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
-			<PdfDpsr
+			{/* <PdfDpsr
 				isModal={isModal}
 				data={dataSelected}
 				dataPPN={dataPPN}
 				dataSuplier={dataSuplier}
 				showModalPdf={showModalPdf}
-			/>
+			/> */}
 			{dataSelected ? (
 				<>
 					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
@@ -213,34 +213,34 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Direct SR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.idPurchase}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Direct SR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.dateOfPurchase).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Note
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.note}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Valid Manager
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.status_manager_pr ? "Valid" : "Unvalid"}
 									</td>
 								</tr>
@@ -257,10 +257,10 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 												<thead>
 													<tr>
 														<th className='border border-black text-center'>
-															Akun / Job no
+															Job no
 														</th>
 														<th className='border border-black text-center'>
-															Part / Item
+															No Sr
 														</th>
 														<th className='border border-black text-center'>
 															Service Description
@@ -293,10 +293,10 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																		{result.sr.job_no}
 																	</td>
 																	<td className='border border-black text-center'>
-																		{result.part}
+																		{result.sr.no_sr}
 																	</td>
 																	<td className='border border-black text-center'>
-																		{result.workCenter.name}
+																		{result.desc}
 																	</td>
 																	<td className='border border-black text-center'>
 																		{result.qtyAppr}

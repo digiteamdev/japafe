@@ -75,11 +75,11 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 						taxpr: res.taxpr,
 						disc: res.disc,
 						currency: "IDR",
-						total: res.Material_Stock.harga * res.qtyAppr,
-						material: `${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`,
+						total: res.Material_Master.harga * res.qtyAppr,
+						material: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
 						qty: res.qtyAppr,
 						note: res.note,
-						price: res.Material_Stock.harga,
+						price: res.Material_Master.harga,
 						job_no: res.mr.job_no,
 					});
 					if (!suplier.includes(res.supplier.supplier_name)) {

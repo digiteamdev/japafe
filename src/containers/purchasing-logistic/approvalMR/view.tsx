@@ -1,6 +1,5 @@
 import moment from "moment";
 import { Section } from "../../../components";
-import { Console } from "console";
 
 interface props {
 	dataSelected: any;
@@ -19,26 +18,26 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Approval MR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.idApprove}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Approval MR
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.dateApprove).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Approval By
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.user.employee.employee_name}
 									</td>
 								</tr>
@@ -49,43 +48,42 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>Job No</th>
-									<th className='border border-black text-center'>Type</th>
-									<th className='border border-black text-center'>Supplier</th>
-									<th className='border border-black text-center'>
+									<th className='border border-black text-center p-0'>Job No</th>
+									<th className='border border-black text-center p-0'>Type</th>
+									<th className='border border-black text-center p-0'>Supplier</th>
+									<th className='border border-black text-center p-0'>
 										Material Name / Material Spesifikasi
 									</th>
-									<th className='border border-black text-center'>Qty</th>
-									<th className='border border-black text-center'>
+									<th className='border border-black text-center p-0'>Qty</th>
+									<th className='border border-black text-center p-0'>
 										Qty Approval
 									</th>
-									<th className='border border-black text-center'>Note</th>
+									<th className='border border-black text-center p-0'>Note</th>
 								</tr>
 							</thead>
 							<tbody>
 								{dataSelected.detailMr.map((res: any, i: number) => {
 									return (
 										<tr key={i}>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center  p-0'>
 												{res.mr.job_no }
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center p-0'>
 												{res.mrappr}
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center p-0'>
 												{res.supplier.supplier_name}
 											</td>
-											<td className='border border-black text-center'>
-												{res.Material_Stock.Material_master.material_name} -{" "}
-												{res.Material_Stock.spesifikasi}
+											<td className='border border-black text-center p-0'>
+												{res.Material_Master.name} {res.Material_Master.spesifikasi}
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center p-0'>
 												{res.qty}
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center p-0'>
 												{res.qtyAppr}
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black text-center p-0'>
 												{res.note}
 											</td>
 										</tr>

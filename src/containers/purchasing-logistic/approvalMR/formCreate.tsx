@@ -65,20 +65,19 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 				let detail: any = [];
 				let idAppr: string = generateIdNum();
 				response.data.result.map((res: any) => {
+					console.log(res)
 					detail.push({
 						id: res.id,
 						mrappr: res.mrappr,
 						supId: res.supId,
 						material:
-							res.Material_Stock.Material_master.material_name +
-							" - " +
-							res.Material_Stock.spesifikasi,
+							`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
 						qty: res.qty,
 						note: res.note,
 						qtyAppr: res.qty,
 						no_mr: res.mr.no_mr,
 						job_no: res.job_no,
-						stock: res.Material_Stock.jumlah_Stock,
+						stock: res.Material_Master.jumlah_Stock,
 						user: res.mr.user.employee.employee_name,
 					});
 				});

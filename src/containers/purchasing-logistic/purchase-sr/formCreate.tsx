@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Section, Input, InputSelect } from "../../../components";
+import { Section, Input, InputSelect, InputArea } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
 	GetAllSupplier,
@@ -10,8 +10,8 @@ import {
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
-import { Disclosure } from "@headlessui/react";
+import { Trash2 } from "react-feather";
+import { formatRupiah } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -59,7 +59,6 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any) => {
-					console.log(res)
 					detail.push({
 						id: res.id,
 						no_sr: res.sr.no_sr,
@@ -70,7 +69,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 						currency: "IDR",
 						total: res.total,
 						material: res.part,
-						service: res.workCenter.name,
+						desc: res.desc,
 						qty: res.qtyAppr,
 						note: res.note,
 						price: res.price,
@@ -272,7 +271,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 								values.detailMr.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+											<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.no_sr`}
@@ -338,35 +337,35 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													</InputSelect>
 												</div>
 												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.material`}
-														name={`detailMr.${i}.material`}
-														placeholder='Part / Item'
-														label='Part / Item'
-														type='text'
-														value={result.material}
-														disabled={true}
+													<InputArea
+														id={`srDetail.${i}.desc`}
+														name={`SrDetail.${i}.desc`}
+														placeholder='Descripsi'
+														label='Descripsi'
+														value={result.desc}
 														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`detailMr.${i}.service`}
-														name={`detailMr.${i}.service`}
-														placeholder='Description Service'
-														label='Description Service'
-														type='text'
-														value={result.service}
 														disabled={true}
-														required={true}
+														row={2}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
 											</Section>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
+												<div className='w-full'>
+													<Input
+														id={`detailMr.${i}.note`}
+														name={`detailMr.${i}.note`}
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={result.note}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
 												<div className='w-full'>
 													<Input
 														id={`detailMr.${i}.qty`}
@@ -396,40 +395,28 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<Input
-														id={`detailMr.${i}.note`}
-														name={`detailMr.${i}.note`}
-														placeholder='Note'
-														label='Note'
-														type='text'
-														value={result.note}
-														disabled={true}
-														required={true}
-														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
 														id={`detailMr.${i}.price`}
 														name={`detailMr.${i}.price`}
 														placeholder='Price'
 														label='Price'
-														type='number'
+														pattern='\d*'
+														type='text'
 														onChange={(e: any) => {
+															let harga = e.target.value.toString().replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
-																	e.target.value,
+																	harga,
 																	result.qty,
 																	result.disc
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.price`,
-																e.target.value
+																harga
 															);
 														}}
-														value={result.price}
+														value={formatRupiah(result.price.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -441,22 +428,24 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.disc`}
 														placeholder='Discount'
 														label='Discount'
-														type='number'
+														pattern='\d*'
+														type='text'
 														onChange={(e: any) => {
+															let disc = e.target.value.toString().replaceAll(".", "");
 															setFieldValue(
 																`detailMr.${i}.total`,
 																totalHarga(
 																	result.price,
 																	result.qty,
-																	e.target.value
+																	disc
 																)
 															);
 															setFieldValue(
 																`detailMr.${i}.disc`,
-																e.target.value
+																disc
 															);
 														}}
-														value={result.disc}
+														value={formatRupiah(result.disc.toString())}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -468,8 +457,9 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 														name={`detailMr.${i}.total`}
 														placeholder='Total Price'
 														label='Total Price'
-														type='number'
-														value={result.total}
+														pattern='\d*'
+														type='text'
+														value={formatRupiah(result.total.toString())}
 														disabled={true}
 														required={true}
 														withLabel={true}
@@ -477,7 +467,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 													/>
 												</div>
 											</Section>
-											<Section className='grid grid-cols-1 gap-2 mt-4 border-b border-b-gray-500'>
+											<Section className='grid grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
 												<div className='w-full'>
 													{values.detailMr.length === 1 ? null : (
 														<a

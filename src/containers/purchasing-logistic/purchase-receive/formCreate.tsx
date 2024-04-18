@@ -57,6 +57,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 			const response = await GetPurchase();
 			if (response) {
 				response.data.result.map((res: any) => {
+					console.log(res)
 					dataList.push({
 						value: res,
 						label: res.id_so,
@@ -356,7 +357,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 															placeholder='Material Name'
 															label='Material Name'
 															type='text'
-															value={`${res.Material_Stock.Material_master.material_name} ${res.Material_Stock.spesifikasi}`}
+															value={`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -481,7 +482,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 															placeholder='Service Description'
 															label='Service Description'
 															type='text'
-															value={res.workCenter.name}
+															value={res.desc}
 															disabled={true}
 															required={true}
 															withLabel={true}

@@ -64,7 +64,7 @@ export const FormEditPurchaseMr = ({
 				disc: res.disc,
 				currency: res.currency,
 				total: res.total,
-				material: res.Material_Stock.spesifikasi,
+				material: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
 				qty: res.qtyAppr,
 				note: res.note,
 				note_revision: res.note_revision,
@@ -129,7 +129,7 @@ export const FormEditPurchaseMr = ({
 			taxPsrDmr: payload.taxPsrDmr,
 			detailMr: listDetail,
 		};
-		console.log(data)
+
 		try {
 			const response = await EditPrMr(data);
 			if (response.data) {

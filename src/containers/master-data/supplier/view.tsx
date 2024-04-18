@@ -17,57 +17,57 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 								<thead></thead>
 								<tbody>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Supplier Name
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.supplier_name}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Supplier Type
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.type_supplier}
 										</td>
 									</tr>
                                     <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Office Email
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.office_email}
 										</td>
 									</tr>
                                     <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											NPWP
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.NPWP}
 										</td>
 									</tr>
                                     <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											PPH / PPN
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.pph}% / {dataSelected.ppn}%
 										</td>
 									</tr>
                                     <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Address
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.addresses_sup}
 										</td>
 									</tr>
                                     <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.provinces}, {dataSelected.cities}, {dataSelected.districts},{dataSelected.sub_districts}, {dataSelected.ec_postalcode},    
 										</td>
 									</tr>
@@ -85,26 +85,26 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 										dataSelected.SupplierBank.map((res: any, i: number) => (
 											<>
 												<tr key={i}>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														bank_name
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														{res.bank_name}
 													</td>
 												</tr>
 												<tr>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														Account Number
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														{res.rekening}
 													</td>
 												</tr>
 												<tr>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														Account Name
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														{res.account_name}
 													</td>
 												</tr>
@@ -113,34 +113,34 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 									) : (
 										<>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Address Person
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Address Workshopx
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Address Recipient
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Address
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
@@ -160,26 +160,26 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 										dataSelected.SupplierContact.map((res: any, i: number) => (
 											<>
 												<tr key={i}>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														Contact Person
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														{res.contact_person}
 													</td>
 												</tr>
 												<tr>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														Phone
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														+62{res.phone}
 													</td>
 												</tr>
 												<tr>
-													<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 														Email
 													</td>
-													<td className='w-[50%] pl-2 border border-gray-200'>
+													<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 														{res.email_person}
 													</td>
 												</tr>
@@ -188,26 +188,26 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 									) : (
 										<>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Contact Person
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													-
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>
 											<tr>
-												<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 													Email
 												</td>
-												<td className='w-[50%] pl-2 border border-gray-200'>
+												<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 													-
 												</td>
 											</tr>

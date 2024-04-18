@@ -100,7 +100,7 @@ export const FormEditPurchaseMr = ({
 				disc: result.disc,
 				currency: result.currency,
 				total: result.total,
-				material: result.Material_Stock.spesifikasi,
+				material: `${result.Material_Master.name} ${result.Material_Master.spesifikasi}`,
 				qty: result.qtyAppr,
 				note: result.note,
 				delivery_time: result.delivery_time,
@@ -196,7 +196,6 @@ export const FormEditPurchaseMr = ({
 
 	const editPurchaseOrder = async (payload: data) => {
 		setIsLoading(true);
-		console.log(payload)
 		let termOfPay: any = [];
 		payload.termOfPayment.map((res: any) => {
 			let prices: any = res.price.replace(/[$.]/g, "");
