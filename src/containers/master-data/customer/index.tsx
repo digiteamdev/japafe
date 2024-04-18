@@ -183,20 +183,17 @@ export const Customer = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									{/* <td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-										{i + 1}
-									</td> */}
-									<td className='px-6 py-4'>{res.name}</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='p-1'>{res.name}</td>
+									<td className='whitespace-nowrap p-1'>
 										{res.contact.length > 0
 											? `+62${res.contact[0].phone}`
 											: "-"}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>{res.email}</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap p-1'>{res.email}</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -205,7 +202,7 @@ export const Customer = () => {
 												<Eye color='white' />
 											</Button>
 											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true,'edit', false);
@@ -214,7 +211,7 @@ export const Customer = () => {
 												<Edit color='white' />
 											</Button>
 											<Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "delete", false);
