@@ -16,10 +16,10 @@ export const ViewDepartement = ({
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Name
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.name}
 									</td>
 								</tr>
@@ -35,10 +35,10 @@ export const ViewDepartement = ({
 											return (
 												<table className='w-full mt-2' key={i}>
 													<tr>
-														<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+														<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 															Name Sub Departement
 														</td>
-														<td className='w-[50%] pl-2 border border-gray-200'>
+														<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 															{res.name}
 														</td>
 													</tr>
@@ -48,10 +48,10 @@ export const ViewDepartement = ({
 								) : (
 									<table className='w-full'>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
                                             Name Sub Departement
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											-
 										</td>
 									</tr>

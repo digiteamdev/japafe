@@ -37,75 +37,66 @@ export const ViewPo = ({ dataSelected }: props) => {
 								<thead></thead>
 								<tbody>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											PO/SO/SPK No
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.id_po}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											PO/SO/SPK Date
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{moment(dataSelected.date).format("DD-MMMM-YYYY")}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Quotation No
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.quotations.quo_num}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Job No
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.job_no}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Customer
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.quotations.Customer.name}
 										</td>
 									</tr>
-									{/* <tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
-											Equipment
-										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
-											{dataSelected.quotations.eqandpart[0].equipment.nama} /{" "}
-											{dataSelected.quotations.eqandpart.length} Count Part
-										</td>
-									</tr> */}
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Subject
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.quotations.subject}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Tax
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.tax.toUpperCase()}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											PO/SO/SPK File
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.upload_doc === null ? (
 												"Tidak Ada File"
 											) : (

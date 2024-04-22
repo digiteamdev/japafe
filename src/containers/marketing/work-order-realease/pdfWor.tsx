@@ -25,8 +25,8 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
 			const width = pdf.internal.pageSize.getWidth();
-			// const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
+			const height = pdf.internal.pageSize.getHeight();
+			pdf.addImage(imgData, "JPEG", 0, 0, width, 280);
 			// window.open(pdf.output("bloburl"), "_blank");
 			pdf.save(`Work_Order_Release_${data.job_no}.pdf`);
 		});
@@ -96,7 +96,7 @@ export const PdfWor = ({ isModal, data, showModalPdf }: props) => {
 											</div>
 										</button>
 									</div>
-									<div className='my-4 mx-40 px-20 pb-4' id='divToPrint'>
+									<div className='m-2 p-1' id='divToPrint'>
 										<div className='pt-4'>
 											<div className='flex border border-black'>
 												<div className='w-[45%] p-2'>

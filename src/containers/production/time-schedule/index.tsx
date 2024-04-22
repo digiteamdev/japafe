@@ -208,27 +208,27 @@ export const Schedule = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='px-6 py-4 text-center'>
+									<td className='p-1'>
 										{ res.wor.job_no }
 									</td>
-									<td className='px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{ moment(res.timesch).format('DD-MMMM-YYYY') }
 									</td>
-									<td className='px-6 py-4 text-center'>
+									<td className='p-1'>
 										{ res.wor.customerPo.quotations.Customer.name }
 									</td>
-									<td className='px-6 py-4 text-center'>
+									<td className='p-1'>
 										{ res.wor.customerPo.quotations.subject }
 									</td>
-									<td className='px-6 py-4 text-center'>
+									<td className='p-1 text-center'>
 										{ res.wor.priority_status }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[15%] text-center'>
+									<td className='whitespace-nowrap p-1 w-[15%] text-center'>
 										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											<Button className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'view', false);

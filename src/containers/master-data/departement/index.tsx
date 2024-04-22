@@ -43,8 +43,8 @@ export const Departement = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
 		{ name: "Departement Name" },
+		{ name: "Sub Departement" },
 		{ name: "Action" },
 	];
 
@@ -144,6 +144,18 @@ export const Departement = () => {
 		setIsModal(false);
 	};
 
+	const showSubDepart = (data:any) => {
+		let subDepart: any = ''
+		data.sub_depart.map((res:any, i:number) => {
+			if(i === data.sub_depart.length - 1){
+				subDepart = subDepart + `- ${res.name}`
+			}else{
+				subDepart = subDepart + `- ${res.name}\r\n`
+			}
+		})
+		return subDepart
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -196,27 +208,28 @@ export const Departement = () => {
 						</tr>
 					) : (
 						data.map((res, i) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 w-[5%]'>
-										{i + 1}
-									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[80%]'>
+									<td className='whitespace-nowrap p-1'>
 										{res.name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
+									<td className='p-1 whitespace-pre'>
+										{showSubDepart(res)}
+									</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											<Button className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'view', false);
 											}}>
 												<Eye color='white' />
 											</Button>
-											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'edit', false);
@@ -224,7 +237,7 @@ export const Departement = () => {
 												<Edit color='white' />
 											</Button>
 											<Button 
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={ () => {
 													setDataSelected(res);
 													showModal(true,'delete', false);

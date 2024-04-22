@@ -395,18 +395,18 @@ export const ListNav = [
 				title: "Equipment & Part",
 				subMenu: null,
 			},
-			{
-				id: "material-type",
-				link: "/general-affair/material-type",
-				title: "Material Type",
-				subMenu: null,
-			},
-			{
-				id: "material",
-				link: "/general-affair/material",
-				title: "Material",
-				subMenu: null,
-			},
+			// {
+			// 	id: "material-type",
+			// 	link: "/general-affair/material-type",
+			// 	title: "Material Type",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "material",
+			// 	link: "/general-affair/material",
+			// 	title: "Material",
+			// 	subMenu: null,
+			// },
 			{
 				id: "warehouse",
 				link: "/general-affair/warehouse",

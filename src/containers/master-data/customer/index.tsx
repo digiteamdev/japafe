@@ -13,7 +13,7 @@ import { User, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateCustomer } from "./formCreate";
 import { ViewCustomer } from "./view";
 import { FormEditCustomer } from "./fromEdit";
-import { GetCustomer, SearchCustomer, DeleteCustomer } from "../../../services";
+import { GetCustomer, SearchCustomer, DeleteCustomer, DownloadCustomerCsv } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken, getRole } from "../../../configs/session";
 import { cekDivisiMarketing, changeDivisi } from "../../../utils"
@@ -141,6 +141,9 @@ export const Customer = () => {
 				showModal={showModal}
 				search={searchCustomer}
 			>
+				{/* <a href={DownloadCustomerCsv}>
+					kslas
+				</a> */}
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>

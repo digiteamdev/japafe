@@ -40,34 +40,34 @@ export const ViewBillOfMaterial = ({ dataSelected }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Summary
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.srimg.id_summary}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										No Job
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.srimg.timeschedule.wor.job_no}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Customer
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.Customer.name}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Subject
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.srimg.timeschedule.wor.customerPo.quotations.subject}
 									</td>
 								</tr>

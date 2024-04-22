@@ -328,20 +328,20 @@ export const FormEditApproval = ({
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										{titleID()}
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.idPurchase
 											? dataSelected.idPurchase
 											: dataSelected.id_so}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										{titleDate()}
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.dateOfPurchase
 											? moment(dataSelected.dateOfPurchase).format(
 													"DD-MMMM-YYYY"
@@ -354,66 +354,66 @@ export const FormEditApproval = ({
 								{dataSelected.id_cash_advance ? (
 									<>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Request By
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.employee.employee_name}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Job No
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.wor.job_no}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Customer
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.wor.customerPo.quotations.Customer.name}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Subject
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.wor.subject}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Description
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.description}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Value
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{total(dataSelected.cdv_detail)}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Payment Type
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.status_payment}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Note
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.note}
 											</td>
 										</tr>

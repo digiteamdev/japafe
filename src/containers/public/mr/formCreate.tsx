@@ -546,6 +546,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																				`detailMr.${i}.satuan`,
 																				e.value.satuan
 																			);
+																			setFieldValue(
+																				`detailMr.${i}.detail`,
+																				e
+																			);
 																		}}
 																		required={true}
 																		withLabel={true}

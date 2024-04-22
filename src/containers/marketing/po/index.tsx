@@ -208,19 +208,19 @@ export const Po = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='px-6 py-4'>
+									<td className='p-1'>
 										{res.job_no}
 									</td>
-									<td className='px-6 py-4'>
+									<td className='p-1'>
 										{res.id_po === "" ? "-" : res.id_po}
 									</td>
-									<td className='px-6 py-4'>{res.quotations.quo_num}</td>
-									<td className='px-6 py-4'>{res.quotations.Customer.name}</td>
-									<td className='px-6 py-4'>{res.quotations.subject}</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
+									<td className='p-1'>{res.quotations.quo_num}</td>
+									<td className='p-1'>{res.quotations.Customer.name}</td>
+									<td className='p-1'>{res.quotations.subject}</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -231,7 +231,7 @@ export const Po = () => {
 											{/* { res.wor.length === 0 ? ( */}
 											<>
 												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "edit", false);
@@ -240,7 +240,7 @@ export const Po = () => {
 													<Edit color='white' />
 												</Button>
 												<Button
-													className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "delete", false);

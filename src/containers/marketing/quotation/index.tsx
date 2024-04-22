@@ -221,24 +221,24 @@ export const Quotation = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='px-6 py-4 w-[5%] text-center'>
+									<td className='p-1 w-[5%]'>
 										{res.quo_num}
 									</td>
-									<td className='px-6 py-4 text-center'>{res.Customer.name}</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='p-1'>{res.Customer.name}</td>
+									<td className='whitespace-nowrap p-1'>
 										{`+62${res.CustomerContact.phone}`}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1'>
 										{moment(res.date).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='px-6 py-4 text-center'>{res.subject}</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
+									<td className='p-1'>{res.subject}</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -247,7 +247,7 @@ export const Quotation = () => {
 												<Eye color='white' />
 											</Button>
 											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "edit", false);
@@ -258,7 +258,7 @@ export const Quotation = () => {
 											{res.CustomerPo === null ? (
 												<>
 													<Button
-														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 														onClick={() => {
 															setDataSelected(res);
 															showModal(true, "delete", false);

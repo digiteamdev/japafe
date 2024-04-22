@@ -194,21 +194,21 @@ export const ApprovalList = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{ res.id_cash_advance ? res.id_cash_advance : res.idPurchase ? res.idPurchase : res.id_so}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{ res.id_cash_advance ? moment(res.date_cash_advance).format("DD-MMMM-YYYY") : res.dateOfPurchase ? moment(res.dateOfPurchase).format("DD-MMMM-YYYY") : moment(res.date_prepared).format("DD-MMMM-YYYY") }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{ res.id_cash_advance ? total(res.cdv_detail) : total(
 											res.SrDetail.length > 0 ? res.SrDetail : res.detailMr
 										)}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -217,7 +217,7 @@ export const ApprovalList = () => {
 												<Eye color='white' />
 											</Button>
 											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "edit", false);

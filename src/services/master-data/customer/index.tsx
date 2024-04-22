@@ -9,3 +9,5 @@ export const DeleteCustomer = (id: string) => Axios.delete(process.env.BASE_URL+
 
 export const EditCustomerContact = (data: any) => Axios.put(process.env.BASE_URL+`/customercontact`, data);
 export const EditCustomerAddress = (data: any) => Axios.put(process.env.BASE_URL+`/customeraddress`, data);
+
+export const DownloadCustomerCsv = process.env.BASE_URL+`/customercsv`;

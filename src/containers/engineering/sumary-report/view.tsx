@@ -14,7 +14,7 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-	console.log(dataSelected)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{/* <PdfSummary
@@ -43,10 +43,10 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 								<thead></thead>
 								<tbody>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											No Job
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.timeschedule.wor.job_no} (
 											{
 												dataSelected.timeschedule.wor.customerPo.quotations
@@ -56,58 +56,58 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.equipment}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Model
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.model}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Quantity
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.qty}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											O E M
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.ioem}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Serial Number / Tag Number
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.isr} / {dataSelected.itn}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Introduction
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.introduction}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Introduction Image
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.inimg !== null ? (
 												<Image
 													src={dataSelected.inimg}

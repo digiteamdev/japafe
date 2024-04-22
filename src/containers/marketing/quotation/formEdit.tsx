@@ -9,16 +9,10 @@ import {
 import { Formik, Form, FieldArray } from "formik";
 import { quotationSchema } from "../../../schema/marketing/quotation/quotationSchema";
 import { Plus, Trash2 } from "react-feather";
-import {
-	EditQuotation,
-	EditQuotationDetail,
-	DeleteQuotationDetail,
-	GetAllEquipment,
-	EditQuotationItem,
-	DeleteQuotationItem,
-} from "../../../services";
+import { EditQuotation } from "../../../services";
 import { toast } from "react-toastify";
 import { formatRupiah } from "@/src/utils";
+import Editor from 'react-simple-wysiwyg';
 
 interface props {
 	content: string;
@@ -564,6 +558,9 @@ export const FormEditQuotation = ({
 									withLabel={false}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600 resize-y'
 								/>
+								{/* <Editor value={values.Quotations_Detail} onChange={(e:any) => {
+									setFieldValue('Quotations_Detail', e.target.value)
+								}}/> */}
 							</div>
 						</Section>
 						<h1 className='text-xl font-bold mt-3'>

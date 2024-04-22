@@ -5,7 +5,7 @@ interface props {
 	dataSelected: any;
 }
 
-export const ViewDrawing = ({ dataSelected }: props) => {
+export const Drawing = ({ dataSelected }: props) => {
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -15,26 +15,26 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Drawing
 									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.id_drawing}
 									</td>
 								</tr>
 								<tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Drawing
 									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+									<td className='w-[50%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_drawing).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										No Job
 									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.timeschedule.wor.job_no} (
 										{
 											dataSelected.timeschedule.wor.customerPo.quotations
@@ -44,18 +44,18 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 									</td>
 								</tr>
 								<tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Subject
 									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.timeschedule.wor.subject}
 									</td>
 								</tr>
 								<tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Job Description
 									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.timeschedule.wor.job_desk}
 									</td>
 								</tr>
@@ -68,10 +68,10 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 							<table className='w-full'>
 								<thead>
 									<tr>
-										<th className='w-[10%] pl-2 border border-black text-center'>
+										<th className='w-[10%]pl-2 border border-black text-center'>
 											No
 										</th>
-										<th className='w-[10%] pl-2 border border-black text-center'>
+										<th className='w-[10%]pl-2 border border-black text-center'>
 											File
 										</th>
 									</tr>
@@ -80,7 +80,7 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 									{dataSelected.file_drawing.map((res: any, i: number) => {
 										return (
 											<tr key={i}>
-												<td className='w-[10%] pl-2 border border-black text-center'>
+												<td className='w-[10%]pl-2 border border-black text-center'>
 													{i + 1}
 												</td>
 												<td className='w-[90%] pl-2 border border-black text-center p-3'>

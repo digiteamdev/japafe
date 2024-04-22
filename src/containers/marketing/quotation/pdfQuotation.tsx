@@ -25,11 +25,11 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 		html2canvas(doc).then((canvas) => {
 			const imgData = canvas.toDataURL("image/png");
 			const pdf: any = new jsPDF("p", "mm", "a4");
-			// const width = pdf.internal.pageSize.getWidth();
-			// const height = pdf.internal.pageSize.getHeight();
-			pdf.addImage(imgData, "JPEG", 0, 0, 0, 0);
-			window.open(pdf.output("bloburl"), "_blank");
-			// pdf.save(`quotation_${data.quo_auto}.pdf`);
+			const width = pdf.internal.pageSize.getWidth();
+			const height = pdf.internal.pageSize.getHeight();
+			pdf.addImage(imgData, "JPEG", 0, 0, width, 265);
+			// window.open(pdf.output("bloburl"), "_blank");
+			pdf.save(`quotation_${data.quo_auto}.pdf`);
 		});
 	};
 
@@ -144,7 +144,7 @@ export const PdfQuotation = ({ isModal, data, showModalPdf }: props) => {
 										</button>
 									</div>
 									<div
-										className='my-4 mx-40 px-20 pb-4 pt-4 text-xs'
+										className='m-2 px-1 pb-4 pt-4 text-xs'
 										id='divToPrint'
 									>
 										<div className='flex border border-black'>

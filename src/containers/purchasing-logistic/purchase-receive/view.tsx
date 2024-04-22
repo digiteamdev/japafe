@@ -17,58 +17,58 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Receive
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_receive}
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Receive
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_receive).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										ID Purchase
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_so}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Date Purchase
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
                                     {moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.supplier.supplier_name}, {dataSelected.supplier.addresses_sup}, {dataSelected.supplier.cities}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Phone
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										+62{dataSelected.supplier.SupplierContact[0]?.phone}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										DO Id
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										
 									</td>
 								</tr>
@@ -81,16 +81,16 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                             <table className="w-full">
                                 <thead>
                                     <tr>
-                                        <th className="border border-black p-2 text-center">
+                                        <th className="border border-black p-1 text-center">
                                             Job No
                                         </th>
-                                        <th className="border border-black p-2 text-center">
+                                        <th className="border border-black p-1 text-center">
                                             Material Name
                                         </th>
-                                        <th className="border border-black p-2 text-center">
+                                        <th className="border border-black p-1 text-center">
                                             Qty Pruchase
                                         </th>
-                                        <th className="border border-black p-2 text-center">
+                                        <th className="border border-black p-1 text-center">
                                             Qty Receive
                                         </th>
                                     </tr>
@@ -98,16 +98,16 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                 <tbody>
                                     { dataSelected.detailMr.map( (res:any, i: number) => (
                                         <tr key={i}>
-                                            <td className="border border-black p-2 text-center">
+                                            <td className="border border-black p-1 text-center">
                                                 { res.mr.job_no }
                                             </td>
-                                            <td className="border border-black p-2 text-center">
+                                            <td className="border border-black p-1 text-center">
                                                 {`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
                                             </td>
-                                            <td className="border border-black p-2 text-center">
+                                            <td className="border border-black p-1 text-center">
                                                 { res.qtyAppr }
                                             </td>
-                                            <td className="border border-black p-2 text-center">
+                                            <td className="border border-black p-1 text-center">
                                                 { res.qty_receive }
                                             </td>
                                         </tr>

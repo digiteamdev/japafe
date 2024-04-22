@@ -137,20 +137,20 @@ export const JobStatus = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<React.Fragment key={i}>
-									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
-										<td className=' px-6 py-4'>
+									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
+										<td className=' p-1'>
 											{res.job_no}
 										</td>
-										<td className=' px-6 py-4'>
+										<td className=' p-1'>
 											{moment(res.date_of_order).format("DD-MMMM-YYYY")} - {moment(res.delivery_date).format("DD-MMMM-YYYY")}
 										</td>
-										<td className=' px-6 py-4'>
+										<td className=' p-1'>
 											{res.customerPo.quotations.Customer.name} - {res.customerPo.quotations.Customer.address[0].cities}, {res.customerPo.quotations.Customer.address[0].provinces}
 										</td>
-										<td className=' px-6 py-4'>
+										<td className=' p-1'>
 											{res.subject}
 										</td>
-                                        <td className=' px-6 py-4'>
+                                        <td className='p-1'>
 											On Process
 										</td>
 									</tr>

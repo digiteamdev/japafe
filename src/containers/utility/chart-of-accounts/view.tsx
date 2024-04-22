@@ -16,18 +16,18 @@ export const ViewChartOfAccount = ({
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Code
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.coa_code}
 									</td>
 								</tr>
                                 <tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Name
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.coa_name}
 									</td>
 								</tr>

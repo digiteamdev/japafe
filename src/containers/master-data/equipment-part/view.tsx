@@ -18,10 +18,10 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 								<thead></thead>
 								<tbody>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment Image
 										</td>
-										<td className='w-[50%] px-2 py-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] px-2 py-2 border border-gray-200'>
 											{/* <img src={dataSelected.eq_image} className="px-2 py-2 object-cover h-32 w-32" alt=""/> */}
 											<Image
 												src={dataSelected.eq_image}
@@ -32,18 +32,18 @@ export const ViewEquipment = ({ dataSelected }: props) => {
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Equipment Name
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.nama}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Description
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.keterangan_eq}
 										</td>
 									</tr>

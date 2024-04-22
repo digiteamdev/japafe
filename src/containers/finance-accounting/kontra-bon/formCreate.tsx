@@ -269,7 +269,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={data}
 				// validationSchema={kontraBonSchema}

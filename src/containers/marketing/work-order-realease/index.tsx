@@ -80,7 +80,7 @@ export const Wor = () => {
 			getWor(page, perPage, divisiMarketing);
 		}
 	};
-
+console.log(dataSelected)
 	const getWor = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {
@@ -203,24 +203,24 @@ export const Wor = () => {
 						data.map((res: any, i: number) => {
 							return (
 								<React.Fragment key={i}>
-									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
-										<td className='px-6 py-4 text-center'>
+									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
+										<td className='p-1 text-center'>
 											{res.job_no}{" "}
 											{res.refivision !== '0' ? res.refivision : ''}
 										</td>
-										<td className='px-6 py-4 text-center'>
+										<td className='whitespace-nowrap p-1'>
 											{moment(res.date_wor).format("DD-MMMM-YYYY")}
 										</td>
-										<td className='px-6 py-4 text-center'>
+										<td className='p-1'>
 											{res.customerPo.quotations.Customer.name}
 										</td>
-										<td className='px-6 py-4 text-center'>
+										<td className='p-1'>
 											{res.customerPo.quotations.subject}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4 w-[10%] text-center'>
+										<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 											<div>
 												<Button
-													className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+													className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "view", false);
@@ -233,7 +233,7 @@ export const Wor = () => {
 														{res.status === "valid" ? null : (
 															<>
 																<Button
-																	className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md cursor-pointer`}
+																	className={`mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md cursor-pointer`}
 																	onClick={() => {
 																		setDataSelected(res);
 																		showModal(true, "edit", false);
@@ -242,7 +242,7 @@ export const Wor = () => {
 																	<Edit color='white' />
 																</Button>
 																<Button
-																	className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+																	className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 																	onClick={() => {
 																		setDataSelected(res);
 																		showModal(true, "delete", false);
@@ -257,17 +257,17 @@ export const Wor = () => {
 											</div>
 										</td>
 									</tr>
-									<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'>
+									<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-xs'>
 										<td
 											colSpan={headerTabel?.length}
-											className='whitespace-nowrap px-4 py-2'
+											className='whitespace-nowrap p-1'
 										>
 											<button
 												className={`${
 													res.timeschedule === null
 														? "bg-red-500"
 														: "bg-green-500"
-												} text-white py-1 px-1 rounded-md mr-2`}
+												} text-white p-1 rounded-md mr-2`}
 											>
 												Schedule
 											</button>
@@ -277,7 +277,7 @@ export const Wor = () => {
 													res.timeschedule.srimg === null
 														? "bg-red-500"
 														: "bg-green-500"
-												} text-white py-1 px-1 rounded-md mr-2`}
+												} text-white p-1 rounded-md mr-2`}
 											>
 												Summary
 											</button>
@@ -287,7 +287,7 @@ export const Wor = () => {
 													res.timeschedule.drawing === null
 														? "bg-red-500"
 														: "bg-green-500"
-												} text-white py-1 px-1 rounded-md mr-2`}
+												} text-white p-1 rounded-md mr-2`}
 											>
 												Drawing
 											</button>
@@ -298,16 +298,16 @@ export const Wor = () => {
 													res.timeschedule.srimg.dispacth === null
 														? "bg-red-500"
 														: "bg-green-500"
-												} text-white py-1 px-1 rounded-md mr-2`}
+												} text-white p-1 rounded-md mr-2`}
 											>
 												Dispatch
 											</button>
-											<button className='bg-orange-500 text-white py-1 px-1 rounded-md mr-2'>
+											{/* <button className='bg-orange-500 text-white py-1 px-1 rounded-md mr-2'>
 												Cost
 											</button>
 											<button className='bg-orange-500 text-white py-1 px-1 rounded-md'>
 												Man Our
-											</button>
+											</button> */}
 										</td>
 									</tr>
 								</React.Fragment>

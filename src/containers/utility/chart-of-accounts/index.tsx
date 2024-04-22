@@ -202,22 +202,22 @@ export const ChartOfAccount = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{res.coa_code}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{res.coa_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[15%]'>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+											<Button className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'view', false);
 											}}>
 												<Eye color='white' />
 											</Button>
-											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 											onClick={ () => {
 												setDataSelected(res);
 												showModal(true,'edit', false);
@@ -225,7 +225,7 @@ export const ChartOfAccount = () => {
 												<Edit color='white' />
 											</Button>
 											<Button 
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={ () => {
 													setDataSelected(res);
 													showModal(true,'delete', false);

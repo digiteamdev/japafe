@@ -414,34 +414,34 @@ export const ViewSchedule = ({
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2 mb-3'>
 								<table className='w-full'>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%]  bg-gray-300 pl-2 border border-gray-200'>
 											Id Time Schedulle
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.idTs}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Job No
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.wor.job_no}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Customer
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.wor.customerPo.quotations.Customer.name}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Start date / End date
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{moment(dataSelected.wor.date_of_order).format(
 												"DD-MMMM-YYYY"
 											)}{" "}
@@ -452,10 +452,10 @@ export const ViewSchedule = ({
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Holiday
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.holiday ? "Not Working" : "Working"}
 										</td>
 									</tr>

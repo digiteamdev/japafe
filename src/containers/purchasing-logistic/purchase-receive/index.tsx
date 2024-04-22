@@ -176,25 +176,25 @@ export const PurchaseReceive = () => {
 						data.map((res: any, i: number) => {
                             return (
 								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1'>
 										{res.id_receive}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{moment(res.date_receive).format("DD-MMMM-YYYY")}
 									</td>
-                                    <td className='whitespace-nowrap px-6 py-4 text-center'>
+                                    <td className='whitespace-nowrap p-1'>
 										{res.id_so}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1'>
 										{res.supplier.supplier_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -204,7 +204,7 @@ export const PurchaseReceive = () => {
 											</Button>
 											{res.status_manager_director === "revision" ? (
 												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "edit", false);
@@ -214,7 +214,7 @@ export const PurchaseReceive = () => {
 												</Button>
 											) : res.status_manager ? null : (
 												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "edit", false);

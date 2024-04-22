@@ -189,10 +189,10 @@ export const ViewApprovalDirector = ({
 						<div className='w-full'>
 							<table className='w-full'>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										{titleID()}
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_cash_advance
 											? dataSelected.id_cash_advance
 											: dataSelected.idPurchase
@@ -201,10 +201,10 @@ export const ViewApprovalDirector = ({
 									</td>
 								</tr>
 								<tr>
-									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										{titleDate()}
 									</td>
-									<td className='w-[50%] pl-2 border border-gray-200'>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.id_cash_advance
 											? moment(dataSelected.date_cash_advance).format(
 													"DD-MMMM-YYYY"
@@ -221,50 +221,50 @@ export const ViewApprovalDirector = ({
 								{dataSelected.id_cash_advance ? (
 									<>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Request By
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.employee.employee_name}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Job No
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.wor.job_no}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Description
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.description}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Value
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{total(dataSelected.cdv_detail)}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Payment Type
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.status_payment}
 											</td>
 										</tr>
 										<tr>
-											<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 												Note
 											</td>
-											<td className='w-[50%] pl-2 border border-gray-200'>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 												{dataSelected.note}
 											</td>
 										</tr>
@@ -398,10 +398,7 @@ export const ViewApprovalDirector = ({
 															<thead>
 																<tr>
 																	<th className='border border-black text-center'>
-																		Akun / Job no
-																	</th>
-																	<th className='border border-black text-center'>
-																		Part / Item
+																		Job no / No SR
 																	</th>
 																	<th className='border border-black text-center'>
 																		Service Description
@@ -430,13 +427,10 @@ export const ViewApprovalDirector = ({
 																	return (
 																		<tr key={idx}>
 																			<td className='border border-black text-center'>
-																				{result.sr.job_no}
+																				{result.sr.job_no} / {result.sr.no_sr}
 																			</td>
 																			<td className='border border-black text-center'>
-																				{result.part}
-																			</td>
-																			<td className='border border-black text-center'>
-																				{result.workCenter.name}
+																				{result.desc}
 																			</td>
 																			<td className='border border-black text-center'>
 																				{result.qty}
@@ -461,7 +455,7 @@ export const ViewApprovalDirector = ({
 																<tr>
 																	<td
 																		className='border border-black text-right pr-4'
-																		colSpan={7}
+																		colSpan={6}
 																	>
 																		Total
 																	</td>
@@ -472,7 +466,7 @@ export const ViewApprovalDirector = ({
 																<tr>
 																	<td
 																		className='border border-black text-right pr-4'
-																		colSpan={7}
+																		colSpan={6}
 																	>
 																		{Ppn(res, "ppn")}
 																	</td>
@@ -483,7 +477,7 @@ export const ViewApprovalDirector = ({
 																<tr>
 																	<td
 																		className='border border-black text-right pr-4'
-																		colSpan={7}
+																		colSpan={6}
 																	>
 																		Grand Total
 																	</td>

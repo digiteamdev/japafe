@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import { removeToken, getRole } from "../../../configs/session";
 import {
 	SectionTitle,
@@ -8,7 +8,7 @@ import {
 	Modal,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { User, Trash2, Eye, Edit } from "react-feather";
 import { FormCreateEmploye } from "./formCreate";
@@ -32,7 +32,6 @@ interface dataDepartement {
 }
 
 export const Employe = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,10 +43,9 @@ export const Employe = () => {
 	const [countData, setCountData] = useState<number>(0);
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No" },
 		{ name: "NIK" },
 		{ name: "Name" },
 		{ name: "Departement" },
@@ -62,14 +60,14 @@ export const Employe = () => {
 	];
 
 	useEffect(() => {
-		let roleUsers: any = getRole()
+		let roleUsers: any = getRole();
 		getDepartement();
 		getEmploye(page, perPage);
-		if(roleUsers !== undefined){
-			let roleUser = JSON.parse(roleUsers)
-			for( var i = 0; i < roleUser.length; i++){
-				if(roleUser[i].role.role_name === "HR & GA"){
-					setRoleHRD(true)
+		if (roleUsers !== undefined) {
+			let roleUser = JSON.parse(roleUsers);
+			for (var i = 0; i < roleUser.length; i++) {
+				if (roleUser[i].role.role_name === "HR & GA") {
+					setRoleHRD(true);
 					break;
 				}
 			}
@@ -106,14 +104,14 @@ export const Employe = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -183,17 +181,19 @@ export const Employe = () => {
 			/>
 			<Content
 				title='Employe'
-				print={ roleHRD }
+				print={roleHRD}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchEmploye}
 			>
-				<Table header={ roleHRD ? headerTabel : headerTabelPublic}>
+				<Table header={roleHRD ? headerTabel : headerTabelPublic}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
 							<td
-								colSpan={roleHRD ? headerTabel?.length : headerTabelPublic?.length}
+								colSpan={
+									roleHRD ? headerTabel?.length : headerTabelPublic?.length
+								}
 								className='whitespace-nowrap px-6 py-4 text-center text-lg'
 							>
 								<svg
@@ -218,7 +218,9 @@ export const Employe = () => {
 					) : data.length === 0 ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
 							<td
-								colSpan={roleHRD ? headerTabel?.length : headerTabelPublic?.length}
+								colSpan={
+									roleHRD ? headerTabel?.length : headerTabelPublic?.length
+								}
 								className='whitespace-nowrap px-6 py-4 text-center text-lg'
 							>
 								No Data
@@ -226,31 +228,26 @@ export const Employe = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							if(roleHRD){
+							if (roleHRD) {
 								return (
 									<tr
-										className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+										className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 										key={i}
 									>
-										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-											{i + 1}
-										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
-											{res.NIK}
-										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>{res.NIK}</td>
+										<td className='whitespace-nowrap p-1'>
 											{res.employee_name}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>
 											{res.sub_depart.name}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>
 											+62{res.phone_number}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4 w-[10%]'>
+										<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 											<div>
 												<Button
-													className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+													className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "view", false);
@@ -259,16 +256,16 @@ export const Employe = () => {
 													<Eye color='white' />
 												</Button>
 												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
-														showModal(true,'edit', false);
+														showModal(true, "edit", false);
 													}}
 												>
 													<Edit color='white' />
 												</Button>
 												<Button
-													className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
+													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
 														showModal(true, "delete", false);
@@ -280,22 +277,20 @@ export const Employe = () => {
 										</td>
 									</tr>
 								);
-							}else{
+							} else {
 								return (
 									<tr
 										className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 										key={i}
 									>
-										<td className='whitespace-nowrap px-6 py-4 w-[5%] text-center'>
-											{i + 1}
-										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>{res.NIK}</td>
+										<td className='whitespace-nowrap p-1'>
 											{res.employee_name}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>
 											{res.sub_depart.name}
 										</td>
-										<td className='whitespace-nowrap px-6 py-4'>
+										<td className='whitespace-nowrap p-1'>
 											+62{res.phone_number}
 										</td>
 									</tr>
@@ -304,20 +299,18 @@ export const Employe = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getEmploye(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getEmploye(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -335,9 +328,7 @@ export const Employe = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewEmploye 
-							dataSelected={dataSelected}
-						/>
+						<ViewEmploye dataSelected={dataSelected} />
 					) : modalContent === "add" ? (
 						<FormCreateEmploye
 							listDepartement={listDepartement}
@@ -345,7 +336,12 @@ export const Employe = () => {
 							showModal={showModal}
 						/>
 					) : (
-						<FormEditEmploye content={modalContent} showModal={showModal} dataEmploye={dataSelected} listDepartement={listDepartement}/>
+						<FormEditEmploye
+							content={modalContent}
+							showModal={showModal}
+							dataEmploye={dataSelected}
+							listDepartement={listDepartement}
+						/>
 					)}
 				</Modal>
 			)}

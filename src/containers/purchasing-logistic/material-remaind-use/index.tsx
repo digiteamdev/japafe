@@ -180,18 +180,18 @@ export const MaterialRemaindUse = () => {
 							return (
                                 <></>
 								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 								// 	key={i}
 								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                //     <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
-								// 	<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+								// 	<td className='whitespace-nowrap p-1'>{ res.id_cash_advance }</td>
+								// 	<td className='whitespace-nowrap p-1'>{ res.employee.employee_name }</td>
+								// 	<td className='whitespace-nowrap p-1'>{ res.description }</td>
+								// 	<td className='whitespace-nowrap p-1'>{ res.user.username }</td>
+                                //     <td className='whitespace-nowrap p-1'>{ formatRupiah(res.total.toString()) }</td>
+								// 	<td className='whitespace-nowrap text-center p-1 w-[10%]'>
 								// 		<div>
 								// 			<Button
-								// 				className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+								// 				className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 								// 				onClick={() => {
 								// 					setDataSelected(res);
 								// 					showModal(true, "view", false);
