@@ -98,6 +98,7 @@ export const FormEditDispatch = ({
 				timeschId: res.timeschId,
 				aktivitasID: res.aktivitasId,
 				aktivitas: res.aktivitas.work_scope_item.item,
+				dataAktivitas: res.aktivitas,
 				start: moment(res.aktivitas.startday).format("DD-MMMM-YYYY"),
 				end: moment(res.aktivitas.endday).format("DD-MMMM-YYYY"),
 				subdepId: res.subdepId,
@@ -647,6 +648,7 @@ export const FormEditDispatch = ({
 						theme: "colored",
 					});
 				}
+				showModal(false, content, true);
 			} catch (error) {
 				toast.error("SO Activity Failed", {
 					position: "top-center",
@@ -661,7 +663,7 @@ export const FormEditDispatch = ({
 			}
 		} else {
 			try {
-				const response = await DispatchDetailStart(data.idDispatch, body);
+				const response = await DispatchDetailStart(data.aktivitasID, body);
 				if (response.data) {
 					let bodyStart: any = {
 						dispatchDetailId: data.idDispatch,
@@ -682,6 +684,7 @@ export const FormEditDispatch = ({
 						});
 					}
 				}
+				showModal(false, content, true);
 			} catch (error) {
 				toast.error("Start Activity Failed", {
 					position: "top-center",
@@ -702,6 +705,8 @@ export const FormEditDispatch = ({
 			dispatchDetailId: data.idDispatch,
 			employeeId: data.employeeId,
 			start: new Date(),
+			finish: new Date(),
+			operatorId: data.operator[data.operator.length - 1].id
 		};
 		try {
 			const start = await DispatchOperatorStart(body);
@@ -962,8 +967,8 @@ export const FormEditDispatch = ({
 															SO
 														</button>
 													</div>
-												) : res.aktivitas.actual_finish === null ? (
-													<>
+												) : res.dataAktivitas.actual_finish === null ? (
+													<div className='flex'>
 														<button
 															type='button'
 															className='bg-orange-500 hover:bg-orange-300 text-white py-1 px-1 rounded-md mx-1 my-1'
@@ -978,8 +983,27 @@ export const FormEditDispatch = ({
 														>
 															Finish
 														</button>
-													</>
-												) : ""}
+													</div>
+												) : res.dataAktivitas.actual_finish !== null ? (
+													<div className='flex'>
+														<button
+															type='button'
+															className='cursor-not-allowed bg-red-500 text-white py-1 px-1 mt-1 rounded-md'
+														>
+															Finished
+														</button>
+													</div>
+												) : (
+													<div className='flex'>
+														<button
+															type='button'
+															className='bg-red-500 hover:bg-red-300 text-white py-1 px-1 rounded-md'
+															onClick={() => finishActivity(res)}
+														>
+															Finish
+														</button>
+													</div>
+												)}
 											</div>
 										</Section>
 									))}

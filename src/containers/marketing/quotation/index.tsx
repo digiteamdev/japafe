@@ -179,6 +179,8 @@ export const Quotation = () => {
 				print={true}
 				marketing={isDropdown}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchQuotation}
 			>

@@ -14,7 +14,7 @@ import { Box, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateWarehouse } from "./formCreate";
 // import { ViewMaterial } from "./view";
 // import { FormEditMaterial } from './formEdit';
-import { GetMaterialNew, SearchMaterial, DeleteMaterial } from "../../../services";
+import { GetMaterialNew, SearchMaterialNew, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
 import { changeDivisi, formatRupiah } from "@/src/utils";
 
@@ -82,7 +82,7 @@ export const Warehouse = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchMaterial(page, limit, search);
+			const response = await SearchMaterialNew(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -135,6 +135,8 @@ export const Warehouse = () => {
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchMaterial}
 			>

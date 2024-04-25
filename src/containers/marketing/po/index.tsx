@@ -163,6 +163,8 @@ export const Po = () => {
 				print={true}
 				marketing={isDropdown}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchPo}
 			>

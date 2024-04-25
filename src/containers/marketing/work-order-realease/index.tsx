@@ -161,6 +161,8 @@ console.log(dataSelected)
 				print={roleMarketing}
 				marketing={isDropdown}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchwor}
 			>

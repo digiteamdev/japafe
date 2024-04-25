@@ -135,6 +135,8 @@ export const ApprovalMr = () => {
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchApprovalMr}
 			>

@@ -6,9 +6,11 @@ interface props {
 	title?: string;
 	print?: boolean;
 	marketing?: boolean;
+	timeSheet?: boolean;
 	showModal: (val: boolean, content: string, realod: boolean) => void;
 	search: (page: number, perpage: number, search: string) => void;
 	changeDivisi: (data: string) => void;
+	changeTimeSheet: (data: string) => void;
 	children: ReactNode;
 }
 
@@ -16,8 +18,10 @@ export const Content = ({
 	title,
 	print,
 	marketing,
+	timeSheet,
 	showModal,
 	changeDivisi,
+	changeTimeSheet,
 	search,
 	children,
 }: props) => {
@@ -54,14 +58,34 @@ export const Content = ({
 								placeholder='Material'
 								label='Material'
 								onChange={(event: any) => {
-									changeDivisi(event.target.value)
+									changeDivisi(event.target.value);
 								}}
 								required={true}
 								withLabel={false}
 								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 							>
-								<option value="S">SWASTA</option>
-								<option value="B">BUMN</option>
+								<option value='S'>SWASTA</option>
+								<option value='B'>BUMN</option>
+							</InputSelect>
+						</div>
+					) : null}
+					{timeSheet ? (
+						<div className='lg:w-[35%] md:w-[35%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
+							<InputSelect
+								id=''
+								name=''
+								placeholder='Material'
+								label='Material'
+								onChange={(event: any) => {
+									changeTimeSheet(event.target.value);
+								}}
+								required={true}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+							>
+								<option value=''>All</option>
+								<option value='worktime'>Work Time</option>
+								<option value='overtime'>Over Time</option>
 							</InputSelect>
 						</div>
 					) : null}

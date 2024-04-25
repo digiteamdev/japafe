@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,20 +7,17 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreatePurchaseMr } from "./formCreate";
-import { ViewPurchaseMR } from "./view";
-import { FormEditPurchaseMr } from "./formEdit";
-import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
-import { toast } from "react-toastify";
+import { Clock, Eye, Edit, Trash2 } from "react-feather";
+import { FormCreateTimeSheet } from "./formCreate";
+import { ViewTimeSheet } from "./view";
+import { GetTimeSheet, SearchTimeSheet } from "../../../services";
 import { removeToken } from "../../../configs/session";
+import { changeDivisi, formatRupiah } from "../../../utils/index";
 import moment from "moment";
-import { changeDivisi } from "@/src/utils";
 
-export const PurchaseMR = () => {
-
+export const TimeSheet = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,18 +25,27 @@ export const PurchaseMR = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [typeSheet, setTypeSheet] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [showCreate, setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
-		{ name: "ID Purhcase MR" },
-		{ name: "Purchase MR Date" },
-        { name: "Action" }
+		{ name: "Date" },
+		{ name: "Job No" },
+		{ name: "Process" },
+		{ name: "Start/Finish" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage, 'PR');
+		getTimeSheet(page, perPage);
+		let route = router.pathname;
+		let arrayRouter = route.split("/");
+		if (arrayRouter[1] === "marketing") {
+			setShowCreate(false);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,38 +56,58 @@ export const PurchaseMR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage, 'PR');
+			getTimeSheet(page, perPage);
 		}
 	};
 
-	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
+	const getTimeSheet = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPurchaseMR(page, perpage, type);
+			const response = await GetTimeSheet(page, perpage, '');
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
-				// removeToken();
-				// router.push('/');
+			} else {
+				removeToken();
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchPurchaseMR = async (
+	const changeTimeSheet = async (data: string) => {
+		setIsLoading(true);
+		try {
+			const response = await GetTimeSheet(page, perPage, data);
+			if (response.data) {
+				setData(response.data.result);
+				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil(response.data.totalData / perPage));
+			}
+		} catch (error: any) {
+			if (error.response.data.login) {
+				setData([]);
+			} else {
+				removeToken();
+				router.push("/");
+			}
+		}
+		setIsLoading(false);
+	};
+
+	const searchTimeSheet = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseMR(page, limit, search, 'PR');
+			const response = await SearchTimeSheet(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -91,53 +117,53 @@ export const PurchaseMR = () => {
 		setIsLoading(false);
 	};
 
-	const deletePurchaseMR = async (id: string) => {
-		try {
-			const response = await DeletePurchaseMR(id);
-			if(response.data){
-				toast.success("Delete Purchase Request Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				getPurchaseMR(1, 10, 'PR');
-			}
-		} catch (error) {
-			toast.error("Delete Purchase Request Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
+	const deleteMaterialStock = async (id: string) => {
+		// try {
+		// 	const response = await DeleteCustomer(id);
+		// 	if(response.data){
+		// 		toast.success("Delete Customer Success", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 		getMaterialStok(1, 10);
+		// 	}
+		// } catch (error) {
+		// 	toast.error("Delete Customer Failed", {
+		// 		position: "top-center",
+		// 		autoClose: 5000,
+		// 		hideProgressBar: true,
+		// 		closeOnClick: true,
+		// 		pauseOnHover: true,
+		// 		draggable: true,
+		// 		progress: undefined,
+		// 		theme: "colored",
+		// 	});
+		// }
 		setIsModal(false);
 	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Purchase Material Request'
+				title='Time Sheet'
 				total={countData}
-				icon={<Send className='w-[36px] h-[36px]' />}
+				icon={<Clock className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Purchase Material Request'
-				print={true}
+				title='Time Sheet'
+				print={showCreate}
 				marketing={false}
+				timeSheet={true}
+				changeTimeSheet={changeTimeSheet}
 				changeDivisi={changeDivisi}
-				timeSheet={false}
-				changeTimeSheet={changeDivisi}
 				showModal={showModal}
-				search={searchPurchaseMR}
+				search={searchTimeSheet}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -181,8 +207,18 @@ export const PurchaseMR = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idPurchase }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ moment(res.date).format('DD-MM-YY') }
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job}
+									</td>
+									<td className='whitespace-nowrap p-1'>
+										{res.job_description}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ moment(res.actual_start).format('LT') } / { moment(res.actual_finish).format('LT') }
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -194,8 +230,7 @@ export const PurchaseMR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.status_manager_director === 'revision' ? (
-												<Button
+											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -204,26 +239,6 @@ export const PurchaseMR = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											) : res.status_manager_pr ? null : (
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true,'edit', false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-											) }
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
 										</div>
 									</td>
 								</tr>
@@ -231,20 +246,18 @@ export const PurchaseMR = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getPurchaseMR(value, perPage, 'PR');
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getTimeSheet(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -252,21 +265,23 @@ export const PurchaseMR = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deletePurchaseMR}
+					onDelete={deleteMaterialStock}
 				/>
 			) : (
 				<Modal
-					title='Purchase Material Request'
+					title='Time Sheet'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewPurchaseMR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
-					) : modalContent === "add" ? (
-                        <FormCreatePurchaseMr content={modalContent} showModal={showModal} />
+						<ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
+					) : 
+					modalContent === "add" ? (
+						<FormCreateTimeSheet content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditPurchaseMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<></>
+						// <FormEditCustomer content={modalContent} showModal={showModal} dataCustomer={dataSelected}/>
 					)}
 				</Modal>
 			)}

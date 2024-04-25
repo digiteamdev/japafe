@@ -403,6 +403,21 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
+									id='certificate'
+									name='certificate'
+									placeholder='certificate Number'
+									label='certificate Number'
+									type='text'
+									// value={values.certificate}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
 									id='isr'
 									name='isr'
 									placeholder='Serial Number'
@@ -446,14 +461,16 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='inimg'
 									name='inimg'
-									placeholder='Introduction Image'
-									label='Introduction Image'
+									placeholder='File'
+									label='Upload File'
 									type='file'
-									accept='image/*'
+									// accept='image/*'
 									onChange={(event: any) => {
 										setFieldValue("inimg", event.currentTarget.files[0]);
 									}}
@@ -562,6 +579,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 																Manufacture New
 															</option>
 															<option value='Supply_New'>Supply New</option>
+															<option value='Inspection'>Inspection</option>
 														</InputSelect>
 													</div>
 													<div className='w-full'>

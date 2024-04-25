@@ -138,6 +138,8 @@ export const MaterialNameInfo = () => {
 				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

@@ -184,6 +184,8 @@ export const Employe = () => {
 				print={roleHRD}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchEmploye}
 			>

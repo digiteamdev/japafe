@@ -138,6 +138,8 @@ export const Customer = () => {
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchCustomer}
 			>

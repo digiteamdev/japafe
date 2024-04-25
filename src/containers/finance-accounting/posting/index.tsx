@@ -101,6 +101,8 @@ export const Posting = () => {
 				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchCashier}
 			>

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { CardLogin } from "../src/containers";
-import Logo1 from "../src/assets/logo/logo-ISO-9001.png";
-import Logo2 from "../src/assets/logo/Logo-ISO-45001.png";
-import Logo3 from "../src/assets/logo/Logo-ISO-14001.png";
+import Logo1 from "../src/assets/logo/iso1.png";
+import Logo2 from "../src/assets/logo/iso2.png";
+import Logo3 from "../src/assets/logo/iso3.png";
 import Image from "next/image";
 import { getToken } from "../src/configs/session";
 import Head from "next/head";
@@ -41,7 +41,7 @@ export default function Home() {
 					<div className='flex mt-20 justify-center'>
 						<Image
 							src={Logo1}
-							className='w-[20%] h-[20%]'
+							className='w-[16%] h-[20%]'
 							loading='eager'
 							priority={true}
 							alt='logo'

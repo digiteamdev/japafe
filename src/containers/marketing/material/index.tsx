@@ -136,6 +136,8 @@ export const MaterialStokMaketing = () => {
 				print={showCreate}
 				marketing={false}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
