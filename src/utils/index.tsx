@@ -145,7 +145,7 @@ export const pembilang = (nilai: any) => {
 
 export const cekDivisiMarketing = () => {
 	let roles = getRole();
-	let divisi = "B"
+	let divisi = ""
 	if (roles !== undefined) {
 		let role = JSON.parse(roles)
 		role.map((res:any) => {

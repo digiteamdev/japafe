@@ -24,7 +24,7 @@ export const Wor = () => {
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isDropdown, setIsDropdown] = useState<any>(false);
-	const [divisiMarketing, setDivisiMarketing] = useState<string>("");
+	const [divisiMarketing, setDivisiMarketing] = useState<string>("cek");
 	const [countData, setCountData] = useState<number>(0);
 	const [roleMarketing, setRoleMarketing] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
@@ -48,7 +48,7 @@ export const Wor = () => {
 		if(position === 'Director' || position === 'Manager'){
 			setIsDropdown(true)
 		}
-		if(divisiMarketing !== ""){
+		if(divisiMarketing !== "cek"){
 			getWor(page, perPage, divisiMarketing);
 		}else{
 			setDivisiMarketing(cekDivisiMarketing())
@@ -69,7 +69,7 @@ export const Wor = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [divisiMarketing]);
-
+console.log(divisiMarketing)
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
 		setModalContent(content);
