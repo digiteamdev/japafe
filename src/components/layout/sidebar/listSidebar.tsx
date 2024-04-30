@@ -115,33 +115,33 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "permit-request",
-				link: "/public/permit-request",
-				title: "Permit Request",
+			// {
+			// 	id: "permit-request",
+			// 	link: "/public/permit-request",
+			// 	title: "Permit Request",
 
-				subMenu: null,
-			},
-			{
-				id: "dispatch-record",
-				link: "/public/dispatch-record",
-				title: "Dispatch Record",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "dispatch-record",
+			// 	link: "/public/dispatch-record",
+			// 	title: "Dispatch Record",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "employe",
 				link: "/public/employe",
 				title: "Employe",
 				subMenu: null,
 			},
-			{
-				id: "absen-today",
-				link: "/public/absen-today",
-				title: "Absen Today",
+			// {
+			// 	id: "absen-today",
+			// 	link: "/public/absen-today",
+			// 	title: "Absen Today",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "master-material",
 				link: "/public/master-material",

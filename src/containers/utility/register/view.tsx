@@ -6,8 +6,6 @@ interface props {
 }
 
 export const ViewUser = ({ dataSelected }: props) => {
-	console.log(dataSelected);
-
     const showRole = (data: any) => {
         let role: any = []
         data.map( (res:any) => {

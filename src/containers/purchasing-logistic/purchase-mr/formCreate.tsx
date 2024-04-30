@@ -70,12 +70,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						no_mr: res.mr.no_mr,
 						user: res.mr.user.employee.employee_name,
 						supId: res.supId,
-						supplier: {
-							label: res.supplier.supplier_name,
-							value: res.supplier
-						},
+						supplier: {},
 						taxpr: res.taxpr,
-						ppn: res.supplier.ppn,
+						ppn: 0,
 						job_no: res.mr.job_no,
 						disc: res.disc,
 						currency: "IDR",

@@ -30,6 +30,7 @@ interface data {
 	timeschId: string;
 	qty: string;
 	equipment: string;
+	ca_number: string;
 	model: string;
 	ioem: string;
 	isr: string;
@@ -66,6 +67,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		timeschId: "",
 		equipment: "",
 		model: "",
+		ca_number: "",
 		qty: "",
 		ioem: "",
 		isr: "",
@@ -137,6 +139,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		let datasWor: any = [];
 		try {
 			const response = await GetSummaryTimeSchedulle();
+			console.log(response.data)
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					datasWor.push({
@@ -403,12 +406,12 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
-									id='certificate'
-									name='certificate'
-									placeholder='certificate Number'
-									label='certificate Number'
+									id='ca_number'
+									name='ca_number'
+									placeholder='Certificate Number'
+									label='Certificate Number'
 									type='text'
-									// value={values.certificate}
+									value={values.ca_number}
 									onChange={handleChange}
 									disabled={false}
 									required={true}

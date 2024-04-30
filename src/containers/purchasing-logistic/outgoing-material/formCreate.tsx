@@ -293,7 +293,6 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									label='ID Purchase Recieve'
 									onChange={(e: any) => {
 										e.value.detailMr.map((res: any, i: number) => {
-											console.log(res)
 											setFieldValue("pb", [
 												{
 													coa_id: null,

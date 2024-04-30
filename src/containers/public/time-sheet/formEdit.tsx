@@ -15,6 +15,7 @@ import { getIdUser } from "@/src/configs/session";
 import moment from "moment";
 
 interface props {
+	dataSelected: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
@@ -31,13 +32,17 @@ interface data {
 	type_timesheet: string;
 }
 
-export const FormCreateTimeSheet = ({ content, showModal }: props) => {
+export const FormEditTimeSheet = ({
+	dataSelected,
+	content,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [typeSheet, setTypeSheet] = useState<string>("overtime");
 	const [userID, setUserId] = useState<string>("");
 	const [employe, setEmploye] = useState<string>("");
 	const [depart, setDepart] = useState<string>("");
 	const [minDate, setMinDate] = useState<any>(new Date());
+	const [maxDate, setMaxDate] = useState<any>(new Date());
 	const [data, setData] = useState<data>({
 		date: new Date(),
 		job: "",
@@ -51,42 +56,37 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		getEmploye();
-		dateInput()
+		settingData();
+		dateInput();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getEmploye = async () => {
-		try {
-			const id = getIdUser();
-			const response = await GetEmployeById(id);
-			if (response) {
-				setEmploye(response.data.result.employee.employee_name);
-				setUserId(response.data.result.employee.id);
-				setDepart(response.data.result.employee.sub_depart.name);
-				setData({
-					date: new Date(),
-					job: "",
-					part_name: "",
-					job_description: "",
-					userId: id ? id : "",
-					actual_start: new Date(),
-					actual_finish: new Date(),
-					total_hours: "",
-					type_timesheet: "worktime",
-				});
-			}
-		} catch (error) {}
+	const settingData = () => {
+        setData({
+			date: new Date(dataSelected.date),
+			job: dataSelected.job,
+			part_name: dataSelected.part_name,
+			job_description: dataSelected.job_description,
+			userId: dataSelected.userId,
+			actual_start: new Date(dataSelected.actual_start),
+			actual_finish: new Date(dataSelected.actual_finish),
+			total_hours: dataSelected.total_hours,
+			type_timesheet: dataSelected.type_timesheet,
+		})
+        setEmploye(dataSelected.user.employee.employee_name)
+        setDepart(dataSelected.user.employee.sub_depart.name)
 	};
 
 	const dateInput = () => {
-		let minDate: any = moment().subtract(3, 'days');
-		setMinDate(minDate)
+		let minDate: any = moment(dataSelected.date).subtract(3, "days");
+		let maxDate: any = moment(dataSelected.date).add(1, "days");
+		setMinDate(minDate);
+		setMaxDate(maxDate);
 	};
 
-	const addTimeSheet = async (data: any) => {
+	const editTimeSheet = async (data: any) => {
 		setIsLoading(true);
-		try {
+        try {
 			const response = await AddTimeSheet(data);
 			if (response) {
 				toast.success("Add Time Sheet Success", {
@@ -122,7 +122,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 				initialValues={data}
 				// validationSchema={activitySchema}
 				onSubmit={(values) => {
-					addTimeSheet(values);
+					editTimeSheet(values);
 				}}
 				enableReinitialize
 			>
@@ -141,7 +141,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									id='date'
 									label='date'
 									minDate={minDate}
-									maxDate={new Date()}
+									maxDate={maxDate}
 									value={values.date}
 									onChange={(value: any) => setFieldValue("date", value)}
 									withLabel={true}
@@ -190,10 +190,10 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option value='worktime' selected>
+									<option value='worktime' selected={ values.type_timesheet === 'worktime' ? true : false }>
 										Work Time
 									</option>
-									<option value='overtime'>Over Time</option>
+									<option value='overtime' selected={ values.type_timesheet === 'overtime' ? true : false } >Over Time</option>
 								</InputSelect>
 							</div>
 						</Section>

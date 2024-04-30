@@ -80,7 +80,7 @@ export const Wor = () => {
 			getWor(page, perPage, divisiMarketing);
 		}
 	};
-console.log(dataSelected)
+
 	const getWor = async (page: number, perpage: number, divisi: string) => {
 		setIsLoading(true);
 		try {

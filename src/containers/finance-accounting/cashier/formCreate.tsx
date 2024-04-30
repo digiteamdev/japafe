@@ -736,7 +736,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 							name='journal_cashier'
 							render={(arrays) =>
 								values.journal_cashier.map((result: any, i: number) => {
-									console.log(result);
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2'>

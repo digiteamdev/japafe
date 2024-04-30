@@ -149,7 +149,6 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	};
 
 	const addCashAdvance = async (payload: any) => {
-		console.log(payload)
 		setIsLoading(true);
 		let detail: any = [];
 		payload.detail.map((res: any) => {

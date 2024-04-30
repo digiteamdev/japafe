@@ -199,22 +199,22 @@ export const Cashier = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.id_cashier}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon.id_kontrabon : '-' }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.note}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{formatRupiah(res.total.toString())}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.pay_to}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										<div>
 											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {

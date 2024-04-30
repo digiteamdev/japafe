@@ -333,28 +333,28 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 								<thead></thead>
 								<tbody>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Id Kontra Bon
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{dataSelected.id_kontrabon}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Date Prepered
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{moment(dataSelected.date_prepered).format(
 												"DD-MMMM-YYYY"
 											)}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Purchase Type / Id Purchase
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{`${typePurchase(
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.poandso.id_so
@@ -367,10 +367,10 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Suplier/Vendor
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.supplier
 														.supplier_name
@@ -378,38 +378,38 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Invoice Number
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{dataSelected.invoice}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Delivery Number
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{dataSelected.DO}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Due Date
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{moment(dataSelected.due_date).format("DD-MMMM-YYYY")}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Bill Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
 												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
 											)
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{formatRupiah(
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.price.toString()
@@ -418,45 +418,45 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Discount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
 												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
 											)
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{ dataSelected.cash_advance ? 0 : formatRupiah(discount().toString())}
 										</td>
 									</tr>
 									{ dataSelected.cash_advance ? null : showTax()}
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Cash Advant (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
 												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
 											)
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>{0}</td>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>{0}</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Total Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
 												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
 											)
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
 											{formatRupiah(dataSelected.grandtotal.toString())}
 										</td>
 									</tr>
 									<tr>
-										<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Term & Conditions
 										</td>
-										<td className='w-[50%] pl-2 border border-gray-200'>
+										<td className='sm:w-[50%] md:[25%] pl-2 border border-gray-200'>
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.limitpay
 												: dataSelected.purchase ? dataSelected.purchase.note : "IDR"}{" "}

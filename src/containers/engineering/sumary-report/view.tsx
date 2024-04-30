@@ -105,17 +105,17 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-											Introduction Image
+											File
 										</td>
 										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.inimg !== null ? (
-												<Image
-													src={dataSelected.inimg}
-													width={70}
-													height={70}
-													alt='Picture part'
-													className='mr-2'
-												/>
+												<a
+													href={dataSelected.inimg}
+													target='_blank'
+													className='justify-center rounded-full border border-transparent bg-green-500 px-2 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer'
+												>
+													Show File
+												</a>
 											) : (
 												"-"
 											)}
@@ -134,7 +134,9 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 										<th className='border border-black text-center'>Image</th>
 										<th className='border border-black text-center'>Part</th>
 										<th className='border border-black text-center'>Finding</th>
-										<th className='border border-black text-center'>Quantity</th>
+										<th className='border border-black text-center'>
+											Quantity
+										</th>
 										<th className='border border-black text-center'>Type</th>
 										<th className='border border-black text-center'>note</th>
 									</tr>
@@ -153,25 +155,26 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 																		width={70}
 																		height={70}
 																		alt='Picture part'
-																		className='mr-2'
+																		className='mx-auto'
 																	/>
 																);
-														}) : null}
+														  })
+														: null}
 												</td>
-												<td className="border border-black text-center">
-													{ res.name_part }
+												<td className='border border-black text-center'>
+													{res.name_part}
 												</td>
-												<td className="border border-black text-center">
-													{ res.input_finding }
+												<td className='border border-black text-center'>
+													{res.input_finding}
 												</td>
-												<td className="border border-black text-center">
-													{ res.qty }
+												<td className='border border-black text-center'>
+													{res.qty}
 												</td>
-												<td className="border border-black text-center">
-													{ res.choice.replace(/_|-|\./g, " ") }
+												<td className='border border-black text-center'>
+													{res.choice.replace(/_|-|\./g, " ")}
 												</td>
-												<td className="border border-black text-center">
-													{ res.note }
+												<td className='border border-black text-center'>
+													{res.note}
 												</td>
 											</tr>
 										);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,20 +7,24 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye } from "react-feather";
 import { FormCreateApprovalMr } from "./formCreate";
 import { ViewApprovalMR } from "./view";
 import { FormEditApprovalMr } from "./formEdit";
-import { GetApprovalRequest, SearchApprovalRequest, DeleteMR } from "../../../services";
+import {
+	GetApprovalRequest,
+	SearchApprovalRequest,
+	DeleteMR,
+	GetMRForApproval,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
 export const ApprovalMr = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,13 +34,15 @@ export const ApprovalMr = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Approval MR" },
-        { name: "Approval MR Date" },
-		{ name: "Approval By" },
-        { name: "Action" }
+		{ name: "Job No" },
+		{ name: "No MR" },
+		{ name: "Request By" },
+		{ name: "Material" },
+		{ name: "Date Request" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
@@ -58,18 +64,19 @@ export const ApprovalMr = () => {
 	const getApprovalMr = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalRequest(page, perpage, type);
+			const response = await GetMRForApproval();
+			console.log(response);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -95,7 +102,7 @@ export const ApprovalMr = () => {
 	const deleteMR = async (id: string) => {
 		try {
 			const response = await DeleteMR(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Material Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -123,6 +130,18 @@ export const ApprovalMr = () => {
 		setIsModal(false);
 	};
 
+	const showMaterial = (data:any) => {
+		let material:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				material = `- `+res.Material_Master.name
+			}else{
+				material = material +` \r\n ` + `- `+res.Material_Master.name 
+			}
+		})
+		return material
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -132,7 +151,7 @@ export const ApprovalMr = () => {
 			/>
 			<Content
 				title='Approval Material Request'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -182,9 +201,21 @@ export const ApprovalMr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idApprove }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_mr}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.employee.employee_name}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{showMaterial(res.detailMr)}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.dateApprove).format("DD-MMMM-YYYY")}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -196,15 +227,15 @@ export const ApprovalMr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
-													showModal(true,'edit', false);
+													showModal(true, "edit", false);
 												}}
 											>
 												<Edit color='white' />
-											</Button>
+											</Button> */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
@@ -221,20 +252,18 @@ export const ApprovalMr = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getApprovalMr(value, perPage, "MP");
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getApprovalMr(value, perPage, "MP");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -252,11 +281,22 @@ export const ApprovalMr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewApprovalMR dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
+						<ViewApprovalMR
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreateApprovalMr content={modalContent} showModal={showModal} />
+						<FormCreateApprovalMr
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : (
-                        <FormEditApprovalMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditApprovalMr
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

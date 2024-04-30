@@ -193,25 +193,24 @@ export const DuePayment = () => {
 						</tr>
 					) : (
 						data.map((res:any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{res.id_kontrabon}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{moment(res.due_date).format('DD-MMM-YYYY')}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase ? res.purchase.note : res.cash_advance.note}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4'>
+									<td className='whitespace-nowrap p-1'>
 										{formatRupiah(res.grandtotal.toString())}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										<div>
 											<Button className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
 											onClick={ () => {

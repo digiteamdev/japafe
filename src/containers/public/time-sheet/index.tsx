@@ -11,6 +11,7 @@ import {
 } from "../../../components";
 import { Clock, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateTimeSheet } from "./formCreate";
+import { FormEditTimeSheet } from "./formEdit";
 import { ViewTimeSheet } from "./view";
 import { GetTimeSheet, SearchTimeSheet } from "../../../services";
 import { removeToken } from "../../../configs/session";
@@ -33,6 +34,7 @@ export const TimeSheet = () => {
 	const [showCreate, setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
 		{ name: "Date" },
+		{ name: "Type" },
 		{ name: "Job No" },
 		{ name: "Process" },
 		{ name: "Start/Finish" },
@@ -211,6 +213,9 @@ export const TimeSheet = () => {
 										{ moment(res.date).format('DD-MM-YY') }
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
+										{res.type_timesheet}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
 										{res.job}
 									</td>
 									<td className='whitespace-nowrap p-1'>
@@ -280,8 +285,7 @@ export const TimeSheet = () => {
 					modalContent === "add" ? (
 						<FormCreateTimeSheet content={modalContent} showModal={showModal} />
 					) : (
-						<></>
-						// <FormEditCustomer content={modalContent} showModal={showModal} dataCustomer={dataSelected}/>
+						<FormEditTimeSheet content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

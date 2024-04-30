@@ -106,7 +106,6 @@ export const ViewSpjCashAdvance = ({
 			});
 		}
 	};
-    console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (

@@ -524,7 +524,6 @@ export const ViewSchedule = ({
 											})}
 										</tr>
 										{aktivitas.map((res: any, i: number) => {
-											console.log(res)
 											if(i !== 0){
 												return (
 													<tr key={i}>

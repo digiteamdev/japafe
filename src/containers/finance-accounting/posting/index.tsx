@@ -59,7 +59,6 @@ export const Posting = () => {
 		try {
 			const response = await GetAllPosting(page, limit);
 			if (response.data) {
-				console.log(response);
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / limit));
@@ -148,14 +147,14 @@ export const Posting = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
 										-
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-1 text-center'>
                                         { moment(res.date_cashier).format('DD-MMMM-YYYY') }
 									</td>
-									<td className='px-6 py-4 text-center'>From Cashier: Purchase - {res.pay_to}</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='p-1 text-center'>From Cashier: Purchase - {res.pay_to}</td>
+									<td className='whitespace-nowrap p-1 text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'

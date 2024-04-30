@@ -10,6 +10,7 @@ import {
 	GetEmployeById,
 	GetBom,
 	AddMr,
+	AddMaterialNew,
 	AddMaterialStockOne,
 	GetAllMaterial,
 	GetAllMaterialNew,
@@ -29,6 +30,7 @@ interface data {
 	date_mr: any;
 	detailMr: [
 		{
+			isInput: boolean;
 			bomId: string;
 			material: string;
 			materialStockId: string;
@@ -42,8 +44,8 @@ interface data {
 
 export const FormCreateMr = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isSearch, setIsSearch] = useState<boolean>(false);
 	const [isMaterial, setIsMaterial] = useState<boolean>(false);
+	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [isFormAddSpesifikasi, setIsFormAddSpesifikasi] =
 		useState<boolean>(false);
 	const [user, setUser] = useState<string>("");
@@ -57,6 +59,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	const [satuan, setSatuan] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
 	const [listMaterial, setListMaterial] = useState<any>([]);
+	const [listDetail, setListDetail] = useState<any>([]);
 	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
 	const [listItemSearch, setListItemSearch] = useState<any>([]);
 	const [data, setData] = useState<data>({
@@ -64,13 +67,14 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		date_mr: "",
 		detailMr: [
 			{
+				isInput: false,
 				bomId: "",
 				material: "",
 				satuan: "",
 				materialStockId: "",
 				note: "",
 				qty: "",
-				detail: []
+				detail: [],
 			},
 		],
 	});
@@ -79,11 +83,15 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		getEmploye();
-		getBom();
-		getMaterial();
+		if(!isCreate){
+			getEmploye();
+			getBom();
+			getMaterial();
+		}else{
+			createMR(listDetail)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isCreate]);
 
 	const getEmploye = async () => {
 		try {
@@ -102,6 +110,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			let list_material: any = [];
 			let list_material_stock: any = [];
 			const response = await GetAllMaterialNew();
+			list_material.push({
+				label: "Input",
+				value: null,
+			});
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_material.push({
@@ -202,25 +214,67 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 		}
 	};
 
-	const addMr = async (payload: data) => {
+	const addMr = (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.detailMr.map((res: any) => {
-			listDetail.push({
-				bomIdD: res.bomId,
-				materialId: res.material,
-				qty: parseInt(res.qty),
-				note: res.note,
-			});
+		payload.detailMr.map( (res: any, i: number) => {
+			if (res.isInput) {
+				let dataBody: any = {
+					name: res.material,
+					spesifikasi: null,
+					satuan: res.satuan,
+					jumlah_Stock: 0,
+					harga: 0,
+					note: res.note,
+					date_in: new Date(),
+					date_out: null,
+				};
+				AddMaterialNew(dataBody).then((resp:any) => {
+					listDetail.push({
+						bomIdD: res.bomId,
+						materialId: resp.data.results.id,
+						qty: parseInt(res.qty),
+						note: res.note,
+					});
+					if(payload.detailMr.length === listDetail.length){
+						let data = {
+							userId: getIdUser(),
+							date_mr: new Date(),
+							bomIdU: bomId,
+							worId: worID === "" ? null : worID,
+							job_no: jobNo,
+							detailMr: listDetail,
+						};
+						setListDetail(data)
+						setIsCreate(true)
+					}
+				})
+			} else {
+				listDetail.push({
+					bomIdD: res.bomId,
+					materialId: res.material,
+					qty: parseInt(res.qty),
+					note: res.note,
+				});
+				if(payload.detailMr.length === listDetail.length){
+					let data = {
+						userId: getIdUser(),
+						date_mr: new Date(),
+						bomIdU: bomId,
+						worId: worID === "" ? null : worID,
+						job_no: jobNo,
+						detailMr: listDetail,
+					};
+					setListDetail(data)
+					setIsCreate(true)
+				}
+			}
 		});
-		let data = {
-			userId: getIdUser(),
-			date_mr: new Date(),
-			bomIdU: bomId,
-			worId: worID === "" ? null : worID,
-			job_no: jobNo,
-			detailMr: listDetail,
-		};
+		setIsLoading(false);
+	};
+
+	const createMR = async (data:any) => {
+		setIsLoading(true);
 		try {
 			const response = await AddMr(data);
 			if (response.data) {
@@ -249,22 +303,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			});
 		}
 		setIsLoading(false);
-	};
-
-	const searchMaterial = (data: string) => {
-		let itemSearch: any = [];
-		listMaterial.map((res: any) => {
-			if (res.name.toLowerCase().includes(data.toLowerCase())) {
-				itemSearch.push(res);
-			}
-		});
-		listMaterialStock.map((res: any) => {
-			if (res.name.toLowerCase().includes(data.toLowerCase())) {
-				itemSearch.push(res);
-			}
-		});
-		setListItemSearch(itemSearch);
-	};
+	}
 
 	const addMaterialStock = async (payload: any) => {
 		setIsLoading(true);
@@ -464,15 +503,17 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 													setWorID("");
 													setBomId(null);
 													setJobNo("Internal");
-													setFieldValue('detailMr', [{
-														bomId: "",
-														material: "",
-														satuan: "",
-														materialStockId: "",
-														note: "",
-														qty: "",
-														detail: []
-													}])
+													setFieldValue("detailMr", [
+														{
+															bomId: "",
+															material: "",
+															satuan: "",
+															materialStockId: "",
+															note: "",
+															qty: "",
+															detail: [],
+														},
+													]);
 												} else {
 													e.value.bom_detail.map((res: any) => {
 														list_detail.push({
@@ -484,15 +525,13 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 															detail: {
 																label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
 																value: res.Material_Master,
-															}
+															},
 														});
 													});
-													setFieldValue('detailMr', list_detail)
+													setFieldValue("detailMr", list_detail);
 													setWorID(e.value.srimg.timeschedule.wor.id);
 													setBomId(e.value.bom_detail[0].bomId);
-													setJobNo(
-														e.value.srimg.timeschedule.wor.job_no
-													);
+													setJobNo(e.value.srimg.timeschedule.wor.job_no);
 												}
 												setIsMaterial(true);
 											}}
@@ -526,98 +565,80 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 														<div key={i}>
 															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
-																	<InputSelectSearch
-																		datas={listMaterial}
-																		id={`detailMr.${i}.material`}
-																		name={`detailMr.${i}.material`}
-																		placeholder='Material'
-																		label='Material'
-																		value={result.detail}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.material`,
-																				e.value.id
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.bomId`,
-																				e.value.bomId ? e.value.bomId : null
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.satuan`,
-																				e.value.satuan
-																			);
-																			setFieldValue(
-																				`detailMr.${i}.detail`,
-																				e
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-																	/>
-																</div>
-																{/* <div className='w-full'>
-																	<InputSelect
-																		id={`detailMr.${i}.materialStockId`}
-																		name={`detailMr.${i}.materialStockId`}
-																		placeholder='Spesifikasi'
-																		label='Spesifikasi'
-																		onChange={(e: any) => {
-																			if (e.target.value === "create") {
-																				setData(values);
-																				setMaterialID(result.material);
-																				setSatuan(result.satuan);
-																				setIsFormAddSpesifikasi(true);
-																			} else if (e.target.value === "no data") {
+																	{result.isInput ? (
+																		<Input
+																			id={`detailMr.${i}.material`}
+																			name={`detailMr.${i}.material`}
+																			placeholder='Material'
+																			label='Material'
+																			type='text'
+																			value={result.material}
+																			onChange={(e: any) => {
 																				setFieldValue(
-																					`detailMr.${i}.materialStockId`,
-																					""
-																				);
-																			} else {
-																				setFieldValue(
-																					`detailMr.${i}.materialStockId`,
+																					`detailMr.${i}.material`,
 																					e.target.value
 																				);
-																			}
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	>
-																		<option value='no data' selected>
-																			Choose Spesifikasi
-																		</option>
-																		{listMaterialStock.length === 0 ? (
-																			<option value='no data'>No data</option>
-																		) : (
-																			listMaterialStock
-																				.filter((res: any) => {
-																					return (
-																						res.material === result.material
+																			}}
+																			disabled={false}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																		/>
+																	) : (
+																		<InputSelectSearch
+																			datas={listMaterial}
+																			id={`detailMr.${i}.material`}
+																			name={`detailMr.${i}.material`}
+																			placeholder='Material'
+																			label='Material'
+																			value={result.detail}
+																			onChange={(e: any) => {
+																				if (e.value === null) {
+																					setFieldValue(
+																						`detailMr.${i}.isInput`,
+																						true
 																					);
-																				})
-																				.map((res: any, i: number) => {
-																					return (
-																						<option
-																							value={res.id}
-																							key={i}
-																							selected={
-																								res.id ===
-																								result.materialStockId
-																							}
-																						>
-																							{res.name}
-																						</option>
+																					setFieldValue(
+																						`detailMr.${i}.bomId`,
+																						null
 																					);
-																				})
-																		)}
-																		{result.material !== "" ? (
-																			<option value='create'>
-																				Add New Spesifikasi
-																			</option>
-																		) : null}
-																	</InputSelect>
-																</div> */}
+																					setFieldValue(
+																						`detailMr.${i}.detail`,
+																						e
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.satuan`,
+																						""
+																					);
+																				} else {
+																					setFieldValue(
+																						`detailMr.${i}.isInput`,
+																						false
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.material`,
+																						e.value.id
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.bomId`,
+																						e.value.bomId ? e.value.bomId : null
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.satuan`,
+																						e.value.satuan
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.detail`,
+																						e
+																					);
+																				}
+																			}}
+																			required={true}
+																			withLabel={true}
+																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+																		/>
+																	)}
+																</div>
 																<div className='w-full'>
 																	<Input
 																		id={`detailMr.${i}.satuan`}
@@ -626,7 +647,13 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																		label='Satuan'
 																		type='text'
 																		value={result.satuan}
-																		disabled={true}
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.satuan`,
+																				e.target.value
+																			);
+																		}}
+																		disabled={!result.isInput}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -683,7 +710,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																				materialStockId: "",
 																				note: "",
 																				qty: "",
-																				detail: []
+																				detail: [],
 																			})
 																		}
 																	>

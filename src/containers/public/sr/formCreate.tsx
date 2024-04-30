@@ -413,7 +413,6 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 													});
 													setIsOperasional(true);
 												} else {
-													console.log(e.value)
 													setJobNo(e.value.srimg.timeschedule.wor.job_no);
 													setSubject(e.value.srimg.timeschedule.wor.subject);
 													setCustomer(

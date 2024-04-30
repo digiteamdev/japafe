@@ -65,7 +65,6 @@ export const FormCreateApprovalMr = ({ content, showModal }: props) => {
 				let detail: any = [];
 				let idAppr: string = generateIdNum();
 				response.data.result.map((res: any) => {
-					console.log(res)
 					detail.push({
 						id: res.id,
 						mrappr: res.mrappr,

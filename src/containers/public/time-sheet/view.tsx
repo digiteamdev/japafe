@@ -44,7 +44,7 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 										Departement
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{/* {dataSelected.employee.} */}
+										{dataSelected.user.employee.sub_depart.name}
 									</td>
 								</tr>
 								<tr>
@@ -84,7 +84,7 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
                                     <td className='border border-black text-center'>
 										{dataSelected.part_name}
 									</td>
-                                    <td className='border border-black text-center'>
+                                    <td className='border border-black whitespace-pre text-center'>
 										{dataSelected.job_description}
 									</td>
                                     <td className='border border-black text-center'>

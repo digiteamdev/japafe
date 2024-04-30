@@ -57,7 +57,6 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 			const response = await GetPurchase();
 			if (response) {
 				response.data.result.map((res: any) => {
-					console.log(res)
 					dataList.push({
 						value: res,
 						label: res.id_so,

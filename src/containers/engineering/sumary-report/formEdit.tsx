@@ -33,6 +33,7 @@ interface data {
 	customer: string;
 	subject: string;
 	model: string;
+	ca_number: "",
 	qty: string;
 	ioem: string;
 	isr: string;
@@ -68,6 +69,7 @@ export const FormEditSummaryReport = ({
 		customer: "",
 		subject: "",
 		equipment: "",
+		ca_number: "",
 		model: "",
 		qty: "",
 		ioem: "",
@@ -99,6 +101,7 @@ export const FormEditSummaryReport = ({
 			subject: dataSummary.timeschedule.wor.customerPo.quotations.subject,
 			equipment: dataSummary.equipment,
 			model: dataSummary.model,
+			ca_number: dataSummary.ca_number,
 			qty: dataSummary.qty,
 			ioem: dataSummary.ioem,
 			isr: dataSummary.isr,
