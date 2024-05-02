@@ -137,19 +137,6 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 					<Form>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<InputDate
-									id='date'
-									label='date'
-									minDate={minDate}
-									maxDate={new Date()}
-									value={values.date}
-									onChange={(value: any) => setFieldValue("date", value)}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
 								<Input
 									id='employe'
 									name='employe'
@@ -175,6 +162,19 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputDate
+									id='date'
+									label='date'
+									minDate={minDate}
+									maxDate={new Date()}
+									value={values.date}
+									onChange={(value: any) => setFieldValue("date", value)}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>

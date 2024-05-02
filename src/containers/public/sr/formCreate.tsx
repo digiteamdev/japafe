@@ -109,7 +109,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 					datasWor.push({
 						value: res,
 						internal: false,
-						label: res.srimg.timeschedule.wor.job_no,
+						label: `${res.srimg.timeschedule.wor.job_no} - ${res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
@@ -421,6 +421,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 													);
 													e.value.dispatchDetail.map((res: any) => {
 														if(res.aktivitas.so){
+															console.log(res)
 															list_service.push({
 																dispacthdetailId: res.id,
 																workCenterId: null,
@@ -432,26 +433,6 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 															})
 														}
 													})
-													// e.value.dispatchDetail.map((res: any) => {
-													// 	if (res.so) {
-													// 		e.value.srimg.srimgdetail.map((srimg: any) => {
-													// 			if (!list_part.includes(srimg.name_part)) {
-													// 				list_part.push(srimg.name_part);
-													// 			}
-													// 			if (srimg.name_part === res.part) {
-													// 				list_service.push({
-													// 					dispacthdetailId: res.id,
-													// 					workCenterId: res.workId,
-													// 					description: res.workCenter.name,
-													// 					part: res.part,
-													// 					unit: e.value.srimg.timeschedule.wor.unit,
-													// 					qty: srimg.qty,
-													// 					note: "",
-													// 				});
-													// 			}
-													// 		});
-													// 	}
-													// });
 													setFieldValue("dispacthIDS", e.value.id);
 													setFieldValue(
 														"worId",
@@ -513,6 +494,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		name={`SrDetail.${i}.description`}
 																		placeholder='Descripsi'
 																		label='Descripsi'
+																		value={result.description}
 																		required={true}
 																		onChange={(e:any) => {
 																			setFieldValue(`SrDetail.${i}.description`, e.target.value)
@@ -535,11 +517,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																				e.target.value
 																			)
 																		}
-																		disabled={
-																			result.dispacthdetailId === null
-																				? false
-																				: true
-																		}
+																		disabled={false}
 																		value={result.qty}
 																		required={true}
 																		withLabel={true}
@@ -553,18 +531,14 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		placeholder='Unit'
 																		label='Unit'
 																		type='text'
+																		value={result.unit}
 																		onChange={(e: any) =>
 																			setFieldValue(
 																				`SrDetail.${i}.unit`,
 																				e.target.value
 																			)
 																		}
-																		disabled={
-																			result.dispacthdetailId === null
-																				? false
-																				: true
-																		}
-																		value={result.unit}
+																		disabled={false}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -577,13 +551,13 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																		placeholder='Note'
 																		label='Note'
 																		type='text'
+																		value={result.note}
 																		onChange={(e: any) =>
 																			setFieldValue(
 																				`SrDetail.${i}.note`,
 																				e.target.value
 																			)
 																		}
-																		value={result.note}
 																		required={true}
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
