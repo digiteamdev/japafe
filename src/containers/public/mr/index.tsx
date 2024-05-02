@@ -36,7 +36,7 @@ export const Mr = () => {
 		{ name: "MR No" },
 		{ name: "No Job" },
 		{ name: "MR Date" },
-		{ name: "Departement" },
+		{ name: "Request By" },
 		{ name: "Action" },
 	];
 
@@ -244,7 +244,7 @@ export const Mr = () => {
 										{moment(res.date_mr).format("DD-MM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.user.employee.sub_depart.name}
+										{res.user.employee.employee_name}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

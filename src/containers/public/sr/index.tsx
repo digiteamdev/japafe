@@ -35,8 +35,8 @@ export const Sr = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "SR No" },
-        { name: "SR Date" },
 		{ name: "Job No" },
+        { name: "SR Date" },
         { name: "Request By" },
         { name: "Action" }
 	];
@@ -234,8 +234,8 @@ export const Sr = () => {
 									key={i}
 								>
 									<td className={`whitespace-nowrap p-1 text-center ${bgSr(res.statusSr)}`}>{ res.no_sr }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.date_sr).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.date_sr).format('DD-MMMM-YYYY') }</td>
                                     <td className='whitespace-nowrap p-1 text-center'>{ res.user.username }</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
