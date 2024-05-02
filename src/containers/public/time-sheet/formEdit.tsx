@@ -9,7 +9,7 @@ import {
 } from "../../../components";
 import { Formik, Form } from "formik";
 import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
-import { AddTimeSheet, GetEmployeById } from "../../../services";
+import { EditTimeSheet, GetEmployeById } from "../../../services";
 import { toast } from "react-toastify";
 import { getIdUser } from "@/src/configs/session";
 import moment from "moment";
@@ -87,7 +87,7 @@ export const FormEditTimeSheet = ({
 	const editTimeSheet = async (data: any) => {
 		setIsLoading(true);
         try {
-			const response = await AddTimeSheet(data);
+			const response = await EditTimeSheet(dataSelected.id,data);
 			if (response) {
 				toast.success("Add Time Sheet Success", {
 					position: "top-center",
