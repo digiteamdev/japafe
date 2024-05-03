@@ -87,7 +87,7 @@ export const FormEditTimeSheet = ({
 	const editTimeSheet = async (data: any) => {
 		setIsLoading(true);
         try {
-			const response = await EditTimeSheet(dataSelected.id,data);
+			const response = await EditTimeSheet(data, dataSelected.id);
 			if (response) {
 				toast.success("Add Time Sheet Success", {
 					position: "top-center",

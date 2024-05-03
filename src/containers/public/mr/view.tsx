@@ -95,53 +95,55 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const showButtonValid = (data: any) => {
-		if (position === "Supervisor") {
-			if (data.status_spv === null || data.status_spv === "unvalid") {
-				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve("Supervisor")}
-					>
-						<div className='flex px-1 py-1'>
-							<Check size={16} className='mr-1' /> Valid SPV
-						</div>
-					</button>
-				);
-			} else {
-				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve("Supervisor")}
-					>
-						<div className='flex px-1 py-1'>
-							<X size={16} className='mr-1' /> Unvalid SPV
-						</div>
-					</button>
-				);
-			}
-		} else if (position === "Manager") {
-			if (data.status_manager === "unvalid" || data.status_manager === null) {
-				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve("Manager")}
-					>
-						<div className='flex px-1 py-1'>
-							<Check size={16} className='mr-1' /> Valid Manager
-						</div>
-					</button>
-				);
-			} else {
-				return (
-					<button
-						className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
-						onClick={() => approve("Manager")}
-					>
-						<div className='flex px-1 py-1'>
-							<Check size={16} className='mr-1' /> Unvalid Manager
-						</div>
-					</button>
-				);
+		if(dataSelected.statusMr === "Request"){
+			if (position === "Supervisor") {
+				if (data.status_spv === null || data.status_spv === "unvalid") {
+					return (
+						<button
+							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve("Supervisor")}
+						>
+							<div className='flex px-1 py-1'>
+								<Check size={16} className='mr-1' /> Valid SPV
+							</div>
+						</button>
+					);
+				} else {
+					return (
+						<button
+							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve("Supervisor")}
+						>
+							<div className='flex px-1 py-1'>
+								<X size={16} className='mr-1' /> Unvalid SPV
+							</div>
+						</button>
+					);
+				}
+			} else if (position === "Manager") {
+				if (data.status_manager === "unvalid" || data.status_manager === null) {
+					return (
+						<button
+							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve("Manager")}
+						>
+							<div className='flex px-1 py-1'>
+								<Check size={16} className='mr-1' /> Valid Manager
+							</div>
+						</button>
+					);
+				} else {
+					return (
+						<button
+							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+							onClick={() => approve("Manager")}
+						>
+							<div className='flex px-1 py-1'>
+								<Check size={16} className='mr-1' /> Unvalid Manager
+							</div>
+						</button>
+					);
+				}
 			}
 		}
 	};
