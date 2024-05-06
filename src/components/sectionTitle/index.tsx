@@ -7,7 +7,7 @@ interface props {
 
 export const SectionTitle = ({ title, icon, total, informasi }: props) => {
 	return (
-		<div className='grid grid-cols-2 gap-2'>
+		<div className='grid sm:grid-cols-1 md:grid-cols-2 gap-2'>
 			<div className='flex items-center w-full'>
 				<div className='bg-red-200 p-[12px] flex justify-center items-center rounded-[23px]'>
 					{icon}

@@ -151,7 +151,7 @@ export const Sr = () => {
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 				informasi={
-					<div className='absolute z-0 right-2 mt-3'>
+					<div className='right-2 mt-3'>
 						<div className='grid grid-cols-3 gap-2'>
 							<div className='flex'>
 								<div className='bg-white border border-black w-4 h-4 mr-2'></div>
