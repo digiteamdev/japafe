@@ -248,7 +248,7 @@ export const ApprovalSR = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getApprovalSr(page, perPage);
+							getApprovalSr(value, perPage);
 						}}
 					/>
 				) : null}

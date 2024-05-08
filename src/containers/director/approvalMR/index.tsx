@@ -249,7 +249,7 @@ export const ApprovalMR = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getApprovalMr(page, perPage);
+							getApprovalMr(value, perPage);
 						}}
 					/>
 				) : null}
