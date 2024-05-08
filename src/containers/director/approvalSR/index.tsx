@@ -9,16 +9,21 @@ import {
 	ModalDelete,
 	Pagination,
 } from "../../../components";
-import { Clock, Eye, Edit, Trash2 } from "react-feather";
-import { FormCreateTimeSheet } from "./formCreate";
-import { FormEditTimeSheet } from "./formEdit";
-import { ViewTimeSheet } from "./view";
-import { GetTimeSheet, SearchTimeSheet } from "../../../services";
+import { Send, CheckSquare, Eye } from "react-feather";
+// import { FormCreateDirectMr } from "./formCreate";
+import { ViewApprovalSr } from "./view";
+// import { FormEditApproval } from "./formEdit";
+import {
+	GetApprovalSrDirector,
+	SearchPurchaseApproval,
+	DeletePurchaseMR,
+} from "../../../services";
+import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
-import { changeDivisi, formatRupiah } from "../../../utils/index";
 import moment from "moment";
+import { formatRupiah, changeDivisi } from "../../../utils/index";
 
-export const TimeSheet = () => {
+export const ApprovalSR = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,27 +31,21 @@ export const TimeSheet = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
-	const [typeSheet, setTypeSheet] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
-	const [showCreate, setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
-		{ name: "Date" },
-		{ name: "Type" },
 		{ name: "Job No" },
-		{ name: "Process" },
+        { name: "No SR" },
+        { name: "Description" },
+		{ name: "Request By" },
+		{ name: "Date" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getTimeSheet(page, perPage);
-		let route = router.pathname;
-		let arrayRouter = route.split("/");
-		if (arrayRouter[1] === "marketing") {
-			setShowCreate(false);
-		}
+		getApprovalSr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -57,14 +56,14 @@ export const TimeSheet = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getTimeSheet(page, perPage);
+			getApprovalSr(page, perPage);
 		}
 	};
 
-	const getTimeSheet = async (page: number, perpage: number) => {
+	const getApprovalSr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetTimeSheet(page, perpage, '');
+			const response = await GetApprovalSrDirector(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -81,34 +80,14 @@ export const TimeSheet = () => {
 		setIsLoading(false);
 	};
 
-	const changeTimeSheet = async (data: string) => {
-		setIsLoading(true);
-		try {
-			const response = await GetTimeSheet(page, perPage, data);
-			if (response.data) {
-				setData(response.data.result);
-				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil(response.data.totalData / perPage));
-			}
-		} catch (error: any) {
-			if (error.response.data.login) {
-				setData([]);
-			} else {
-				removeToken();
-				router.push("/");
-			}
-		}
-		setIsLoading(false);
-	};
-
-	const searchTimeSheet = async (
+	const searchPurchaseApproval = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchTimeSheet(page, limit, search);
+			const response = await SearchPurchaseApproval(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -118,76 +97,73 @@ export const TimeSheet = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMaterialStock = async (id: string) => {
-		// try {
-		// 	const response = await DeleteCustomer(id);
-		// 	if(response.data){
-		// 		toast.success("Delete Customer Success", {
-		// 			position: "top-center",
-		// 			autoClose: 5000,
-		// 			hideProgressBar: true,
-		// 			closeOnClick: true,
-		// 			pauseOnHover: true,
-		// 			draggable: true,
-		// 			progress: undefined,
-		// 			theme: "colored",
-		// 		});
-		// 		getMaterialStok(1, 10);
-		// 	}
-		// } catch (error) {
-		// 	toast.error("Delete Customer Failed", {
-		// 		position: "top-center",
-		// 		autoClose: 5000,
-		// 		hideProgressBar: true,
-		// 		closeOnClick: true,
-		// 		pauseOnHover: true,
-		// 		draggable: true,
-		// 		progress: undefined,
-		// 		theme: "colored",
-		// 	});
-		// }
+	const deletePurchaseMR = async (id: string) => {
+		try {
+			const response = await DeletePurchaseMR(id);
+			if (response.data) {
+				toast.success("Delete Purchase Request Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				getApprovalSr(page, perPage);
+			}
+		} catch (error) {
+			toast.error("Delete Purchase Request Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
 		setIsModal(false);
 	};
 
-	const showJobNo = (data: any, type: string) => {
-		let text: string = ""
-		if(type === 'jobno'){
-			data.map((res: any, i: number) => {
-				if(i === 0){
-					text = `- `+res.job
-				}else{
-					text = text +` \r\n ` + `- `+res.job 
-				}
-			})
-			return text
-		}else{
-			data.map((res: any, i: number) => {
-				if(i === 0){
-					text = `- `+res.job_description
-				}else{
-					text = text +` \r\n ` + `- `+res.job_description 
-				}
-			})
-			return text
-		}
+	const total = (datas: any) => {
+		let totalHarga: number = 0;
+		datas.map((res: any) => {
+			totalHarga = totalHarga + res.total;
+		});
+		return formatRupiah(totalHarga.toString());
+	};
+
+	const showDesc = (data:any) => {
+		let desc:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				desc = `- `+res.desc
+			}else{
+				desc = desc +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return desc
 	}
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Time Sheet'
+				title='Approval SR'
 				total={countData}
-				icon={<Clock className='w-[36px] h-[36px]' />}
+				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Time Sheet'
-				print={showCreate}
+				title='SR'
+				print={false}
 				marketing={false}
-				timeSheet={true}
-				changeTimeSheet={changeTimeSheet}
 				changeDivisi={changeDivisi}
+				timeSheet={false}
+				changeTimeSheet={changeDivisi}
 				showModal={showModal}
-				search={searchTimeSheet}
+				search={searchPurchaseApproval}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -226,22 +202,25 @@ export const TimeSheet = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
+                            return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ moment(res.date).format('DD-MM-YY') }
+										{ res.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.type_timesheet === 'worktime' ? 'Work Time Sheet' : 'Over Time Report'}
+										{ res.no_sr }
 									</td>
 									<td className='whitespace-pre-line p-1'>
-										{showJobNo(res.time_sheet_add, 'jobno')}
+										{ showDesc(res.SrDetail) }
 									</td>
-									<td className='whitespace-pre-line p-1'>
-									{showJobNo(res.time_sheet_add, 'process')}
+                                    <td className='whitespace-nowrap p-1 text-center'>
+										{ res.user.employee.employee_name }
+									</td>
+                                    <td className='whitespace-nowrap p-1 text-center'>
+										{ moment(res.date_sr).format('DD-MM-YYYY') }
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -253,15 +232,6 @@ export const TimeSheet = () => {
 												}}
 											>
 												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
 											</Button>
 										</div>
 									</td>
@@ -278,7 +248,7 @@ export const TimeSheet = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getTimeSheet(value, perPage);
+							getApprovalSr(page, perPage);
 						}}
 					/>
 				) : null}
@@ -289,22 +259,23 @@ export const TimeSheet = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMaterialStock}
+					onDelete={deletePurchaseMR}
 				/>
 			) : (
 				<Modal
-					title='Time Sheet'
+					title='Approval SR'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
-					) : 
+						<ViewApprovalSr dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+					) :
 					modalContent === "add" ? (
-						<FormCreateTimeSheet content={modalContent} showModal={showModal} />
+						<></>
 					) : (
-						<FormEditTimeSheet content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+                        <></>
+						// <FormEditApproval content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

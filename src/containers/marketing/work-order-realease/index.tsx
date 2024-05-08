@@ -69,7 +69,7 @@ export const Wor = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [divisiMarketing]);
-console.log(divisiMarketing)
+
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
 		setModalContent(content);
@@ -150,7 +150,7 @@ console.log(divisiMarketing)
 	}
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='w-full mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
 				title='Work Order Release'
 				total={countData}

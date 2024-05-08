@@ -13,6 +13,7 @@ interface props {
 	value?: any;
 	dateFormat?: string;
 	showTimeSelect?: boolean;
+	showTimeSelectOnly?: boolean;
 	disabled?: boolean;
 	withLabel?: boolean;
 	onAction?: () => void;
@@ -25,6 +26,7 @@ export const InputDate = ({
 	className,
 	classNameIcon,
 	showTimeSelect,
+	showTimeSelectOnly,
 	minDate,
 	maxDate,
 	name,
@@ -56,7 +58,9 @@ export const InputDate = ({
 					onChange={onChange}
 					className={`${className}`}
 					showTimeSelect={showTimeSelect}
+      				showTimeSelectOnly={showTimeSelectOnly}
 					dateFormat={dateFormat}
+					timeFormat="HH:mm"
 					minDate={new Date(minDate)}
 					maxDate={new Date(maxDate)}
 					disabled={disabled}

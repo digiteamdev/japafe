@@ -23,6 +23,29 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const showJobNo = (data: any, type: string) => {
+		let text: string = "";
+		if (type === "jobno") {
+			data.map((res: any, i: number) => {
+				if (i === 0) {
+					text = `- ` + res.job;
+				} else {
+					text = text + ` \r\n ` + `- ` + res.job;
+				}
+			});
+			return text;
+		} else {
+			data.map((res: any, i: number) => {
+				if (i === 0) {
+					text = `- ` + res.job_description;
+				} else {
+					text = text + ` \r\n ` + `- ` + res.job_description;
+				}
+			});
+			return text;
+		}
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -38,8 +61,8 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.user.employee.employee_name}
 									</td>
-                                </tr>
-                                <tr>
+								</tr>
+								<tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Departement
 									</td>
@@ -52,7 +75,17 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 										Type
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.type_timesheet === 'overtime' ? 'Over Time' : 'Work Time'}
+										{dataSelected.type_timesheet === "overtime"
+											? "Over Time Sheet"
+											: "Work Time Report"}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Date
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{moment(dataSelected.date).format("DD-MM-YYYY")}
 									</td>
 								</tr>
 							</table>
@@ -62,7 +95,6 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 						<table>
 							<thead>
 								<tr>
-									<th className='border border-black text-center'>Date</th>
 									<th className='border border-black text-center'>Job</th>
 									<th className='border border-black text-center'>Part Name</th>
 									<th className='border border-black text-center'>
@@ -74,29 +106,30 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td className='border border-black text-center'>
-										{moment(dataSelected.date).format('DD/MM/YYYY')}
-									</td>
-									<td className='border border-black text-center'>
-										{dataSelected.job}
-									</td>
-                                    <td className='border border-black text-center'>
-										{dataSelected.part_name}
-									</td>
-                                    <td className='border border-black whitespace-pre text-center'>
-										{dataSelected.job_description}
-									</td>
-                                    <td className='border border-black text-center'>
-										{moment(dataSelected.actual_start).format('LT')}
-									</td>
-									<td className='border border-black text-center'>
-										{moment(dataSelected.actual_finish).format('LT')}
-									</td>
-									<td className='border border-black text-center'>
-										{dataSelected.total_hours}
-									</td>
-								</tr>
+								{ dataSelected.time_sheet_add.map((res: any, i: number) => {
+									return(
+										<tr key={i}>
+											<td className='border border-black text-center'>
+												{res.job}
+											</td>
+											<td className='border border-black text-center'>
+												{res.part_name}
+											</td>
+											<td className='border border-black whitespace-pre text-center'>
+												{res.job_description}
+											</td>
+											<td className='border border-black text-center'>
+												{moment(res.actual_start).format("HH:mm")}
+											</td>
+											<td className='border border-black text-center'>
+												{moment(res.actual_finish).format("HH:mm")}
+											</td>
+											<td className='border border-black text-center'>
+												{res.total_hours}
+											</td>
+										</tr>
+									)
+								})}
 							</tbody>
 						</table>
 					</Section>

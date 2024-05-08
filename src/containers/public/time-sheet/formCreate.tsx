@@ -7,12 +7,13 @@ import {
 	InputTime,
 	InputArea,
 } from "../../../components";
-import { Formik, Form } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
 import { AddTimeSheet, GetEmployeById } from "../../../services";
 import { toast } from "react-toastify";
 import { getIdUser } from "@/src/configs/session";
 import moment from "moment";
+import { Plus, Trash2 } from "react-feather";
 
 interface props {
 	content: string;
@@ -21,14 +22,18 @@ interface props {
 
 interface data {
 	date: any;
-	job: string;
-	part_name: string;
-	job_description: string;
 	userId: string;
-	actual_start: any;
-	actual_finish: any;
-	total_hours: string;
 	type_timesheet: string;
+	time_sheet_add: [
+		{
+			job: string;
+			job_description: string;
+			part_name: string;
+			actual_start: any;
+			actual_finish: any;
+			total_hours: string;
+		}
+	];
 }
 
 export const FormCreateTimeSheet = ({ content, showModal }: props) => {
@@ -40,19 +45,23 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 	const [minDate, setMinDate] = useState<any>(new Date());
 	const [data, setData] = useState<data>({
 		date: new Date(),
-		job: "",
-		part_name: "",
-		job_description: "",
 		userId: "",
-		actual_start: new Date(),
-		actual_finish: new Date(),
-		total_hours: "",
 		type_timesheet: "worktime",
+		time_sheet_add: [
+			{
+				job: "",
+				job_description: "",
+				part_name: "",
+				actual_start: new Date(),
+				actual_finish: new Date(),
+				total_hours: "",
+			},
+		],
 	});
 
 	useEffect(() => {
 		getEmploye();
-		dateInput()
+		dateInput();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -66,22 +75,26 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 				setDepart(response.data.result.employee.sub_depart.name);
 				setData({
 					date: new Date(),
-					job: "",
-					part_name: "",
-					job_description: "",
 					userId: id ? id : "",
-					actual_start: new Date(),
-					actual_finish: new Date(),
-					total_hours: "",
 					type_timesheet: "worktime",
+					time_sheet_add: [
+						{
+							job: "",
+							job_description: "",
+							part_name: "",
+							actual_start: new Date(),
+							actual_finish: new Date(),
+							total_hours: "",
+						},
+					],
 				});
 			}
 		} catch (error) {}
 	};
 
 	const dateInput = () => {
-		let minDate: any = moment().subtract(3, 'days');
-		setMinDate(minDate)
+		let minDate: any = moment().subtract(3, "days");
+		setMinDate(minDate);
 	};
 
 	const addTimeSheet = async (data: any) => {
@@ -170,6 +183,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									label='date'
 									minDate={minDate}
 									maxDate={new Date()}
+									dateFormat='dd/MM/yyyy'
 									value={values.date}
 									onChange={(value: any) => setFieldValue("date", value)}
 									withLabel={true}
@@ -191,119 +205,161 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
 									<option value='worktime' selected>
-										Work Time
+										Work Time Sheet
 									</option>
-									<option value='overtime'>Over Time</option>
+									<option value='overtime'>Over Time Report</option>
 								</InputSelect>
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
-							<div className='w-full'>
-								<Input
-									id='job'
-									name='job'
-									placeholder='Job No'
-									label='Job No'
-									type='text'
-									value={values.job}
-									onChange={handleChange}
-									disabled={false}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='part_name'
-									name='part_name'
-									placeholder='Part Name'
-									label='Part Name'
-									type='text'
-									value={values.part_name}
-									onChange={handleChange}
-									disabled={false}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputArea
-									id='job_description'
-									name='job_description'
-									placeholder='Process / Job Description'
-									label='Process / Job Description'
-									type='text'
-									value={values.job_description}
-									onChange={handleChange}
-									disabled={false}
-									row={3}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-							<div className='flex'></div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
-							<div className='w-full'>
-								<InputDate
-									id='actual_start'
-									label='Start'
-									showTimeSelect={true}
-									value={values.actual_start}
-									dateFormat='dd/MM/yyyy h:mm aa'
-									onChange={(value: any) => {
-										let start = moment(new Date(value));
-										let finish = moment(new Date(values.actual_finish));
-										let calculate = Math.ceil(
-											moment.duration(finish.diff(start)).asHours()
-										);
-										setFieldValue("actual_start", value);
-										setFieldValue("total_hours", `${calculate} jam`);
-									}}
-									withLabel={true}
-									className='z-50 bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
-								<InputDate
-									id='actual_finish'
-									label='Finish'
-									showTimeSelect={true}
-									dateFormat='dd/MM/yyyy h:mm aa'
-									value={values.actual_finish}
-									onChange={(value: any) => {
-										let start = moment(new Date(values.actual_start));
-										let finish = moment(new Date(value));
-										let calculate = Math.ceil(
-											moment.duration(finish.diff(start)).asHours()
-										);
-										setFieldValue("actual_finish", value);
-										setFieldValue("total_hours", `${calculate} jam`);
-									}}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
-									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
-								/>
-							</div>
-							<div className='w-full'>
-								<Input
-									id='total'
-									name='total'
-									placeholder='Total'
-									label='Total'
-									type='text'
-									value={values.total_hours}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div>
-						</Section>
+						<FieldArray
+							name='time_sheet_add'
+							render={(arrayTime) =>
+								values.time_sheet_add.map((res: any, i: number) => {
+									return (
+										<div key={i} className=''>
+											<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
+												<div className='w-full'>
+													<Input
+														id={`time_sheet_add.${i}.job`}
+														name={`time_sheet_add.${i}.job`}
+														placeholder='Job No'
+														label='Job No'
+														type='text'
+														value={res.job}
+														onChange={handleChange}
+														disabled={false}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`time_sheet_add.${i}.part_name`}
+														name={`time_sheet_add.${i}.part_name`}
+														placeholder='Part Name'
+														label='Part Name'
+														type='text'
+														value={res.part_name}
+														onChange={handleChange}
+														disabled={false}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputArea
+														id={`time_sheet_add.${i}.job_description`}
+														name={`time_sheet_add.${i}.job_description`}
+														placeholder='Process / Job Description'
+														label='Process / Job Description'
+														type='text'
+														value={res.job_description}
+														onChange={handleChange}
+														disabled={false}
+														row={3}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2'>
+												<div className='w-full'>
+													<InputDate
+														id={`time_sheet_add.${i}.actual_start`}
+														label='Start'
+														showTimeSelect={true}
+														showTimeSelectOnly={true}
+														value={res.actual_start}
+														dateFormat='HH:mm'
+														onChange={(value: any) => {
+															let start = moment(new Date(value));
+															let finish = moment(new Date(res.actual_finish));
+															let calculate = Math.ceil(
+																moment.duration(finish.diff(start)).asHours()
+															);
+															setFieldValue(`time_sheet_add.${i}.actual_start`, value);
+															setFieldValue(`time_sheet_add.${i}.total_hours`, `${calculate} jam`);
+														}}
+														withLabel={true}
+														className='z-50 bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+													/>
+												</div>
+												<div className='w-full'>
+													<InputDate
+														id={`time_sheet_add.${i}.actual_finish`}
+														label='Finish'
+														showTimeSelect={true}
+														showTimeSelectOnly={true}
+														value={res.actual_finish}
+														dateFormat='HH:mm'
+														onChange={(value: any) => {
+															let start = moment(new Date(res.actual_start));
+															let finish = moment(new Date(value));
+															let calculate = Math.ceil(
+																moment.duration(finish.diff(start)).asHours()
+															);
+															setFieldValue(`time_sheet_add.${i}.actual_finish`, value);
+															setFieldValue(`time_sheet_add.${i}.total_hours`, `${calculate} jam`);
+														}}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+													/>
+												</div>
+												<div className='w-full'>
+													<Input
+														id={`time_sheet_add.${i}.total_hours`}
+														name={`time_sheet_add.${i}.total_hours`}
+														placeholder='Total'
+														label='Total'
+														type='text'
+														value={res.total_hours}
+														disabled={true}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+												</div>
+											</Section>
+											<div className='flex w-full border-b-[3px] border-b-red-500 pb-2 mb-2'>
+												{i + 1 === values.time_sheet_add.length ? (
+													<a
+														className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+														onClick={() =>
+															arrayTime.push({
+																job: "",
+																job_description: "",
+																part_name: "",
+																actual_start: new Date(),
+																actual_finish: new Date(),
+																total_hours: "",
+															})
+														}
+													>
+														<Plus size={23} className='mt-1' />
+														Add
+													</a>
+												) : null}
+												{i === 0 &&
+												values.time_sheet_add.length === 1 ? null : (
+													<a
+														className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+														onClick={() => arrayTime.remove(i)}
+													>
+														<Trash2 size={22} className='mt-1 mr-1' />
+														Remove
+													</a>
+												)}
+											</div>
+										</div>
+									);
+								})
+							}
+						/>
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
