@@ -294,6 +294,20 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "list-po",
+				link: "/purchasing-logistic/list-po",
+				title: "List PO",
+
+				subMenu: null,
+			},
+			{
+				id: "list-so",
+				link: "/purchasing-logistic/list-so",
+				title: "List SO",
+
+				subMenu: null,
+			},
 			// {
 			// 	id: "purchase-receive",
 			// 	link: "/purchasing-logistic/purchase-receive",

@@ -12,3 +12,4 @@ export * from './outgoing-material';
 export * from './delivery-order';
 export * from './material-remaind-use';
 export * from './warehouse';
+export * from './list-po';

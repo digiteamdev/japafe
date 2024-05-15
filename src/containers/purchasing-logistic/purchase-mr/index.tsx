@@ -13,7 +13,7 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseMr } from "./formCreate";
 import { ViewPurchaseMR } from "./view";
 import { FormEditPurchaseMr } from "./formEdit";
-import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
+import { GetPurchaseMR, SearchPurchaseMR, DeletePurchaseMR, GetAllMRPo } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -27,19 +27,23 @@ export const PurchaseMR = () => {
 	const [countData, setCountData] = useState<number>(0);
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
+	const [listMr, setListMr] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Purhcase MR" },
-		{ name: "Purchase MR Date" },
+		{ name: "Job No" },
+		{ name: "No MR" },
+		{ name: "Request By" },
+		{ name: "Material" },
+		{ name: "Date Request" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage, 'PR');
+		getPurchaseMR(page, perPage, 'PO')
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -54,11 +58,22 @@ export const PurchaseMR = () => {
 		}
 	};
 
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id =
+			"PR" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 10000);
+		return id;
+	};
+
 	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
-		setIsLoading(true);
 		try {
-			const response = await GetPurchaseMR(page, perpage, type);
-			if (response.data) {
+			const response = await GetAllMRPo(page,perpage,type);
+			if (response) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil( response.data.totalData / perpage));
@@ -71,7 +86,6 @@ export const PurchaseMR = () => {
 				// router.push('/');
 			}
 		}
-		setIsLoading(false);
 	};
 
 	const searchPurchaseMR = async (
@@ -122,6 +136,18 @@ export const PurchaseMR = () => {
 		setIsModal(false);
 	};
 
+	const showMaterial = (data:any) => {
+		let material:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				material = `- `+res.Material_Master.name
+			}else{
+				material = material +` \r\n ` + `- `+res.Material_Master.name 
+			}
+		})
+		return material
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -131,7 +157,7 @@ export const PurchaseMR = () => {
 			/>
 			<Content
 				title='Purchase Material Request'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -176,12 +202,16 @@ export const PurchaseMR = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idPurchase }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.no_mr }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-pre-line p-1'>{ showMaterial(res.detailMr) }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -194,7 +224,7 @@ export const PurchaseMR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.status_manager_director === 'revision' ? (
+											{/* { res.status_manager_director === 'revision' ? (
 												<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
@@ -214,7 +244,7 @@ export const PurchaseMR = () => {
 												>
 													<Edit color='white' />
 												</Button>
-											) }
+											) } */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {

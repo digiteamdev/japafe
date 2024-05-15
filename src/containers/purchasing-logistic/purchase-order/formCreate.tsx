@@ -91,7 +91,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 
 	const getMrPo = async () => {
 		try {
-			const response = await GetAllPoMr("PR");
+			const response:any = await GetAllPoMr(1,1,"PR");
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];
@@ -328,20 +328,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 				}) => (
 					<Form onChange={handleOnChanges}>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							{/* <div className='w-full'>
-								<Input
-									id='idPurchase'
-									name='idPurchase'
-									placeholder='ID Purchase'
-									label='ID Purchase'
-									type='text'
-									value={idPR}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<Input
 									id='datePR'

@@ -88,6 +88,18 @@ export const Posting = () => {
 		}
 	};
 
+	const showMaterial = (data: any) => {
+		let material: string = "Recieve Material: \r\n";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = material + `- ` + res.Material_Master.name;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+			}
+		});
+		return material;
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -148,12 +160,12 @@ export const Posting = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										-
+										{ res.id_receive ? 'Receive Material' : 'Cashier' }
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-                                        { moment(res.date_cashier).format('DD-MMMM-YYYY') }
+                                        { res.id_receive ? moment(res.date_prepared).format('DD-MMMM-YYYY') : moment(res.date_date_cashier).format('DD-MMMM-YYYY') }
 									</td>
-									<td className='p-1 text-center'>From Cashier: Purchase - {res.pay_to}</td>
+									<td className='whitespace-pre-line p-1'>{ res.id_receive ? showMaterial(res.detailMr) : res.note }</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										<div>
 											<Button
