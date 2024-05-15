@@ -61,7 +61,7 @@ export const FormCreateDirectMr = ({ content, showModal }: props) => {
 
 	const getMrPo = async () => {
 		try {
-			const response = await GetAllMRPo("DP");
+			const response = await GetAllMRPo(1,1,"DP");
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];

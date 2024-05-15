@@ -143,7 +143,7 @@ export const FormEditPurchaseMr = ({
 
 	const getMrPo = async () => {
 		try {
-			const response = await GetAllPoMr("PR");
+			const response = await GetAllPoMr(1,1,"PR");
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];

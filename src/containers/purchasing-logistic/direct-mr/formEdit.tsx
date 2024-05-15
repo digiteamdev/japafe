@@ -91,7 +91,7 @@ export const FormEditDirectMr = ({
 
 	const getMrPo = async () => {
 		try {
-			const response = await GetAllMRPo("PO");
+			const response = await GetAllMRPo(1,1,"PO");
 			if (response) {
 				let detail: any = [];
 				response.data.result.map((res: any, i: number) => {

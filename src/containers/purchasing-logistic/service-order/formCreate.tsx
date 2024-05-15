@@ -96,7 +96,7 @@ export const FormCreatePurchaseSr = ({ content, showModal }: props) => {
 
 	const getSrPo = async () => {
 		try {
-			const response = await GetAllPoMr("PSR");
+			const response = await GetAllPoMr(1,1,"PSR");
 			if (response) {
 				let detail: any = [];
 				let suplier: any = [];
