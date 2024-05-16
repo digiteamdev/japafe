@@ -1,1 +1,101 @@
-if(!self.define){let e,s={};const a=(a,c)=>(a=new URL(a+".js",c).href,s[a]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=a,e.onload=s,document.head.appendChild(e)}else e=a,importScripts(a),s()})).then((()=>{let e=s[a];if(!e)throw new Error(`Module ${a} didn’t register its module`);return e})));self.define=(c,i)=>{const n=e||("document"in self?document.currentScript.src:"")||location.href;if(s[n])return;let t={};const r=e=>a(e,n),u={module:{uri:n},exports:t,require:r};s[n]=Promise.all(c.map((e=>u[e]||r(e)))).then((e=>(i(...e),t)))}}define(["./workbox-07a7b4f2"],(function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/Group 32.png",revision:"10c65957943ede0b10200cc28caac0ef"},{url:"/Logo-ISO-14001.png",revision:"5329d20e3b721e65763c69bb9f45df69"},{url:"/Logo-ISO-45001.jpg",revision:"fd50378e7a230647c1f6b3d3a600bea7"},{url:"/_next/static/FjDnbzLLa5AL3DjVzqtaM/_buildManifest.js",revision:"123531421682258dc8aaffe2322763ec"},{url:"/_next/static/FjDnbzLLa5AL3DjVzqtaM/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/chunks/5675-46b0182a740430bc.js",revision:"46b0182a740430bc"},{url:"/_next/static/chunks/636.24efb11d490f21d4.js",revision:"24efb11d490f21d4"},{url:"/_next/static/chunks/72a30a16.88fa0c25e6f6c388.js",revision:"88fa0c25e6f6c388"},{url:"/_next/static/chunks/75fc9c18-02b28d24f737c2ca.js",revision:"02b28d24f737c2ca"},{url:"/_next/static/chunks/7856.189e6f26e87d9814.js",revision:"189e6f26e87d9814"},{url:"/_next/static/chunks/8657-9333b8b2a2160207.js",revision:"9333b8b2a2160207"},{url:"/_next/static/chunks/ad7f724d-b7be9ddcc22d5969.js",revision:"b7be9ddcc22d5969"},{url:"/_next/static/chunks/e78312c5-197a50abe7be1634.js",revision:"197a50abe7be1634"},{url:"/_next/static/chunks/framework-ca706bf673a13738.js",revision:"ca706bf673a13738"},{url:"/_next/static/chunks/main-2a40bf14d4849667.js",revision:"2a40bf14d4849667"},{url:"/_next/static/chunks/pages/404-575b98fbae139037.js",revision:"575b98fbae139037"},{url:"/_next/static/chunks/pages/_app-1b589e94b441f0f1.js",revision:"1b589e94b441f0f1"},{url:"/_next/static/chunks/pages/_error-e4216aab802f5810.js",revision:"e4216aab802f5810"},{url:"/_next/static/chunks/pages/dashboard-52e006d6765f370e.js",revision:"52e006d6765f370e"},{url:"/_next/static/chunks/pages/director/approval-5ba887b321921389.js",revision:"5ba887b321921389"},{url:"/_next/static/chunks/pages/director/approvalMr-df5c5e9c616db2ed.js",revision:"df5c5e9c616db2ed"},{url:"/_next/static/chunks/pages/director/approvalSr-e68aaa41c60d2a6f.js",revision:"e68aaa41c60d2a6f"},{url:"/_next/static/chunks/pages/engineering/bill-of-material-32879c14f935e67d.js",revision:"32879c14f935e67d"},{url:"/_next/static/chunks/pages/engineering/drawing-bad4e4102fa0fb11.js",revision:"bad4e4102fa0fb11"},{url:"/_next/static/chunks/pages/engineering/equipment-part-128f91d0e54fd490.js",revision:"128f91d0e54fd490"},{url:"/_next/static/chunks/pages/engineering/material-f13efe2bafab2c05.js",revision:"f13efe2bafab2c05"},{url:"/_next/static/chunks/pages/engineering/material-type-da895714221dbfe4.js",revision:"da895714221dbfe4"},{url:"/_next/static/chunks/pages/engineering/sumary-report-115a39f0f5eefa00.js",revision:"115a39f0f5eefa00"},{url:"/_next/static/chunks/pages/finance-accounting/cashier-de365224a427bfd5.js",revision:"de365224a427bfd5"},{url:"/_next/static/chunks/pages/finance-accounting/due-payment-a28d207f39c61075.js",revision:"a28d207f39c61075"},{url:"/_next/static/chunks/pages/finance-accounting/kontra-bon-66c2f32985ea4f47.js",revision:"66c2f32985ea4f47"},{url:"/_next/static/chunks/pages/finance-accounting/posting-a77e42cfdd3db2cc.js",revision:"a77e42cfdd3db2cc"},{url:"/_next/static/chunks/pages/general-affair/delivery-order-b4c6307e67fd3797.js",revision:"b4c6307e67fd3797"},{url:"/_next/static/chunks/pages/general-affair/equipment-part-8973c9b14f294a53.js",revision:"8973c9b14f294a53"},{url:"/_next/static/chunks/pages/general-affair/material-762088fb94294d45.js",revision:"762088fb94294d45"},{url:"/_next/static/chunks/pages/general-affair/material-remaind-use-6109c1a08c7efb39.js",revision:"6109c1a08c7efb39"},{url:"/_next/static/chunks/pages/general-affair/material-type-0022fc6a305d970a.js",revision:"0022fc6a305d970a"},{url:"/_next/static/chunks/pages/general-affair/outgoing-material-70aaa4c35fd2d106.js",revision:"70aaa4c35fd2d106"},{url:"/_next/static/chunks/pages/general-affair/purchase-receive-8bc62bd089a6f3d6.js",revision:"8bc62bd089a6f3d6"},{url:"/_next/static/chunks/pages/general-affair/warehouse-715dfd2d8df397cb.js",revision:"715dfd2d8df397cb"},{url:"/_next/static/chunks/pages/hrd-ga/departement-784cde74642ab2f9.js",revision:"784cde74642ab2f9"},{url:"/_next/static/chunks/pages/hrd-ga/employe-472ce0501b54eaf7.js",revision:"472ce0501b54eaf7"},{url:"/_next/static/chunks/pages/index-c2ea2a637b0c2b65.js",revision:"c2ea2a637b0c2b65"},{url:"/_next/static/chunks/pages/marketing/customer-9b136023ea722707.js",revision:"9b136023ea722707"},{url:"/_next/static/chunks/pages/marketing/customer-po-6371cf184059e3cb.js",revision:"6371cf184059e3cb"},{url:"/_next/static/chunks/pages/marketing/job-status-00ae97353645f118.js",revision:"00ae97353645f118"},{url:"/_next/static/chunks/pages/marketing/material-stok-64ebaa04f01fb550.js",revision:"64ebaa04f01fb550"},{url:"/_next/static/chunks/pages/marketing/quotation-f526bdecba27f806.js",revision:"f526bdecba27f806"},{url:"/_next/static/chunks/pages/marketing/work-order-release-25611b7002491ec4.js",revision:"25611b7002491ec4"},{url:"/_next/static/chunks/pages/master-data/activity-eb8cebddd2544997.js",revision:"eb8cebddd2544997"},{url:"/_next/static/chunks/pages/master-data/customer-f18893f354b72689.js",revision:"f18893f354b72689"},{url:"/_next/static/chunks/pages/master-data/departement-701f337c79fccd72.js",revision:"701f337c79fccd72"},{url:"/_next/static/chunks/pages/master-data/employe-608a298bb95f8362.js",revision:"608a298bb95f8362"},{url:"/_next/static/chunks/pages/master-data/equipment-part-19775dca75293adc.js",revision:"19775dca75293adc"},{url:"/_next/static/chunks/pages/master-data/holiday-b03a06e97cd4a961.js",revision:"b03a06e97cd4a961"},{url:"/_next/static/chunks/pages/master-data/material-12793b6748ccd93b.js",revision:"12793b6748ccd93b"},{url:"/_next/static/chunks/pages/master-data/material-type-90fb3919b7113b24.js",revision:"90fb3919b7113b24"},{url:"/_next/static/chunks/pages/master-data/supplier-89d610d50182a3cd.js",revision:"89d610d50182a3cd"},{url:"/_next/static/chunks/pages/master-data/worker-center-e5475c834eea753b.js",revision:"e5475c834eea753b"},{url:"/_next/static/chunks/pages/production/activity-bf1dc9d74e81c4ba.js",revision:"bf1dc9d74e81c4ba"},{url:"/_next/static/chunks/pages/production/dispatch-e00ca1fe5b078d82.js",revision:"e00ca1fe5b078d82"},{url:"/_next/static/chunks/pages/production/equipment-part-bf403b43eef4197f.js",revision:"bf403b43eef4197f"},{url:"/_next/static/chunks/pages/production/time-schedule-f877dda20e2fe282.js",revision:"f877dda20e2fe282"},{url:"/_next/static/chunks/pages/production/worker-center-7305932abe0370b1.js",revision:"7305932abe0370b1"},{url:"/_next/static/chunks/pages/public/cash-advance-9cc1ab23bdd8df3c.js",revision:"9cc1ab23bdd8df3c"},{url:"/_next/static/chunks/pages/public/employe-79973aae22e3ea45.js",revision:"79973aae22e3ea45"},{url:"/_next/static/chunks/pages/public/master-material-d565c58d5347c863.js",revision:"d565c58d5347c863"},{url:"/_next/static/chunks/pages/public/mr-80de00714af3febb.js",revision:"80de00714af3febb"},{url:"/_next/static/chunks/pages/public/spj-cash-advance-f6363f7a8f7c4ee6.js",revision:"f6363f7a8f7c4ee6"},{url:"/_next/static/chunks/pages/public/sr-ce33eff6a4c965f4.js",revision:"ce33eff6a4c965f4"},{url:"/_next/static/chunks/pages/public/time-sheet-9585efd3bea4cc82.js",revision:"9585efd3bea4cc82"},{url:"/_next/static/chunks/pages/public/work-order-release-c598f7cbb66f8869.js",revision:"c598f7cbb66f8869"},{url:"/_next/static/chunks/pages/purchasing-logistic/approval-mr-c6cd8ae435cd15e2.js",revision:"c6cd8ae435cd15e2"},{url:"/_next/static/chunks/pages/purchasing-logistic/approval-sr-1a0a1a8c5b041845.js",revision:"1a0a1a8c5b041845"},{url:"/_next/static/chunks/pages/purchasing-logistic/delivery-order-07d521282ee4909c.js",revision:"07d521282ee4909c"},{url:"/_next/static/chunks/pages/purchasing-logistic/direct-mr-1c06371e026bb7db.js",revision:"1c06371e026bb7db"},{url:"/_next/static/chunks/pages/purchasing-logistic/direct-sr-3e23105b250cf4d1.js",revision:"3e23105b250cf4d1"},{url:"/_next/static/chunks/pages/purchasing-logistic/equipment-part-4b7572c342fd4bdd.js",revision:"4b7572c342fd4bdd"},{url:"/_next/static/chunks/pages/purchasing-logistic/list-po-ca89cdf88b4e140e.js",revision:"ca89cdf88b4e140e"},{url:"/_next/static/chunks/pages/purchasing-logistic/material-26969e70efe14927.js",revision:"26969e70efe14927"},{url:"/_next/static/chunks/pages/purchasing-logistic/material-remaind-use-70be3925150b4431.js",revision:"70be3925150b4431"},{url:"/_next/static/chunks/pages/purchasing-logistic/material-type-0305d931ac1ccc1e.js",revision:"0305d931ac1ccc1e"},{url:"/_next/static/chunks/pages/purchasing-logistic/outgoing-material-93036a0ce9ce1f73.js",revision:"93036a0ce9ce1f73"},{url:"/_next/static/chunks/pages/purchasing-logistic/purchase-mr-44bdc6e74ac17357.js",revision:"44bdc6e74ac17357"},{url:"/_next/static/chunks/pages/purchasing-logistic/purchase-order-57f9f19ea493df2f.js",revision:"57f9f19ea493df2f"},{url:"/_next/static/chunks/pages/purchasing-logistic/purchase-receive-f7d911fc66625d0e.js",revision:"f7d911fc66625d0e"},{url:"/_next/static/chunks/pages/purchasing-logistic/purchase-sr-ddf3facbcfa795f5.js",revision:"ddf3facbcfa795f5"},{url:"/_next/static/chunks/pages/purchasing-logistic/service-order-2aa52b23cb782615.js",revision:"2aa52b23cb782615"},{url:"/_next/static/chunks/pages/purchasing-logistic/spj-purchase-dd447be6323010f1.js",revision:"dd447be6323010f1"},{url:"/_next/static/chunks/pages/purchasing-logistic/supplier-56c12e17ac7a0b25.js",revision:"56c12e17ac7a0b25"},{url:"/_next/static/chunks/pages/purchasing-logistic/warehouse-f552451482540429.js",revision:"f552451482540429"},{url:"/_next/static/chunks/pages/report/material-name-info-6f1c2588305845f6.js",revision:"6f1c2588305845f6"},{url:"/_next/static/chunks/pages/report/material-stok-377191e96ad97a70.js",revision:"377191e96ad97a70"},{url:"/_next/static/chunks/pages/user/account-51456b783045b494.js",revision:"51456b783045b494"},{url:"/_next/static/chunks/pages/utility/chart-of-accounts-d2a8e44e8428b641.js",revision:"d2a8e44e8428b641"},{url:"/_next/static/chunks/pages/utility/holiday-setting-cc0297354471fe1c.js",revision:"cc0297354471fe1c"},{url:"/_next/static/chunks/pages/utility/register-new-user-f6fc536d2916aa07.js",revision:"f6fc536d2916aa07"},{url:"/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js",revision:"837c0df77fd5009c9e46d446188ecfd0"},{url:"/_next/static/chunks/webpack-bb43324c67c725da.js",revision:"bb43324c67c725da"},{url:"/_next/static/css/1bf9d9354f743c9b.css",revision:"1bf9d9354f743c9b"},{url:"/_next/static/css/431944509084d071.css",revision:"431944509084d071"},{url:"/_next/static/media/404.5657f10c.svg",revision:"c12d98d1f19f1b793e15f7d8b7881839"},{url:"/_next/static/media/Logo-ISO-14001.c00d3b09.png",revision:"5329d20e3b721e65763c69bb9f45df69"},{url:"/_next/static/media/Logo-ISO-45001.2c449a98.png",revision:"f2281c09faed42ee685b06c5ab9fd18d"},{url:"/_next/static/media/dwitama.36e111a2.png",revision:"15242583c0bf18a561c1dce24ef361b9"},{url:"/_next/static/media/logo-ISO-9001.4661189c.png",revision:"3312839f8b7dc6be42abede9e1eda95a"},{url:"/android-chrome-192x192.png",revision:"8b1c3e93eb1391dfe97f9ccbb039723f"},{url:"/android-chrome-512x512.png",revision:"53b1cdc09cb465fa5cc5919ca751ff87"},{url:"/apple-touch-icon.png",revision:"d2e5edd3fac156b5003439319eceb76c"},{url:"/favicon-16x16-japa.jpeg",revision:"6383dd2d729d19d457e3c1780e7b3773"},{url:"/favicon-16x16.png",revision:"db6714003b56d6798f2169404392c396"},{url:"/favicon-16x161.png",revision:"ad5e2f8371d5decc76c9a7a18e4bda60"},{url:"/favicon-32x32.png",revision:"10675438a01e937baf682558f164cfec"},{url:"/favicons.ico",revision:"e5b423d13e810f2ce209191247b083f3"},{url:"/icon-192x192.png",revision:"4378f6f00ef60bfaa1acb454252f734d"},{url:"/icon-256x256.png",revision:"13456ab671d8e3637e479164e2042519"},{url:"/icon-384x384.png",revision:"9c539c4ee56f6af7fbb24e608ad95f6c"},{url:"/icon-512x512.png",revision:"15a9c222b84e32e0da031f151745cab8"},{url:"/japa-indomata.jpg",revision:"c87468b5e52f75d8bd9814fcd2b14fb3"},{url:"/logo-ISO-9001.png",revision:"3312839f8b7dc6be42abede9e1eda95a"},{url:"/manifest.json",revision:"b04ff82e8e4b329e2d0451f7c7d13a33"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/s.png",revision:"2c0335453964c82a38d53f6630b85011"},{url:"/vercel.svg",revision:"61c6b19abff40ea7acd577be818f3976"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:a,state:c})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,new e.CacheFirst({cacheName:"google-fonts-webfonts",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,new e.StaleWhileRevalidate({cacheName:"google-fonts-stylesheets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,new e.StaleWhileRevalidate({cacheName:"static-font-assets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,new e.StaleWhileRevalidate({cacheName:"static-image-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/image\?url=.+$/i,new e.StaleWhileRevalidate({cacheName:"next-image",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp3|wav|ogg)$/i,new e.CacheFirst({cacheName:"static-audio-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp4)$/i,new e.CacheFirst({cacheName:"static-video-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:js)$/i,new e.StaleWhileRevalidate({cacheName:"static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:css|less)$/i,new e.StaleWhileRevalidate({cacheName:"static-style-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/data\/.+\/.+\.json$/i,new e.StaleWhileRevalidate({cacheName:"next-data",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:json|xml|csv)$/i,new e.NetworkFirst({cacheName:"static-data-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;const s=e.pathname;return!s.startsWith("/api/auth/")&&!!s.startsWith("/api/")}),new e.NetworkFirst({cacheName:"apis",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:16,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>{if(!(self.origin===e.origin))return!1;return!e.pathname.startsWith("/api/")}),new e.NetworkFirst({cacheName:"others",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:e})=>!(self.origin===e.origin)),new e.NetworkFirst({cacheName:"cross-origin",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:3600})]}),"GET")}));
+/**
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// If the loader is already loaded, just stop.
+if (!self.define) {
+  let registry = {};
+
+  // Used for `eval` and `importScripts` where we can't get script URL by other means.
+  // In both cases, it's safe to use a global var because those functions are synchronous.
+  let nextDefineUri;
+
+  const singleRequire = (uri, parentUri) => {
+    uri = new URL(uri + ".js", parentUri).href;
+    return registry[uri] || (
+      
+        new Promise(resolve => {
+          if ("document" in self) {
+            const script = document.createElement("script");
+            script.src = uri;
+            script.onload = resolve;
+            document.head.appendChild(script);
+          } else {
+            nextDefineUri = uri;
+            importScripts(uri);
+            resolve();
+          }
+        })
+      
+      .then(() => {
+        let promise = registry[uri];
+        if (!promise) {
+          throw new Error(`Module ${uri} didn’t register its module`);
+        }
+        return promise;
+      })
+    );
+  };
+
+  self.define = (depsNames, factory) => {
+    const uri = nextDefineUri || ("document" in self ? document.currentScript.src : "") || location.href;
+    if (registry[uri]) {
+      // Module is already loading or loaded.
+      return;
+    }
+    let exports = {};
+    const require = depUri => singleRequire(depUri, uri);
+    const specialDeps = {
+      module: { uri },
+      exports,
+      require
+    };
+    registry[uri] = Promise.all(depsNames.map(
+      depName => specialDeps[depName] || require(depName)
+    )).then(deps => {
+      factory(...deps);
+      return exports;
+    });
+  };
+}
+define(['./workbox-e43f5367'], (function (workbox) { 'use strict';
+
+  importScripts();
+  self.skipWaiting();
+  workbox.clientsClaim();
+  workbox.registerRoute("/", new workbox.NetworkFirst({
+    "cacheName": "start-url",
+    plugins: [{
+      cacheWillUpdate: async ({
+        request,
+        response,
+        event,
+        state
+      }) => {
+        if (response && response.type === 'opaqueredirect') {
+          return new Response(response.body, {
+            status: 200,
+            statusText: 'OK',
+            headers: response.headers
+          });
+        }
+        return response;
+      }
+    }]
+  }), 'GET');
+  workbox.registerRoute(/.*/i, new workbox.NetworkOnly({
+    "cacheName": "dev",
+    plugins: []
+  }), 'GET');
+
+}));
+//# sourceMappingURL=sw.js.map
