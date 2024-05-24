@@ -308,6 +308,20 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "list-dirrect-purchase",
+				link: "/purchasing-logistic/list-dirrect-purchase",
+				title: "List Dirrect Purchase",
+
+				subMenu: null,
+			},
+			{
+				id: "list-dirrect-service",
+				link: "/purchasing-logistic/list-dirrect-service",
+				title: "List Dirrect Service",
+
+				subMenu: null,
+			},
 			// {
 			// 	id: "purchase-receive",
 			// 	link: "/purchasing-logistic/purchase-receive",
@@ -524,6 +538,13 @@ export const ListNav = [
 				id: "posting",
 				link: "/finance-accounting/posting",
 				title: "Posting",
+
+				subMenu: null,
+			},
+			{
+				id: "journal",
+				link: "/finance-accounting/journal",
+				title: "Journal",
 
 				subMenu: null,
 			},

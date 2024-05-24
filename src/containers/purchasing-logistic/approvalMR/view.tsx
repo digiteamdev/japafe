@@ -69,6 +69,18 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 		});
 	};
 
+	const generateIdNum = () => {
+		var dateObj = new Date();
+		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+		var year = dateObj.getUTCFullYear();
+		const id =
+			"MP" +
+			year.toString() +
+			month.toString() +
+			Math.floor(Math.random() * 10000);
+		return id;
+	};
+
 	const approveMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
@@ -82,7 +94,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 		});
 		let data = {
 			// id: payload.id,
-			idApprove: payload.idMrAppr,
+			idApprove: generateIdNum(),
 			dateApprove: new Date(),
 			approveById: userId,
 			detailMr: listDetail,
@@ -266,6 +278,9 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		type='number'
 																		disabled={false}
 																		value={result.qtyAppr}
+																		onChange={(e:any) => {
+																			setFieldValue(`detailMr.${i}.qtyAppr`, e.target.value)
+																		}}
 																		required={true}
 																		withLabel={false}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
@@ -291,7 +306,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		name={`detailMr.${i}.note`}
 																		placeholder='Note'
 																		label='Note'
-																		type='number'
+																		type='text'
 																		disabled={true}
 																		value={result.note}
 																		required={true}

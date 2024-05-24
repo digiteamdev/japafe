@@ -134,7 +134,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_employe.push({
-						label: res.nick_name,
+						label: res.employee_name,
 						value: res,
 					});
 				});

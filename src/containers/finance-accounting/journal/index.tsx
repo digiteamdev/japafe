@@ -19,7 +19,7 @@ import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewPosting } from './view';
 // import { FormEditCashier } from "./formEdit";
 
-export const Posting = () => {
+export const Journal = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,7 +57,7 @@ export const Posting = () => {
 	const getCashier = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetAllPosting(page, limit, false);
+			const response = await GetAllPosting(page, limit, true);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -77,7 +77,7 @@ export const Posting = () => {
 	const searchCashier = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPosting(page, limit, search, false);
+			const response = await SearchPosting(page, limit, search, true);
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -103,12 +103,12 @@ export const Posting = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Posting'
+				title='Journal'
 				total={countData}
 				icon={<DollarSign className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Posting'
+				title='Journal'
 				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -199,7 +199,7 @@ export const Posting = () => {
 			</Content>
 			{
 				<Modal
-					title='Posting'
+					title='Journal'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}

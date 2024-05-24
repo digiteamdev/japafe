@@ -33,13 +33,16 @@ export const PurchaseSR = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Purhcase SR" },
-		{ name: "Purchase SR Date" },
+		{ name: "No Job" },
+        { name: "No SR" },
+		{ name: "Description" },
+		{ name: "Date SR" },
+		{ name: "Request By" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getPurchaseSR(page, perPage, 'PSR');
+		getPurchaseSR(page, perPage, 'SO');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -50,7 +53,7 @@ export const PurchaseSR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseSR(page, perPage, 'PSR');
+			getPurchaseSR(page, perPage, 'SO');
 		}
 	};
 
@@ -122,6 +125,18 @@ export const PurchaseSR = () => {
 		setIsModal(false);
 	};
 
+	const showDesc = (data:any) => {
+		let desc:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				desc = `- `+res.desc
+			}else{
+				desc = desc +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return desc
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -131,7 +146,7 @@ export const PurchaseSR = () => {
 			/>
 			<Content
 				title='Purchase Service Request'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -176,13 +191,17 @@ export const PurchaseSR = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idPurchase }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.no_sr }</td>
+									<td className='whitespace-pre-line p-1'>{ showDesc(res.SrDetail) }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -194,7 +213,7 @@ export const PurchaseSR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ res.status_manager_director === 'revision' ? (
+											{/* { res.status_manager_director === 'revision' ? (
 												<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
@@ -214,7 +233,7 @@ export const PurchaseSR = () => {
 												>
 													<Edit color='white' />
 												</Button>
-											) }
+											) } */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {

@@ -13,3 +13,6 @@ export * from './delivery-order';
 export * from './material-remaind-use';
 export * from './warehouse';
 export * from './list-po';
+export * from './list-so';
+export * from './list-dirrect-po';
+export * from './list-dirrect-service';

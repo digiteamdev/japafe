@@ -57,7 +57,7 @@ export const FormCreateApprovalSr = ({ content, showModal }: props) => {
 
 	const getMr = async () => {
 		try {
-			const response = await GetDetailSr();
+			const response = await GetDetailSr(1,1);
 			if (response) {
 				let detail: any = [];
 				let idAppr: string = generateIdNum();

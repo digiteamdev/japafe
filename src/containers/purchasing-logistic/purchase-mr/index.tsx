@@ -58,18 +58,6 @@ export const PurchaseMR = () => {
 		}
 	};
 
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"PR" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 10000);
-		return id;
-	};
-
 	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
 		try {
 			const response = await GetAllMRPo(page,perpage,type);

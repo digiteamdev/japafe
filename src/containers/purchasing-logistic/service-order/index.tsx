@@ -13,7 +13,7 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePurchaseSr } from "./formCreate";
 import { ViewSoSR } from "./view";
 import { FormEditPurchaseSr } from "./formEdit";
-import { GetPoMr, SearchPoMR, DeletePurchaseMR } from "../../../services";
+import { GetAllPoMr, SearchPoMR, DeletePurchaseMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -32,10 +32,11 @@ export const PurchaseSO = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "SO Number" },
-		{ name: "Date PO" },
-		{ name: "Suplier" },
-		{ name: "Contact" },
+		{ name: "Job no" },
+		{ name: "No SR" },
+		{ name: "Date SR"},
+		{ name: "Description" },
+		{ name: "Request" },
 		{ name: "Action" },
 	];
 
@@ -58,7 +59,7 @@ export const PurchaseSO = () => {
 	const getPurchaseMR = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetPoMr(page, perpage, type);
+			const response = await GetAllPoMr(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -106,7 +107,7 @@ export const PurchaseSO = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10, "PR");
+				getPurchaseMR(1, 10, "SO");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Order Request Failed", {
@@ -123,6 +124,18 @@ export const PurchaseSO = () => {
 		setIsModal(false);
 	};
 
+	const showDesc = (data:any) => {
+		let desc:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				desc = `- `+res.desc
+			}else{
+				desc = desc +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return desc
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -132,7 +145,7 @@ export const PurchaseSO = () => {
 			/>
 			<Content
 				title='Purchase Order Service Request'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -183,16 +196,19 @@ export const PurchaseSO = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.id_so}
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_sr}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{moment(res.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
-										{res.SrDetail[0]?.supplier.supplier_name}
+									<td className='whitespace-pre-line p-1'>
+										{showDesc(res.SrDetail)}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.SrDetail[0]?.supplier.SupplierContact[0]?.contact_person}
+										{res.user.employee.employee_name}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

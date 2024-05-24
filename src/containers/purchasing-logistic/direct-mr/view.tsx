@@ -261,12 +261,13 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 															<td className='pr-1 w-[35%]'>
 																<InputSelectSearch
 																	datas={listSupplier}
-																	id={`detailMr.${i}.price`}
-																	name={`detailMr.${i}.price`}
+																	id={`detailMr.${i}.supId`}
+																	name={`detailMr.${i}.supId`}
 																	placeholder='Supplier'
 																	label='Supplier'
 																	value={result.supplier}
 																	onChange={(e: any) => {
+																		console.log(e)
 																		setFieldValue(
 																			`detailMr.${i}.supId`,
 																			e.value.id

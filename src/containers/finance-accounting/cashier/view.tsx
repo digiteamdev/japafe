@@ -340,6 +340,14 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 									</tr>
 									<tr>
 										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Reference
+										</td>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+											{dataSelected.kontrabonId === null && dataSelected.cdvId !== null ? dataSelected.cash_advance.id_cash_advance : dataSelected.kontrabonId !== null && dataSelected.cdvId === null ? dataSelected.kontrabon.id_kontrabon : dataSelected.idPurchase ? dataSelected.purchase.idPurchase : '-'}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Date Prepered
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>

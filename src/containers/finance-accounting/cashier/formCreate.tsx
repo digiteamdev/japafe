@@ -24,6 +24,7 @@ interface data {
 	status_payment: string;
 	id_cash_advance: string;
 	kontrabonId: string;
+	idPurchase: string;
 	account_name: string;
 	bank_name: string;
 	rekening: string;
@@ -50,6 +51,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		id_cashier: "",
 		status_payment: "Cash",
 		kontrabonId: "",
+		idPurchase: "",
 		id_cash_advance: "",
 		pay_to: "",
 		account_name: "",
@@ -95,6 +97,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			if (response.data) {
 				data.push({
 					label: "Dirrect",
+					type: "Dirrect",
 					value: [],
 				});
 				response.data.result.map((res: any) => {
@@ -103,13 +106,23 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 							label: `${res.id_kontrabon} - ${
 								res.term_of_pay_po_so
 									? res.term_of_pay_po_so.poandso.id_so
+									: res.idPurchase
+									? res.idPurchase
 									: res.purchase.idPurchase
 							}`,
+							type: "kontrabon",
+							value: res,
+						});
+					} else if (res.idPurchase) {
+						data.push({
+							label: res.idPurchase,
+							type: "purchase",
 							value: res,
 						});
 					} else {
 						data.push({
 							label: res.id_cash_advance,
+							type: "ca",
 							value: res,
 						});
 					}
@@ -195,6 +208,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			status_payment: payload.status_payment,
 			kontrabonId: payload.kontrabonId,
 			cdvId: payload.id_cash_advance,
+			idPurchase: payload.idPurchase,
 			date_cashier: payload.date_cashier,
 			note: payload.note,
 			total: payload.total,
@@ -313,13 +327,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("note", "");
 											setFieldValue("kontrabonId", null);
 											setFieldValue("id_cash_advance", null);
+											setFieldValue("id_purchase", null);
 											setFieldValue("total", 0);
 											setFieldValue("status_payment", "cash");
 											setDisc(0);
 											setPpn(0);
 											setPph(0);
 											setIsDirrect(false);
-										} else {
+										} else if (e.type === "kontrabon") {
 											setIsDirrect(true);
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
@@ -329,9 +344,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														coa_id: res.coa_id,
 														coa_name: res.coa.coa_name,
 														status_transaction: res.status_transaction,
-														grandtotal: e.value.id_kontrabon === undefined
-														? e.value.grand_tot
-														: e.value.grandtotal,
+														grandtotal:
+															e.value.id_kontrabon === undefined
+																? e.value.grand_tot
+																: e.value.grandtotal,
 													});
 												}
 											);
@@ -391,12 +407,13 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											);
 											setFieldValue(
 												"kontrabonId",
-												e.value.id_kontrabon === undefined ? null : e.value.id
+												e.type === "kontrabon" ? e.value.id : null
 											);
 											setFieldValue(
 												"id_cash_advance",
-												e.value.id_kontrabon === undefined ? e.value.id : null
+												e.type === "ca" ? e.value.id : null
 											);
+											setFieldValue(" idPurchase", e.type === "purchase" ? e.value.id : null);
 											setFieldValue(
 												"total",
 												e.value.id_kontrabon === undefined
@@ -481,6 +498,107 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												}
 											}
 											setFieldValue("journal_cashier", listJournal);
+										} else if (e.type === "purchase") {
+											setIsDirrect(false);
+											setCurrency(e.value.currency);
+											setTotal(totalPaid(e.value));
+											setTotalAmount(totalPaid(e.value));
+											setFieldValue("account_name", "");
+											setFieldValue("bank_name", "");
+											setFieldValue("rekening", "");
+											setFieldValue("note", e.value.note);
+											setFieldValue(
+												"kontrabonId",
+												e.type === "kontrabon" ? null : e.value.id
+											);
+											setFieldValue(
+												"id_cash_advance",
+												e.type === "ca" ? e.value.id : null
+											);
+											setFieldValue("idPurchase", e.type === "purchase" ? e.value.id : null);
+											setFieldValue("total", totalPaid(e.value));
+											setFieldValue("status_payment", "Cash");
+											if (e.value.type === "ca") {
+												setDisc(0);
+												setPpn(0);
+												setPph(0);
+												setFieldValue("status_payment", "Cash");
+											} else if (e.type === "kontrabon") {
+												discAmount(e.value.term_of_pay_po_so.poandso);
+												if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.ppn,
+														"ppn"
+													);
+												} else if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.pph,
+														"pph"
+													);
+												} else if (
+													e.value.term_of_pay_po_so.tax_invoice &&
+													e.value.term_of_pay_po_so.poandso.taxPsrDmr ===
+														"ppn_and_pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.ppn,
+														"ppn"
+													);
+													taxAmount(
+														totalPaid(e.value.term_of_pay_po_so.poandso),
+														e.value.term_of_pay_po_so.poandso.supplier.pph,
+														"pph"
+													);
+												} else {
+													setPpn(0);
+													setPph(0);
+												}
+											}  else if (e.type === "purchase") {
+												setDisc(0);
+												setPpn(0);
+												setPph(0);
+												setFieldValue("status_payment", "Cash");
+											} else {
+												discAmount(e.value.purchase);
+												if (e.value.purchase.taxPsrDmr === "ppn") {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"ppn"
+													);
+												} else if (e.value.purchase.taxPsrDmr === "pph") {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.pph,
+														"pph"
+													);
+												} else if (
+													e.value.purchase.taxPsrDmr === "ppn_and_pph"
+												) {
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"ppn"
+													);
+													taxAmount(
+														totalPaid(e.value.purchase),
+														e.value.purchase.supplier.ppn,
+														"pph"
+													);
+												} else {
+													setPpn(0);
+													setPph(0);
+												}
+											}
 										}
 									}}
 									required={true}
@@ -756,10 +874,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 																`journal_cashier.${i}.coa_id`,
 																e.value.id
 															);
-															setFieldValue(
-																`journal_cashier.${i}.coa`,
-																e
-															);
+															setFieldValue(`journal_cashier.${i}.coa`, e);
 														}}
 														required={true}
 														withLabel={false}

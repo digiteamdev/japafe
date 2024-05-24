@@ -13,7 +13,7 @@ import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateApprovalSr } from "./formCreate";
 import { ViewApprovalSR } from "./view";
 import { FormEditApprovalSr } from "./formEdit";
-import { GetApprovalRequest, SearchApprovalRequest, DeleteSr } from "../../../services";
+import { GetDetailSr, SearchApprovalRequest, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -33,9 +33,11 @@ export const ApprovalSr = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "ID Approval SR" },
-        { name: "Approval SR Date" },
-		{ name: "Approval By" },
+		{ name: "No Job" },
+        { name: "No SR" },
+		{ name: "Description" },
+		{ name: "Date SR" },
+		{ name: "Request By" },
         { name: "Action" }
 	];
 
@@ -58,7 +60,7 @@ export const ApprovalSr = () => {
 	const getSr = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetApprovalRequest(page, perpage, type);
+			const response = await GetDetailSr(page,perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -123,6 +125,18 @@ export const ApprovalSr = () => {
 		setIsModal(false);
 	};
 
+	const showDesc = (data:any) => {
+		let desc:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				desc = `- `+res.desc
+			}else{
+				desc = desc +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return desc
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -132,7 +146,7 @@ export const ApprovalSr = () => {
 			/>
 			<Content
 				title='Approval Service Request'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -182,7 +196,9 @@ export const ApprovalSr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.idApprove }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ res.no_sr }</td>
+									<td className='whitespace-pre-line p-1'>{ showDesc(res.SrDetail) }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
@@ -196,7 +212,7 @@ export const ApprovalSr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -204,7 +220,7 @@ export const ApprovalSr = () => {
 												}}
 											>
 												<Edit color='white' />
-											</Button>
+											</Button> */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {

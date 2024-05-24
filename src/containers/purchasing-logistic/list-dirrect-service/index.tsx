@@ -10,21 +10,21 @@ import {
 	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreatePurchaseMr } from "./formCreate";
-import { ViewPoMR } from "./view";
-import { FormEditPurchaseMr } from "./formEdit";
+// import { FormCreatePurchaseMr } from "./formCreate";
+import { ViewDirrectService } from "./view";
+// import { FormEditPurchaseMr } from "./formEdit";
 import {
 	GetPoMr,
 	SearchPoMR,
 	DeletePurchaseMR,
-	GetAllPoMr,
+	GetDirrectPurchase,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
-export const PurchasePO = () => {
+export const ListDirrectService = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,22 +37,22 @@ export const PurchasePO = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
+		{ name: "ID Dirrect Service" },
 		{ name: "Job No" },
-		{ name: "No MR" },
-		{ name: "Material" },
-		{ name: "Request" },
+		{ name: "No SR" },
+		{ name: "Date" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getMrPo(page, perPage, "PO");
+		getMrPo(page, perPage, "DSR");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const getMrPo = async (page: number, perpage: number, type: string) => {
 		try {
-			const response: any = await GetAllPoMr(page,perpage,type);
-			if(response.data){
+			const response: any = await GetDirrectPurchase(page, perpage, type);
+			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
@@ -61,8 +61,8 @@ export const PurchasePO = () => {
 			if (error.response.data.login) {
 				setData([]);
 			} else {
-				// removeToken();
-				// router.push('/');
+				removeToken();
+				router.push("/");
 			}
 		}
 	};
@@ -74,7 +74,7 @@ export const PurchasePO = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getMrPo(page, perPage, "PO");
+			getMrPo(page, perPage, "DSR");
 		}
 	};
 
@@ -85,7 +85,7 @@ export const PurchasePO = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPoMR(page, limit, search, "PO");
+			const response = await SearchPoMR(page, limit, search, "DSR");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -109,7 +109,7 @@ export const PurchasePO = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMrPo(1, 10, "PR");
+				getMrPo(1, 10, "DSR");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Order Request Failed", {
@@ -126,27 +126,27 @@ export const PurchasePO = () => {
 		setIsModal(false);
 	};
 
-	const showMaterial = (data:any) => {
-		let material:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				material = `- `+res.Material_Master.name
-			}else{
-				material = material +` \r\n ` + `- `+res.Material_Master.name 
+	const showMaterial = (data: any) => {
+		let material: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = `- ` + res.Material_Master.name;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
 			}
-		})
-		return material
-	}
+		});
+		return material;
+	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Purchase Order Material Request'
+				title='List Dirrect Service'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Purchase Order Material Request'
+				title='List Dirrect Service'
 				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -198,16 +198,16 @@ export const PurchasePO = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.job_no }
+										{res.idPurchase}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.no_mr }
-									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{ showMaterial(res.detailMr) }
+										{res.SrDetail[0]?.sr.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.user.employee.employee_name }
+										{res.SrDetail[0]?.sr.no_sr}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.date_prepared).format("DD-MM-yyyy")}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -220,36 +220,6 @@ export const PurchasePO = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{res.status_manager_director === "revision" ? (
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "edit", false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-											) : res.status_manager ? null : (
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "edit", false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-											)}
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
 										</div>
 									</td>
 								</tr>
@@ -265,7 +235,7 @@ export const PurchasePO = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getMrPo(value, perPage, "PO");
+							getMrPo(value, perPage, "DSR");
 						}}
 					/>
 				) : null}
@@ -280,28 +250,32 @@ export const PurchasePO = () => {
 				/>
 			) : (
 				<Modal
-					title='Purchase Order Material Request'
+					title='List Dirrect Service'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewPoMR
-							dataSelected={dataSelected}
-							showModal={showModal}
-							content={modalContent}
-						/>
-					) : modalContent === "add" ? (
-						<FormCreatePurchaseMr
-							content={modalContent}
-							showModal={showModal}
-						/>
+						<ViewDirrectService dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+					) : 
+					// <ViewPoMR
+					// 	dataSelected={dataSelected}
+					// 	showModal={showModal}
+					// 	content={modalContent}
+					// />
+					modalContent === "add" ? (
+						<></>
 					) : (
-						<FormEditPurchaseMr
-							content={modalContent}
-							showModal={showModal}
-							dataSelected={dataSelected}
-						/>
+						// <FormCreatePurchaseMr
+						// 	content={modalContent}
+						// 	showModal={showModal}
+						// />
+						<></>
+						// <FormEditPurchaseMr
+						// 	content={modalContent}
+						// 	showModal={showModal}
+						// 	dataSelected={dataSelected}
+						// />
 					)}
 				</Modal>
 			)}

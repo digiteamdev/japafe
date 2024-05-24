@@ -203,7 +203,7 @@ export const Cashier = () => {
 										{res.id_cashier}
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon.id_kontrabon : '-' }
+										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon.id_kontrabon : res.idPurchase ? res.purchase.idPurchase : '-' }
 									</td>
 									<td className='whitespace-nowrap p-1'>
 										{res.note}
@@ -223,7 +223,7 @@ export const Cashier = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											{ res.status_valid ? null : (
+											{/* { res.status_valid ? null : (
 												<>
 													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 													onClick={ () => {
@@ -241,7 +241,7 @@ export const Cashier = () => {
 														<Trash2 color='white' />
 													</Button>
 												</>
-											) }
+											) } */}
 										</div>
 									</td>
 								</tr>

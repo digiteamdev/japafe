@@ -366,7 +366,7 @@ export const FormEditApproval = ({
 												Job No
 											</td>
 											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-												{dataSelected.wor.job_no}
+												{/* {dataSelected.wor.job_no} */}
 											</td>
 										</tr>
 										<tr>
@@ -374,7 +374,7 @@ export const FormEditApproval = ({
 												Customer
 											</td>
 											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-												{dataSelected.wor.customerPo.quotations.Customer.name}
+												{/* {dataSelected.wor.customerPo.quotations.Customer.name} */}
 											</td>
 										</tr>
 										<tr>
@@ -382,7 +382,7 @@ export const FormEditApproval = ({
 												Subject
 											</td>
 											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-												{dataSelected.wor.subject}
+												{/* {dataSelected.wor.subject} */}
 											</td>
 										</tr>
 										<tr>
