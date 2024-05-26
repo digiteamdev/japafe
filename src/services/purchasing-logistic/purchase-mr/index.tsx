@@ -1,7 +1,7 @@
 import { Axios } from '../../../configs/axios/';
 
 export const AddPrMr = (data: any) => Axios.put(process.env.BASE_URL+'/mrPR', data);
-export const AddPrSr = (data: any) => Axios.put(process.env.BASE_URL+'/srPR', data);
+// export const AddPrSr = (data: any) => Axios.put(process.env.BASE_URL+'/srPR', data);
 export const EditPrMr = (data: any) => Axios.put(process.env.BASE_URL+'/mrPrdetail', data);
 export const GetPurchaseMR = (page: number, perpage: number, type: string) => Axios.get(process.env.BASE_URL+`/mrPR?page=${page}&limit=${perpage}&type=${type}`);
 export const GetAllMRPo = (page: number, perpage: number, type: string) => Axios.get(process.env.BASE_URL+`/mrPR?page=${page}&limit=${perpage}&type=${type}`);
