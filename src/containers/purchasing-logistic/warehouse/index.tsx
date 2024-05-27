@@ -12,8 +12,8 @@ import {
 } from "../../../components";
 import { Box, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateWarehouse } from "./formCreate";
-// import { ViewMaterial } from "./view";
-// import { FormEditMaterial } from './formEdit';
+import { ViewWarehouse } from "./view";
+import { FormEditWarehouse } from './formEdit';
 import { GetMaterialNew, SearchMaterialNew, DeleteMaterial } from "../../../services";
 import { toast } from "react-toastify";
 import { changeDivisi, formatRupiah } from "@/src/utils";
@@ -205,7 +205,7 @@ export const Warehouse = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -222,7 +222,7 @@ export const Warehouse = () => {
 												}}
 											>
 												<Trash2 color='white' />
-											</Button>
+											</Button> */}
 										</div>
 									</td>
 								</tr>
@@ -255,19 +255,17 @@ export const Warehouse = () => {
 				/>
 			) : (
 				<Modal
-				title='Material'
+				title='Warehouse'
 				isModal={isModal}
 				content={modalContent}
 				showModal={showModal}
 			>
 				{modalContent === "view" ? (
-                    <></>
-					// <ViewMaterial dataSelected={dataSelected} />
+					<ViewWarehouse dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
 					) : modalContent === "add" ? (
                         <FormCreateWarehouse content={modalContent} showModal={showModal} />
 				) : (
-                    <></>
-					// <FormEditMaterial content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+					<FormEditWarehouse content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 				)}
 				</Modal>
 			)}

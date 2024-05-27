@@ -25,3 +25,4 @@ export const AddMaterialNew = (data: any) => Axios.post(process.env.BASE_URL+'/m
 export const GetMaterialNew = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/materialMaster?page=${page}&limit=${perpage}`);
 export const SearchMaterialNew = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/materialMaster?page=${page}&limit=${perpage}&search=${search}`);
 export const GetAllMaterialNew = () => Axios.get(process.env.BASE_URL+`/materialMaster`);
+export const EditMaterialNew = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/materialMaster/${id}`, data);

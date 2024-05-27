@@ -24,6 +24,8 @@ export const Pagination = ({
         totalCount
     );
 
+    console.log(paginationRange[paginationRange.length - 1], currentPage)
+
     const onNext = () => {
         onChangePage(currentPage + 1);
     }
@@ -55,7 +57,7 @@ export const Pagination = ({
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-end">
                 <div>
                 <nav className="isolate gap-2 inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                    <button onClick={() => onPrevious()} className="relative cursor-pointer inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
+                    <button onClick={() => currentPage !== 1 ? onPrevious() : false } className="relative cursor-pointer inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
                         <span className="sr-only">Previous</span>
 						<ChevronLeft />
                     </button>
@@ -90,7 +92,7 @@ export const Pagination = ({
                             )
                         })
                     }
-                    <button onClick={() => onNext()} className="relative cursor-pointer inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
+                    <button onClick={() => paginationRange[paginationRange.length - 1] !== currentPage ? onNext() : false} className="relative cursor-pointer inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
                         <span className="sr-only">Next</span>
                         <ChevronRight />
                     </button>

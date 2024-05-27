@@ -639,6 +639,19 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "register-new-user",
+				link: "/hrd-ga/register-new-user",
+				title: "Register New User",
+
+				subMenu: null,
+			},
+			{
+				id: "time-sheet",
+				link: "/hrd-ga/time-sheet",
+				title: "Time Sheet",
+				subMenu: null,
+			},
+			{
 				id: "sallary-overtime",
 				link: "/hrd-ga/sallary-overtime",
 				title: "Sallary & Overtime",

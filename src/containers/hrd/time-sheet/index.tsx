@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,53 +7,47 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
-import { User, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateCustomer } from "./formCreate";
-import { ViewCustomer } from "./view";
-import { FormEditCustomer } from "./fromEdit";
-import { GetCustomer, SearchCustomer, DeleteCustomer, DownloadCustomerCsv } from "../../../services";
-import { toast } from "react-toastify";
-import { removeToken, getRole, getPosition } from "../../../configs/session";
-import { cekDivisiMarketing, changeDivisi } from "../../../utils"
+import { Clock, Eye, Edit, Trash2 } from "react-feather";
+// import { FormCreateTimeSheet } from "./formCreate";
+// import { FormEditTimeSheet } from "./formEdit";
+// import { ViewTimeSheet } from "./view";
+import { GetTimeSheet, SearchTimeSheet } from "../../../services";
+import { removeToken } from "../../../configs/session";
+import { changeDivisi, formatRupiah } from "../../../utils/index";
+import moment from "moment";
 
-export const Customer = () => {
-
+export const TimeSheetHrd = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isDropdown, setIsDropdown] = useState<any>(false);
 	const [countData, setCountData] = useState<number>(0);
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
-	const [divisiMarketing, setDivisiMarketing] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [showCreate, setShowCreate] = useState<boolean>(true);
 	const headerTabel = [
-		// { name: "No" },
-		{ name: "Customer Name" },
-		{ name: "Phone" },
-		{ name: "Email" },
+		{ name: "Date" },
+		{ name: "Type" },
+		{ name: "Job No" },
+		{ name: "Process" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		let position = getPosition()
-		if(position === 'Director' || position === 'Manager'){
-			setIsDropdown(true)
-		}
-		if(divisiMarketing === ""){
-			setDivisiMarketing(cekDivisiMarketing())
-			getCustomer(page, perPage, cekDivisiMarketing());
-		}else{
-			getCustomer(page, perPage, divisiMarketing);
+		getTimeSheet(page, perPage);
+		let route = router.pathname;
+		let arrayRouter = route.split("/");
+		if (arrayRouter[1] === "marketing") {
+			setShowCreate(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [divisiMarketing]);
+	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -62,39 +56,58 @@ export const Customer = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			let divisi = cekDivisiMarketing()
-			getCustomer(page, perPage, divisi);
+			getTimeSheet(page, perPage);
 		}
 	};
 
-	const getCustomer = async (page: number, perpage: number, divisi: string) => {
+	const getTimeSheet = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCustomer(page, perpage, divisi);
+			const response = await GetTimeSheet(page, perpage, '');
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchCustomer = async (
+	const changeTimeSheet = async (data: string) => {
+		setIsLoading(true);
+		try {
+			const response = await GetTimeSheet(page, perPage, data);
+			if (response.data) {
+				setData(response.data.result);
+				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil(response.data.totalData / perPage));
+			}
+		} catch (error: any) {
+			if (error.response.data.login) {
+				setData([]);
+			} else {
+				removeToken();
+				router.push("/");
+			}
+		}
+		setIsLoading(false);
+	};
+
+	const searchTimeSheet = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCustomer(page, limit, search, cekDivisiMarketing());
+			const response = await SearchTimeSheet(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -104,62 +117,77 @@ export const Customer = () => {
 		setIsLoading(false);
 	};
 
-	const deleteCustomer = async (id: string) => {
-		try {
-			const response = await DeleteCustomer(id);
-			if(response.data){
-				toast.success("Delete Customer Success", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				let divisi = cekDivisiMarketing()
-				getCustomer(1, 10, divisi);
-			}
-		} catch (error) {
-			toast.error("Delete Customer Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
-		}
+	const deleteMaterialStock = async (id: string) => {
+		// try {
+		// 	const response = await DeleteCustomer(id);
+		// 	if(response.data){
+		// 		toast.success("Delete Customer Success", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 		getMaterialStok(1, 10);
+		// 	}
+		// } catch (error) {
+		// 	toast.error("Delete Customer Failed", {
+		// 		position: "top-center",
+		// 		autoClose: 5000,
+		// 		hideProgressBar: true,
+		// 		closeOnClick: true,
+		// 		pauseOnHover: true,
+		// 		draggable: true,
+		// 		progress: undefined,
+		// 		theme: "colored",
+		// 	});
+		// }
 		setIsModal(false);
 	};
 
-	const changeDivisi = (data: string) => {
-		setDivisiMarketing(data)
+	const showJobNo = (data: any, type: string) => {
+		let text: string = ""
+		if(type === 'jobno'){
+			data.map((res: any, i: number) => {
+				if(i === 0){
+					text = `- `+res.job
+				}else{
+					text = text +` \r\n ` + `- `+res.job 
+				}
+			})
+			return text
+		}else{
+			data.map((res: any, i: number) => {
+				if(i === 0){
+					text = `- `+res.job_description
+				}else{
+					text = text +` \r\n ` + `- `+res.job_description 
+				}
+			})
+			return text
+		}
 	}
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Customer'
+				title='Time Sheet'
 				total={countData}
-				icon={<User className='w-[36px] h-[36px]' />}
+				icon={<Clock className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Customer'
-				print={true}
-				marketing={isDropdown}
+				title='Time Sheet'
+				print={showCreate}
+				marketing={false}
+				timeSheet={true}
+				changeTimeSheet={changeTimeSheet}
 				changeDivisi={changeDivisi}
-				timeSheet={false}
-				changeTimeSheet={changeDivisi}
 				showModal={showModal}
-				search={searchCustomer}
+				search={searchTimeSheet}
 			>
-				{/* <a href={DownloadCustomerCsv}>
-					kslas
-				</a> */}
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -202,13 +230,18 @@ export const Customer = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='p-1'>{res.name}</td>
-									<td className='whitespace-nowrap p-1'>
-										{res.contact.length > 0
-											? `+62${res.contact[0].phone}`
-											: "-"}
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ moment(res.date).format('DD-MM-YY') }
 									</td>
-									<td className='whitespace-nowrap p-1'>{res.email}</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.type_timesheet === 'worktime' ? 'Work Time Sheet' : 'Over Time Report'}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{showJobNo(res.time_sheet_add, 'jobno')}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+									{showJobNo(res.time_sheet_add, 'process')}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -229,15 +262,6 @@ export const Customer = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
 										</div>
 									</td>
 								</tr>
@@ -245,20 +269,18 @@ export const Customer = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage}
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getCustomer(value, perPage, divisiMarketing);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getTimeSheet(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -266,21 +288,25 @@ export const Customer = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteCustomer}
+					onDelete={deleteMaterialStock}
 				/>
 			) : (
 				<Modal
-					title='Customer'
+					title='Time Sheet'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewCustomer dataSelected={dataSelected} />
-					) : modalContent === "add" ? (
-						<FormCreateCustomer content={modalContent} showModal={showModal} />
+                        <></>
+						// <ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
+					) : 
+					modalContent === "add" ? (
+						<></>
+                        // <FormCreateTimeSheet content={modalContent} showModal={showModal} />
 					) : (
-						<FormEditCustomer content={modalContent} showModal={showModal} dataCustomer={dataSelected}/>
+                        <></>
+						// <FormEditTimeSheet content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}
