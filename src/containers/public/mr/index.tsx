@@ -232,9 +232,11 @@ export const Mr = () => {
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
 									key={i}
 								>
-									<td className={`whitespace-nowrap p-1 text-center ${bgMr(
-										res.statusMr
-									)}`}>
+									<td
+										className={`whitespace-nowrap p-1 text-center ${bgMr(
+											res.statusMr
+										)}`}
+									>
 										{res.no_mr}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
@@ -269,17 +271,19 @@ export const Mr = () => {
 													>
 														<Edit color='white' />
 													</Button>
-													{/* <Button
-															className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-															onClick={() => {
-																setDataSelected(res);
-																showModal(true, "delete", false);
-															}}
-														>
-															<Trash2 color='white' />
-														</Button> */}
 												</>
 											) : null}
+											{ res.statusMr === 'Request' ? (
+												<Button
+													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "delete", false);
+													}}
+												>
+													<Trash2 color='white' />
+												</Button>
+											) : null }
 										</div>
 									</td>
 								</tr>

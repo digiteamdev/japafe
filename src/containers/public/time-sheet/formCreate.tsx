@@ -293,9 +293,9 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														id={`time_sheet_add.${i}.actual_finish`}
 														label='Finish'
 														showTimeSelect={true}
-														showTimeSelectOnly={true}
+														showTimeSelectOnly={false}
 														value={res.actual_finish}
-														dateFormat='HH:mm'
+														dateFormat='dd/MM/yyyy, HH:mm'
 														onChange={(value: any) => {
 															let start = moment(new Date(res.actual_start));
 															let finish = moment(new Date(value));

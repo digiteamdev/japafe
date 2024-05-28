@@ -8,12 +8,15 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	Section,
+	InputSelect,
+	InputDate,
 } from "../../../components";
-import { Clock, Eye, Edit, Trash2 } from "react-feather";
+import { Clock, Eye, Edit, Trash2, Check, Printer } from "react-feather";
 // import { FormCreateTimeSheet } from "./formCreate";
 // import { FormEditTimeSheet } from "./formEdit";
 // import { ViewTimeSheet } from "./view";
-import { GetTimeSheet, SearchTimeSheet } from "../../../services";
+import { GetTimeSheetHrd, SearchTimeSheet } from "../../../services";
 import { removeToken } from "../../../configs/session";
 import { changeDivisi, formatRupiah } from "../../../utils/index";
 import moment from "moment";
@@ -26,6 +29,10 @@ export const TimeSheetHrd = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [type, setType] = useState<string>("");
+	const [userId, setUserId] = useState<string>("");
+	const [dateStar, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -34,20 +41,19 @@ export const TimeSheetHrd = () => {
 	const headerTabel = [
 		{ name: "Date" },
 		{ name: "Type" },
-		{ name: "Job No" },
-		{ name: "Process" },
+		{ name: "employee" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getTimeSheet(page, perPage);
-		let route = router.pathname;
-		let arrayRouter = route.split("/");
-		if (arrayRouter[1] === "marketing") {
-			setShowCreate(false);
-		}
+		getTimeSheet(page, perPage, type, userId);
+		// let route = router.pathname;
+		// let arrayRouter = route.split("/");
+		// if (arrayRouter[1] === "marketing") {
+		// 	setShowCreate(false);
+		// }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [type]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -56,14 +62,26 @@ export const TimeSheetHrd = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getTimeSheet(page, perPage);
+			getTimeSheet(page, perPage, type, userId);
 		}
 	};
 
-	const getTimeSheet = async (page: number, perpage: number) => {
+	const getTimeSheet = async (
+		page: number,
+		perpage: number,
+		type: string,
+		userId: string
+	) => {
 		setIsLoading(true);
 		try {
-			const response = await GetTimeSheet(page, perpage, '');
+			const response = await GetTimeSheetHrd(
+				page,
+				perpage,
+				type,
+				userId,
+				"",
+				""
+			);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -73,31 +91,32 @@ export const TimeSheetHrd = () => {
 			if (error.response.data.login) {
 				setData([]);
 			} else {
-				removeToken();
-				router.push("/");
+				// removeToken();
+				// router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
 	const changeTimeSheet = async (data: string) => {
-		setIsLoading(true);
-		try {
-			const response = await GetTimeSheet(page, perPage, data);
-			if (response.data) {
-				setData(response.data.result);
-				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil(response.data.totalData / perPage));
-			}
-		} catch (error: any) {
-			if (error.response.data.login) {
-				setData([]);
-			} else {
-				removeToken();
-				router.push("/");
-			}
-		}
-		setIsLoading(false);
+		setType(data);
+		// setIsLoading(true);
+		// try {
+		// 	const response = await GetTimeSheetHrd(page, perPage, data, '', '','');
+		// 	if (response.data) {
+		// 		setData(response.data.result);
+		// 		setCountData(response.data.totalData);
+		// 		setTotalPage(Math.ceil(response.data.totalData / perPage));
+		// 	}
+		// } catch (error: any) {
+		// 	if (error.response.data.login) {
+		// 		setData([]);
+		// 	} else {
+		// 		removeToken();
+		// 		router.push("/");
+		// 	}
+		// }
+		// setIsLoading(false);
 	};
 
 	const searchTimeSheet = async (
@@ -148,29 +167,6 @@ export const TimeSheetHrd = () => {
 		setIsModal(false);
 	};
 
-	const showJobNo = (data: any, type: string) => {
-		let text: string = ""
-		if(type === 'jobno'){
-			data.map((res: any, i: number) => {
-				if(i === 0){
-					text = `- `+res.job
-				}else{
-					text = text +` \r\n ` + `- `+res.job 
-				}
-			})
-			return text
-		}else{
-			data.map((res: any, i: number) => {
-				if(i === 0){
-					text = `- `+res.job_description
-				}else{
-					text = text +` \r\n ` + `- `+res.job_description 
-				}
-			})
-			return text
-		}
-	}
-
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -182,12 +178,88 @@ export const TimeSheetHrd = () => {
 				title='Time Sheet'
 				print={showCreate}
 				marketing={false}
-				timeSheet={true}
+				timeSheet={false}
 				changeTimeSheet={changeTimeSheet}
 				changeDivisi={changeDivisi}
 				showModal={showModal}
 				search={searchTimeSheet}
 			>
+				{/* <Section className='grid sm:grid-cols-1 md:grid-cols-5 gap-2 my-2'>
+					<div className='w-full'>
+						<InputSelect
+							id='type'
+							name='type'
+							placeholder='Type'
+							label='Type'
+							onChange={(event: any) => {
+								setType(event.target.value);
+							}}
+							required={true}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+						>
+							<option value='worktime'>Work Time</option>
+							<option value='overtime'>Over Time</option>
+						</InputSelect>
+					</div>
+					<div className='w-full'>
+						<InputSelect
+							id='type'
+							name='type'
+							placeholder='Type'
+							label='Type'
+							onChange={(event: any) => {
+								setType(event.target.value);
+							}}
+							required={true}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+						>
+							<option value='worktime'>Work Time</option>
+							<option value='overtime'>Over Time</option>
+						</InputSelect>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={new Date(dateStar)}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={new Date(dateFinish)}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={() => {
+							}}
+						>
+							<Check color='white' className="mx-auto" />
+						</Button>
+						<Button
+							className='bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={() => {
+							}}
+						>
+							<Printer color='white' className="mx-auto"/>
+						</Button>
+					</div>
+				</Section> */}
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -225,22 +297,22 @@ export const TimeSheetHrd = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res);
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ moment(res.date).format('DD-MM-YY') }
+										{moment(res.date).format("DD-MM-YY")}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.type_timesheet === 'worktime' ? 'Work Time Sheet' : 'Over Time Report'}
+										{res.type_timesheet === "worktime"
+											? "Work Time Sheet"
+											: "Over Time Report"}
 									</td>
-									<td className='whitespace-pre-line p-1'>
-										{showJobNo(res.time_sheet_add, 'jobno')}
-									</td>
-									<td className='whitespace-pre-line p-1'>
-									{showJobNo(res.time_sheet_add, 'process')}
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.employee.employee_name}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -253,15 +325,15 @@ export const TimeSheetHrd = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
-													showModal(true,'edit', false);
+													showModal(true, "edit", false);
 												}}
 											>
 												<Edit color='white' />
-											</Button>
+											</Button> */}
 										</div>
 									</td>
 								</tr>
@@ -277,7 +349,7 @@ export const TimeSheetHrd = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getTimeSheet(value, perPage);
+							getTimeSheet(value, perPage, type, userId);
 						}}
 					/>
 				) : null}
@@ -298,14 +370,13 @@ export const TimeSheetHrd = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
-					) : 
+						<></>
+					) : // <ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
 					modalContent === "add" ? (
 						<></>
-                        // <FormCreateTimeSheet content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
+						// <FormCreateTimeSheet content={modalContent} showModal={showModal} />
+						<></>
 						// <FormEditTimeSheet content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>

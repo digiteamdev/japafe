@@ -13,10 +13,11 @@ import { Clock, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateTimeSheet } from "./formCreate";
 import { FormEditTimeSheet } from "./formEdit";
 import { ViewTimeSheet } from "./view";
-import { GetTimeSheet, SearchTimeSheet } from "../../../services";
-import { removeToken } from "../../../configs/session";
+import { GetTimeSheet, SearchTimeSheet, DeleteTimeSheet } from "../../../services";
+import { removeToken, getIdUser } from "../../../configs/session";
 import { changeDivisi, formatRupiah } from "../../../utils/index";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 export const TimeSheet = () => {
 	const router = useRouter();
@@ -27,6 +28,7 @@ export const TimeSheet = () => {
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [typeSheet, setTypeSheet] = useState<string>("");
+	const [userId, setUserId] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -41,6 +43,10 @@ export const TimeSheet = () => {
 	];
 
 	useEffect(() => {
+		let userId = getIdUser()
+		if(userId){
+			setUserId(userId)
+		}
 		getTimeSheet(page, perPage);
 		let route = router.pathname;
 		let arrayRouter = route.split("/");
@@ -118,34 +124,34 @@ export const TimeSheet = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMaterialStock = async (id: string) => {
-		// try {
-		// 	const response = await DeleteCustomer(id);
-		// 	if(response.data){
-		// 		toast.success("Delete Customer Success", {
-		// 			position: "top-center",
-		// 			autoClose: 5000,
-		// 			hideProgressBar: true,
-		// 			closeOnClick: true,
-		// 			pauseOnHover: true,
-		// 			draggable: true,
-		// 			progress: undefined,
-		// 			theme: "colored",
-		// 		});
-		// 		getMaterialStok(1, 10);
-		// 	}
-		// } catch (error) {
-		// 	toast.error("Delete Customer Failed", {
-		// 		position: "top-center",
-		// 		autoClose: 5000,
-		// 		hideProgressBar: true,
-		// 		closeOnClick: true,
-		// 		pauseOnHover: true,
-		// 		draggable: true,
-		// 		progress: undefined,
-		// 		theme: "colored",
-		// 	});
-		// }
+	const deleteTimeSheet = async (id: string) => {
+		try {
+			const response = await DeleteTimeSheet(id);
+			if(response.data){
+				toast.success("Delete Time Sheet Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				getTimeSheet(page, perPage);
+			}
+		} catch (error) {
+			toast.error("Delete Time Sheet Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
 		setIsModal(false);
 	};
 
@@ -263,6 +269,17 @@ export const TimeSheet = () => {
 											>
 												<Edit color='white' />
 											</Button>
+											{ res.userId === userId ? (
+												<Button
+													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "delete", false);
+													}}
+												>
+													<Trash2 color='white' />
+												</Button>
+											) : null }
 										</div>
 									</td>
 								</tr>
@@ -289,7 +306,7 @@ export const TimeSheet = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMaterialStock}
+					onDelete={deleteTimeSheet}
 				/>
 			) : (
 				<Modal

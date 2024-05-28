@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,7 +7,7 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSr } from "./formCreate";
@@ -21,7 +21,6 @@ import { content } from "html2canvas/dist/types/css/property-descriptors/content
 import { changeDivisi } from "@/src/utils";
 
 export const Sr = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,14 +30,14 @@ export const Sr = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "SR No" },
 		{ name: "Job No" },
-        { name: "SR Date" },
-        { name: "Request By" },
-        { name: "Action" }
+		{ name: "SR Date" },
+		{ name: "Request By" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
@@ -64,14 +63,14 @@ export const Sr = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -97,7 +96,7 @@ export const Sr = () => {
 	const deleteSr = async (id: string) => {
 		try {
 			const response = await DeleteSr(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -233,10 +232,22 @@ export const Sr = () => {
 									className={`border-b transition duration-300 ease-in-out text-md `}
 									key={i}
 								>
-									<td className={`whitespace-nowrap p-1 text-center ${bgSr(res.statusSr)}`}>{ res.no_sr }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.date_sr).format('DD-MMMM-YYYY') }</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>{ res.user.username }</td>
+									<td
+										className={`whitespace-nowrap p-1 text-center ${bgSr(
+											res.statusSr
+										)}`}
+									>
+										{res.no_sr}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.date_sr).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.username}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -248,21 +259,31 @@ export const Sr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{
-												res.status_spv === "valid" || res.status_manager === "valid" ? null : (
-													<>
-														<Button
-															className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-															onClick={() => {
-																setDataSelected(res);
-																showModal(true,'edit', false);
-															}}
-														>
-															<Edit color='white' />
-														</Button>
-													</>
-												) 
-											}
+											{res.status_spv === "valid" ||
+											res.status_manager === "valid" ? null : (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "edit", false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+												</>
+											)}
+											{res.statusSr === "Request" ? (
+												<Button
+													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+													onClick={() => {
+														setDataSelected(res);
+														showModal(true, "delete", false);
+													}}
+												>
+													<Trash2 color='white' />
+												</Button>
+											) : null}
 										</div>
 									</td>
 								</tr>
@@ -270,20 +291,18 @@ export const Sr = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getSr(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getSr(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -301,11 +320,19 @@ export const Sr = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewSR dataSelected={dataSelected} content={modalContent} showModal={showModal}/>
+						<ViewSR
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreateSr content={modalContent} showModal={showModal} />
+						<FormCreateSr content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditSr
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}
