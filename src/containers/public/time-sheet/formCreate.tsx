@@ -270,10 +270,12 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 													<InputDate
 														id={`time_sheet_add.${i}.actual_start`}
 														label='Start'
+														minDate={values.date}
+														maxDate={values.date}
 														showTimeSelect={true}
-														showTimeSelectOnly={true}
+														showTimeSelectOnly={false}
 														value={res.actual_start}
-														dateFormat='HH:mm'
+														dateFormat='dd/MM/yyyy, HH:mm'
 														onChange={(value: any) => {
 															let start = moment(new Date(value));
 															let finish = moment(new Date(res.actual_finish));
@@ -292,6 +294,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 													<InputDate
 														id={`time_sheet_add.${i}.actual_finish`}
 														label='Finish'
+														minDate={values.date}
 														showTimeSelect={true}
 														showTimeSelectOnly={false}
 														value={res.actual_finish}
