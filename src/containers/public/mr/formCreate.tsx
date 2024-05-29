@@ -147,7 +147,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${res.srimg.timeschedule.wor.job_no} - ${res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}`,
+						label: `${res.job_no} - ${res.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
@@ -498,8 +498,8 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 											placeholder='Job No'
 											label='Job No'
 											onChange={(e: any) => {
-												let list_detail: any = [];
-												if (e.value.srimg === undefined) {
+												// let list_detail: any = [];
+												if (e.value.job_no === undefined) {
 													setWorID("");
 													setBomId(null);
 													setJobNo("Internal");
@@ -515,23 +515,37 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 														},
 													]);
 												} else {
-													e.value.bom_detail.map((res: any) => {
-														list_detail.push({
-															bomId: res.id,
-															material: res.materialId,
-															satuan: res.Material_Master.satuan,
-															note: res.dimensi,
-															qty: res.qty,
-															detail: {
-																label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
-																value: res.Material_Master,
-															},
-														});
-													});
-													setFieldValue("detailMr", list_detail);
-													setWorID(e.value.srimg.timeschedule.wor.id);
-													setBomId(e.value.bom_detail[0].bomId);
-													setJobNo(e.value.srimg.timeschedule.wor.job_no);
+													setWorID(e.value.id);
+													setBomId(null);
+													setJobNo(e.value.job_no);
+													setFieldValue("detailMr", [
+														{
+															bomId: "",
+															material: "",
+															satuan: "",
+															materialStockId: "",
+															note: "",
+															qty: "",
+															detail: [],
+														},
+													]);
+													// e.value.bom_detail.map((res: any) => {
+													// 	list_detail.push({
+													// 		bomId: res.id,
+													// 		material: res.materialId,
+													// 		satuan: res.Material_Master.satuan,
+													// 		note: res.dimensi,
+													// 		qty: res.qty,
+													// 		detail: {
+													// 			label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
+													// 			value: res.Material_Master,
+													// 		},
+													// 	});
+													// });
+													// setFieldValue("detailMr", list_detail);
+													// setWorID(e.value.srimg.timeschedule.wor.id);
+													// setBomId(e.value.bom_detail[0].bomId);
+													// setJobNo(e.value.srimg.timeschedule.wor.job_no);
 												}
 												setIsMaterial(true);
 											}}

@@ -109,7 +109,7 @@ export const PurchasePO = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMrPo(1, 10, "PR");
+				getMrPo(1, 10, "PO");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Order Request Failed", {

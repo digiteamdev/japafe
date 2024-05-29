@@ -85,7 +85,6 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 		setIsLoading(true);
 		let listDetail: any = [];
 		payload.SrDetail.map((res: any) => {
-			console.log("asas",res)
 			listDetail.push({
 				id: res.id,
 				srappr: res.srappr,
@@ -129,8 +128,6 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-
-	console.log(dataSelected)
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>

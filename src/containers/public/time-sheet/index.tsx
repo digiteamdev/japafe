@@ -38,7 +38,7 @@ export const TimeSheet = () => {
 		{ name: "Date" },
 		{ name: "Type" },
 		{ name: "Job No" },
-		{ name: "Process" },
+		// { name: "Process" },
 		{ name: "Action" },
 	];
 
@@ -238,7 +238,7 @@ export const TimeSheet = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ moment(res.date).format('DD-MM-YY') }
+										{ moment(res.date).format('DD-MM-yyyy') }
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{res.type_timesheet === 'worktime' ? 'Work Time Sheet' : 'Over Time Report'}
@@ -246,9 +246,9 @@ export const TimeSheet = () => {
 									<td className='whitespace-pre-line p-1'>
 										{showJobNo(res.time_sheet_add, 'jobno')}
 									</td>
-									<td className='whitespace-pre-line p-1'>
+									{/* <td className='whitespace-pre-line p-1'>
 									{showJobNo(res.time_sheet_add, 'process')}
-									</td>
+									</td> */}
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button

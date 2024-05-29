@@ -93,7 +93,7 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 	const Total = (detail: any) => {
 		let jumlahTotal: any = 0;
 		detail.map((res: any) => {
-			jumlahTotal = jumlahTotal + res.price * res.qty;
+			jumlahTotal = (jumlahTotal + res.price * res.qty) - res.disc;
 		});
 		return jumlahTotal.toString();
 	};
@@ -621,18 +621,25 @@ export const ViewSoSR = ({ dataSelected, content, showModal }: props) => {
 															type='number'
 															value={res.percent}
 															onChange={(e: any) => {
-																setFieldValue(
-																	`termOfPayment.${i}.percent`,
-																	e.target.value
-																);
-																setFieldValue(
-																	`termOfPayment.${i}.price`,
-																	totalTermOfPayment(
-																		e.target.value,
-																		values.detailMr,
-																		values.tax
-																	)
-																);
+																if(e.target.value < 0 || e.target.value > 100){
+																	setFieldValue(
+																		`termOfPayment.${i}.percent`,
+																		res.percent
+																	);
+																}else{
+																	setFieldValue(
+																		`termOfPayment.${i}.percent`,
+																		e.target.value
+																	);
+																	setFieldValue(
+																		`termOfPayment.${i}.price`,
+																		totalTermOfPayment(
+																			e.target.value,
+																			values.detailMr,
+																			values.tax
+																		)
+																	);
+																}
 															}}
 															required={true}
 															withLabel={true}

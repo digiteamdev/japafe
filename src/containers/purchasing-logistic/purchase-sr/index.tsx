@@ -84,7 +84,7 @@ export const PurchaseSR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseSR(page, limit, search, 'PSR');
+			const response = await SearchPurchaseSR(page, limit, search, 'SO');
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -108,7 +108,7 @@ export const PurchaseSR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseSR(1, 10, 'PSR');
+				getPurchaseSR(1, 10, 'SO');
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -191,7 +191,6 @@ export const PurchaseSR = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -259,7 +258,7 @@ export const PurchaseSR = () => {
 							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getPurchaseSR(value, perPage, 'PSR');
+								getPurchaseSR(value, perPage, 'SO');
 							}}
 						/>
 					) : null

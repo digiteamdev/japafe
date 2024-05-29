@@ -90,7 +90,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 	const Total = (detail:any) => {
 		let jumlahTotal: any = 0;
 		detail.map((res: any) => {
-			jumlahTotal = jumlahTotal + res.price * res.qty;
+			jumlahTotal = (jumlahTotal + res.price * res.qty) - res.disc;
 		});
 		return jumlahTotal.toString();
 	};
@@ -604,14 +604,21 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 															type='number'
 															value={res.percent}
 															onChange={(e: any) => {
-																setFieldValue(
-																	`termOfPayment.${i}.percent`,
-																	e.target.value
-																);
-																setFieldValue(
-																`termOfPayment.${i}.price`,
-																totalTermOfPayment(e.target.value, values.detailMr, values.tax)
-																);
+																if(e.target.value < 0 || e.target.value > 100){
+																	setFieldValue(
+																		`termOfPayment.${i}.percent`,
+																		res.percent
+																	);
+																}else{
+																	setFieldValue(
+																		`termOfPayment.${i}.percent`,
+																		e.target.value
+																	);
+																	setFieldValue(
+																	`termOfPayment.${i}.price`,
+																	totalTermOfPayment(e.target.value, values.detailMr, values.tax)
+																	);
+																}
 															}}
 															required={true}
 															withLabel={true}
@@ -781,11 +788,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 								{values.detailMr.length > 0 ? (
 									<div className='w-full'>
 										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'>
+											<div className='w-full col-span-5'>
 												<p className='text-xl mt-4 text-end'>Total</p>
 											</div>
 											<div className='w-full'>
@@ -803,11 +806,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 											</div>
 										</Section>
 										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'>
+											<div className='w-full col-span-5'>
 												<p className='text-xl mt-4 text-end'>PPN</p>
 											</div>
 											<div className='w-full'>
@@ -825,11 +824,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 											</div>
 										</Section>
 										<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'></div>
-											<div className='w-full'>
+											<div className='w-full col-span-5'>
 												<p className='text-xl mt-4 text-end'>Grand Total</p>
 											</div>
 											<div className='w-full'>

@@ -106,11 +106,13 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 			const response = await GetAllDispatch();
 			if (response) {
 				response.data.result.map((res: any) => {
-					datasWor.push({
-						value: res,
-						internal: false,
-						label: `${res.srimg.timeschedule.wor.job_no} - ${res.srimg.timeschedule.wor.customerPo.quotations.Customer.name}`,
-					});
+					if(res.job_no){
+						datasWor.push({
+							value: res,
+							internal: false,
+							label: `${res.job_no} - ${res.customerPo.quotations.Customer.name}`,
+						});
+					}
 				});
 				setListWor(datasWor);
 			}
@@ -413,30 +415,39 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 													});
 													setIsOperasional(true);
 												} else {
-													setJobNo(e.value.srimg.timeschedule.wor.job_no);
-													setSubject(e.value.srimg.timeschedule.wor.subject);
+													setJobNo(e.value.job_no);
+													setSubject(e.value.subject);
 													setCustomer(
-														e.value.srimg.timeschedule.wor.customerPo.quotations
+														e.value.customerPo.quotations
 															.Customer.name
 													);
-													e.value.dispatchDetail.map((res: any) => {
-														if(res.aktivitas.so){
-															console.log(res)
-															list_service.push({
-																dispacthdetailId: res.id,
-																workCenterId: null,
-																description: res.aktivitas.work_scope_item.item,
-																part: null,
-																unit: res.aktivitas.work_scope_item.unit,
-																qty: res.aktivitas.work_scope_item.qty,
-																note: "",
-															})
-														}
-													})
-													setFieldValue("dispacthIDS", e.value.id);
+													// e.value.dispatchDetail.map((res: any) => {
+													// 	if(res.aktivitas.so){
+													// 		console.log(res)
+													// 		list_service.push({
+													// 			dispacthdetailId: res.id,
+													// 			workCenterId: null,
+													// 			description: res.aktivitas.work_scope_item.item,
+													// 			part: null,
+													// 			unit: res.aktivitas.work_scope_item.unit,
+													// 			qty: res.aktivitas.work_scope_item.qty,
+													// 			note: "",
+													// 		})
+													// 	}
+													// })
+													// setFieldValue("dispacthIDS", e.value.id);
+													list_service.push({
+														dispacthdetailId: null,
+														workCenterId: "",
+														description: "",
+														part: "",
+														unit: "",
+														qty: 0,
+														note: "",
+													});
 													setFieldValue(
 														"worId",
-														e.value.srimg.timeschedule.worId
+														e.value.id
 													);
 													setListPartDispatch(list_part);
 													setIsService(true);

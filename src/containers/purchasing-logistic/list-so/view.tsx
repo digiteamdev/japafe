@@ -12,7 +12,7 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
 	const Total = (detail: any) => {
 		let jumlahTotal: any = 0;
 		detail.map((res: any) => {
-			jumlahTotal = jumlahTotal + res.price * res.qty;
+			jumlahTotal = (jumlahTotal + res.price * res.qty) - res.disc;
 		});
 		return jumlahTotal.toString();
 	};

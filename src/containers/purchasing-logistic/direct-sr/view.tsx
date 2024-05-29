@@ -210,6 +210,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 													<th className='text-center'>Qty</th>
 													<th className='text-center'>Supplier</th>
 													<th className='text-center'>Price</th>
+													<th className='text-center'>Disc</th>
 													<th className='text-center'>Total Price</th>
 												</tr>
 											</thead>
@@ -246,7 +247,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																		setFieldValue(`detailMr.${i}.qtyAppr`, qty);
 																		setFieldValue(
 																			`detailMr.${i}.total`,
-																			result.price * qty
+																			(result.price * qty) - result.disc
 																		);
 																	}}
 																	disabled={false}
@@ -256,7 +257,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
-															<td className='pr-1 w-[35%]'>
+															<td className='pr-1 w-[20%]'>
 																<InputSelectSearch
 																	datas={listSupplier}
 																	id={`detailMr.${i}.supId`}
@@ -291,11 +292,36 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																		setFieldValue(`detailMr.${i}.price`, price);
 																		setFieldValue(
 																			`detailMr.${i}.total`,
-																			price * result.qtyAppr
+																			(price * result.qtyAppr) - result.disc
 																		);
 																	}}
 																	disabled={false}
 																	value={formatRupiah(result.price.toString())}
+																	required={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
+																/>
+															</td>
+															<td className='pr-1 w-[15%]'>
+																<Input
+																	id={`detailMr.${i}.disc`}
+																	name={`detailMr.${i}.disc`}
+																	placeholder='Discount'
+																	label='Discount'
+																	type='text'
+																	pattern='\d*'
+																	onChange={(e: any) => {
+																		let disc: number = e.target.value
+																			.toString()
+																			.replaceAll(".", "");
+																		setFieldValue(`detailMr.${i}.disc`, disc);
+																		setFieldValue(
+																			`detailMr.${i}.total`,
+																			(result.price * result.qtyAppr) - disc
+																		);
+																	}}
+																	disabled={false}
+																	value={formatRupiah(result.disc.toString())}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'

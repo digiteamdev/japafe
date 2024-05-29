@@ -158,6 +158,17 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const totalPaid = (data: any) => {
 		let totalPaidPurchase: number = 0;
 		data.detailMr.map((res: any) => {
+			totalPaidPurchase = (totalPaidPurchase + res.total) + res.disc;
+		});
+		data.SrDetail.map((res: any) => {
+			totalPaidPurchase = (totalPaidPurchase + res.total) + res.disc;
+		});
+		return totalPaidPurchase;
+	};
+
+	const grandTotalPaid = (data: any) => {
+		let totalPaidPurchase: number = 0;
+		data.detailMr.map((res: any) => {
 			totalPaidPurchase = totalPaidPurchase + res.total;
 		});
 		data.SrDetail.map((res: any) => {
@@ -339,6 +350,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
 												(res: any) => {
+													console.log(res)
 													listJournal.push({
 														coa: { label: res.coa.coa_name, value: res.coa },
 														coa_id: res.coa_id,
@@ -502,7 +514,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setIsDirrect(false);
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
-											setTotalAmount(totalPaid(e.value));
+											setTotalAmount(grandTotalPaid(e.value));
 											setFieldValue("account_name", "");
 											setFieldValue("bank_name", "");
 											setFieldValue("rekening", "");
@@ -563,7 +575,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}  else if (e.type === "purchase") {
-												setDisc(0);
+												discAmount(e.value)
+												// setDisc(0);
 												setPpn(0);
 												setPph(0);
 												setFieldValue("status_payment", "Cash");

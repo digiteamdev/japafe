@@ -83,7 +83,7 @@ export const PurchaseMR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseMR(page, limit, search, 'PR');
+			const response = await SearchPurchaseMR(page, limit, search, 'PO');
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -107,7 +107,7 @@ export const PurchaseMR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10, 'PR');
+				getPurchaseMR(1, 10, 'PO');
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -258,7 +258,7 @@ export const PurchaseMR = () => {
 							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getPurchaseMR(value, perPage, 'PR');
+								getPurchaseMR(value, perPage, 'PO');
 							}}
 						/>
 					) : null
