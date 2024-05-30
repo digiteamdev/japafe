@@ -65,7 +65,6 @@ export const ApprovalMr = () => {
 		setIsLoading(true);
 		try {
 			const response = await GetMRForApproval();
-			console.log(response);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);

@@ -54,7 +54,7 @@ export const PurchaseMR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage, 'PR');
+			getPurchaseMR(page, perPage, 'PO');
 		}
 	};
 
@@ -190,7 +190,6 @@ export const PurchaseMR = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'

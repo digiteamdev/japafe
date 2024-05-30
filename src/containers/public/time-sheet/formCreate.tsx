@@ -219,7 +219,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 										<div key={i} className=''>
 											<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 												<div className='w-full'>
-													<Input
+													<InputArea
 														id={`time_sheet_add.${i}.job`}
 														name={`time_sheet_add.${i}.job`}
 														placeholder='Job No'
@@ -228,13 +228,14 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														value={res.job}
 														onChange={handleChange}
 														disabled={false}
+														row={3}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
 												<div className='w-full'>
-													<Input
+													<InputArea
 														id={`time_sheet_add.${i}.part_name`}
 														name={`time_sheet_add.${i}.part_name`}
 														placeholder='Part Name'
@@ -243,6 +244,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														value={res.part_name}
 														onChange={handleChange}
 														disabled={false}
+														row={3}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

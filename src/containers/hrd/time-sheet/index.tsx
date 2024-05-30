@@ -11,12 +11,17 @@ import {
 	Section,
 	InputSelect,
 	InputDate,
+	InputSelectSearch,
 } from "../../../components";
 import { Clock, Eye, Edit, Trash2, Check, Printer } from "react-feather";
 // import { FormCreateTimeSheet } from "./formCreate";
 // import { FormEditTimeSheet } from "./formEdit";
 // import { ViewTimeSheet } from "./view";
-import { GetTimeSheetHrd, SearchTimeSheet } from "../../../services";
+import {
+	GetTimeSheetHrd,
+	GetAllEmploye,
+	SearchTimeSheet,
+} from "../../../services";
 import { removeToken } from "../../../configs/session";
 import { changeDivisi, formatRupiah } from "../../../utils/index";
 import moment from "moment";
@@ -29,6 +34,7 @@ export const TimeSheetHrd = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [listEmploye, setListemploye] = useState<any>([]);
 	const [type, setType] = useState<string>("");
 	const [userId, setUserId] = useState<string>("");
 	const [dateStar, setDateStart] = useState<any>(new Date());
@@ -47,6 +53,7 @@ export const TimeSheetHrd = () => {
 
 	useEffect(() => {
 		getTimeSheet(page, perPage, type, userId);
+		getEmploye();
 		// let route = router.pathname;
 		// let arrayRouter = route.split("/");
 		// if (arrayRouter[1] === "marketing") {
@@ -96,6 +103,24 @@ export const TimeSheetHrd = () => {
 			}
 		}
 		setIsLoading(false);
+	};
+
+	const getEmploye = async () => {
+		try {
+			let list_employe: any = [];
+			const response = await GetAllEmploye();
+			if (response) {
+				response.data.result.map((res: any) => {
+					list_employe.push({
+						label: res.employee_name,
+						value: res,
+					});
+				});
+			}
+			setListemploye(list_employe);
+		} catch (error) {
+			setListemploye([]);
+		}
 	};
 
 	const changeTimeSheet = async (data: string) => {
@@ -184,23 +209,21 @@ export const TimeSheetHrd = () => {
 				showModal={showModal}
 				search={searchTimeSheet}
 			>
-				{/* <Section className='grid sm:grid-cols-1 md:grid-cols-5 gap-2 my-2'>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-5 gap-2 my-2'>
 					<div className='w-full'>
-						<InputSelect
-							id='type'
-							name='type'
-							placeholder='Type'
-							label='Type'
-							onChange={(event: any) => {
-								setType(event.target.value);
+						<InputSelectSearch
+							datas={listEmploye}
+							id='idPurchase'
+							name='idPurchase'
+							placeholder='Employe'
+							label='employe'
+							onChange={(e: any) => {
+								console.log(e);
 							}}
 							required={true}
 							withLabel={false}
-							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-						>
-							<option value='worktime'>Work Time</option>
-							<option value='overtime'>Over Time</option>
-						</InputSelect>
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+						/>
 					</div>
 					<div className='w-full'>
 						<InputSelect
@@ -246,20 +269,18 @@ export const TimeSheetHrd = () => {
 					<div className='flex'>
 						<Button
 							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-							onClick={() => {
-							}}
+							onClick={() => {}}
 						>
-							<Check color='white' className="mx-auto" />
+							<Check color='white' className='mx-auto' />
 						</Button>
 						<Button
 							className='bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-							onClick={() => {
-							}}
+							onClick={() => {}}
 						>
-							<Printer color='white' className="mx-auto"/>
+							<Printer color='white' className='mx-auto' />
 						</Button>
 					</div>
-				</Section> */}
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>

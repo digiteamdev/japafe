@@ -62,7 +62,6 @@ export const DirectPurchaseMR = () => {
 		try {
 			const response = await GetAllMRPo(page, perpage, type);
 			if (response.data) {
-				console.log(response.data)
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil( response.data.totalData / perpage));
@@ -192,7 +191,6 @@ export const DirectPurchaseMR = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'

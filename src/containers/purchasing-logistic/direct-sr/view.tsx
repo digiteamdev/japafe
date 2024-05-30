@@ -84,27 +84,10 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 	const purchaseMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
+		let isWarning: boolean = false
 		payload.detailMr.map((res: any) => {
-			listDetail.push({
-				id: res.id,
-				supId: res.supId,
-				qtyAppr: parseInt(res.qtyAppr),
-				price: parseInt(res.price),
-				disc: parseInt(res.disc),
-				total: parseInt(res.total),
-			});
-		});
-		let data = {
-			dateOfPurchase: payload.dateOfPurchase,
-			idPurchase: payload.idPurchase,
-			taxPsrDmr: payload.taxPsrDmr,
-			currency: payload.currency,
-			srDetail: listDetail,
-		};
-		try {
-			const response = await AddPrSr(data);
-			if (response.data) {
-				toast.success("Purchase Material Request Success", {
+			if(res.supId === null){
+				toast.warning("Supplier has not been filled in yet", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -114,23 +97,70 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				showModal(false, content, true);
+				isWarning = true;
+			}else if(res.price === 0){
+				toast.warning("Price cannot be 0", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				isWarning = true;
+			}else{
+				listDetail.push({
+					id: res.id,
+					supId: res.supId,
+					qtyAppr: parseInt(res.qtyAppr),
+					price: parseInt(res.price),
+					disc: parseInt(res.disc),
+					total: parseInt(res.total),
+				});
+				isWarning = false
 			}
-		} catch (error) {
-			toast.error("Purchase Material Request Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
+		});
+		let data = {
+			dateOfPurchase: payload.dateOfPurchase,
+			idPurchase: payload.idPurchase,
+			taxPsrDmr: payload.taxPsrDmr,
+			currency: payload.currency,
+			srDetail: listDetail,
+		};
+		if(!isWarning){
+			try {
+				const response = await AddPrSr(data);
+				if (response.data) {
+					toast.success("Purchase Material Request Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Purchase Material Request Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
 		}
 		setIsLoading(false);
 	};
-	console.log(dataSelected)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (

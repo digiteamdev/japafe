@@ -84,25 +84,18 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 	const approveMr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
+		let isWarning: boolean = false
 		payload.detailMr.map((res: any) => {
-			listDetail.push({
-				id: res.id,
-				mrappr: res.mrappr,
-				// supId: res.supId,
-				qtyAppr: parseInt(res.qtyAppr),
-			});
-		});
-		let data = {
-			// id: payload.id,
-			idApprove: generateIdNum(),
-			dateApprove: new Date(),
-			approveById: userId,
-			detailMr: listDetail,
-		};
-		try {
-			const response = await ApprovalMr(data);
-			if (response.data) {
-				toast.success("Approval Material Request Success", {
+			if (res.mrappr !== null) {
+				listDetail.push({
+					id: res.id,
+					mrappr: res.mrappr,
+					// supId: res.supId,
+					qtyAppr: parseInt(res.qtyAppr),
+				});
+				isWarning = false
+			} else {
+				toast.warning("Purchase Type Not yet entered", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -112,19 +105,44 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				showModal(false, content, true);
+				isWarning = true
 			}
-		} catch (error) {
-			toast.error("Approval Material Request Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
+		});
+		let data = {
+			// id: payload.id,
+			idApprove: generateIdNum(),
+			dateApprove: new Date(),
+			approveById: userId,
+			detailMr: listDetail,
+		};
+		if(!isWarning){
+			try {
+				const response = await ApprovalMr(data);
+				if (response.data) {
+					toast.success("Approval Material Request Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Approval Material Request Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
 		}
 		setIsLoading(false);
 	};
@@ -252,7 +270,14 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		</option>
 																		<option value='PO'>PO</option>
 																		<option value='DP'>DP</option>
-																		<option value='Stock' disabled={result.stock === 0 ? true : false}>Stock</option>
+																		<option
+																			value='Stock'
+																			disabled={
+																				result.stock === 0 ? true : false
+																			}
+																		>
+																			Stock
+																		</option>
 																	</InputSelect>
 																</td>
 																<td className='pr-1 w-[5%]'>
@@ -278,8 +303,11 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		type='number'
 																		disabled={false}
 																		value={result.qtyAppr}
-																		onChange={(e:any) => {
-																			setFieldValue(`detailMr.${i}.qtyAppr`, e.target.value)
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.qtyAppr`,
+																				e.target.value
+																			);
 																		}}
 																		required={true}
 																		withLabel={false}
@@ -300,7 +328,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600 text-center'
 																	/>
 																</td>
-																<td className="w-[30%]">
+																<td className='w-[30%]'>
 																	<Input
 																		id={`detailMr.${i}.note`}
 																		name={`detailMr.${i}.note`}

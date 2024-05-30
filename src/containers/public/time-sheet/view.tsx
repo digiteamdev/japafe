@@ -109,10 +109,10 @@ export const ViewTimeSheet = ({ dataSelected, showModal }: props) => {
 								{ dataSelected.time_sheet_add.map((res: any, i: number) => {
 									return(
 										<tr key={i}>
-											<td className='border border-black text-center'>
+											<td className='border border-black whitespace-pre text-center'>
 												{res.job}
 											</td>
-											<td className='border border-black text-center'>
+											<td className='border border-black whitespace-pre text-center'>
 												{res.part_name}
 											</td>
 											<td className='border border-black whitespace-pre text-center'>

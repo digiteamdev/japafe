@@ -265,7 +265,6 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 			await DeleteMRDetail(id);
 			return false;
 		} catch (error) {
-			console.log(error);
 			return false;
 		}
 	};

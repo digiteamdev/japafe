@@ -253,7 +253,7 @@ export const FormEditTimeSheet = ({
 										<div key={i} className=''>
 											<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 												<div className='w-full'>
-													<Input
+													<InputArea
 														id={`time_sheet_add.${i}.job`}
 														name={`time_sheet_add.${i}.job`}
 														placeholder='Job No'
@@ -262,13 +262,14 @@ export const FormEditTimeSheet = ({
 														value={res.job}
 														onChange={handleChange}
 														disabled={false}
+														row={3}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
 												<div className='w-full'>
-													<Input
+													<InputArea
 														id={`time_sheet_add.${i}.part_name`}
 														name={`time_sheet_add.${i}.part_name`}
 														placeholder='Part Name'
@@ -277,6 +278,7 @@ export const FormEditTimeSheet = ({
 														value={res.part_name}
 														onChange={handleChange}
 														disabled={false}
+														row={3}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -304,10 +306,12 @@ export const FormEditTimeSheet = ({
 													<InputDate
 														id={`time_sheet_add.${i}.actual_start`}
 														label='Start'
+														minDate={values.date}
+														maxDate={values.date}
 														showTimeSelect={true}
-														showTimeSelectOnly={true}
+														showTimeSelectOnly={false}
 														value={res.actual_start}
-														dateFormat='HH:mm'
+														dateFormat='dd/MM/yyyy, HH:mm'
 														onChange={(value: any) => {
 															let start = moment(new Date(value));
 															let finish = moment(new Date(res.actual_finish));
@@ -332,10 +336,11 @@ export const FormEditTimeSheet = ({
 													<InputDate
 														id={`time_sheet_add.${i}.actual_finish`}
 														label='Finish'
+														minDate={values.date}
 														showTimeSelect={true}
-														showTimeSelectOnly={true}
+														showTimeSelectOnly={false}
 														value={res.actual_finish}
-														dateFormat='HH:mm'
+														dateFormat='dd/MM/yyyy, HH:mm'
 														onChange={(value: any) => {
 															let start = moment(new Date(res.actual_start));
 															let finish = moment(new Date(value));

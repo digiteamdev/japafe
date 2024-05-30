@@ -84,25 +84,18 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 	const approveSr = async (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
+		let isWarning: boolean = false
 		payload.SrDetail.map((res: any) => {
-			listDetail.push({
-				id: res.id,
-				srappr: res.srappr,
-				// supId: res.supId,
-				qtyAppr: parseInt(res.qtyAppr),
-			});
-		});
-		let data = {
-			// id: payload.id,
-			idApprove: generateIdNum(),
-			dateApprove: new Date(),
-			approveById: userId,
-			srDetail: listDetail,
-		};
-		try {
-			const response = await ApprovalSr(data);
-			if (response.data) {
-				toast.success("Approval Material Request Success", {
+			if (res.srappr !== null){
+				listDetail.push({
+					id: res.id,
+					srappr: res.srappr,
+					// supId: res.supId,
+					qtyAppr: parseInt(res.qtyAppr),
+				});
+				isWarning = false
+			}else{
+				toast.warning("Purchase Type Not yet entered", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -112,19 +105,44 @@ export const ViewApprovalSR = ({ dataSelected, content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
-				showModal(false, content, true);
+				isWarning = true
 			}
-		} catch (error) {
-			toast.error("Approval Material Request Failed", {
-				position: "top-center",
-				autoClose: 5000,
-				hideProgressBar: true,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "colored",
-			});
+		});
+		let data = {
+			// id: payload.id,
+			idApprove: generateIdNum(),
+			dateApprove: new Date(),
+			approveById: userId,
+			srDetail: listDetail,
+		};
+		if(!isWarning){
+			try {
+				const response = await ApprovalSr(data);
+				if (response.data) {
+					toast.success("Approval Material Request Success", {
+						position: "top-center",
+						autoClose: 5000,
+						hideProgressBar: true,
+						closeOnClick: true,
+						pauseOnHover: true,
+						draggable: true,
+						progress: undefined,
+						theme: "colored",
+					});
+					showModal(false, content, true);
+				}
+			} catch (error) {
+				toast.error("Approval Material Request Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
 		}
 		setIsLoading(false);
 	};
