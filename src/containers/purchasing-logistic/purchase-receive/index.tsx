@@ -122,6 +122,16 @@ export const PurchaseReceive = () => {
 		setIsModal(false);
 	};
 
+	const showVendor = (data: any) => {
+		let vendor: string = ""
+		if(data.detailMr.length > 0){
+			vendor = data.detailMr[0].supplier.supplier_name
+		}else{
+			vendor = data.SrDetail[0].supplier.supplier_name
+		}
+		return vendor
+	} 
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -188,10 +198,10 @@ export const PurchaseReceive = () => {
 										{moment(res.date_receive).format("DD-MMMM-YYYY")}
 									</td>
                                     <td className='whitespace-nowrap p-1'>
-										{res.id_so}
+										{res.id_so ? res.id_so : res.idPurchase }
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{res.supplier.supplier_name}
+										{res.supplier?.supplier_name ? res.supplier?.supplier_name : showVendor(res) }
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -204,7 +214,7 @@ export const PurchaseReceive = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{res.status_manager_director === "revision" ? (
+											{/* {res.status_manager_director === "revision" ? (
 												<Button
 													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
@@ -224,7 +234,7 @@ export const PurchaseReceive = () => {
 												>
 													<Edit color='white' />
 												</Button>
-											)}
+											)} */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {

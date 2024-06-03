@@ -350,11 +350,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
 												(res: any) => {
-													console.log(res)
 													listJournal.push({
-														coa: { label: res.coa.coa_name, value: res.coa },
+														coa: { label: res.coa?.coa_name, value: res.coa },
 														coa_id: res.coa_id,
-														coa_name: res.coa.coa_name,
+														coa_name: res.coa?.coa_name,
 														status_transaction: res.status_transaction,
 														grandtotal:
 															e.value.id_kontrabon === undefined

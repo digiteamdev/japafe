@@ -8,7 +8,8 @@ interface props {
 }
 
 export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props) => {
-	return (
+    
+    return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
 				<>
@@ -48,7 +49,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                     {moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
-                                <tr>
+                                {/* <tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										Suplier
 									</td>
@@ -63,7 +64,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										+62{dataSelected.supplier.SupplierContact[0]?.phone}
 									</td>
-								</tr>
+								</tr> */}
                                 <tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										DO Id
@@ -85,6 +86,12 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                             Job No
                                         </th>
                                         <th className="border border-black p-1 text-center">
+                                            No MR
+                                        </th>
+                                        <th className="border border-black p-1 text-center">
+                                            Supplier
+                                        </th>
+                                        <th className="border border-black p-1 text-center">
                                             Material Name
                                         </th>
                                         <th className="border border-black p-1 text-center">
@@ -100,6 +107,12 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                         <tr key={i}>
                                             <td className="border border-black p-1 text-center">
                                                 { res.mr.job_no }
+                                            </td>
+                                            <td className="border border-black p-1 text-center">
+                                                { res.mr.no_mr }
+                                            </td>
+                                            <td className="border border-black p-1 text-center">
+                                                { res.supplier?.supplier_name }
                                             </td>
                                             <td className="border border-black p-1 text-center">
                                                 {`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
@@ -125,13 +138,19 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                             Job No
                                         </th>
                                         <th className="border border-black p-2 text-center">
-                                            Part Name
+                                            No SR
+                                        </th>
+                                        <th className="border border-black p-2 text-center">
+                                            Supplier
                                         </th>
                                         <th className="border border-black p-2 text-center">
                                             Service Description
                                         </th>
                                         <th className="border border-black p-2 text-center">
                                             Qty
+                                        </th>
+                                        <th className="border border-black p-2 text-center">
+                                            Qty Recieve
                                         </th>
                                     </tr>
                                 </thead>
@@ -142,10 +161,16 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                                 { res.sr.job_no }
                                             </td>
                                             <td className="border border-black p-2 text-center">
-                                                { res.part }
+                                                { res.sr.no_sr }
                                             </td>
                                             <td className="border border-black p-2 text-center">
-                                                { res.workCenter.name }
+                                                { res.supplier?.supplier_name }
+                                            </td>
+                                            <td className="border border-black p-2 text-center">
+                                                { res.desc }
+                                            </td>
+                                            <td className="border border-black p-2 text-center">
+                                                { res.qtyAppr }
                                             </td>
                                             <td className="border border-black p-2 text-center">
                                                 { res.qty_receive }

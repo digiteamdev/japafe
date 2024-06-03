@@ -19,7 +19,7 @@ import { Clock, Eye, Edit, Trash2, Check, Printer } from "react-feather";
 // import { ViewTimeSheet } from "./view";
 import {
 	GetTimeSheetHrd,
-	GetAllEmploye,
+	GetAllEmployee,
 	SearchTimeSheet,
 } from "../../../services";
 import { removeToken } from "../../../configs/session";
@@ -52,7 +52,7 @@ export const TimeSheetHrd = () => {
 	];
 
 	useEffect(() => {
-		getTimeSheet(page, perPage, type, userId);
+		getTimeSheet(page, perPage, type, userId, dateStar, dateFinish);
 		getEmploye();
 		// let route = router.pathname;
 		// let arrayRouter = route.split("/");
@@ -60,7 +60,7 @@ export const TimeSheetHrd = () => {
 		// 	setShowCreate(false);
 		// }
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [type]);
+	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -69,7 +69,7 @@ export const TimeSheetHrd = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getTimeSheet(page, perPage, type, userId);
+			getTimeSheet(page, perPage, type, userId, dateStar, dateFinish);
 		}
 	};
 
@@ -77,17 +77,23 @@ export const TimeSheetHrd = () => {
 		page: number,
 		perpage: number,
 		type: string,
-		userId: string
+		userId: string,
+		dateStart: any,
+		dateFinish: any
 	) => {
 		setIsLoading(true);
 		try {
+			let start: any =
+				dateStart === "" ? "" : moment(dateStart).format("yyyy-MM-DD");
+			let finish: any =
+				dateFinish === "" ? "" : moment(dateFinish).format("yyyy-MM-DD");
 			const response = await GetTimeSheetHrd(
 				page,
 				perpage,
 				type,
 				userId,
-				"",
-				""
+				start,
+				finish
 			);
 			if (response.data) {
 				setData(response.data.result);
@@ -108,7 +114,7 @@ export const TimeSheetHrd = () => {
 	const getEmploye = async () => {
 		try {
 			let list_employe: any = [];
-			const response = await GetAllEmploye();
+			const response = await GetAllEmployee();
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_employe.push({
@@ -213,12 +219,13 @@ export const TimeSheetHrd = () => {
 					<div className='w-full'>
 						<InputSelectSearch
 							datas={listEmploye}
-							id='idPurchase'
-							name='idPurchase'
+							id='employee'
+							name='employee'
 							placeholder='Employe'
 							label='employe'
 							onChange={(e: any) => {
-								console.log(e);
+								console.log(e.value)
+								setUserId(e.value.id);
 							}}
 							required={true}
 							withLabel={false}
@@ -238,6 +245,7 @@ export const TimeSheetHrd = () => {
 							withLabel={false}
 							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 						>
+							<option value=''>All</option>
 							<option value='worktime'>Work Time</option>
 							<option value='overtime'>Over Time</option>
 						</InputSelect>
@@ -247,7 +255,7 @@ export const TimeSheetHrd = () => {
 							id='date'
 							label='date'
 							dateFormat='dd/MM/yyyy'
-							value={new Date(dateStar)}
+							value={dateStar === "" ? new Date() : new Date(dateStar)}
 							onChange={(value: any) => setDateStart(value)}
 							withLabel={false}
 							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
@@ -259,7 +267,7 @@ export const TimeSheetHrd = () => {
 							id='date'
 							label='date'
 							dateFormat='dd/MM/yyyy'
-							value={new Date(dateFinish)}
+							value={dateFinish === "" ? new Date() : new Date(dateFinish)}
 							onChange={(value: any) => setDateFinish(value)}
 							withLabel={false}
 							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
@@ -269,7 +277,9 @@ export const TimeSheetHrd = () => {
 					<div className='flex'>
 						<Button
 							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-							onClick={() => {}}
+							onClick={() => {
+								getTimeSheet(page, perPage, type, userId, dateStar, dateFinish);
+							}}
 						>
 							<Check color='white' className='mx-auto' />
 						</Button>
@@ -318,7 +328,6 @@ export const TimeSheetHrd = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res);
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -370,7 +379,7 @@ export const TimeSheetHrd = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getTimeSheet(value, perPage, type, userId);
+							getTimeSheet(value, perPage, type, userId, dateStar, dateFinish);
 						}}
 					/>
 				) : null}
