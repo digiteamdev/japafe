@@ -534,13 +534,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "general-ledger",
-			// 	link: "/finance-accounting/general-ledger",
-			// 	title: "General Ledger",
+			{
+				id: "general-ledger",
+				link: "/finance-accounting/general-ledger",
+				title: "General Ledger",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "posting",
 				link: "/finance-accounting/posting",

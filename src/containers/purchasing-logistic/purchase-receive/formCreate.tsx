@@ -433,7 +433,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																</InputSelect>
 															</div> */}
 															<div className='w-full'>
-																{i > 1 ? (
+																{i > 0 ? (
 																	<a
 																		className='inline-flex text-red-500 cursor-pointer text-xl mt-8'
 																		onClick={() => {
@@ -458,7 +458,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 												return values.srDetail.map((res: any, i: number) => {
 													return (
 														<Section
-															className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+															className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 															key={i}
 														>
 															<div className='w-full'>
@@ -518,7 +518,26 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																/>
 															</div>
 															<div className='w-full'>
-																{i > 1 ? (
+																<Input
+																	id={`srDetail.${i}.qty_receive`}
+																	name={`srDetail.${i}.qty_receive`}
+																	placeholder='Qty Receive'
+																	label='Qty Receive'
+																	type='number'
+																	value={res.qty_receive}
+																	onChange={(e: any) => {
+																		setFieldValue(
+																			`srDetail.${i}.qty_receive`,
+																			e.target.value
+																		);
+																	}}
+																	required={true}
+																	withLabel={true}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</div>
+															<div className='w-full'>
+																{i > 0 ? (
 																	<a
 																		className='inline-flex text-red-500 cursor-pointer text-xl mt-8'
 																		onClick={() => {
@@ -672,7 +691,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																</InputSelect>
 															</div> */}
 															<div className='w-full'>
-																{i > 1 ? (
+																{i > 0 ? (
 																	<a
 																		className='inline-flex text-red-500 cursor-pointer text-xl mt-8'
 																		onClick={() => {
@@ -697,7 +716,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 												return values.srDetail.map((res: any, i: number) => {
 													return (
 														<Section
-															className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+															className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 															key={i}
 														>
 															<div className='w-full'>
@@ -757,7 +776,26 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																/>
 															</div>
 															<div className='w-full'>
-																{i > 1 ? (
+																<Input
+																	id={`srDetail.${i}.qty_receive`}
+																	name={`srDetail.${i}.qty_receive`}
+																	placeholder='Qty Receive'
+																	label='Qty Receive'
+																	type='number'
+																	value={res.qty_receive}
+																	onChange={(e: any) => {
+																		setFieldValue(
+																			`srDetail.${i}.qty_receive`,
+																			e.target.value
+																		);
+																	}}
+																	required={true}
+																	withLabel={true}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</div>
+															<div className='w-full'>
+																{i > 0 ? (
 																	<a
 																		className='inline-flex text-red-500 cursor-pointer text-xl mt-8'
 																		onClick={() => {

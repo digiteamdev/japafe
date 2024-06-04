@@ -181,7 +181,8 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 								<InputDate
 									id='date'
 									label='date'
-									minDate={minDate}
+									// minDate={minDate}
+									minDate={new Date('2024-05-26')}
 									maxDate={new Date()}
 									dateFormat='dd/MM/yyyy'
 									value={values.date}

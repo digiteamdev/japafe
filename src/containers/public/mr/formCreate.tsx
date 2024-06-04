@@ -117,7 +117,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_material.push({
-						label: `${res.name} ${res.spesifikasi}`,
+						label: `${res.name} ${res.spesifikasi ? res.spesifikasi : ''}`,
 						value: res,
 					});
 				});
