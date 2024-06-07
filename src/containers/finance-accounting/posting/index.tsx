@@ -11,7 +11,7 @@ import {
 	Pagination,
 } from "../../../components";
 import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
-// import { FormCreateCashier } from "./formCreate";
+import { FormCreateGeneralLedger } from "./formCreate";
 import { GetAllPosting, SearchPosting } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -57,7 +57,7 @@ export const Posting = () => {
 	const getCashier = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetAllPosting(page, limit, false);
+			const response = await GetAllPosting(page, limit, "satu");
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -77,7 +77,7 @@ export const Posting = () => {
 	const searchCashier = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPosting(page, limit, search, false);
+			const response = await SearchPosting(page, limit, search, "satu");
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -109,7 +109,7 @@ export const Posting = () => {
 			/>
 			<Content
 				title='Posting'
-				print={false}
+				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -211,8 +211,8 @@ export const Posting = () => {
 						<></>
 					) : (
 						// <FormEditCashier content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-						<></>
-						// <FormCreateCashier content={modalContent} showModal={showModal}/>
+						
+						<FormCreateGeneralLedger content={modalContent} showModal={showModal}/>
 					)}
 				</Modal>
 			}

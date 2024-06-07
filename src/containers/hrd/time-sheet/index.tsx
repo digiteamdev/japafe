@@ -16,7 +16,7 @@ import {
 import { Clock, Eye, Edit, Trash2, Check, Printer } from "react-feather";
 // import { FormCreateTimeSheet } from "./formCreate";
 // import { FormEditTimeSheet } from "./formEdit";
-// import { ViewTimeSheet } from "./view";
+import { ViewTimeSheetHrd } from "./view";
 import {
 	GetTimeSheetHrd,
 	GetAllEmployee,
@@ -224,8 +224,7 @@ export const TimeSheetHrd = () => {
 							placeholder='Employe'
 							label='employe'
 							onChange={(e: any) => {
-								console.log(e.value)
-								setUserId(e.value.id);
+								setUserId(e.value.user[0]?.id);
 							}}
 							required={true}
 							withLabel={false}
@@ -400,8 +399,8 @@ export const TimeSheetHrd = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-					) : // <ViewTimeSheet dataSelected={dataSelected}  showModal={showModal}/>
+						<ViewTimeSheetHrd dataSelected={dataSelected}  showModal={showModal}/>
+					) :
 					modalContent === "add" ? (
 						<></>
 					) : (

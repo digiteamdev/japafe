@@ -11,15 +11,15 @@ import {
 	Pagination,
 } from "../../../components";
 import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
-// import { FormCreateGeneralLedger } from "./formCreate";
+// import { FormCreateCashier } from "./formCreate";
 import { GetAllPosting, SearchPosting } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { changeDivisi, formatRupiah } from "@/src/utils";
-import { ViewPosting } from './view';
-// import { FormEditCashier } from "./formEdit";
+// import { ViewPosting } from './view';
+import { FormCreateGeneralLedger } from "./formCreate";
 
-export const Journal = () => {
+export const GeneralLedger = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -57,7 +57,7 @@ export const Journal = () => {
 	const getCashier = async (page: number, limit: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetAllPosting(page, limit, "dua");
+			const response = await GetAllPosting(page, limit, "satu");
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -77,7 +77,7 @@ export const Journal = () => {
 	const searchCashier = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPosting(page, limit, search, "dua");
+			const response = await SearchPosting(page, limit, search, "satu");
 			if (response.data) {
 				setData(response.data.result);
 				setIsLoading(false);
@@ -103,13 +103,13 @@ export const Journal = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Journal'
+				title='General Ledger'
 				total={countData}
 				icon={<DollarSign className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Journal'
-				print={false}
+				title='General Ledger'
+				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -199,20 +199,20 @@ export const Journal = () => {
 			</Content>
 			{
 				<Modal
-					title='Journal'
+					title='General Ledger'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewPosting dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+                        <></>
+						// <ViewPosting dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 					) : 
 					modalContent === "edit" ? (
 						<></>
 					) : (
 						// <FormEditCashier content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-						<></>
-						// <FormCreateGeneralLedger content={modalContent} showModal={showModal}/>
+						<FormCreateGeneralLedger content={modalContent} showModal={showModal}/>
 					)}
 				</Modal>
 			}
