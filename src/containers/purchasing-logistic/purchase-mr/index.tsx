@@ -130,7 +130,7 @@ export const PurchaseMR = () => {
 			if(i === 0){
 				material = `- `+res.name_material
 			}else{
-				material = material +` \r\n ` + `- `+res.res.name_material 
+				material = material +` \r\n ` + `- `+res.name_material 
 			}
 		})
 		return material
