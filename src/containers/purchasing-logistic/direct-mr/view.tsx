@@ -113,6 +113,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 			}else{
 				listDetail.push({
 					id: res.id,
+					name_material: res.name_material,
 					supId: res.supId,
 					taxpr: res.taxpr,
 					currency: res.currency,
@@ -252,13 +253,16 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 														<tr key={i}>
 															<td className='pr-1 w-[30%]'>
 																<Input
-																	id={`detailMr.${i}.material`}
-																	name={`detailMr.${i}.material`}
+																	id={`detailMr.${i}.name_material`}
+																	name={`detailMr.${i}.name_material`}
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={result.Material_Master.name}
-																	disabled={true}
+																	value={result.name_material}
+																	onChange={(e: any) => {
+																		setFieldValue(`detailMr.${i}.name_material`, e.target.value)
+																	}}
+																	disabled={false}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'

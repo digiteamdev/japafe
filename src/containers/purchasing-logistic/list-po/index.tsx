@@ -152,9 +152,9 @@ export const ListPO = () => {
 		let material: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.Material_Master.name;
+				material = `- ` + res.name_material;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+				material = material + ` \r\n ` + `- ` + res.name_material;
 			}
 		});
 		return material;
@@ -228,11 +228,11 @@ export const ListPO = () => {
 									<td className='whitespace-nowrap p-1 text-center'>
 										{res.detailMr[0].mr.no_mr}
 									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{showMaterial(res.detailMr)}
-									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{res.supplier.supplier_name}
+									</td>
+									<td className='whitespace-pre-line p-1 text-center'>
+										{showMaterial(res.detailMr)}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

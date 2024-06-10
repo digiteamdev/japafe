@@ -133,9 +133,9 @@ export const ApprovalMr = () => {
 		let material:string = ""
 		data.map((res: any, i:number) => {
 			if(i === 0){
-				material = `- `+res.Material_Master.name
+				material = `- `+res.name_material
 			}else{
-				material = material +` \r\n ` + `- `+res.Material_Master.name 
+				material = material +` \r\n ` + `- `+res.name_material 
 			}
 		})
 		return material

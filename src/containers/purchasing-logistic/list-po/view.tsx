@@ -179,7 +179,7 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
 									return (
 										<tr key={i}>
 											<td className='text-center border border-black'>
-												{res.Material_Master.name}
+												{res.name_material}
 											</td>
 											<td className='text-center border border-black'>
 												{res.qty}

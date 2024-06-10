@@ -90,6 +90,7 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 				listDetail.push({
 					id: res.id,
 					mrappr: res.mrappr,
+					name_material: res.material,
 					// supId: res.supId,
 					qtyAppr: parseInt(res.qtyAppr),
 				});
@@ -243,7 +244,10 @@ export const ViewApprovalMR = ({ dataSelected, content, showModal }: props) => {
 																		label='Material Name'
 																		type='text'
 																		value={result.material}
-																		disabled={true}
+																		onChange={(e: any) => {
+																			setFieldValue(`detailMr.${i}.material`, e.target.value)
+																		}}
+																		disabled={false}
 																		required={true}
 																		withLabel={false}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'

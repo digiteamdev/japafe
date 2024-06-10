@@ -33,6 +33,7 @@ interface data {
 			isInput: boolean;
 			bomId: string;
 			material: string;
+			name_material: string;
 			materialStockId: string;
 			satuan: string;
 			note: string;
@@ -70,6 +71,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				isInput: false,
 				bomId: "",
 				material: "",
+				name_material: "",
 				satuan: "",
 				materialStockId: "",
 				note: "",
@@ -233,6 +235,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					listDetail.push({
 						bomIdD: res.bomId,
 						materialId: resp.data.results.id,
+						name_material: res.material,
 						qty: parseInt(res.qty),
 						note: res.note,
 					});
@@ -253,6 +256,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				listDetail.push({
 					bomIdD: res.bomId,
 					materialId: res.material,
+					name_material: res.name_material,
 					qty: parseInt(res.qty),
 					note: res.note,
 				});
@@ -306,6 +310,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	}
 
 	const addMaterialStock = async (payload: any) => {
+		console.log(payload)
 		setIsLoading(true);
 		let listDetail: any = {
 			materialId: materialID,
@@ -498,7 +503,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 											placeholder='Job No'
 											label='Job No'
 											onChange={(e: any) => {
-												// let list_detail: any = [];
 												if (e.value.job_no === undefined) {
 													setWorID("");
 													setBomId(null);
@@ -529,23 +533,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 															detail: [],
 														},
 													]);
-													// e.value.bom_detail.map((res: any) => {
-													// 	list_detail.push({
-													// 		bomId: res.id,
-													// 		material: res.materialId,
-													// 		satuan: res.Material_Master.satuan,
-													// 		note: res.dimensi,
-													// 		qty: res.qty,
-													// 		detail: {
-													// 			label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
-													// 			value: res.Material_Master,
-													// 		},
-													// 	});
-													// });
-													// setFieldValue("detailMr", list_detail);
-													// setWorID(e.value.srimg.timeschedule.wor.id);
-													// setBomId(e.value.bom_detail[0].bomId);
-													// setJobNo(e.value.srimg.timeschedule.wor.job_no);
 												}
 												setIsMaterial(true);
 											}}
@@ -588,6 +575,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																			type='text'
 																			value={result.material}
 																			onChange={(e: any) => {
+																				setFieldValue(
+																					`detailMr.${i}.name_material`,
+																					e.target.value
+																				);
 																				setFieldValue(
 																					`detailMr.${i}.material`,
 																					e.target.value
@@ -644,6 +635,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																					setFieldValue(
 																						`detailMr.${i}.detail`,
 																						e
+																					);
+																					setFieldValue(
+																						`detailMr.${i}.name_material`,
+																						e.label
 																					);
 																				}
 																			}}
