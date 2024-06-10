@@ -81,6 +81,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 			newDetail.push({
 				bomId: res.bomIdD,
 				material: res.Material_Master.id,
+				name_material: res.name_material,
 				satuan: res.Material_Master.satuan,
 				selectMaterial: {
 					label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
@@ -92,35 +93,35 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				mrId: dataSelected.id,
 			});
 		});
-		if (dataSelected.wor === null) {
-			setJobNo(dataSelected.job_no);
-			getMaterial();
-		} else {
-			dataSelected.bom.bom_detail.map((res: any) => {
-				if (!material.includes(res.materialId)) {
-					material.push(res.materialId);
-					list_material.push({
-						id: res.materialId,
-						bomId: res.id,
-						satuan: res.Material_master.satuan,
-						name: res.Material_master.material_name,
-					});
-				}
-				res.Material_master.Material_Stock.map((spec: any, i: number) => {
-					if (!materialStock.includes(spec.id)) {
-						materialStock.push(spec.id);
-						list_material_stock.push({
-							material: res.materialId,
-							id: spec.id,
-							name: spec.spesifikasi,
-						});
-					}
-				});
-			});
-			setListMaterial(list_material);
-			setListMaterialStock(list_material_stock);
-			setJobNo(dataSelected.job_no);
-		}
+		setJobNo(dataSelected.job_no);
+		getMaterial();
+		// if (dataSelected.wor === null) {
+		// } else {
+		// 	dataSelected.bom.bom_detail.map((res: any) => {
+		// 		if (!material.includes(res.materialId)) {
+		// 			material.push(res.materialId);
+		// 			list_material.push({
+		// 				id: res.materialId,
+		// 				bomId: res.id,
+		// 				satuan: res.Material_master.satuan,
+		// 				name: res.Material_master.material_name,
+		// 			});
+		// 		}
+		// 		res.Material_master.Material_Stock.map((spec: any, i: number) => {
+		// 			if (!materialStock.includes(spec.id)) {
+		// 				materialStock.push(spec.id);
+		// 				list_material_stock.push({
+		// 					material: res.materialId,
+		// 					id: spec.id,
+		// 					name: spec.spesifikasi,
+		// 				});
+		// 			}
+		// 		});
+		// 	});
+		// 	setListMaterial(list_material);
+		// 	setListMaterialStock(list_material_stock);
+		// 	setJobNo(dataSelected.job_no);
+		// }
 		setData({
 			userId: dataSelected.userId,
 			date_mr: dataSelected.date_mr,
@@ -219,7 +220,8 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 		payload.detailMr.map((res: any) => {
 			listDetail.push({
 				bomIdD: res.bomId,
-				materialStockId: res.materialStockId,
+				materialId: res.material,
+				name_material: res.name_material,
 				qty: parseInt(res.qty),
 				id: res.id,
 				note: res.note,
@@ -406,8 +408,8 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 												<div className='w-full'>
 													<InputSelectSearch
 														datas={listMaterial}
-														id={`detailMr.${i}.material`}
-														name={`detailMr.${i}.material`}
+														id={`detailMr.${i}.name_material`}
+														name={`detailMr.${i}.name_material`}
 														placeholder='Material'
 														label='Material'
 														value={result.selectMaterial}
@@ -419,6 +421,10 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 															setFieldValue(
 																`detailMr.${i}.material`,
 																e.value.id
+															);
+															setFieldValue(
+																`detailMr.${i}.name_material`,
+																e.label
 															);
 															setFieldValue(
 																`detailMr.${i}.bomId`,
