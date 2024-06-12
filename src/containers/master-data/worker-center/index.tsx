@@ -158,6 +158,8 @@ export const WorkerCenter = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchWorkerCenter}
 			>

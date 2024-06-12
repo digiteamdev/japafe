@@ -186,6 +186,8 @@ export const Employe = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchEmploye}
 			>

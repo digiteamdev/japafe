@@ -137,6 +137,8 @@ export const Material = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchMaterial}
 			>
