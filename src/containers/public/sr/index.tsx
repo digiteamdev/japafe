@@ -28,6 +28,7 @@ export const Sr = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [statusSr, setStatusSr] = useState<string>("all");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,7 +44,7 @@ export const Sr = () => {
 	useEffect(() => {
 		getSr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [statusSr]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -59,7 +60,7 @@ export const Sr = () => {
 	const getSr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetSr(page, perpage);
+			const response = await GetSr(page, perpage, statusSr);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -83,7 +84,7 @@ export const Sr = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchSr(page, limit, search);
+			const response = await SearchSr(page, limit, search, statusSr);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -143,6 +144,10 @@ export const Sr = () => {
 		}
 	};
 
+	const changeSr = (data: string) => {
+		setStatusSr(data)
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -187,6 +192,8 @@ export const Sr = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={true}
+				changeMr={changeSr}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

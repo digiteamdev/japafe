@@ -212,6 +212,8 @@ export const TimeSheetHrd = () => {
 				timeSheet={false}
 				changeTimeSheet={changeTimeSheet}
 				changeDivisi={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchTimeSheet}
 			>

@@ -7,10 +7,12 @@ interface props {
 	print?: boolean;
 	marketing?: boolean;
 	timeSheet?: boolean;
+	mr?: boolean;
 	showModal: (val: boolean, content: string, realod: boolean) => void;
 	search: (page: number, perpage: number, search: string) => void;
 	changeDivisi: (data: string) => void;
 	changeTimeSheet: (data: string) => void;
+	changeMr: (data: string) => void;
 	children: ReactNode;
 }
 
@@ -19,9 +21,11 @@ export const Content = ({
 	print,
 	marketing,
 	timeSheet,
+	mr,
 	showModal,
 	changeDivisi,
 	changeTimeSheet,
+	changeMr,
 	search,
 	children,
 }: props) => {
@@ -86,6 +90,30 @@ export const Content = ({
 								<option value=''>All</option>
 								<option value='worktime'>Work Time</option>
 								<option value='overtime'>Over Time</option>
+							</InputSelect>
+						</div>
+					) : null}
+					{mr ? (
+						<div className='lg:w-[35%] md:w-[35%] mr-3 sm:mb-2 sm:w-full xs:mb-2 xs:w-full'>
+							<InputSelect
+								id=''
+								name=''
+								placeholder='Status'
+								label='Status'
+								onChange={(event: any) => {
+									changeMr(event.target.value);
+								}}
+								required={true}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+							>
+								<option value=''>All</option>
+								<option value='Request'>Request</option>
+								<option value='Approval'>Approval</option>
+								<option value='Purchase'>Purchase</option>
+								<option value='Receive'>Receive</option>
+								<option value='Finish'>Finish</option>
+								<option value='Reject'>Reject</option>
 							</InputSelect>
 						</div>
 					) : null}

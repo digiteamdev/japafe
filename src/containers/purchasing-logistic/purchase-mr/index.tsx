@@ -70,8 +70,8 @@ export const PurchaseMR = () => {
 			if(error.response.data.login){
 				setData([]);
 			}else{
-				// removeToken();
-				// router.push('/');
+				removeToken();
+				router.push('/');
 			}
 		}
 	};
@@ -150,6 +150,8 @@ export const PurchaseMR = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchPurchaseMR}
 			>
@@ -211,36 +213,6 @@ export const PurchaseMR = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* { res.status_manager_director === 'revision' ? (
-												<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true,'edit', false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											) : res.status_manager_pr ? null : (
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true,'edit', false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-											) } */}
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
 										</div>
 									</td>
 								</tr>

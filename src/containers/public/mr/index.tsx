@@ -17,7 +17,6 @@ import { GetMr, SearchMr, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 import { changeDivisi } from "@/src/utils";
 
 export const Mr = () => {
@@ -28,6 +27,7 @@ export const Mr = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [statusMr, setStatusMr] = useState<string>("all");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
@@ -43,7 +43,7 @@ export const Mr = () => {
 	useEffect(() => {
 		getMr(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [statusMr]);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -59,7 +59,7 @@ export const Mr = () => {
 	const getMr = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMr(page, perpage);
+			const response = await GetMr(page, perpage, statusMr);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -83,7 +83,7 @@ export const Mr = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchMr(page, limit, search);
+			const response = await SearchMr(page, limit, search, statusMr);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -143,6 +143,10 @@ export const Mr = () => {
 		}
 	};
 
+	const changeMr = (data: string) => {
+		setStatusMr(data)
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
@@ -187,6 +191,8 @@ export const Mr = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={true}
+				changeMr={changeMr}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>

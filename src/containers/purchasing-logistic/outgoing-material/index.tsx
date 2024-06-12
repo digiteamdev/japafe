@@ -139,6 +139,8 @@ export const OutgoingMaterial = () => {
 				changeDivisi={changeDivisi}
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
+				mr={false}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchOutgoingMaterial}
 			>

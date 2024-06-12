@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
 	Input,
-	InputSelect,
 	InputSelectSearch,
 	Section,
 } from "../../../components";
@@ -163,7 +162,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-
+	console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -218,18 +217,14 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 					<h1 className='font-bold text-xl py-2'>Detail Material Request</h1>
 					<Formik
 						initialValues={{ ...data }}
-						// validationSchema={departemenSchema}
 						onSubmit={(values) => {
 							purchaseMr(values);
 						}}
 						enableReinitialize
 					>
 						{({
-							handleChange,
 							handleSubmit,
 							setFieldValue,
-							errors,
-							touched,
 							values,
 						}) => (
 							<Form>
