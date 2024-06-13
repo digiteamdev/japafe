@@ -310,7 +310,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	}
 
 	const addMaterialStock = async (payload: any) => {
-		console.log(payload)
 		setIsLoading(true);
 		let listDetail: any = {
 			materialId: materialID,

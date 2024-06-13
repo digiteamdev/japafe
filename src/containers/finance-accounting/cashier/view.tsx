@@ -19,7 +19,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 	const [position, setPosition] = useState<any>([]);
 
 	useEffect(() => {
-		let positionAkun = getPosition();
+		let positionAkun: any = getPosition();
 		if (positionAkun !== undefined) {
 			setPosition(positionAkun);
 		}

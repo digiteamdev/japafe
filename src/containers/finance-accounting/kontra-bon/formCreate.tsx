@@ -311,6 +311,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='ID Purchase'
 									onChange={(e: any) => {
 										selectPO(e.value);
+										console.log(e.value)
 										if(e.value.cdv_detail !== undefined){
 											let totalAmount = 0;
 											e.value.cdv_detail.map( (res: any) => {
@@ -361,6 +362,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
+											setFieldValue("invoice", e.value.term_of_pay_po_so[0].invoice);
 											setFieldValue("tax_invoice", true);
 											setPayTax(false);
 										}
@@ -511,6 +513,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								<InputDate
 									id='dueDate'
 									label='Pay Date'
+									dateFormat="dd/MM/yyyy"
 									value={values.due_date}
 									minDate={new Date()}
 									onChange={(value: any) => setFieldValue("due_date", value)}

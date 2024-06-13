@@ -199,6 +199,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 
 	const addCashier = async (payload: any) => {
 		setIsLoading(true);
+		console.log(payload)
 		let totalDebet: number = 0;
 		let totalKredit: number = 0;
 		let jurnal: any = [];
@@ -219,7 +220,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			status_payment: payload.status_payment,
 			kontrabonId: payload.kontrabonId,
 			cdvId: payload.id_cash_advance,
-			idPurchase: payload.idPurchase,
+			idPurchase: payload.id_purchase,
 			date_cashier: payload.date_cashier,
 			note: payload.note,
 			total: payload.total,
@@ -346,6 +347,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setPph(0);
 											setIsDirrect(false);
 										} else if (e.type === "kontrabon") {
+											console.log("kontrabon")
 											setIsDirrect(true);
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
@@ -510,6 +512,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											}
 											setFieldValue("journal_cashier", listJournal);
 										} else if (e.type === "purchase") {
+											console.log("purchase")
 											setIsDirrect(false);
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
@@ -611,6 +614,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
+										}else{
+											console.log("ca")
 										}
 									}}
 									required={true}
