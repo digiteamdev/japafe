@@ -9,11 +9,7 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { cashierSchema } from "../../../schema/finance-accounting/cashier/cashierSchema";
-import {
-	GetBom,
-	GetAllCoa,
-	CreateJournal
-} from "../../../services";
+import { GetBom, GetAllCoa, CreateJournal } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { formatRupiah } from "@/src/utils";
@@ -25,8 +21,9 @@ interface props {
 }
 
 interface data {
-	job_no: string;
-	data: any;
+	worId: string;
+	note: string;
+	journal_general: any;
 }
 
 export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
@@ -36,27 +33,29 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 	const [listWor, setListWor] = useState<any>([]);
 	const [listCoa, setListCoa] = useState<any>([]);
 	const [data, setData] = useState<data>({
-		job_no: "",
-		data: [],
+		worId: "",
+		note: "",
+		journal_general: [],
 	});
 
 	useEffect(() => {
 		getWor();
 		getCoa();
 		setData({
-			job_no: "",
-			data: [
+			worId: "",
+			note: "",
+			journal_general: [
 				{
-					worId: "",
 					coa_id: "",
 					status_transaction: "Debet",
 					grandtotal: 0,
+					note: ""
 				},
 				{
-					worId: "",
 					coa_id: "",
 					status_transaction: "Kredit",
 					grandtotal: 0,
+					note: ""
 				},
 			],
 		});
@@ -66,7 +65,7 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 	const getWor = async () => {
 		let datasWor: any = [
 			{
-				value: { id: "Internal" },
+				value: { id: null },
 				label: "Internal",
 			},
 		];
@@ -109,17 +108,22 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 	};
 
 	const createJournal = async (payload: any) => {
-		let data: any = []
-		payload.data.map((res: any) => {
+		let data: any = [];
+		payload.journal_general.map((res: any) => {
 			data.push({
-				worId: Wor.id,
 				coa_id: res.coa_id,
+				note: res.note,
 				status_transaction: res.status_transaction,
 				grandtotal: res.grandtotal,
-			})
-		})
+			});
+		});
+		let dataBody = {
+			worId: payload.worId,
+			note: payload.note,
+			journal_general: data
+		}
 		try {
-			const response = await CreateJournal(data);
+			const response = await CreateJournal(dataBody);
 			if (response) {
 				toast.success("Add General Ledger Success", {
 					position: "top-center",
@@ -145,7 +149,7 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 				theme: "colored",
 			});
 		}
-	}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
@@ -167,7 +171,7 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 				}) => (
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>General Ledger</h1>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-1 mt-2 gap-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-1 mt-2 gap-2'>
 							<div className='w-full'>
 								<Input
 									id='date'
@@ -191,29 +195,45 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 									label='Job No'
 									onChange={(e: any) => {
 										setWor(e.value);
+										setFieldValue('worId', e.value.id)
 									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
+							<div className='w-full'>
+								<InputArea
+									id='note'
+									name='note'
+									placeholder='Note'
+									label='Note'
+									type='text'
+									value={values.note}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 						</Section>
 						<FieldArray
-							name='data'
+							name='journal_general'
 							render={(arrays) =>
-								values.data.map((result: any, i: number) => {
+								values.journal_general.map((result: any, i: number) => {
 									return (
 										<div key={i}>
 											<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 pt-2'>
 												<div className='w-full'>
 													<InputSelectSearch
 														datas={listCoa}
-														id={`data.${i}.coa_id`}
-														name={`data.${i}.coa_id`}
+														id={`journal_general.${i}.coa_id`}
+														name={`journal_general.${i}.coa_id`}
 														placeholder='Journal'
 														label='Journal'
 														onChange={(e: any) => {
-															setFieldValue(`data.${i}.coa_id`, e.value.id);
+															setFieldValue(`journal_general.${i}.coa_id`, e.value.id);
 														}}
 														required={true}
 														withLabel={true}
@@ -222,8 +242,8 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<InputSelect
-														id={`data.${i}.status_transaction`}
-														name={`data.${i}.status_transaction`}
+														id={`journal_general.${i}.status_transaction`}
+														name={`journal_general.${i}.status_transaction`}
 														placeholder='Status'
 														label='Status'
 														onChange={handleChange}
@@ -255,8 +275,8 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 												</div>
 												<div className='w-full'>
 													<Input
-														id={`data.${i}.grandtotal`}
-														name={`data.${i}.grandtotal`}
+														id={`journal_general.${i}.grandtotal`}
+														name={`journal_general.${i}.grandtotal`}
 														placeholder='Total'
 														label='Total'
 														type='text'
@@ -266,7 +286,7 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 															let total = parseInt(
 																e.target.value.replace(/\./g, "")
 															);
-															setFieldValue(`data.${i}.grandtotal`, total);
+															setFieldValue(`journal_general.${i}.grandtotal`, total);
 														}}
 														withLabel={true}
 														value={formatRupiah(result.grandtotal.toString())}
@@ -275,15 +295,15 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 												</div>
 											</Section>
 											<div className='flex w-full'>
-												{i + 1 === values.data.length ? (
+												{i + 1 === values.journal_general.length ? (
 													<a
 														className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 														onClick={() =>
 															arrays.push({
-                                                                worId: "",
-                                                                coa_id: "",
-                                                                status_transaction: "Debet",
-                                                                grandtotal: 0,
+																coa_id: "",
+																status_transaction: "Debet",
+																grandtotal: 0,
+																note: ""
 															})
 														}
 													>
@@ -291,7 +311,7 @@ export const FormCreateGeneralLedger = ({ content, showModal }: props) => {
 														Add
 													</a>
 												) : null}
-												{i === 0 && values.data.length === 1 ? null : (
+												{i === 0 && values.journal_general.length === 1 ? null : (
 													<a
 														className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
 														onClick={() => arrays.remove(i)}
