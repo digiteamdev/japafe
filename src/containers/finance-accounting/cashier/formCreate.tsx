@@ -220,7 +220,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			status_payment: payload.status_payment,
 			kontrabonId: payload.kontrabonId,
 			cdvId: payload.id_cash_advance,
-			idPurchase: payload.id_purchase,
+			idPurchase: payload.idPurchase === "" ? null : payload.idPurchase,
 			date_cashier: payload.date_cashier,
 			note: payload.note,
 			total: payload.total,
@@ -396,19 +396,19 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												"account_name",
 												e.value.id_kontrabon === undefined
 													? ""
-													: e.value.SupplierBank.account_name
+													: e.value.SupplierBank?.account_name
 											);
 											setFieldValue(
 												"bank_name",
 												e.value.id_kontrabon === undefined
 													? ""
-													: e.value.SupplierBank.bank_name
+													: e.value.SupplierBank?.bank_name
 											);
 											setFieldValue(
 												"rekening",
 												e.value.id_kontrabon === undefined
 													? ""
-													: e.value.SupplierBank.rekening
+													: e.value.SupplierBank?.rekening
 											);
 											setFieldValue(
 												"note",
@@ -615,7 +615,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												}
 											}
 										}else{
-											console.log("ca")
+											console.log(e)
 										}
 									}}
 									required={true}

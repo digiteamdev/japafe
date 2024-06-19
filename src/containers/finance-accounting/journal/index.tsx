@@ -9,14 +9,15 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	Section,
 } from "../../../components";
-import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
+import { DollarSign, Eye, Edit, Trash2, Printer } from "react-feather";
 // import { FormCreateGeneralLedger } from "./formCreate";
-import { GetAllPosting, SearchPosting } from "../../../services";
+import { GetAllPosting, SearchPosting, Neraca, LabaRugi } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { changeDivisi, formatRupiah } from "@/src/utils";
-import { ViewPosting } from './view';
+import { ViewPosting } from "./view";
 // import { FormEditCashier } from "./formEdit";
 
 export const Journal = () => {
@@ -119,6 +120,26 @@ export const Journal = () => {
 				showModal={showModal}
 				search={searchCashier}
 			>
+				<Section className='grid grid-cols-2 gap-2 mb-4'>
+					<div>
+						<button
+							className='bg-green-100 hover:bg-green-50 text-black py-2 px-4 rounded-lg inline-flex justify-center border border-green-300 w-full'
+							onClick={() => window.location.href = process.env.BASE_URL+`/Neraca`}
+						>
+							<Printer size={18} className='mt-[5px]' />
+							<span className='ml-2'>Neraca</span>
+						</button>
+					</div>
+					<div>
+						<button
+							className='bg-green-100 hover:bg-green-50 text-black py-2 px-4 rounded-lg inline-flex justify-center border border-green-300 w-full'
+							onClick={() => window.location.href = process.env.BASE_URL+`/LabaRugiPdf`}
+						>
+							<Printer size={18} className='mt-[5px]' />
+							<span className='ml-2'>Laba Rugi</span>
+						</button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -162,12 +183,16 @@ export const Journal = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.id_receive ? 'Receive Material' : 'Cashier' }
+										{res.id_receive ? "Receive Material" : "Cashier"}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-                                        { res.id_receive ? moment(res.date_prepared).format('DD-MMMM-YYYY') : moment(res.date_date_cashier).format('DD-MMMM-YYYY') }
+										{res.id_receive
+											? moment(res.date_prepared).format("DD-MMMM-YYYY")
+											: moment(res.date_date_cashier).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='whitespace-pre-line p-1'>{ res.id_receive ? showMaterial(res.detailMr) : res.note }</td>
+									<td className='whitespace-pre-line p-1'>
+										{res.id_receive ? showMaterial(res.detailMr) : res.note}
+									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										<div>
 											<Button
@@ -207,9 +232,12 @@ export const Journal = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewPosting dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
-					) : 
-					modalContent === "edit" ? (
+						<ViewPosting
+							dataSelected={dataSelected}
+							showModal={showModal}
+							content={modalContent}
+						/>
+					) : modalContent === "edit" ? (
 						<></>
 					) : (
 						// <FormEditCashier content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

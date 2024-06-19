@@ -309,7 +309,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 			}
 		}
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<PdfCashier
@@ -391,7 +391,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.kontrabonId === null
 												? dataSelected.note
-												: dataSelected.kontrabon.purchase === null
+												: dataSelected.kontrabon.purchaseID === null
 												? `${dataSelected.kontrabon.term_of_pay_po_so.limitpay}, ${dataSelected.kontrabon.term_of_pay_po_so.poandso.note}`
 												: dataSelected.kontrabon.purchase.note}
 										</td>
@@ -401,7 +401,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Total Pay
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabonId === null ? formatRupiah(dataSelected.total.toString()) : dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null ? formatRupiah(dataSelected.total.toString()) : dataSelected.kontrabon.purchaseID === null
 												? formatRupiah(
 														dataSelected.kontrabon.term_of_pay_po_so.price.toString()
 												  )
@@ -415,7 +415,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Discount
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.kontrabonId === null ? 0 : dataSelected.kontrabon.purchase === null
+											{dataSelected.kontrabonId === null ? 0 : dataSelected.kontrabon.purchaseID === null
 												? formatRupiah(
 														discount(
 															dataSelected.kontrabon.term_of_pay_po_so.poandso

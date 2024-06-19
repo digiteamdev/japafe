@@ -26,7 +26,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 			pdf.save(`Cashier_${data.id_cashier}.pdf`);
 		});
 	};
-
+console.log(data)
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>
@@ -127,7 +127,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 															:{" "}
 															{data.kontrabonId === null
 																? data.note
-																: data.kontrabon.purchase === null
+																: data.kontrabon.purchaseID === null
 																? `${data.kontrabon.term_of_pay_po_so.limitpay}, ${data.kontrabon.term_of_pay_po_so.poandso.note}`
 																: data.kontrabon.purchase.note}
 														</div>
@@ -243,7 +243,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 																<td className='border border-black border-b-0 text-center text-sm py-10'></td>
 															</tr>
 															<tr>
-																<td className='border border-black border-r-0 text-center text-sm py-3'></td>
+																<td className='border border-black border-r-0 text-center text-sm py-3'>{ data.pay_to }</td>
 																<td className='border border-black border-r-0 text-center text-sm py-3'></td>
 																<td className='border border-black text-center text-sm py-3'></td>
 															</tr>

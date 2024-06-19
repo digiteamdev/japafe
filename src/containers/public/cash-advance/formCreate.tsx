@@ -8,7 +8,7 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { AddCashAdvance, GetEmployeCash, GetWorCash } from "../../../services";
+import { AddCashAdvance, GetEmployeCash, GetBom } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -113,32 +113,18 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			{
 				value: {
 					id: null,
-					job_no: year.toString().substring(2,4) + 200
+					job_no: "Internal"
 				},
-				label: year.toString().substring(2,4) + 200 + " - Adm & Office"
-			},
-			{
-				value: {
-					id: null,
-					job_no: year.toString().substring(2,4) + 210
-				},
-				label: year.toString().substring(2,4) + 210 + " - Maintance"
-			},
-			{
-				value: {
-					id: null,
-					job_no: year.toString().substring(2,4) + 220
-				},
-				label: year.toString().substring(2,4) + 220 + " - Trainning & Studying"
+				label: "Internal"
 			},
 		];
 		try {
-			const response = await GetWorCash();
+			const response = await GetBom();
 			if (response) {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: res.job_no === "" ? res.job_no_mr : res.job_no,
+						label: res.job_no + ' - ' + res.customerPo.quotations.Customer.name,
 					});
 				});
 				setListWor(datasWor);
@@ -151,8 +137,10 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	const addCashAdvance = async (payload: any) => {
 		setIsLoading(true);
 		let detail: any = [];
+		let total: number = 0;
 		payload.detail.map((res: any) => {
 			if (res.value !== "" || res.description !== "") {
+				total = total + parseInt(res.value)
 				detail.push({
 					type_cdv: res.type,
 					total: parseInt(res.value),
@@ -161,15 +149,16 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			}
 		});
 		let data = {
-			id_cash_advance: payload.id_cash_advance,
+			id_cash_advance: caID,
 			employeeId: payload.employeeId,
 			worId: payload.worId,
 			job_no: payload.job_no,
-			userId: payload.userId,
+			userId: userId,
 			status_payment: payload.status_payment,
 			note: payload.note,
 			date_cash_advance: payload.date_cash_advance,
 			cdv_detail: detail,
+			grand_tot: total
 		};
 		try {
 			const response = await AddCashAdvance(data);
@@ -202,7 +191,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
@@ -221,7 +210,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				}) => (
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
-						<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='id_cash_advance'
@@ -236,7 +225,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<InputSelectSearch
 									datas={listEmploye}
 									id='request'
@@ -252,7 +241,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listWor}
@@ -336,8 +325,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 												<Input
 													id={`detail.${i}.value`}
 													name={`detail.${i}.value`}
-													placeholder='Value'
-													label='Value'
+													placeholder='Amount'
+													label='Amount'
 													type='number'
 													value={res.value}
 													onChange={(e: any) => {

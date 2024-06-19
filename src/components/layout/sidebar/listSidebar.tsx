@@ -521,6 +521,13 @@ export const ListNav = [
 			// 	subMenu: null,
 			// },
 			{
+				id: "chart-of-accounts",
+				link: "/finance-accounting/chart-of-accounts",
+				title: "Charts Of Accounts",
+
+				subMenu: null,
+			},
+			{
 				id: "kontra-bon",
 				link: "/finance-accounting/kontra-bon",
 				title: "kontra Bon",

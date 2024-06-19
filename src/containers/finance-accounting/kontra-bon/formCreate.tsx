@@ -86,7 +86,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		setIdKontraBon(id);
 	};
 
-	const getPurchase = async () => { 
+	const getPurchase = async () => {
 		setIsLoading(true);
 		let data: any = [];
 		try {
@@ -94,7 +94,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					data.push({
-						label: res.id_spj ? res.id_spj : res.id_so ? res.id_so : res.idPurchase,
+						label: res.id_spj
+							? res.id_spj
+							: res.id_so
+							? res.id_so
+							: res.idPurchase,
 						value: res,
 					});
 				});
@@ -120,21 +124,21 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		let dataAcc: any = [];
 		let hasTax: boolean = false;
 		let taxType: string = "";
-		if(data.detailMr === undefined){
+		if (data.detailMr === undefined) {
 			data.cdv_detail.map((res: any) => {
-				bill = bill + res.actual
-			})
-			setTotalAmount(bill)
+				bill = bill + res.actual;
+			});
+			setTotalAmount(bill);
 			setBillAmount(bill);
 			setBillPaid(bill);
-			setPercent(100)
+			setPercent(100);
 			setTax("");
 			setDataAccBank([]);
 			setDisc(disc);
 			setSuplier("-");
 			setTermOfPayment("-");
-			setAccount(false)
-		}else{
+			setAccount(false);
+		} else {
 			data.detailMr.map((res: any) => {
 				disc = disc + res.disc;
 				bill = bill + res.total;
@@ -150,7 +154,10 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				});
 			});
 			if (data.taxPsrDmr === "ppn") {
-				ppn = taxAmount(bill, data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn);
+				ppn = taxAmount(
+					bill,
+					data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn
+				);
 				billPaid = taxAmount(
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
@@ -165,15 +172,24 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
 				);
-				pph = taxAmount(bill, data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph);
+				pph = taxAmount(
+					bill,
+					data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph
+				);
 				if (data.term_of_pay_po_so && data.term_of_pay_po_so[0].tax_invoice) {
 					setTotalAmount(billPaid - disc);
 				} else {
 					setTotalAmount(billPaid - disc + pph);
 				}
 			} else if (data.taxPsrDmr === "ppn_and_pph") {
-				ppn = taxAmount(bill, data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn);
-				pph = taxAmount(bill, data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph);
+				ppn = taxAmount(
+					bill,
+					data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn
+				);
+				pph = taxAmount(
+					bill,
+					data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph
+				);
 				billPaid = taxAmount(
 					bill,
 					data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
@@ -223,7 +239,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			setBillAmount(bill);
 			setBillPaid(billPaid);
 			setDisc(disc);
-			setSuplier(data.supplier ? data.supplier.supplier_name : data.detailMr[0].supplier.supplier_name);
+			setSuplier(
+				data.supplier
+					? data.supplier.supplier_name
+					: data.detailMr[0].supplier.supplier_name
+			);
 			setPercent(
 				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
 			);
@@ -232,14 +252,28 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 					? `${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
 					: `${data.note}`
 			);
-			setAccount(true)
+			setAccount(true);
 		}
 	};
 
 	const addKontraBon = async (payload: any) => {
 		setIsLoading(true);
+		let dataBody = {
+			termId: payload.termId,
+			poandsoId: payload.soId,
+			id_kontrabon: payload.id_kontrabon,
+			account_name: payload.account_name,
+			purchaseID: payload.purchaseID,
+			cdvId: payload.cdvId,
+			tax_prepered: payload.tax_prepered,
+			due_date: payload.due_date,
+			invoice: payload.invoice,
+			DO: payload.DO,
+			grandtotal: totalAmount,
+			tax_invoice: payload.tax_invoice,
+		};
 		try {
-			const response = await AddKontraBon(payload);
+			const response = await AddKontraBon(dataBody);
 			if (response) {
 				toast.success("Add Kontra Bon Success", {
 					position: "top-center",
@@ -311,12 +345,12 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='ID Purchase'
 									onChange={(e: any) => {
 										selectPO(e.value);
-										console.log(e.value)
-										if(e.value.cdv_detail !== undefined){
+										console.log(e.value);
+										if (e.value.cdv_detail !== undefined) {
 											let totalAmount = 0;
-											e.value.cdv_detail.map( (res: any) => {
-												totalAmount = totalAmount + res.actual
-											})
+											e.value.cdv_detail.map((res: any) => {
+												totalAmount = totalAmount + res.actual;
+											});
 											setFieldValue("purchaseID", null);
 											setFieldValue("cdvId", e.value.id);
 											setFieldValue("poandsoId", null);
@@ -325,7 +359,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("grandtotal", totalAmount);
 											setFieldValue("account_name", null);
 											setPayTax(true);
-										}else if (
+										} else if (
 											e.value.term_of_pay_po_so &&
 											e.value.term_of_pay_po_so[0].tax_invoice
 										) {
@@ -352,17 +386,20 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("purchaseID", e.value.id);
 											setFieldValue("tax_invoice", true);
 											setPayTax(true);
-											if(e.value.taxPsrDmr === 'nontax'){
-												setFieldValue("tax_invoice",false);
-											}else{
-												setFieldValue("tax_invoice",true);
+											if (e.value.taxPsrDmr === "nontax") {
+												setFieldValue("tax_invoice", false);
+											} else {
+												setFieldValue("tax_invoice", true);
 											}
 										} else {
 											setFieldValue("purchaseID", null);
 											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
-											setFieldValue("invoice", e.value.term_of_pay_po_so[0].invoice);
+											setFieldValue(
+												"invoice",
+												e.value.term_of_pay_po_so[0].invoice
+											);
 											setFieldValue("tax_invoice", true);
 											setPayTax(false);
 										}
@@ -513,7 +550,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								<InputDate
 									id='dueDate'
 									label='Pay Date'
-									dateFormat="dd/MM/yyyy"
+									dateFormat='dd/MM/yyyy'
 									value={values.due_date}
 									minDate={new Date()}
 									onChange={(value: any) => setFieldValue("due_date", value)}
@@ -523,7 +560,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						{ Account ? (
+						{Account ? (
 							<>
 								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
@@ -640,7 +677,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									</div>
 								</Section>
 							</>
-						) : null }
+						) : null}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
