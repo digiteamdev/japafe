@@ -45,6 +45,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 		mr: [
 			{
 				poandsoId: "",
+				no_mr: "",
 				idMr: "",
 				materialName: "",
 				job_no: "",
@@ -179,6 +180,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			payload.mr.map((res: any) => {
 				listDetail.push({
 					poandsoId: res.poandsoId,
+					mrId: res.mrId,
 					qty_out: parseInt(res.qty_out),
 				});
 			});
@@ -188,7 +190,6 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 				mr: listDetail,
 			};
 		}
-
 		try {
 			const response = await AddOutgoingMaterial(data);
 			if (response.data) {
@@ -303,7 +304,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												},
 											]);
 											setFieldValue(`mr.${i}.poandsoId`, res.poandsoId);
-											setFieldValue(`mr.${i}.idMr`, res.mr.no_mr);
+											setFieldValue(`mr.${i}.no_mr`, res.mr.no_mr);
+											setFieldValue(`mr.${i}.idMr`, res.mr.id);
 											setFieldValue(
 												`mr.${i}.materialName`,
 												`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`
@@ -474,12 +476,12 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
 													<div className='w-full'>
 														<Input
-															id={`mr.${i}.idMr`}
-															name={`mr.${i}.idMr`}
-															placeholder='Id Mr'
-															label='Id Mr'
+															id={`mr.${i}.no_mr`}
+															name={`mr.${i}.no_mr`}
+															placeholder='No Mr'
+															label='No Mr'
 															type='text'
-															value={result.idMr}
+															value={result.no_mr}
 															disabled={true}
 															required={true}
 															withLabel={true}

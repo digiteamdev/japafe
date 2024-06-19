@@ -49,7 +49,7 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 							<thead>
 								<tr>
 									<th className="text-center border border-black">Material Name</th>
-									<th className="text-center border border-black">No Job</th>
+									{/* <th className="text-center border border-black">No Job</th> */}
 									<th className="text-center border border-black">Outgoing</th>
 									<th className="text-center border border-black">Employe</th>
 								</tr>
@@ -58,8 +58,8 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 								{ dataSelected.stock_outgoing_material.map((res: any, i: number) => {
 									return(
 										<tr key={i}>
-											<td className="text-center border border-black">{res.Material_Stock === null ? `${res.poandso.detailMr[0].Material_Master.name} ${res.poandso.detailMr[0].Material_Master.spesifikasi}` : res.Material_Stock.spesifikasi }</td>
-											<td className="text-center border border-black">{res.poandso.detailMr[0].mr.job_no }</td>
+											<td className="text-center border border-black">{res.materialStockId === null ? `${res.poandso.detailMr[0].Material_Master.name} ${res.poandso.detailMr[0].Material_Master.spesifikasi}` : `${res.Material_Master.name} ${res.Material_Master.spesifikasi}` }</td>
+											{/* <td className="text-center border border-black">{res.poandso.detailMr[0].mr.job_no }</td> */}
 											<td className="text-center border border-black">{res.qty_out }</td>
 											<td className="text-center border border-black">{res.poandsoId === null ?res.employee.employee_name : res.poandso.detailMr[0].mr.user.employee.employee_name }</td>
 										</tr>
