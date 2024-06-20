@@ -99,7 +99,7 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const showButtonValid = (data: any) => {
-		if(dataSelected.statusSr === "Request"){
+		if (dataSelected.statusSr === "Request") {
 			if (position === "Supervisor") {
 				if (data.status_spv === null || data.status_spv === "unvalid") {
 					return (
@@ -181,8 +181,7 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 										No SR
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.no_sr} -{" "}
-										{moment(dataSelected.date_sr).format("DD-MMMM-YYYY")}
+										{dataSelected.no_sr}
 									</td>
 								</tr>
 								<tr>
@@ -191,6 +190,14 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.job_no}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Date Sr
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{moment(dataSelected.date_sr).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
 								<tr>

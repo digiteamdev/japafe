@@ -188,7 +188,7 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Tanggal Dispatch
+										Date MR
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_mr).format("DD-MMMM-YYYY")}
