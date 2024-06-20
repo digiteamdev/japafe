@@ -211,7 +211,7 @@ export const Journal = () => {
 						})
 					)}
 				</Table>
-				{totalPage > 1 ? (
+				{/* {totalPage > 1 ? (
 					<Pagination
 						currentPage={currentPage}
 						pageSize={perPage}
@@ -222,7 +222,7 @@ export const Journal = () => {
 							getCashier(value, perPage);
 						}}
 					/>
-				) : null}
+				) : null} */}
 			</Content>
 			{
 				<Modal

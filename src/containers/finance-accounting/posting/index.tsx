@@ -216,7 +216,7 @@ export const Posting = () => {
 						})
 					)}
 				</Table>
-				{totalPage > 1 ? (
+				{/* {totalPage > 1 ? (
 					<Pagination
 						currentPage={currentPage}
 						pageSize={perPage}
@@ -227,7 +227,7 @@ export const Posting = () => {
 							getCashier(value, perPage);
 						}}
 					/>
-				) : null}
+				) : null} */}
 			</Content>
 			{
 				<Modal
