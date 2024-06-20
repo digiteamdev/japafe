@@ -207,7 +207,7 @@ export const Warehouse = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -216,7 +216,7 @@ export const Warehouse = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
