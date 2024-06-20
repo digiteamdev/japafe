@@ -253,7 +253,7 @@ export const PurchaseReceive = () => {
 						})
 					)}
 				</Table>
-				{totalPage > 1 ? (
+				{/* {totalPage > 1 ? (
 					<Pagination
 						currentPage={currentPage}
 						pageSize={perPage}
@@ -264,7 +264,7 @@ export const PurchaseReceive = () => {
 							getPurchaseReceive(value, perPage);
 						}}
 					/>
-				) : null}
+				) : null} */}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
