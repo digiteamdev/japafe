@@ -225,7 +225,7 @@ export const ViewApprovalDirector = ({
 												Request By
 											</td>
 											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-												{dataSelected.employee.employee_name}
+												{dataSelected.user.employee.employee_name}
 											</td>
 										</tr>
 										<tr>

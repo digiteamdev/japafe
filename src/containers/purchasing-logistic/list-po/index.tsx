@@ -38,6 +38,7 @@ export const ListPO = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Date" },
+		{ name: "PO Number" },
 		{ name: "Job No" },
 		{ name: "No MR" },
 		{ name: "Supplier" },
@@ -223,6 +224,9 @@ export const ListPO = () => {
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{moment(res.date_prepared).format('DD-MM-yyyy')}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.id_so}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{res.detailMr[0].mr.job_no}

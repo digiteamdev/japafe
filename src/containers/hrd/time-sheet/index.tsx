@@ -19,6 +19,7 @@ import { Clock, Eye, Edit, Trash2, Check, Printer } from "react-feather";
 import { ViewTimeSheetHrd } from "./view";
 import {
 	GetTimeSheetHrd,
+	GetTimeSheetCsv,
 	GetAllEmployee,
 	SearchTimeSheet,
 } from "../../../services";
@@ -286,7 +287,9 @@ export const TimeSheetHrd = () => {
 						</Button>
 						<Button
 							className='bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-							onClick={() => {}}
+							onClick={ async () => {
+								window.location.href = process.env.BASE_URL+`/timesheetCsv?${userId === "" ? "" : `&userId=${userId}`}${type === "" ? "" : `&type=${type}`}${dateStar === "" ? "" : `&dateStar=${dateStar}`}${dateFinish === "" ? "" : `&dateEnd=${dateFinish}`}`
+							}}
 						>
 							<Printer color='white' className='mx-auto' />
 						</Button>

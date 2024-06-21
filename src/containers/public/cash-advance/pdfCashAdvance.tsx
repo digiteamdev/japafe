@@ -123,7 +123,7 @@ export const PdfCashAdvance = ({
 											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Request By</div>
 												<div className='w-full'>
-													: {dataSelected.employee.employee_name}
+													: {dataSelected.user.employee.employee_name}
 												</div>
 											</div>
 											<div className='flex flex-row w-full'>
@@ -133,7 +133,7 @@ export const PdfCashAdvance = ({
 													{dataSelected.job_no}
 												</div>
 											</div>
-											<div className='flex flex-row w-full'>
+											{/* <div className='flex flex-row w-full'>
 												<div className='w-1/4'>Customer</div>
 												<div className='w-full'>
 													:{" "}
@@ -145,17 +145,17 @@ export const PdfCashAdvance = ({
 												<div className='w-full'>
 													: { dataSelected.wor === null ? "" : dataSelected.wor.subject}
 												</div>
-											</div>
+											</div> */}
 											<div className='flex flex-row w-full'>
 												<div className='w-1/4'>Payment Type</div>
 												<div className='w-full'>
 													: {dataSelected.status_payment}
 												</div>
 											</div>
-											<div className='flex flex-row w-full'>
+											{/* <div className='flex flex-row w-full'>
 												<div className='w-1/4'>Note</div>
 												<div className='w-full'>: {dataSelected.note}</div>
-											</div>
+											</div> */}
 										</Section>
 										<Section className='grid grid-cols-1 gap-2 mt-2'>
 											<table className='w-full'>

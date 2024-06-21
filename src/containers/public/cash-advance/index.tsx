@@ -34,10 +34,10 @@ export const CashAdvance = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id" },
+		{ name: "Date" },
+		{ name: "Job No" },
         { name: "Request By" },
         { name: "Total" },
-		{ name: "Created" },
         { name: "Action" }
 	];
 
@@ -194,10 +194,10 @@ export const CashAdvance = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.id_cash_advance }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.employee.employee_name }</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>{ total(res.cdv_detail) }</td>
                                     <td className='whitespace-nowrap px-6 py-4 text-center'>{ moment(res.date_cash_advance).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.job_no }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap px-6 py-4 text-center'>{ total(res.cdv_detail) }</td>
 									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
 										<div>
 											<Button

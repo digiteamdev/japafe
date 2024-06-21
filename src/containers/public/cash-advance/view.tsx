@@ -246,7 +246,7 @@ export const ViewCashAdvance = ({
 										Request By
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.employee.employee_name}
+										{dataSelected.user.employee.employee_name}
 									</td>
 								</tr>
 								<tr>
@@ -257,7 +257,7 @@ export const ViewCashAdvance = ({
 										{dataSelected.job_no}
 									</td>
 								</tr>
-								<tr>
+								{/* <tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Customer
 									</td>
@@ -272,7 +272,7 @@ export const ViewCashAdvance = ({
 									<td className='w-[50%] pl-2 border border-gray-200'>
 										{ dataSelected.wor === null ? "" : dataSelected.wor.subject}
 									</td>
-								</tr>
+								</tr> */}
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Payment Type
@@ -281,14 +281,14 @@ export const ViewCashAdvance = ({
 										{dataSelected.status_payment}
 									</td>
 								</tr>
-								<tr>
+								{/* <tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Note
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.note}
 									</td>
-								</tr>
+								</tr> */}
 							</table>
 						</div>
 					</Section>

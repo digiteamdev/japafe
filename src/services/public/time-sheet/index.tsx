@@ -7,3 +7,4 @@ export const GetTimeSheetHrd = (page: number, perpage: number, type: string, use
 export const SearchTimeSheet = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/timesheet?page=${page}&limit=${perpage}&search=${search}`);
 export const DeleteTimeSheet = (id: string) => Axios.delete(process.env.BASE_URL+`/timesheet/${id}`);
 export const EditTimeSheet = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/timesheet/${id}`, data);
+export const GetTimeSheetCsv = (type: string, userId: string, dateStar: string, dateEnd: string) => Axios.get(process.env.BASE_URL+`/timesheetCsv?${userId === "" ? "" : `&userId=${userId}`}${type === "" ? "" : `&type=${type}`}${dateStar === "" ? "" : `&dateStar=${dateStar}`}${dateEnd === "" ? "" : `&dateEnd=${dateEnd}`}`);

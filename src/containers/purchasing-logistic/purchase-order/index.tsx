@@ -222,7 +222,7 @@ export const PurchasePO = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{res.status_manager_director === "revision" ? (
+											{/* {res.status_manager_director === "revision" ? (
 												<Button
 													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
@@ -242,7 +242,7 @@ export const PurchasePO = () => {
 												>
 													<Edit color='white' />
 												</Button>
-											)}
+											)} */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
