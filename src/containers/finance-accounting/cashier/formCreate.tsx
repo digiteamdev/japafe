@@ -96,8 +96,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			const response = await GetCashier();
 			if (response.data) {
 				data.push({
-					label: "Dirrect",
-					type: "Dirrect",
+					label: "Direct",
+					type: "Direct",
 					value: [],
 				});
 				response.data.result.map((res: any) => {
@@ -216,6 +216,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 				status_transaction: res.status_transaction,
 				grandtotal: res.grandtotal,
 			});
+			console.log(res.status_transaction)
 			if (res.status_transaction === "Debet") {
 				totalDebet = totalDebet + res.grandtotal;
 			} else {
@@ -237,7 +238,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			rekening: payload.rekening,
 			journal_cashier: jurnal,
 		};
-
+		console.log(totalDebet, totalKredit)
 		if (totalDebet === 0 || totalKredit === 0) {
 			toast.warning("Journal total has not been filled in", {
 				position: "top-center",
@@ -335,7 +336,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
-										if (e.label === "Dirrect") {
+										if (e.label === "Direct") {
 											setCurrency("IDR");
 											setTotal(0);
 											setTotalAmount(0);
@@ -348,7 +349,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("id_cash_advance", null);
 											setFieldValue("id_purchase", null);
 											setFieldValue("total", 0);
-											setFieldValue("status_payment", "cash");
+											setFieldValue("status_payment", "Cash");
 											setDisc(0);
 											setPpn(0);
 											setPph(0);
@@ -1004,7 +1005,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 																arrays.push({
 																	coa_id: "",
 																	coa_name: "",
-																	status_transaction: "",
+																	status_transaction: "Debet",
 																	grandtotal: 0,
 																});
 															}}
