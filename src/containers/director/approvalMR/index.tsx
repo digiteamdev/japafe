@@ -15,7 +15,7 @@ import { ViewApprovalMr } from "./view";
 // import { FormEditApproval } from "./formEdit";
 import {
 	GetApprovalMr,
-	SearchPurchaseApproval,
+	SearchApprovalMr,
 	DeletePurchaseMR,
     ApprovalPrMr
 } from "../../../services";
@@ -88,7 +88,7 @@ export const ApprovalMR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseApproval(page, limit, search);
+			const response = await SearchApprovalMr(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}

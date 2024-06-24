@@ -158,12 +158,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const totalPaid = (data: any) => {
 		let totalPaidPurchase: number = 0;
 		data.detailMr.map((res: any) => {
-			totalPaidPurchase = (totalPaidPurchase + res.total) + res.disc;
+			totalPaidPurchase = totalPaidPurchase + res.total + res.disc;
 		});
 		data.SrDetail.map((res: any) => {
-			totalPaidPurchase = (totalPaidPurchase + res.total) + res.disc;
+			totalPaidPurchase = totalPaidPurchase + res.total + res.disc;
 		});
 		return totalPaidPurchase;
+	};
+
+	const totalCa = (data: any) => {
+		let totalPaidCa: number = 0;
+		data.cdv_detail.map((res: any) => {
+			totalPaidCa = totalPaidCa + res.total;
+		});
+		return totalPaidCa;
 	};
 
 	const grandTotalPaid = (data: any) => {
@@ -199,7 +207,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 
 	const addCashier = async (payload: any) => {
 		setIsLoading(true);
-		console.log(payload)
 		let totalDebet: number = 0;
 		let totalKredit: number = 0;
 		let jurnal: any = [];
@@ -346,8 +353,13 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setPpn(0);
 											setPph(0);
 											setIsDirrect(false);
+											setFieldValue("journal_cashier", [{
+												coa_id: "",
+												coa_name: "",
+												status_transaction: "Debet",
+												grandtotal: 0,
+											},])
 										} else if (e.type === "kontrabon") {
-											console.log("kontrabon")
 											setIsDirrect(true);
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
@@ -426,7 +438,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												"id_cash_advance",
 												e.type === "ca" ? e.value.id : null
 											);
-											setFieldValue(" idPurchase", e.type === "purchase" ? e.value.id : null);
+											setFieldValue(
+												" idPurchase",
+												e.type === "purchase" ? e.value.id : null
+											);
 											setFieldValue(
 												"total",
 												e.value.id_kontrabon === undefined
@@ -512,7 +527,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											}
 											setFieldValue("journal_cashier", listJournal);
 										} else if (e.type === "purchase") {
-											console.log("purchase")
 											setIsDirrect(false);
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
@@ -529,7 +543,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												"id_cash_advance",
 												e.type === "ca" ? e.value.id : null
 											);
-											setFieldValue("idPurchase", e.type === "purchase" ? e.value.id : null);
+											setFieldValue(
+												"idPurchase",
+												e.type === "purchase" ? e.value.id : null
+											);
 											setFieldValue("total", totalPaid(e.value));
 											setFieldValue("status_payment", "Cash");
 											if (e.value.type === "ca") {
@@ -576,8 +593,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPpn(0);
 													setPph(0);
 												}
-											}  else if (e.type === "purchase") {
-												discAmount(e.value)
+											} else if (e.type === "purchase") {
+												discAmount(e.value);
 												// setDisc(0);
 												setPpn(0);
 												setPph(0);
@@ -614,8 +631,36 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
-										}else{
-											console.log(e)
+										} else {
+											setIsDirrect(false);
+											setDisc(0);
+											setPpn(0);
+											setPph(0);
+											setCurrency("IDR");
+											setTotal(totalCa(e.value));
+											setTotalAmount(totalCa(e.value));
+											setFieldValue("account_name", "");
+											setFieldValue(
+												"pay_to",
+												e.value.user.employee.employee_name
+											);
+											setFieldValue("bank_name", "");
+											setFieldValue("rekening", "");
+											setFieldValue("note", e.value.note);
+											setFieldValue("kontrabonId", null);
+											setFieldValue(
+												"id_cash_advance",
+												e.type === "ca" ? e.value.id : null
+											);
+											setFieldValue("idPurchase", null);
+											setFieldValue("total", totalCa(e.value));
+											setFieldValue("status_payment", e.value.status_payment);
+											setFieldValue("journal_cashier", [{
+												coa_id: "",
+												coa_name: "",
+												status_transaction: "Debet",
+												grandtotal: 0,
+											},])
 										}
 									}}
 									required={true}
@@ -934,11 +979,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														name={`journal_cashier.${i}.grandtotal`}
 														placeholder='total'
 														label='total'
-														type='number'
-														onChange={handleChange}
+														type='text'
+														pattern="\d*"
+														onChange={(e:any) => {
+															let totals: number = 0;
+															if (e.target.value !== "") {
+																totals = parseInt(e.target.value.replace(/\./g, ""));
+																setFieldValue(`journal_cashier.${i}.grandtotal`, totals);
+															} else {
+																setFieldValue(`journal_cashier.${i}.grandtotal`, totals);
+															}
+														}}
 														required={true}
 														withLabel={false}
-														value={result.grandtotal}
+														value={formatRupiah(result.grandtotal.toString())}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
