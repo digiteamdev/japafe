@@ -3,7 +3,7 @@ import { Menu, Bell } from 'react-feather';
 import { Dropdown } from '../menu';
 import { Notification } from '../notification';
 import { getUsername, getImage, getPosition, removeToken } from '../../../configs/session';
-import { GetAllApprovalMr } from "@/src/services";
+import { GetAllApprovalMr, GetAllApprovalSr } from "@/src/services";
 
 interface props {
 	isSidebar?: boolean;
@@ -29,7 +29,7 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 		if(position === undefined){
 			setData([])
 		}else if( position === 'Director'){
-			getApprovalMr()
+			getApproval()
 		}
 		if (image !== undefined) {
 			setImage(photo)
@@ -37,13 +37,26 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const getApprovalMr = async () => {
+	const getApproval = async () => {
 		try {
-			const response = await GetAllApprovalMr();
-			if (response.data) {
-				setData(response.data.result);
-				setCountData(response.data.totalData);
+			let datas: any = []
+			let countDatas: number = 0
+			const responseMr = await GetAllApprovalMr();
+			const responseSr = await GetAllApprovalSr();
+			if (responseMr.data) {
+				responseMr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'approvalMr'})
+				})
+				countDatas = countDatas + responseMr.data.totalData;
 			}
+			if (responseSr.data) {
+				responseSr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'approvalSr'})
+				})
+				countDatas = countDatas + responseSr.data.totalData;
+			}
+			setData(datas)
+			setCountData(countDatas)
 		} catch (error: any) {
 			if (error.response.data.login) {
 				setData([]);

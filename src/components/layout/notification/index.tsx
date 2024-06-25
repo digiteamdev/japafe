@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import { Bell } from "react-feather";
+import { listNotification } from "../../../utils"
 import { removeToken, getImage } from "../../../configs/session";
 import { Logout } from "../../../services/";
 import { toast } from "react-toastify";
@@ -20,10 +21,15 @@ export const Notification = ({ data, count }: props) => {
 	}, []);
 
 	return (
-		<Menu as='div' className='relative inline-block text-left'>
-			<div>
+		<Menu as='div' className='relative inline-block'>
+			<div className='justify-center rounded-full'>
 				<Menu.Button>
-					<Bell size={24} />
+					{count > 0 ? (
+						<div className='absolute bg-red-400 justify-center rounded-full px-2 py-1 left-3 top-[-10px]'>
+							<p className='text-[12px]'>{count}</p>
+						</div>
+					) : null}
+					<Bell size={32} />
 				</Menu.Button>
 			</div>
 
@@ -36,7 +42,7 @@ export const Notification = ({ data, count }: props) => {
 				leaveFrom='transform opacity-100 scale-100'
 				leaveTo='transform opacity-0 scale-95'
 			>
-				<Menu.Items className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+				<Menu.Items className='absolute right-0 z-10 mt-2 lg:max-h-60 md:max-h-60 sm:max-h-60 xs:max-h-60 lg:w-96 md:w-96 sm:w-64 xs:w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-auto'>
 					{data.length === 0 ? (
 						<div className='py-1'>
 							<div className='p-2 text-center'>
@@ -47,10 +53,14 @@ export const Notification = ({ data, count }: props) => {
 						</div>
 					) : (
 						<div className='py-1'>
-							<div className='p-2 text-center'>
-								<Menu.Item>
-									<p>no notifications</p>
-								</Menu.Item>
+							<div className='p-2'>
+								{data.map((res: any, i: number) => {
+									return (
+										<Menu.Item key={i} as='div' className="hover:bg-gray-200">
+											{listNotification(res, res.type)}
+										</Menu.Item>
+									);
+								})}
 							</div>
 						</div>
 					)}

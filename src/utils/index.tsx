@@ -1,5 +1,7 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { getRole } from "../configs/session";
+import Link from "next/link";
+import { Send } from "react-feather";
 
 const currentYear = new Date().getFullYear();
 const range = (start: number, stop: number, step: number) =>
@@ -145,20 +147,52 @@ export const pembilang = (nilai: any) => {
 
 export const cekDivisiMarketing = () => {
 	let roles = getRole();
-	let divisi = ""
+	let divisi = "";
 	if (roles !== undefined) {
-		let role = JSON.parse(roles)
-		role.map((res:any) => {
-			if(res.role.role_name === "MARKETING SWASTA"){
-				divisi = "S"
-			}else if(res.role.role_name === "MARKETING BUMN"){
-				divisi = "B"
+		let role = JSON.parse(roles);
+		role.map((res: any) => {
+			if (res.role.role_name === "MARKETING SWASTA") {
+				divisi = "S";
+			} else if (res.role.role_name === "MARKETING BUMN") {
+				divisi = "B";
 			}
-		})
+		});
 	}
-	return divisi
-}
+	return divisi;
+};
 
 export const changeDivisi = (data: string) => {
-	return data
-}
+	return data;
+};
+
+export const listNotification = (data: any, type: string) => {
+	let text: string = "";
+	let width: number = window.innerWidth;
+	switch (type) {
+		case "approvalMr":
+			text = `New material request from ${data.user.employee.employee_name}`;
+			return (
+				<Link href={`/director/approvalMr/${data.id}`}>
+					<div className='flex '>
+						<span className='flex  text-gray-900 text-sm cursor-pointer'>
+							<Send size={24} className='pr-2' />
+							{ width > 768 ? (text.length > 45 ? `${text.slice(0, 44)}...` : text) : (text.length > 28 ? `${text.slice(0, 27)}...` : text) }
+						</span>
+					</div>
+				</Link>
+			);
+		case "approvalSr":
+			text = `New service request from ${data.user.employee.employee_name}`;
+			return (
+				<Link href={`/director/approvalSr/${data.id}`}>
+					<div className='flex '>
+						<span className='flex  text-gray-900 text-sm cursor-pointer hover:bg-gray-200'>
+							<Send size={24} className='pr-2' />
+							{ width > 768 ? (text.length > 45 ? `${text.slice(0, 44)}...` : text) : (text.length > 28 ? `${text.slice(0, 27)}...` : text) }
+						</span>
+					</div>
+				</Link>
+			);
+		break;
+	}
+};

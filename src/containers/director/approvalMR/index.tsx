@@ -230,8 +230,7 @@ export const ApprovalMR = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
+													router.push(`/director/approvalMr/${res.id}`)
 												}}
 											>
 												<Eye color='white' />
@@ -264,24 +263,7 @@ export const ApprovalMR = () => {
 					showModal={showModal}
 					onDelete={deletePurchaseMR}
 				/>
-			) : (
-				<Modal
-					title='Approval MR'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-						<ViewApprovalMr dataSelected={dataSelected} showModal={showModal} content={modalContent} />
-					) :
-					modalContent === "add" ? (
-						<></>
-					) : (
-                        <></>
-						// <FormEditApproval content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
-				</Modal>
-			)}
+			) : null }
 		</div>
 	);
 };
