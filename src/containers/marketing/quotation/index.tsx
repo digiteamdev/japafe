@@ -244,6 +244,7 @@ export const Quotation = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
+													// router.push(`/marketing/quotation/${res.id}`)
 													setDataSelected(res);
 													showModal(true, "view", false);
 												}}

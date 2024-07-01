@@ -1,6 +1,7 @@
 import { Axios } from '../../../configs/axios/';
 
 export const GetCustomer = (page: number, perpage: number, divisi: string) => Axios.get(process.env.BASE_URL+`/customer?page=${page}&limit=${perpage}&divisi=${divisi}`);
+export const GetCustomerById = (id: string) => Axios.get(process.env.BASE_URL+`/customer/${id}`);
 export const GetAllCustomer = (divisi: string) => Axios.get(process.env.BASE_URL+`/customer?divisi=${divisi}`);
 export const SearchCustomer = (page: number, perpage: number, search: string, divisi: string) => Axios.get(process.env.BASE_URL+`/customer?page=${page}&limit=${perpage}&search=${search}&divisi=${divisi}`);
 export const AddCustomer = (data: any) => Axios.post(process.env.BASE_URL+'/customer', data);

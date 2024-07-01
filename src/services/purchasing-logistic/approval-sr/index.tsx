@@ -4,6 +4,7 @@ import { Axios } from '../../../configs/axios/';
 export const GetApprovalSr = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/SRapprove?page=${page}&limit=${perpage}`);
 export const GetSrValid = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/SRapprove?page=${page}&limit=${perpage}`);
 export const GetDetailSr = (page: number, perpage: number) => Axios.get(process.env.BASE_URL+`/detailSR?page=${page}&limit=${perpage}`);
+export const GetAllDetailSr = () => Axios.get(process.env.BASE_URL+`/detailSR`);
 export const ApprovalSr = (data: any) => Axios.put(process.env.BASE_URL+`/SRapprove`, data);
 export const ApprovalEditSr = (data: any) => Axios.put(process.env.BASE_URL+`/detailSR`, data);
 // export const DeleteActivity = (id: string) => Axios.delete(process.env.BASE_URL+`/masterAktivitas/${id}`);

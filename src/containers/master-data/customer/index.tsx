@@ -219,8 +219,9 @@ export const Customer = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
+													router.push(`/marketing/customer/${res.id}`)
+													// setDataSelected(res);
+													// showModal(true, "view", false);
 												}}
 											>
 												<Eye color='white' />

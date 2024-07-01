@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import { getRole } from "../configs/session";
 import Link from "next/link";
-import { Send } from "react-feather";
+import { Send, Calendar } from "react-feather";
+import moment from "moment";
 
 const currentYear = new Date().getFullYear();
 const range = (start: number, stop: number, step: number) =>
@@ -173,10 +174,20 @@ export const listNotification = (data: any, type: string) => {
 			text = `New material request from ${data.user.employee.employee_name}`;
 			return (
 				<Link href={`/director/approvalMr/${data.id}`}>
-					<div className='flex '>
-						<span className='flex  text-gray-900 text-sm cursor-pointer'>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
 							<Send size={24} className='pr-2' />
-							{ width > 768 ? (text.length > 45 ? `${text.slice(0, 44)}...` : text) : (text.length > 28 ? `${text.slice(0, 27)}...` : text) }
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.date_mr).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
@@ -185,14 +196,68 @@ export const listNotification = (data: any, type: string) => {
 			text = `New service request from ${data.user.employee.employee_name}`;
 			return (
 				<Link href={`/director/approvalSr/${data.id}`}>
-					<div className='flex '>
-						<span className='flex  text-gray-900 text-sm cursor-pointer hover:bg-gray-200'>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
 							<Send size={24} className='pr-2' />
-							{ width > 768 ? (text.length > 45 ? `${text.slice(0, 44)}...` : text) : (text.length > 28 ? `${text.slice(0, 27)}...` : text) }
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.date_sr).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
 			);
-		break;
-	}
+		case "approvalMrPurchasing":
+			text = `New approval mr from ${data.user.employee.employee_name}`;
+			return (
+				<Link href={`/purchasing-logistic/approval-mr/${data.id}`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{ moment(data.date_sr).format("dddd, DD MMMM YYYY") }
+						</span>
+					</div>
+				</Link>
+			);
+		case "approvalSrPurchasing":
+			text = `New approval sr from ${data.user.employee.employee_name}`;
+			return (
+				<Link href={`/purchasing-logistic/approval-sr/${data.id}`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{ moment(data.date_sr).format("dddd, DD MMMM YYYY") }
+						</span>
+					</div>
+				</Link>
+			);
+			break;
+	};
 };

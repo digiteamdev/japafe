@@ -10,9 +10,6 @@ import {
 	Pagination
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateApprovalSr } from "./formCreate";
-import { ViewApprovalSR } from "./view";
-import { FormEditApprovalSr } from "./formEdit";
 import { GetDetailSr, SearchApprovalRequest, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
@@ -208,8 +205,7 @@ export const ApprovalSr = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
+													router.push(`/purchasing-logistic/approval-sr/${res.id}`)
 												}}
 											>
 												<Eye color='white' />
@@ -262,22 +258,7 @@ export const ApprovalSr = () => {
 					showModal={showModal}
 					onDelete={deleteSr}
 				/>
-			) : (
-				<Modal
-					title='Approval Service Request'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-                        <ViewApprovalSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
-					) : modalContent === "add" ? (
-                        <FormCreateApprovalSr content={modalContent} showModal={showModal} />
-					) : (
-                        <FormEditApprovalSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
-				</Modal>
-			)}
+			) : null}
 		</div>
 	);
 };

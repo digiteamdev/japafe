@@ -25,7 +25,7 @@ export const Notification = ({ data, count }: props) => {
 			<div className='justify-center rounded-full'>
 				<Menu.Button>
 					{count > 0 ? (
-						<div className='absolute bg-red-400 justify-center rounded-full px-2 py-1 left-3 top-[-10px]'>
+						<div className='absolute bg-red-400 justify-center font-semibold rounded-full px-2 py-1 left-3 top-[-10px]'>
 							<p className='text-[12px]'>{count}</p>
 						</div>
 					) : null}

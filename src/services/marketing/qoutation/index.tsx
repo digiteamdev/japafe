@@ -7,6 +7,7 @@ export const SearchQuotation = (page: number, perpage: number, search: string, d
 export const AddQuotation = (data: any) => Axios.post(process.env.BASE_URL+'/quotation', data);
 export const EditQuotation = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/quotation/${id}`, data);
 export const DeleteQuotation = (id: string) => Axios.delete(process.env.BASE_URL+`/quotation/${id}`);
+export const GetQuotationById = (id: string) => Axios.get(process.env.BASE_URL+`/quotationByid/${id}`);
 
 //Detail
 export const EditQuotationDetail = (data: any) => Axios.put(process.env.BASE_URL+`/quotationDetail`, data);

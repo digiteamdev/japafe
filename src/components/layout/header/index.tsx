@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Menu, Bell } from 'react-feather';
 import { Dropdown } from '../menu';
 import { Notification } from '../notification';
-import { getUsername, getImage, getPosition, removeToken } from '../../../configs/session';
-import { GetAllApprovalMr, GetAllApprovalSr } from "@/src/services";
+import { getUsername, getImage, getPosition, getRole } from '../../../configs/session';
+import { GetAllApprovalMr, GetAllApprovalSr, GetAllMRForApproval, GetAllDetailSr } from "@/src/services";
 
 interface props {
 	isSidebar?: boolean;
@@ -21,16 +21,26 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 		let photo = getImage();
 		let user = getUsername();
 		let position = getPosition();
+		let role = getRole()
+
 		if (user === undefined) {
 			setUsername("")
 		}else{
 			setUsername(user)
 		}
-		if(position === undefined){
-			setData([])
-		}else if( position === 'Director'){
+
+		if( position === 'Director' && role ){
 			getApproval()
+		}else if(position !== 'Director' && role ){
+			JSON.parse(role).map( (res: any) => {
+				if(res.role.role_name === 'PURCHASING'){
+					getAllApprovalMr()
+				}
+			})
+		}else{
+			setData([])
 		}
+
 		if (image !== undefined) {
 			setImage(photo)
 		}
@@ -62,6 +72,32 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 				setData([]);
 			}
 		}
+	};
+
+	const getAllApprovalMr = async () => {
+		try {
+			let datas: any = []
+			let countDatas: number = 0
+			const response = await GetAllMRForApproval();
+			const responseSr = await GetAllDetailSr();
+			if (response.data) {
+				response.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'approvalMrPurchasing'})
+				})
+				countDatas = countDatas + response.data.totalData;
+			}
+			if (responseSr.data) {
+				responseSr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'approvalSrPurchasing'})
+				})
+				countDatas = countDatas + responseSr.data.totalData;
+			}
+			setData(datas)
+			setCountData(countDatas)
+		} catch (error: any) {
+			setData([]);
+		}
+
 	};
 
 	return (

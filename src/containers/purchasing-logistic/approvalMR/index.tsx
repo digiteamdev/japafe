@@ -10,9 +10,6 @@ import {
 	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye } from "react-feather";
-import { FormCreateApprovalMr } from "./formCreate";
-import { ViewApprovalMR } from "./view";
-import { FormEditApprovalMr } from "./formEdit";
 import {
 	GetApprovalRequest,
 	SearchApprovalRequest,
@@ -64,7 +61,7 @@ export const ApprovalMr = () => {
 	const getApprovalMr = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMRForApproval();
+			const response = await GetMRForApproval(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -222,8 +219,7 @@ export const ApprovalMr = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
+													router.push(`/purchasing-logistic/approval-mr/${res.id}`)
 												}}
 											>
 												<Eye color='white' />
@@ -274,33 +270,7 @@ export const ApprovalMr = () => {
 					showModal={showModal}
 					onDelete={deleteMR}
 				/>
-			) : (
-				<Modal
-					title='Approval Material Request'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-						<ViewApprovalMR
-							dataSelected={dataSelected}
-							content={modalContent}
-							showModal={showModal}
-						/>
-					) : modalContent === "add" ? (
-						<FormCreateApprovalMr
-							content={modalContent}
-							showModal={showModal}
-						/>
-					) : (
-						<FormEditApprovalMr
-							content={modalContent}
-							showModal={showModal}
-							dataSelected={dataSelected}
-						/>
-					)}
-				</Modal>
-			)}
+			) : null }
 		</div>
 	);
 };

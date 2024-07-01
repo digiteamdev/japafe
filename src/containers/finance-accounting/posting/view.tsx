@@ -116,7 +116,7 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					dataCoa.push({
-						label: res.coa_name,
+						label: `${res.coa_code} ${res.coa_name}`,
 						value: res,
 					});
 				});

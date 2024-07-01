@@ -1,5 +1,6 @@
 export * from './supplier';
 export * from './customer';
+export * from './customer/viewCustomer';
 export * from './employe';
 export * from './equipment-part';
 export * from './departement';
