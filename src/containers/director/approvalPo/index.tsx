@@ -9,18 +9,21 @@ import {
 	ModalDelete,
 	Pagination,
 } from "../../../components";
-import { DollarSign, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateCashAdvance } from "./formCreate";
-import { ViewCashAdvance } from "./view";
-import { FormEditCashAdvance } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { Send, CheckSquare, Eye } from "react-feather";
+// import { FormCreateDirectMr } from "./formCreate";
+import { ViewApprovalPo } from "./view";
+// import { FormEditApproval } from "./formEdit";
+import {
+	GetApprovalPo,
+	SearchPurchaseApproval,
+	DeletePurchaseMR,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { changeDivisi, formatRupiah } from "@/src/utils";
+import { formatRupiah, changeDivisi } from "../../../utils/index";
 
-export const CashAdvance = () => {
+export const ApprovalPo = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -33,15 +36,15 @@ export const CashAdvance = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Date" },
 		{ name: "Job No" },
-		{ name: "Request By" },
-		{ name: "Total" },
+        { name: "No MR" },
+        { name: "Supplier" },
+        { name: "Material" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getCashAdvance(page, perPage);
+		getApprovalPo(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -52,15 +55,16 @@ export const CashAdvance = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCashAdvance(page, perPage);
+			getApprovalPo(page, perPage);
 		}
 	};
 
-	const getCashAdvance = async (page: number, perpage: number) => {
+	const getApprovalPo = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCashAdvance(page, perpage);
+			const response = await GetApprovalPo(page, perpage);
 			if (response.data) {
+                console.log(response.data)
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
@@ -76,14 +80,14 @@ export const CashAdvance = () => {
 		setIsLoading(false);
 	};
 
-	const searchCashAdvance = async (
+	const searchPurchaseApproval = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCashAdvance(page, limit, search);
+			const response = await SearchPurchaseApproval(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -93,11 +97,11 @@ export const CashAdvance = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deletePurchaseMR = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
+			const response = await DeletePurchaseMR(id);
 			if (response.data) {
-				toast.success("Delete Material Request Success", {
+				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -107,10 +111,10 @@ export const CashAdvance = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getCashAdvance(1, 10);
+				getApprovalPo(page, perPage);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Purchase Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -124,24 +128,36 @@ export const CashAdvance = () => {
 		setIsModal(false);
 	};
 
-	const total = (data: any) => {
-		let total: number = 0;
-		data.map((res: any) => {
-			total = total + res.total;
+	const total = (datas: any) => {
+		let totalHarga: number = 0;
+		datas.map((res: any) => {
+			totalHarga = totalHarga + res.total;
 		});
-		return formatRupiah(total.toString());
+		return formatRupiah(totalHarga.toString());
 	};
+
+	const showDesc = (data:any) => {
+		let desc:string = ""
+		data.map((res: any, i:number) => {
+			if(i === 0){
+				desc = `- `+res.desc
+			}else{
+				desc = desc +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return desc
+	}
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Cash Advance'
+				title='Approval PO'
 				total={countData}
-				icon={<DollarSign className='w-[36px] h-[36px]' />}
+				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Cash Advance'
-				print={true}
+				title='Approval PO'
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -149,7 +165,7 @@ export const CashAdvance = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={searchCashAdvance}
+				search={searchPurchaseApproval}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -188,42 +204,35 @@ export const CashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
+                            return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{moment(res.date_cash_advance).format("DD-MMMM-YYYY")}
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ res.job_no}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.wor ? res.wor.job_no : "Internal"}
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ res.no_mr }
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.user.employee.employee_name}
+									<td className='whitespace-pre-line p-1'>
+										{/* { showDesc(res.SrDetail) } */}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{total(res.cdv_detail)}
+                                    <td className='whitespace-nowrap p-1 text-center'>
+										{/* { res.user.employee.employee_name } */}
 									</td>
-									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+                                    <td className='whitespace-nowrap p-1 text-center'>
+										{/* { moment(res.date_sr).format('DD-MM-YYYY') } */}
+									</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
+													router.push(`/director/approvalSr/${res.id}`)
 												}}
 											>
 												<Eye color='white' />
-											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
-											>
-												<Edit color='white' />
 											</Button>
 										</div>
 									</td>
@@ -240,7 +249,7 @@ export const CashAdvance = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getCashAdvance(value, perPage);
+							getApprovalPo(value, perPage);
 						}}
 					/>
 				) : null}
@@ -251,31 +260,9 @@ export const CashAdvance = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deletePurchaseMR}
 				/>
-			) : (
-				<Modal
-					title='Cash Advance'
-					isModal={isModal}
-					content={modalContent}
-					showModal={showModal}
-				>
-					{modalContent === "view" ? (
-						<ViewCashAdvance
-							dataSelected={dataSelected}
-							content={modalContent}
-							showModal={showModal}
-						/>
-					) : modalContent === "add" ? (
-						<FormCreateCashAdvance
-							content={modalContent}
-							showModal={showModal}
-						/>
-					) : (
-						<FormEditCashAdvance content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
-				</Modal>
-			)}
+			) : null }
 		</div>
 	);
 };

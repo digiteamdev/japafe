@@ -207,6 +207,7 @@ export const PurchaseMR = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
+													// router.push(`/purchasing-logistic/purchase-mr/${res.id}`)
 													setDataSelected(res);
 													showModal(true, "view", false);
 												}}

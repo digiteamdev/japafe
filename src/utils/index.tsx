@@ -20,6 +20,7 @@ export const GetListYear = () => {
 };
 
 export const formatRupiah = (angka: any) => {
+	// let angka_koma = angka.split(".")
 	let number_string = angka.replace(/[^,\d]/g, "").toString(),
 		split = number_string.split(","),
 		sisa = split[0].length % 3,
@@ -187,7 +188,7 @@ export const listNotification = (data: any, type: string) => {
 						</span>
 						<span className='flex  text-gray-900 text-xs pl-5'>
 							<Calendar size={18} className='pr-2' />
-							{moment(data.date_mr).format("dddd, DD MMMM YYYY")}
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
@@ -209,7 +210,7 @@ export const listNotification = (data: any, type: string) => {
 						</span>
 						<span className='flex  text-gray-900 text-xs pl-5'>
 							<Calendar size={18} className='pr-2' />
-							{moment(data.date_sr).format("dddd, DD MMMM YYYY")}
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
@@ -231,7 +232,7 @@ export const listNotification = (data: any, type: string) => {
 						</span>
 						<span className='flex  text-gray-900 text-xs pl-5'>
 							<Calendar size={18} className='pr-2' />
-							{ moment(data.date_sr).format("dddd, DD MMMM YYYY") }
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
@@ -253,11 +254,99 @@ export const listNotification = (data: any, type: string) => {
 						</span>
 						<span className='flex  text-gray-900 text-xs pl-5'>
 							<Calendar size={18} className='pr-2' />
-							{ moment(data.date_sr).format("dddd, DD MMMM YYYY") }
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
 						</span>
 					</div>
 				</Link>
 			);
 			break;
-	};
+		case "purchaseMr":
+			text = `New purchase mr`;
+			return (
+				<Link href={`/purchasing-logistic/purchase-mr`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
+						</span>
+					</div>
+				</Link>
+			);
+		case "purchaseSr":
+			text = `New purchase sr`;
+			return (
+				<Link href={`/purchasing-logistic/purchase-sr`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
+						</span>
+					</div>
+				</Link>
+			);
+		case "purchaseDirectMr":
+			text = `New direct mr`;
+			return (
+				<Link href={`/purchasing-logistic/direct-mr`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
+						</span>
+					</div>
+				</Link>
+			);
+		case "purchaseDirectSr":
+			text = `New direct sr`;
+			return (
+				<Link href={`/purchasing-logistic/direct-sr`}>
+					<div className='border cursor-pointer border-b-rose-500 border-t-0 border-l-0 border-r-0'>
+						<span className='flex  text-gray-900 text-sm'>
+							<Send size={24} className='pr-2' />
+							{width > 768
+								? text.length > 45
+									? `${text.slice(0, 44)}...`
+									: text
+								: text.length > 28
+								? `${text.slice(0, 27)}...`
+								: text}
+						</span>
+						<span className='flex  text-gray-900 text-xs pl-5'>
+							<Calendar size={18} className='pr-2' />
+							{moment(data.updatedAt).format("dddd, DD MMMM YYYY")}
+						</span>
+					</div>
+				</Link>
+			);
+	}
 };

@@ -254,7 +254,7 @@ export const ViewCashAdvance = ({
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.job_no}
+										{dataSelected.wor ? dataSelected.wor.job_no : 'Internal'}
 									</td>
 								</tr>
 								{/* <tr>

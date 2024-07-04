@@ -3,7 +3,7 @@ import { Menu, Bell } from 'react-feather';
 import { Dropdown } from '../menu';
 import { Notification } from '../notification';
 import { getUsername, getImage, getPosition, getRole } from '../../../configs/session';
-import { GetAllApprovalMr, GetAllApprovalSr, GetAllMRForApproval, GetAllDetailSr } from "@/src/services";
+import { GetAllApprovalMr, GetAllApprovalSr, GetAllMRForApproval, GetAllDetailSr, GetAllMRPo, GetPurchaseSR } from "@/src/services";
 
 interface props {
 	isSidebar?: boolean;
@@ -80,6 +80,10 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 			let countDatas: number = 0
 			const response = await GetAllMRForApproval();
 			const responseSr = await GetAllDetailSr();
+			const responsePr = await GetAllMRPo(1, 10, 'PO');
+			const responseDmr = await GetAllMRPo(1, 10, 'DP');
+			const responsePsr = await GetPurchaseSR(1, 10, 'SO');
+			const responseDsr = await GetPurchaseSR(1, 10, 'DSO');
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					datas.push({...res, 'type': 'approvalMrPurchasing'})
@@ -91,6 +95,30 @@ export const Header = ({ isSidebar, showSidebar }: props) => {
 					datas.push({...res, 'type': 'approvalSrPurchasing'})
 				})
 				countDatas = countDatas + responseSr.data.totalData;
+			}
+			if (responsePr.data) {
+				responsePr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'purchaseMr'})
+				})
+				countDatas = countDatas + responsePr.data.totalData;
+			}
+			if (responseDmr.data) {
+				responseDmr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'purchaseDirectMr'})
+				})
+				countDatas = countDatas + responseDmr.data.totalData;
+			}
+			if (responsePsr.data) {
+				responsePsr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'purchaseSr'})
+				})
+				countDatas = countDatas + responsePsr.data.totalData;
+			}
+			if (responseDsr.data) {
+				responseDsr.data.result.map((res: any) => {
+					datas.push({...res, 'type': 'purchaseDirectSr'})
+				})
+				countDatas = countDatas + responseDsr.data.totalData;
 			}
 			setData(datas)
 			setCountData(countDatas)

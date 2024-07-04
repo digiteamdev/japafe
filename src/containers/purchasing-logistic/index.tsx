@@ -18,3 +18,4 @@ export * from './list-dirrect-po';
 export * from './list-dirrect-service';
 export * from './approvalMR/view';
 export * from './approvalSR/view';
+export * from './purchase-mr/viewPr';

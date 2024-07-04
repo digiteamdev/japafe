@@ -7,103 +7,93 @@ import {
 	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { departemenSchema } from "../../../schema/master-data/departement/departementSchema";
-import { AddCashAdvance, GetEmployeCash, GetBom } from "../../../services";
+import { EditCashAdvance, GetEmployeCash, GetBom } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import { getIdUser } from "../../../configs/session";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
+	dataSelected: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
 interface data {
 	id_cash_advance: string;
-	employeeId: string;
 	worId: string;
+	wor: any;
 	job_no: string;
 	userId: string;
 	status_payment: string;
-	currency: string;
 	detail: any;
-	total: number;
-	description: string;
+    date_cash_advance: any;
+	grand_tot: number;
 	note: string;
-	date_cash_advance: Date;
 }
 
-export const FormCreateCashAdvance = ({ content, showModal }: props) => {
+export const FormEditCashAdvance = ({
+	dataSelected,
+	content,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [caID, setCaID] = useState<string>("");
-	const [listEmploye, setListEmploye] = useState<any>([]);
-	const [userId, setUserId] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
+    const [listDelete, setListDelete] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		id_cash_advance: "",
-		employeeId: "",
 		worId: "",
 		job_no: "",
 		userId: "",
+        date_cash_advance: new Date(),
+		wor: {},
 		detail: [
 			{
-				type: "Consumable",
-				value: "",
+                id: "",
+				type_cdv: "Consumable",
+				total: 0,
 				description: "",
 			},
 		],
-		currency: "IDR",
 		status_payment: "Cash",
-		total: 0,
-		description: "",
-		note: "",
-		date_cash_advance: new Date(),
+		grand_tot: 0,
+		note: dataSelected.note,
 	});
 
 	useEffect(() => {
-		getEmploye();
-		getEmployeById();
+		settingData();
 		getWor();
-		generateIdNum();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getEmployeById = async () => {
-		const id = getIdUser();
-		if (id !== undefined) {
-			setUserId(id);
-		}
-	};
-
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"CA" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 10000);
-		setCaID(id);
-	};
-
-	const getEmploye = async () => {
-		let listemploye: any = [];
-		try {
-			const response = await GetEmployeCash();
-			if (response) {
-				response.data.result.map((res: any) => {
-					listemploye.push({
-						label: res.employee_name,
-						value: res,
-					});
-				});
-			}
-		} catch (error) {
-			listemploye = [];
-		}
-		setListEmploye(listemploye);
+	const settingData = () => {
+		let detail: any = [];
+		dataSelected.cdv_detail.map((res: any) => {
+			detail.push({
+				id: res.id,
+				type_cdv: res.type_cdv,
+				total: res.total,
+				description: res.description,
+			});
+		});
+		setData({
+			id_cash_advance: dataSelected.id_cash_advance,
+			worId: dataSelected.worId,
+			wor: {
+				label: dataSelected.wor
+					? dataSelected.wor.job_no +
+					  " - " +
+					  dataSelected.wor.customerPo.quotations.Customer.name
+					: "Internal",
+			},
+			job_no: dataSelected.wor ? dataSelected.wor.job_no : "Internal",
+			userId: dataSelected.userId,
+			detail: detail,
+			status_payment: dataSelected.status_payment,
+            date_cash_advance: dataSelected.date_cash_advance,
+			grand_tot: dataSelected.grand_tot,
+			note: "",
+		});
 	};
 
 	const getWor = async () => {
@@ -113,9 +103,9 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			{
 				value: {
 					id: null,
-					job_no: "Internal"
+					job_no: "Internal",
 				},
-				label: "Internal"
+				label: "Internal",
 			},
 		];
 		try {
@@ -124,7 +114,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: res.job_no + ' - ' + res.customerPo.quotations.Customer.name,
+						label: res.job_no + " - " + res.customerPo.quotations.Customer.name,
 					});
 				});
 				setListWor(datasWor);
@@ -134,36 +124,35 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		}
 	};
 
-	const addCashAdvance = async (payload: any) => {
+	const editCashAdvance = async (payload: any) => {
 		setIsLoading(true);
 		let detail: any = [];
 		let total: number = 0;
 		payload.detail.map((res: any) => {
-			if (res.value !== "" || res.description !== "") {
-				total = total + parseInt(res.value)
+			if (res.total !== 0 || res.description !== "") {
+				total = total + parseInt(res.total);
 				detail.push({
-					type_cdv: res.type,
-					total: parseInt(res.value),
+                    id: res.id,
+                    cdvId: dataSelected.id,
+					type_cdv: res.type_cdv,
+					total: parseInt(res.total),
 					description: res.description,
 				});
 			}
 		});
 		let data = {
-			id_cash_advance: caID,
-			employeeId: payload.employeeId,
 			worId: payload.worId,
-			job_no: payload.job_no,
-			userId: userId,
+			userId: payload.userId,
 			status_payment: payload.status_payment,
 			note: payload.note,
 			date_cash_advance: payload.date_cash_advance,
 			cdv_detail: detail,
-			grand_tot: total
+            delete: listDelete
 		};
 		try {
-			const response = await AddCashAdvance(data);
+			const response = await EditCashAdvance(data, dataSelected.id);
 			if (response.data) {
-				toast.success("Add Cash Advance Success", {
+				toast.success("Edit Cash Advance Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -176,7 +165,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				showModal(false, content, true);
 			}
 		} catch (error) {
-			toast.error("Add Cash Advances Failed", {
+			toast.error("Edit Cash Advances Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -190,9 +179,12 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-	function formatrupiah(arg0: any): string | undefined {
-		throw new Error("Function not implemented.");
-	}
+    const deleted = async (id: string) => {
+		let list_delete: any = listDelete
+        listDelete.push({
+            id: id
+        })
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
@@ -200,7 +192,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					addCashAdvance(values);
+					editCashAdvance(values);
 				}}
 				enableReinitialize
 			>
@@ -215,37 +207,6 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							{/* <div className='w-full'>
-								<Input
-									id='id_cash_advance'
-									name='id_cash_advance'
-									placeholder='id Cash Advance'
-									label='id Cash Advance'
-									type='text'
-									value={caID}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
-							{/* <div className='w-full'>
-								<InputSelectSearch
-									datas={listEmploye}
-									id='request'
-									name='request'
-									placeholder='Request By'
-									label='Request By'
-									onChange={(e: any) => {
-										setFieldValue("employeeId", e.value.id);
-										setFieldValue("id_cash_advance", caID);
-										setFieldValue("userId", userId);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listWor}
@@ -255,8 +216,10 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									label='Job No'
 									onChange={(e: any) => {
 										setFieldValue("worId", e.value.id);
+										setFieldValue("wor", e);
 										setFieldValue("job_no", e.value.job_no);
 									}}
+									value={values.wor}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
@@ -273,28 +236,22 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								>
-									<option value='Cash'>Cash</option>
-									<option value='Transfer'>Transfer</option>
+									<option
+										value='Cash'
+										selected={values.status_payment === "Cash" ? true : false}
+									>
+										Cash
+									</option>
+									<option
+										value='Transfer'
+										selected={
+											values.status_payment === "Transfer" ? true : false
+										}
+									>
+										Transfer
+									</option>
 								</InputSelect>
 							</div>
-							{/* <div className='w-full'>
-								<InputSelect
-									id='currency'
-									name='currency'
-									placeholder='Currency'
-									label='Currency'
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='IDR'>IDR</option>
-									<option value='EUR'>EUR</option>
-									<option value='SGD'>SGD</option>
-									<option value='USD'>USD</option>
-									<option value='YEN'>YEN</option>
-								</InputSelect>
-							</div> */}
 						</Section>
 						<FieldArray
 							name='detail'
@@ -307,35 +264,35 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 										>
 											<div className='w-full'>
 												<InputSelect
-													id={`detail.${i}.type`}
-													name={`detail.${i}.type`}
+													id={`detail.${i}.type_cdv`}
+													name={`detail.${i}.type_cdv`}
 													placeholder='Type'
 													label='Type'
 													onChange={(e: any) => {
-														setFieldValue(`detail.${i}.type`, e.target.value);
+														setFieldValue(`detail.${i}.type_cdv`, e.target.value);
 													}}
 													required={true}
 													withLabel={true}
 													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 												>
-													<option value='Consumable'>Consumable</option>
-													<option value='Investasi'>Investasi</option>
-													<option value='Service'>Service</option>
-													<option value='Operasional'>Operasional</option>
-													<option value='SDM'>SDM</option>
+													<option value='Consumable' selected={res.type_cdv === "Consumable" ? true : false}>Consumable</option>
+													<option value='Investasi' selected={res.type_cdv === "Investasi" ? true : false}>Investasi</option>
+													<option value='Service' selected={res.type_cdv === "Service" ? true : false}>Service</option>
+													<option value='Operasional' selected={res.type_cdv === "Operasional" ? true : false}>Operasional</option>
+													<option value='SDM' selected={res.type_cdv === "SDM" ? true : false}>SDM</option>
 												</InputSelect>
 											</div>
 											<div className='w-full'>
 												<Input
-													id={`detail.${i}.value`}
-													name={`detail.${i}.value`}
+													id={`detail.${i}.total`}
+													name={`detail.${i}.total`}
 													placeholder='Amount'
 													label='Amount'
 													type='text'
 													pattern='\d*'
-													value={formatRupiah(res.value.toString())}
+													value={formatRupiah(res.total.toString())}
 													onChange={(e: any) => {
-														setFieldValue(`detail.${i}.value`, e.target.value);
+														setFieldValue(`detail.${i}.total`, e.target.value.replaceAll(".", ""));
 													}}
 													required={true}
 													withLabel={true}
@@ -369,8 +326,9 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 														onClick={() =>
 															arrayDetail.push({
-																type: "Consumable",
-																value: "",
+																id: "",
+																type_cdv: "Consumable",
+																total: 0,
 																description: "",
 															})
 														}
@@ -382,7 +340,12 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 												{i === 0 && values.detail.length === 1 ? null : (
 													<a
 														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-														onClick={() => arrayDetail.remove(i)}
+														onClick={() => {
+                                                            if(res.id !== ""){
+                                                                deleted(res.id)
+                                                            }
+                                                            arrayDetail.remove(i)
+                                                        }}
 													>
 														<Trash2 size={22} className='mt-1 mr-1' />
 														Remove
