@@ -84,15 +84,14 @@ export const ListPO = () => {
 		setIsLoading(true);
 		try {
 			const response = await GetPoMr(page, perpage, type);
-			console.log(response.data);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
+			setData([]);
 			if (error.response.data.login) {
-				setData([]);
 			} else {
 				// removeToken();
 				// router.push('/');
@@ -217,6 +216,7 @@ export const ListPO = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
