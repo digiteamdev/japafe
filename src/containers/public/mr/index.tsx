@@ -8,14 +8,16 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	InputDate,
+	Section,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
 import { FormCreateMr } from "./formCreate";
 import { ViewMR } from "./view";
 import { FormEditMr } from "./formEdit";
 import { GetMr, SearchMr, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken } from "../../../configs/session";
+import { removeToken, getRole } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
@@ -32,6 +34,9 @@ export const Mr = () => {
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
+	const [isShowPrint, setIsShowPrint] = useState<any>(false);
 	const headerTabel = [
 		{ name: "MR No" },
 		{ name: "No Job" },
@@ -41,7 +46,13 @@ export const Mr = () => {
 	];
 
 	useEffect(() => {
+		let role:any = getRole()
 		getMr(page, perPage);
+		if(role){
+			JSON.parse(role).map((res:any) => {
+				res.role?.role_name === 'PURCHASING' ? setIsShowPrint(true) : null
+			})
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusMr]);
 
@@ -144,8 +155,8 @@ export const Mr = () => {
 	};
 
 	const changeMr = (data: string) => {
-		setStatusMr(data)
-	}
+		setStatusMr(data);
+	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
@@ -196,6 +207,43 @@ export const Mr = () => {
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
+				{ isShowPrint ? (
+					<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+						<div className='w-full'>
+							<InputDate
+								id='date'
+								label='date'
+								dateFormat='dd/MM/yyyy'
+								value={dateStart}
+								onChange={(value: any) => setDateStart(value)}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+								classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+							/>
+						</div>
+						<div className='w-full'>
+							<InputDate
+								id='date'
+								label='date'
+								dateFormat='dd/MM/yyyy'
+								minDate={dateStart}
+								value={dateFinish}
+								onChange={(value: any) => setDateFinish(value)}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+								classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+							/>
+						</div>
+						<div className='flex'>
+							<Button
+								className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+								onClick={ async () => window.location.href = process.env.BASE_URL+`/MRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=Purchase` }
+							>
+								<Printer color='white' className='mx-auto' />
+							</Button>
+						</div>
+					</Section>
+				) : null }
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -279,7 +327,7 @@ export const Mr = () => {
 													</Button>
 												</>
 											) : null}
-											{ res.statusMr === 'Request' ? (
+											{res.statusMr === "Request" ? (
 												<Button
 													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 													onClick={() => {
@@ -289,7 +337,7 @@ export const Mr = () => {
 												>
 													<Trash2 color='white' />
 												</Button>
-											) : null }
+											) : null}
 										</div>
 									</td>
 								</tr>

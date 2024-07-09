@@ -225,7 +225,7 @@ export const Cashier = () => {
 											}}>
 												<Eye color='white' />
 											</Button>
-											{/* { res.status_valid ? null : (
+											{ res.status_valid ? null : (
 												<>
 													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 													onClick={ () => {
@@ -234,16 +234,16 @@ export const Cashier = () => {
 													}}>
 														<Edit color='white' />
 													</Button>
-													<Button 
+													{/* <Button 
 														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 														onClick={ () => {
 															setDataSelected(res);
 															showModal(true,'delete', false);
 														}}>
 														<Trash2 color='white' />
-													</Button>
+													</Button> */}
 												</>
-											) } */}
+											) }
 										</div>
 									</td>
 								</tr>
