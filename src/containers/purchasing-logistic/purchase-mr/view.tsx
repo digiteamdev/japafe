@@ -84,7 +84,8 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 		let listDetail: any = [];
 		let isWarning: boolean = false;
 		payload.detailMr.map((res: any) => {
-			if(res.supId === null && res.price > 0){
+			console.log(res)
+			if(res.supId === null && parseInt(res.price) > 0){
 				toast.warning("Supplier has not been filled in yet", {
 					position: "top-center",
 					autoClose: 5000,
@@ -96,7 +97,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 					theme: "colored",
 				});
 				isWarning = true;
-			}else if(res.supId !== null && res.price === 0){
+			}else if(res.supId !== null && parseInt(res.price) === 0){
 				toast.warning("Price cannot be 0", {
 					position: "top-center",
 					autoClose: 5000,
@@ -108,7 +109,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 					theme: "colored",
 				});
 				isWarning = true;
-			}else if(res.supId !== null && res.price > 0){
+			}else if(res.supId !== null && parseInt(res.price) > 0){
 				listDetail.push({
 					id: res.id,
 					name_material: res.name_material,
@@ -123,6 +124,19 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 				isWarning = false
 			}
 		});
+		if( listDetail.length === 0 && !isWarning){
+			toast.warning("Supplier has not been filled in yet", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+			isWarning = true;
+		}
 		let data = {
 			dateOfPurchase: payload.dateOfPurchase,
 			idPurchase: payload.idPurchase,
@@ -130,35 +144,35 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 			currency: payload.currency,
 			detailMr: listDetail,
 		};
-		if(!isWarning){
-			try {
-				const response = await AddPrMr(data);
-				if (response.data) {
-					toast.success("Purchase Material Request Success", {
-						position: "top-center",
-						autoClose: 5000,
-						hideProgressBar: true,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: "colored",
-					});
-					showModal(false, content, true);
-				}
-			} catch (error) {
-				toast.error("Purchase Material Request Failed", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		}
+		// if(!isWarning){
+		// 	try {
+		// 		const response = await AddPrMr(data);
+		// 		if (response.data) {
+		// 			toast.success("Purchase Material Request Success", {
+		// 				position: "top-center",
+		// 				autoClose: 5000,
+		// 				hideProgressBar: true,
+		// 				closeOnClick: true,
+		// 				pauseOnHover: true,
+		// 				draggable: true,
+		// 				progress: undefined,
+		// 				theme: "colored",
+		// 			});
+		// 			showModal(false, content, true);
+		// 		}
+		// 	} catch (error) {
+		// 		toast.error("Purchase Material Request Failed", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 	}
+		// }
 		setIsLoading(false);
 	};
 

@@ -36,6 +36,11 @@ export const formatRupiah = (angka: any) => {
 	return rupiah;
 };
 
+export const rupiahFormat = (angka: any) => {
+	let rupiah = new Intl.NumberFormat("id-ID").format(1000000.9);
+	return rupiah
+};
+
 const rangePage = (start: any, end: any) => {
 	let length = end - start + 1;
 	return Array.from({ length }, (_, idx) => idx + start);
