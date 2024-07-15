@@ -13,7 +13,7 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
 	const Total = (detail: any) => {
 		let jumlahTotal: any = 0;
 		detail.map((res: any) => {
-			jumlahTotal = jumlahTotal + res.price * res.qty - res.disc;
+			jumlahTotal = jumlahTotal + res.price * res.qtyAppr - res.disc;
 		});
 		return jumlahTotal.toString();
 	};
@@ -196,7 +196,7 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
 												{res.name_material}
 											</td>
 											<td className='text-center border border-black'>
-												{res.qty}
+												{res.qtyAppr}
 											</td>
 											<td className='text-center border border-black'>
 												{res.Material_Master.satuan}

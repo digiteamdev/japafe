@@ -12,7 +12,7 @@ import {
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 // import { FormCreatePurchaseMr } from "./formCreate";
 import { ViewPurchase } from "./view";
-// import { FormEditPurchaseMr } from "./formEdit";
+import { FormEditPo } from "./formEdit";
 import {
 	GetPoMr,
 	SearchPoMR,
@@ -251,6 +251,15 @@ export const ListPO = () => {
 											>
 												<Eye color='white' />
 											</Button>
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true,'edit', false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
 										</div>
 									</td>
 								</tr>
@@ -288,7 +297,7 @@ export const ListPO = () => {
 				>
 					{modalContent === "view" ? (
 						<ViewPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
-					) : // <ViewPoMR
+					) : 
 					// 	dataSelected={dataSelected}
 					// 	showModal={showModal}
 					// 	content={modalContent}
@@ -296,16 +305,11 @@ export const ListPO = () => {
 					modalContent === "add" ? (
 						<></>
 					) : (
-						// <FormCreatePurchaseMr
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
-						<></>
-						// <FormEditPurchaseMr
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// 	dataSelected={dataSelected}
-						// />
+						<FormEditPo
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}
