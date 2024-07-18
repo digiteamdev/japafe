@@ -237,7 +237,7 @@ export const Mr = () => {
 						<div className='flex'>
 							<Button
 								className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-								onClick={ async () => window.location.href = process.env.BASE_URL+`/MRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=Purchase` }
+								onClick={ async () => window.location.href = process.env.BASE_URL+`/MRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusMr}` }
 							>
 								<Printer color='white' className='mx-auto' />
 							</Button>

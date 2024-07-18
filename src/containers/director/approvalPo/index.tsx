@@ -38,7 +38,6 @@ export const ApprovalPo = () => {
 	const headerTabel = [
 		{ name: "Job No" },
         { name: "No MR" },
-        { name: "Supplier" },
         { name: "Material" },
 		{ name: "Action" },
 	];
@@ -64,7 +63,6 @@ export const ApprovalPo = () => {
 		try {
 			const response = await GetApprovalPo(page, perpage);
 			if (response.data) {
-                console.log(response.data)
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
@@ -128,24 +126,16 @@ export const ApprovalPo = () => {
 		setIsModal(false);
 	};
 
-	const total = (datas: any) => {
-		let totalHarga: number = 0;
-		datas.map((res: any) => {
-			totalHarga = totalHarga + res.total;
-		});
-		return formatRupiah(totalHarga.toString());
-	};
-
-	const showDesc = (data:any) => {
-		let desc:string = ""
-		data.map((res: any, i:number) => {
+	const showMaterial = (data:any) => {
+		let material:string = ""
+		data?.map((res: any, i:number) => {
 			if(i === 0){
-				desc = `- `+res.desc
+				material = `- `+res.Material_Master.name
 			}else{
-				desc = desc +` \r\n ` + `- `+res.desc 
+				material = material +` \r\n ` + `- `+res.Material_Master.name 
 			}
 		})
-		return desc
+		return material
 	}
 
 	return (
@@ -204,32 +194,28 @@ export const ApprovalPo = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
                             return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.job_no}
+										{ res.detailMr[0]?.mr?.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.no_mr }
+										{ res.detailMr[0]?.mr?.no_mr }
 									</td>
 									<td className='whitespace-pre-line p-1'>
-										{/* { showDesc(res.SrDetail) } */}
-									</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>
-										{/* { res.user.employee.employee_name } */}
-									</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>
-										{/* { moment(res.date_sr).format('DD-MM-YYYY') } */}
+										{ showMaterial(res.detailMr) }
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													router.push(`/director/approvalSr/${res.id}`)
+													setDataSelected(res);
+													showModal(true, "view", false);
 												}}
 											>
 												<Eye color='white' />
@@ -262,7 +248,22 @@ export const ApprovalPo = () => {
 					showModal={showModal}
 					onDelete={deletePurchaseMR}
 				/>
-			) : null }
+			) : (
+				<Modal
+					title='Purchase Order'
+					isModal={isModal}
+					content={modalContent}
+					showModal={showModal}
+				>
+					{modalContent === "view" ? (
+						<ViewApprovalPo
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
+					) : null}
+				</Modal>
+			)}
 		</div>
 	);
 };
