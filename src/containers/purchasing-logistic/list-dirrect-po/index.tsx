@@ -15,7 +15,7 @@ import { ViewDirrectPurchase } from "./view";
 // import { FormEditPurchaseMr } from "./formEdit";
 import {
 	GetDirrectPurchase,
-	SearchPoMR,
+	SearchDirrectPurchase,
 	DeletePurchaseMR,
 	GetAllMRPo,
 } from "../../../services";
@@ -85,7 +85,7 @@ export const ListDirrectPurchase = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPoMR(page, limit, search, "DMR");
+			const response = await SearchDirrectPurchase(page, limit, search, "DMR");
 			if (response.data) {
 				setData(response.data.result);
 			}

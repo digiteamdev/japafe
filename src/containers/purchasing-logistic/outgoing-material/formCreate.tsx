@@ -80,8 +80,9 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			const response = await GetOutgoingMaterialAll();
 			if (response) {
 				response.data.result.map((res: any) => {
+					console.log(res)
 					dataRecieve.push({
-						label: res.id_receive,
+						label: res.id_so ? res.id_so : res.idPurchase,
 						value: res,
 					});
 				});

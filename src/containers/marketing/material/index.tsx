@@ -185,7 +185,7 @@ export const MaterialStokMaketing = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1'>{ `${res.name} ${res.spesifikasi}` }</td>
+									<td className='whitespace-nowrap p-1'>{res.name}{" "}{res.spesifikasi}</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ res.jumlah_Stock }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ res.satuan }</td>
 									<td className='whitespace-nowrap p-1 text-center'>{ formatRupiah(res.harga.toString()) }</td>

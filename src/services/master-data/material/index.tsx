@@ -26,3 +26,4 @@ export const GetMaterialNew = (page: number, perpage: number) => Axios.get(proce
 export const SearchMaterialNew = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/materialMaster?page=${page}&limit=${perpage}&search=${search}`);
 export const GetAllMaterialNew = () => Axios.get(process.env.BASE_URL+`/materialMaster`);
 export const EditMaterialNew = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/materialMaster/${id}`, data);
+export const DeleteMaterialNew = (id: string) => Axios.delete(process.env.BASE_URL+`/materialMaster/${id}`);

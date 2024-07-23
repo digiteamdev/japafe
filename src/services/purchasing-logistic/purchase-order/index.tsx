@@ -10,3 +10,4 @@ export const SearchPoMR = (page: number, perpage: number, search: string, type: 
 export const PdfPo = (id: any) => Axios.post(process.env.BASE_URL+`/pdfPo/${id}`);
 
 export const GetDirrectPurchase = (page: number, perpage: number, type: string) => Axios.get(process.env.BASE_URL+`/listdirect?page=${page}&limit=${perpage}&type=${type}`);
+export const SearchDirrectPurchase = (page: number, perpage: number, search: string, type: string) => Axios.get(process.env.BASE_URL+`/listdirect?page=${page}&limit=${perpage}&type=${type}&search=${search}`);

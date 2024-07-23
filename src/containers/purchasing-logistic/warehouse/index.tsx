@@ -14,7 +14,7 @@ import { Box, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreateWarehouse } from "./formCreate";
 import { ViewWarehouse } from "./view";
 import { FormEditWarehouse } from './formEdit';
-import { GetMaterialNew, SearchMaterialNew, DeleteMaterial } from "../../../services";
+import { GetMaterialNew, SearchMaterialNew, DeleteMaterialNew } from "../../../services";
 import { toast } from "react-toastify";
 import { changeDivisi, formatRupiah } from "@/src/utils";
 
@@ -94,7 +94,7 @@ export const Warehouse = () => {
 
 	const deleteMaterial = async (id: string) => {
 		try {
-			const response = await DeleteMaterial(id);
+			const response = await DeleteMaterialNew(id);
 			if(response.data){
 				toast.success("Delete Material Success", {
 					position: "top-center",
@@ -216,7 +216,7 @@ export const Warehouse = () => {
 											>
 												<Edit color='white' />
 											</Button>
-											{/* <Button
+											<Button
 												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -224,7 +224,7 @@ export const Warehouse = () => {
 												}}
 											>
 												<Trash2 color='white' />
-											</Button> */}
+											</Button>
 										</div>
 									</td>
 								</tr>
