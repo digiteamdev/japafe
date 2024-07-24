@@ -80,7 +80,6 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			const response = await GetOutgoingMaterialAll();
 			if (response) {
 				response.data.result.map((res: any) => {
-					console.log(res)
 					dataRecieve.push({
 						label: res.id_so ? res.id_so : res.idPurchase,
 						value: res,
@@ -309,7 +308,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 											setFieldValue(`mr.${i}.idMr`, res.mr.id);
 											setFieldValue(
 												`mr.${i}.materialName`,
-												`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`
+												`${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`
 											);
 											setFieldValue(
 												`mr.${i}.job_no`,

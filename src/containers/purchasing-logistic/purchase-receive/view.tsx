@@ -115,7 +115,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                                 { res.supplier?.supplier_name }
                                             </td>
                                             <td className="border border-black p-1 text-center">
-                                                {`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
+                                                {res.Material_Master.name}{" "}{res.Material_Master.spesifikasi}
                                             </td>
                                             <td className="border border-black p-1 text-center">
                                                 { res.qtyAppr }

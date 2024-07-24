@@ -373,7 +373,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={`${res.Material_Master.name} ${res.Material_Master.spesifikasi}`}
+																	value={`${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`}
 																	disabled={true}
 																	required={true}
 																	withLabel={true}

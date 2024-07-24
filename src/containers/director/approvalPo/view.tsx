@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Input, InputArea, Section } from "../../../components";
 import moment from "moment";
 import { FieldArray, Form, Formik } from "formik";
-import { AddPrMr, GetAllSupplier, ApprovalPo } from "../../../services";
+import { ApprovalPo } from "../../../services";
 import { formatRupiah } from "../../../utils";
 import { toast } from "react-toastify";
 
@@ -100,7 +100,6 @@ export const ViewApprovalPo = ({ dataSelected, content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-	console.log(dataSelected);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
