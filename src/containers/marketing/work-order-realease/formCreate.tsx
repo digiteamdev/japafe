@@ -123,6 +123,14 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 				value: "Spot",
 			},
 			{
+				label: "Pads",
+				value: "Pads",
+			},
+			{
+				label: "Trip",
+				value: "Trip",
+			},
+			{
 				label: "Unit",
 				value: "Unit",
 			},
@@ -331,6 +339,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 										setCustomerAddress(
 											e.value.quotations.Customer.address[0].address_workshop
 										);
+										setFieldValue('shipping_address', e.value.quotations.Customer.address[0].address_workshop)
 										setFieldValue("subject", e.value.quotations.subject);
 										scopeQuotations.map((res: any) => {
 											scopeWork.push({
@@ -608,6 +617,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									placeholder='Shipping Address'
 									label='Shipping Address'
 									type='text'
+									value={values.shipping_address}
 									onChange={handleChange}
 									required={true}
 									withLabel={true}

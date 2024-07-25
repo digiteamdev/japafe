@@ -81,8 +81,13 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			if (response) {
 				response.data.result.map((res: any) => {
 					dataRecieve.push({
-						label: res.id_so ? res.id_so : res.idPurchase,
+						label: res.id_so
+							? res.id_so
+							: res.idPurchase
+							? res.idPurchase
+							: res.no_mr,
 						value: res,
+						type: res.no_mr ? "mr" : "purchase",
 					});
 				});
 			}
@@ -180,7 +185,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			payload.mr.map((res: any) => {
 				listDetail.push({
 					poandsoId: res.poandsoId,
-					mrId: res.mrId,
+					mrId: res.idMr,
 					qty_out: parseInt(res.qty_out),
 				});
 			});
@@ -293,37 +298,73 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									placeholder='ID Purchase Recieve'
 									label='ID Purchase Recieve'
 									onChange={(e: any) => {
-										e.value.detailMr.map((res: any, i: number) => {
-											setFieldValue("pb", [
-												{
-													coa_id: null,
-													materialStockId: null,
-													employeeId: null,
-													qty_out: 0,
-													stock: 0,
-												},
-											]);
-											setFieldValue(`mr.${i}.poandsoId`, res.poandsoId);
-											setFieldValue(`mr.${i}.no_mr`, res.mr.no_mr);
-											setFieldValue(`mr.${i}.idMr`, res.mr.id);
-											setFieldValue(
-												`mr.${i}.materialName`,
-												`${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`
-											);
-											setFieldValue(
-												`mr.${i}.job_no`,
-												res.mr.job_no
-											);
-											setFieldValue(
-												`mr.${i}.requestBy`,
-												res.mr.user.employee.employee_name
-											);
-											setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
-											setFieldValue(
-												`mr.${i}.stock`,
-												res.Material_Master.jumlah_Stock
-											);
-										});
+										if (e.type === "mr") {
+											e.value.detailMr.map((res: any, i: number) => {
+												setFieldValue("pb", [
+													{
+														coa_id: null,
+														materialStockId: null,
+														employeeId: null,
+														qty_out: 0,
+														stock: 0,
+													},
+												]);
+												setFieldValue(`mr.${i}.poandsoId`, res.poandsoId);
+												setFieldValue(`mr.${i}.no_mr`, e.value.no_mr);
+												setFieldValue(`mr.${i}.idMr`, e.value.id);
+												setFieldValue(
+													`mr.${i}.materialName`,
+													`${res.Material_Master.name} ${
+														res.Material_Master.spesifikasi
+															? res.Material_Master.spesifikasi
+															: ""
+													}`
+												);
+												setFieldValue(`mr.${i}.job_no`, e.value.job_no);
+												setFieldValue(
+													`mr.${i}.requestBy`,
+													e.value.user.employee.employee_name
+												);
+												setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
+												setFieldValue(
+													`mr.${i}.stock`,
+													res.Material_Master.jumlah_Stock
+												);
+											});
+										} else {
+											e.value.detailMr.map((res: any, i: number) => {
+												setFieldValue("pb", [
+													{
+														coa_id: null,
+														materialStockId: null,
+														employeeId: null,
+														qty_out: 0,
+														stock: 0,
+													},
+												]);
+												setFieldValue(`mr.${i}.poandsoId`, res.poandsoId);
+												setFieldValue(`mr.${i}.no_mr`, res.mr.no_mr);
+												setFieldValue(`mr.${i}.idMr`, res.mr.id);
+												setFieldValue(
+													`mr.${i}.materialName`,
+													`${res.Material_Master.name} ${
+														res.Material_Master.spesifikasi
+															? res.Material_Master.spesifikasi
+															: ""
+													}`
+												);
+												setFieldValue(`mr.${i}.job_no`, res.mr.job_no);
+												setFieldValue(
+													`mr.${i}.requestBy`,
+													res.mr.user.employee.employee_name
+												);
+												setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
+												setFieldValue(
+													`mr.${i}.stock`,
+													res.Material_Master.jumlah_Stock
+												);
+											});
+										}
 									}}
 									required={true}
 									withLabel={true}
