@@ -219,10 +219,10 @@ export const Dispatch = () => {
 										{ res.srimg.timeschedule.wor.job_no }
 									</td>
 									<td className='p-1'>
-										{ res.srimg.timeschedule.wor.customerPo.quotations.subject }
+										{ res.srimg.timeschedule.wor.customerPo.quotations.Customer.name }
 									</td>
 									<td className='p-1'>
-										{ res.srimg.timeschedule.wor.customerPo.quotations.Customer.name }
+										{ res.srimg.timeschedule.wor.customerPo.quotations.subject }
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

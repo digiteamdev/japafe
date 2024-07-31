@@ -135,6 +135,14 @@ export const FormEditWor = ({ content, dataWor, showModal }: props) => {
 				value: "Spot",
 			},
 			{
+				label: "Pads",
+				value: "Pads",
+			},
+			{
+				label: "Trip",
+				value: "Trip",
+			},
+			{
 				label: "Unit",
 				value: "Unit",
 			},
