@@ -76,29 +76,24 @@ export const ViewApprovalMR = () => {
 	const approveMr = async (payload: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
+		let remove:any = [];
 		let isWarning: boolean = false;
 		payload.detailMr.map((res: any) => {
 			if (res.mrappr !== null) {
-				listDetail.push({
-					id: res.id,
-					mrappr: res.mrappr,
-					name_material: res.material,
-					// supId: res.supId,
-					qtyAppr: parseInt(res.qtyAppr),
-				});
+				if(res.mrappr === 'Remove'){
+					remove.push({
+						id: res.id
+					})
+				}else{
+					listDetail.push({
+						id: res.id,
+						mrappr: res.mrappr,
+						name_material: res.material,
+						// supId: res.supId,
+						qtyAppr: parseInt(res.qtyAppr),
+					});
+				}
 				isWarning = false;
-			} else {
-				toast.warning("Purchase Type Not yet entered", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
 			}
 		});
 		let data = {
@@ -107,6 +102,7 @@ export const ViewApprovalMR = () => {
 			dateApprove: new Date(),
 			approveById: userId,
 			detailMr: listDetail,
+			delete: remove
 		};
 		if (!isWarning) {
 			try {
@@ -164,7 +160,7 @@ export const ViewApprovalMR = () => {
 						Loading
 					</>
 				</div>
-			) : data && data.statusMr === "Request" ? (
+			) : data ? (
 				<>
 					<div className='grid sm:grid-cols-1 md:grid-cols-2 gap-2'>
 						<div className='flex items-center w-full'>
@@ -308,6 +304,7 @@ export const ViewApprovalMR = () => {
 																		>
 																			Stock
 																		</option>
+																		<option value='Remove'>Remove</option>
 																	</InputSelect>
 																</td>
 																<td className='pr-1 w-[5%]'>
