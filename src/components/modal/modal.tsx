@@ -29,7 +29,7 @@ export const Modal = ({ title, isModal, content, showModal,children  }: props) =
 					<div className='fixed inset-0 bg-black z-20 bg-opacity-25 w-full h-screen' />
 				</Transition.Child>
 
-				<div className='fixed inset-0 z-40 overflow-y-auto w-full'>
+				<div className='fixed inset-4 z-40 overflow-y-auto w-full'>
 					<div className='flex min-h-full items-center justify-center p-4 text-center'>
 						<Transition.Child
 							as={Fragment}

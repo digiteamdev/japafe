@@ -95,10 +95,25 @@ export const ViewWor = ({ dataSelected, content, position, role, showModal }: pr
 									</tr>
 									<tr>
 										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-											Quotation / Customer
+											Quotation
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.customerPo.quotations.quo_num} /{" "}
+											{dataSelected.customerPo.quotations.quo_num}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											No PO
+										</td>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+											{dataSelected.customerPo.id_po}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Customer
+										</td>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.customerPo.quotations.Customer.name}
 										</td>
 									</tr>
