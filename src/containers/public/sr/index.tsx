@@ -8,14 +8,16 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
 import { FormCreateSr } from "./formCreate";
 import { ViewSR } from "./view";
 import { FormEditSr } from "./formEdit";
 import { GetSr, SearchSr, DeleteSr } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken } from "../../../configs/session";
+import { getRole, removeToken } from "../../../configs/session";
 import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 import { changeDivisi } from "@/src/utils";
@@ -33,6 +35,9 @@ export const Sr = () => {
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
+	const [isShowPrint, setIsShowPrint] = useState<any>(false);
 	const headerTabel = [
 		{ name: "SR No" },
 		{ name: "Job No" },
@@ -42,7 +47,13 @@ export const Sr = () => {
 	];
 
 	useEffect(() => {
+		let role:any = getRole()
 		getSr(page, perPage);
+		if(role){
+			JSON.parse(role).map((res:any) => {
+				res.role?.role_name === 'PURCHASING' ? setIsShowPrint(true) : null
+			})
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusSr]);
 
@@ -197,6 +208,43 @@ export const Sr = () => {
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
+								{ isShowPrint ? (
+					<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+						<div className='w-full'>
+							<InputDate
+								id='date'
+								label='date'
+								dateFormat='dd/MM/yyyy'
+								value={dateStart}
+								onChange={(value: any) => setDateStart(value)}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+								classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+							/>
+						</div>
+						<div className='w-full'>
+							<InputDate
+								id='date'
+								label='date'
+								dateFormat='dd/MM/yyyy'
+								minDate={dateStart}
+								value={dateFinish}
+								onChange={(value: any) => setDateFinish(value)}
+								withLabel={false}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+								classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+							/>
+						</div>
+						<div className='flex'>
+							<Button
+								className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+								onClick={ async () => window.location.href = process.env.BASE_URL+`/SRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusSr}` }
+							>
+								<Printer color='white' className='mx-auto' />
+							</Button>
+						</div>
+					</Section>
+				) : null }
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>

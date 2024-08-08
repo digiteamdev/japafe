@@ -1,6 +1,7 @@
 import moment from "moment";
 import { Section } from "../../../components";
 import { formatRupiah } from "@/src/utils";
+import { Printer } from "react-feather";
 
 interface props {
 	dataSelected: any;
@@ -45,7 +46,21 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
 				<>
-					<h1 className='font-bold text-xl'>Server Order</h1>
+					<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
+						<div>
+							<h1 className='font-bold text-xl'>Service Order</h1>
+						</div>
+						{/* <div className='text-right mr-6'>
+							<button
+								className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+								onClick={() => window.open(process.env.BASE_URL+`/pdfPo/${dataSelected.id}`, '_blank')}
+							>
+								<div className='flex px-1 py-1'>
+									<Printer size={16} className='mr-1' /> Print
+								</div>
+							</button>
+						</div> */}
+					</div>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
