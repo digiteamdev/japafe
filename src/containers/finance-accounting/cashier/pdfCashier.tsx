@@ -26,7 +26,7 @@ export const PdfCashier = ({ isModal, data, showModalPdf }: props) => {
 			pdf.save(`Cashier_${data.id_cashier}.pdf`);
 		});
 	};
-console.log(data)
+
 	return (
 		<div className='z-80'>
 			<Transition appear show={isModal} as={Fragment}>

@@ -139,7 +139,6 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		let datasWor: any = [];
 		try {
 			const response = await GetSummaryTimeSchedulle();
-			console.log(response.data)
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					datasWor.push({

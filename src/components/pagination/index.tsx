@@ -24,8 +24,6 @@ export const Pagination = ({
         totalCount
     );
 
-    console.log(paginationRange[paginationRange.length - 1], currentPage)
-
     const onNext = () => {
         onChangePage(currentPage + 1);
     }

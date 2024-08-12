@@ -407,7 +407,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let listDates: any = [];
 		let countHoliday = 0;
 		let countHolidayRange = 0;
-		let total_bobot: number = totalBobot + bobot;
+		let total_bobot: number = countBobot(tasks) + bobot;
 		let listDatesRange: any = [];
 		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
@@ -445,7 +445,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 			}
 		}
 		if(total_bobot > 100){
-			setTotalBobot(totalBobot)
+			setTotalBobot(total_bobot)
 			toast.error("Total Bobot can't be more than 100", {
 				position: "top-center",
 				autoClose: 5000,
@@ -574,7 +574,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		let listDates: any = [];
 		let countHoliday = 0;
 		let countHolidayRange = 0;
-		let total_bobot: number = totalBobot + bobot;
+		let total_bobot: number = countBobot(tasks);
 		let listDatesRange: any = [];
 		let rangeJob = countDay(starDate, endDate);
 		let rangeDay = countDay(starDate, activityStar);
@@ -1008,6 +1008,16 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 		setData(data);
 		setIsCreateActivity(true);
 	};
+
+	const countBobot = (data:any) => {
+		let total:number = 0
+		data.map((res:any, i:number) => {
+			if(i !== 0){
+				total += res.bobot
+			}
+		})
+		return total
+	}
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
@@ -1499,7 +1509,7 @@ export const FormCreateSchedule = ({ content, showModal }: props) => {
 									<Section className="grig grid-cols-1 gap-1">
 										<div className="w-full">
 											<p>Total Activity : { tasks.length - 1 }</p>
-											<p>Total Bobot : { totalBobot }%</p>
+											<p>Total Bobot : { countBobot(tasks) }%</p>
 										</div>
 									</Section>
 									<div className='mt-8 flex justify-end'>

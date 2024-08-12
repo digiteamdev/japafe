@@ -24,7 +24,6 @@ export const ViewQuotation = () => {
 		try {
 			const response = await GetQuotationById(id);
 			if (response.data) {
-				console.log(response.data.result)
 				setQuotation(response.data.result);
 			}
 		} catch (error: any) {

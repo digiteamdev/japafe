@@ -35,7 +35,7 @@ export const FormEditWarehouse = ({ dataSelected, content, showModal }: props) =
         date_in: null,
         date_out: null,
 	});
-    console.log(dataSelected)
+    
     useEffect(() => {
 		setData({
             name: dataSelected.name,

@@ -345,7 +345,6 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='ID Purchase'
 									onChange={(e: any) => {
 										selectPO(e.value);
-										console.log(e.value);
 										if (e.value.cdv_detail !== undefined) {
 											let totalAmount = 0;
 											e.value.cdv_detail.map((res: any) => {

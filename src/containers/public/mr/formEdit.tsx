@@ -9,6 +9,7 @@ import {
 	DeleteMRDetail,
 	GetAllMaterial,
 	GetAllMaterialNew,
+	AddMaterialNew,
 } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
@@ -26,6 +27,7 @@ interface data {
 	date_mr: any;
 	detailMr: [
 		{
+			isInput: boolean,
 			bomId: string;
 			material: string;
 			satuan: string;
@@ -39,20 +41,24 @@ interface data {
 
 export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isCreate, setIsCreate] = useState<boolean>(false);
 	const [user, setUser] = useState<string>("");
 	const [userId, setUserId] = useState<string>("");
 	const [departement, setDepartement] = useState<string>("");
 	const [jobNo, setJobNo] = useState<string>("");
 	const [listWor, setListWor] = useState<any>([]);
+	const [WorId, setWorId] = useState<any>(null);
 	const [dateMR, setDateMR] = useState<any>(new Date());
 	const [listMaterial, setListMaterial] = useState<any>([]);
 	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
+	const [listDetail, setListDetail] = useState<any>([]);
 	const [listMRdelete, setListMRdelete] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		userId: "",
 		date_mr: "",
 		detailMr: [
 			{
+				isInput: false,
 				bomId: "",
 				material: "",
 				satuan: "",
@@ -65,18 +71,18 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		getEmploye();
-		getBom();
-		dataSetting();
+		if(!isCreate){
+			getEmploye();
+			getBom();
+			dataSetting();
+		}else{
+			editMr(listDetail)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isCreate]);
 
 	const dataSetting = () => {
 		let newDetail: any = [];
-		let list_material: any = [];
-		let material: any = [];
-		let list_material_stock: any = [];
-		let materialStock: any = [];
 		dataSelected.detailMr.map((res: any) => {
 			newDetail.push({
 				bomId: res.bomIdD,
@@ -84,7 +90,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				name_material: res.name_material,
 				satuan: res.Material_Master.satuan,
 				selectMaterial: {
-					label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi}`,
+					label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`,
 					value: res.Material_Master,
 				},
 				qty: res.qty,
@@ -93,35 +99,9 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				mrId: dataSelected.id,
 			});
 		});
+		setWorId(dataSelected.worId)
 		setJobNo(dataSelected.job_no);
 		getMaterial();
-		// if (dataSelected.wor === null) {
-		// } else {
-		// 	dataSelected.bom.bom_detail.map((res: any) => {
-		// 		if (!material.includes(res.materialId)) {
-		// 			material.push(res.materialId);
-		// 			list_material.push({
-		// 				id: res.materialId,
-		// 				bomId: res.id,
-		// 				satuan: res.Material_master.satuan,
-		// 				name: res.Material_master.material_name,
-		// 			});
-		// 		}
-		// 		res.Material_master.Material_Stock.map((spec: any, i: number) => {
-		// 			if (!materialStock.includes(spec.id)) {
-		// 				materialStock.push(spec.id);
-		// 				list_material_stock.push({
-		// 					material: res.materialId,
-		// 					id: spec.id,
-		// 					name: spec.spesifikasi,
-		// 				});
-		// 			}
-		// 		});
-		// 	});
-		// 	setListMaterial(list_material);
-		// 	setListMaterialStock(list_material_stock);
-		// 	setJobNo(dataSelected.job_no);
-		// }
 		setData({
 			userId: dataSelected.userId,
 			date_mr: dataSelected.date_mr,
@@ -135,10 +115,14 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 			let list_material: any = [];
 			let list_material_stock: any = [];
 			const response = await GetAllMaterialNew();
+			list_material.push({
+				label: "Input",
+				value: null,
+			});
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_material.push({
-						label: `${res.name} ${res.spesifikasi}`,
+						label: `${res.name} ${res.spesifikasi ? res.spesifikasi : ''}`,
 						value: res,
 					});
 				});
@@ -214,26 +198,78 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 		}
 	};
 
-	const editMr = async (payload: data) => {
+	const addMaterial = (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.detailMr.map((res: any) => {
-			listDetail.push({
-				bomIdD: res.bomId,
-				materialId: res.material,
-				name_material: res.name_material,
-				qty: parseInt(res.qty),
-				id: res.id,
-				note: res.note,
-				mrId: dataSelected.id,
-			});
+		payload.detailMr.map( (res: any, i: number) => {
+			if (res.isInput) {
+				let dataBody: any = {
+					name: res.material,
+					spesifikasi: null,
+					satuan: res.satuan,
+					jumlah_Stock: 0,
+					harga: 0,
+					note: res.note,
+					date_in: new Date(),
+					date_out: null,
+				};
+				AddMaterialNew(dataBody).then((resp:any) => {
+					listDetail.push({
+						id: res.id,
+						mrId: dataSelected.id,
+						bomIdD: res.bomId,
+						materialId: resp.data.results.id,
+						name_material: res.material,
+						qty: parseInt(res.qty),
+						note: res.note,
+					});
+					if(payload.detailMr.length === listDetail.length){
+						let data = {
+							userId: getIdUser(),
+							date_mr: new Date(),
+							bomIdU: res.bomId,
+							worId: WorId,
+							job_no: jobNo,
+							detailMr: listDetail,
+						};
+						setListDetail(data)
+						setIsCreate(true)
+					}
+				})
+			} else {
+				listDetail.push({
+					id: res.id,
+					mrId: dataSelected.id,
+					bomIdD: res.bomId,
+					materialId: res.material,
+					name_material: res.name_material,
+					qty: parseInt(res.qty),
+					note: res.note,
+				});
+				if(payload.detailMr.length === listDetail.length){
+					let data = {
+						userId: getIdUser(),
+						date_mr: new Date(),
+						bomIdU: res.bomId,
+						worId: WorId,
+						job_no: jobNo,
+						detailMr: listDetail,
+					};
+					setListDetail(data)
+					setIsCreate(true)
+				}
+			}
 		});
+		setIsLoading(false);
+	};
 
+	const editMr = async (payload: any) => {
+		setIsLoading(true);
 		listMRdelete.map((res: any) => {
 			deleteMr(res);
 		});
 		try {
-			const response = await EditMR(listDetail);
+			const response = await EditMR(payload.detailMr);
 			if (response.data) {
 				toast.success("Edit Material Request Success", {
 					position: "top-center",
@@ -285,7 +321,7 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 				initialValues={data}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					editMr(values);
+					addMaterial(values);
 				}}
 				enableReinitialize
 			>
@@ -406,39 +442,82 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 													/>
 												</div>
 												<div className='w-full'>
-													<InputSelectSearch
-														datas={listMaterial}
-														id={`detailMr.${i}.name_material`}
-														name={`detailMr.${i}.name_material`}
+													{ result.isInput ? (
+														<Input
+														id={`detailMr.${i}.material`}
+														name={`detailMr.${i}.material`}
 														placeholder='Material'
 														label='Material'
-														value={result.selectMaterial}
+														type='text'
 														onChange={(e: any) => {
 															setFieldValue(
-																`detailMr.${i}.selectMaterial`,
-																e
+																`detailMr.${i}.name_material`,
+																e.target.value
 															);
 															setFieldValue(
 																`detailMr.${i}.material`,
-																e.value.id
-															);
-															setFieldValue(
-																`detailMr.${i}.name_material`,
-																e.label
-															);
-															setFieldValue(
-																`detailMr.${i}.bomId`,
-																e.value.bomId ? e.value.bomId : null
-															);
-															setFieldValue(
-																`detailMr.${i}.satuan`,
-																e.value.satuan
+																e.target.value
 															);
 														}}
+														disabled={false}
 														required={true}
 														withLabel={true}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
+													) : (
+														<InputSelectSearch
+															datas={listMaterial}
+															id={`detailMr.${i}.name_material`}
+															name={`detailMr.${i}.name_material`}
+															placeholder='Material'
+															label='Material'
+															value={result.selectMaterial}
+															onChange={(e: any) => {
+																if(e.value === null){
+																	setFieldValue(
+																		`detailMr.${i}.isInput`,
+																		true
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.bomId`,
+																		null
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.detail`,
+																		e
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.satuan`,
+																		""
+																	);
+																}else{
+																	setFieldValue(
+																		`detailMr.${i}.selectMaterial`,
+																		e
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.material`,
+																		e.value.id
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.name_material`,
+																		e.label
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.bomId`,
+																		e.value.bomId ? e.value.bomId : null
+																	);
+																	setFieldValue(
+																		`detailMr.${i}.satuan`,
+																		e.value.satuan
+																	);
+																}
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													) }
 												</div>
 												<div className='w-full'>
 													<Input
@@ -448,7 +527,13 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 														label='Satuan'
 														type='text'
 														value={result.satuan}
-														disabled={true}
+														onChange={(e: any) => {
+															setFieldValue(
+																`detailMr.${i}.satuan`,
+																e.target.value
+															);
+														}}
+														disabled={!result.isInput}
 														required={true}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

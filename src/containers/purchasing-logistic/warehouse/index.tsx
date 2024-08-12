@@ -84,7 +84,6 @@ export const Warehouse = () => {
 		try {
 			const response = await SearchMaterialNew(page, limit, search);
 			if (response.data) {
-				console.log(response.data)
 				setData(response.data.result);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil( response.data.totalData / perPage));

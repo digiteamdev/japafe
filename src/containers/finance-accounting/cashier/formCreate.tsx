@@ -216,7 +216,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 				status_transaction: res.status_transaction,
 				grandtotal: res.grandtotal,
 			});
-			console.log(res.status_transaction)
 			if (res.status_transaction === "Debet") {
 				totalDebet = totalDebet + res.grandtotal;
 			} else {
@@ -238,7 +237,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 			rekening: payload.rekening,
 			journal_cashier: jurnal,
 		};
-		console.log(totalDebet, totalKredit)
 		if (totalDebet === 0 || totalKredit === 0) {
 			toast.warning("Journal total has not been filled in", {
 				position: "top-center",

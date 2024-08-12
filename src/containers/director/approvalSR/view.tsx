@@ -78,7 +78,7 @@ export const ViewApprovalSr = () => {
 		}
 		setIsLoading(false);
 	};
-console.log(data)
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			{isLoading ? (

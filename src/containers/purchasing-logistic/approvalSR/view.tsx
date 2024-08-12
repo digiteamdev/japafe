@@ -38,7 +38,6 @@ export const ViewApprovalSR = () => {
 		try {
 			const response = await GetSrId(id);
 			if (response.data) {
-				console.log(response.data);
 				let listDetail: any = [];
 				response.data.result.SrDetail.map((res: any) => {
 					listDetail.push({
