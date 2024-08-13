@@ -40,6 +40,7 @@ export const FormEditDrawing = ({
 	const [dateWor, setDateWor] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
     const [jobDesc, setJobDesc] = useState<string>("");
+	const [jobNo, setJobNo] = useState<string>("");
 	const [data, setData] = useState<data>({
 		date_drawing: new Date(),
 		timeschId: "",
@@ -58,13 +59,14 @@ export const FormEditDrawing = ({
 	}, []);
 
 	const settingData = () => {
-        setDateWor(moment(dataSelected.timeschedule.wor.date_wor).format("DD-MM-YYYY"));
-        setCustomerName(dataSelected.timeschedule.wor.customerPo.quotations.Customer.name);
-        setSubject(dataSelected.timeschedule.wor.subject);
-        setJobDesc(dataSelected.timeschedule.wor.job_desk);
+        setDateWor(moment(dataSelected.wor.date_wor).format("DD-MM-YYYY"));
+        setCustomerName(dataSelected.wor.customerPo.quotations.Customer.name);
+        setSubject(dataSelected.wor.customerPo.quotations.subject);
+        setJobDesc(dataSelected.wor.job_description);
+		setJobNo(dataSelected.wor.job_no);
 		setData({
 			date_drawing: new Date(dataSelected.date_drawing),
-			timeschId: dataSelected.timeschId,
+			timeschId: dataSelected.wor.id,
 			id_drawing: dataSelected.id_drawing,
 			file: dataSelected.file_drawing,
 		});
@@ -120,7 +122,7 @@ export const FormEditDrawing = ({
 		setIsLoading(true);
 		const formData = new FormData();
 		formData.append("id_drawing", generateIdNum());
-		formData.append("timeschId", payload.timeschId);
+		formData.append("worId", payload.timeschId);
 		formData.append("date_drawing", payload.date_drawing);
 		formData.append("file_lenght", payload.file.length.toString());
 		payload.file.map((res: any, i: number) => {
@@ -195,7 +197,7 @@ export const FormEditDrawing = ({
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								{/* <InputSelect
 									id='timeschId'
 									name='timeschId'
 									placeholder='Job Number'
@@ -224,7 +226,19 @@ export const FormEditDrawing = ({
 											);
 										})
 									)}
-								</InputSelect>
+								</InputSelect> */}
+								<Input
+									id='date_wor'
+									name='date_wor'
+									placeholder='Job No'
+									label='Job No'
+									type='text'
+									value={jobNo}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
 							</div>
 							<div className='w-full'>
 								<Input

@@ -39,6 +39,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 	const [customerName, setCustomerName] = useState<string>("");
 	const [dateWor, setDateWor] = useState<string>("");
 	const [subject, setSubject] = useState<string>("");
+	const [jobDesc, setJobDesc] = useState<string>("");
 	const [data, setData] = useState<data>({
 		date_drawing: new Date(),
 		timeschId: "",
@@ -92,8 +93,8 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 					datasWor.push({
 						value: res,
 						label: `${
-							res.wor.job_no
-						} - ${res.wor.customerPo.quotations.Customer.name}`,
+							res.job_no
+						} - ${res.customerPo.quotations.Customer.name}`,
 					});
 				});
 				setListWor(datasWor);
@@ -107,7 +108,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		const formData = new FormData();
 		formData.append("id_drawing", generateIdNum());
-		formData.append("timeschId", payload.timeschId);
+		formData.append("worId", payload.timeschId);
 		formData.append("date_drawing", payload.date_drawing);
 		formData.append("file_lenght", payload.file.length.toString());
 		payload.file.map((res: any, i: number) => {
@@ -190,14 +191,13 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 									label='Job Number'
 									onChange={(e: any) => {
 										setCustomerName(
-											e.value.wor.customerPo.quotations.Customer.name
+											e.value.customerPo.quotations.Customer.name
 										);
-										setDateWor(moment(e.value.wor.date_wor).format("DD-MM-YYYY"));
-										setSubject(e.value.wor.subject);
+										setDateWor(moment(e.value.date_wor).format("DD-MM-YYYY"));
+										setSubject(e.value.subject);
 										setFieldValue("timeschId", e.value.id);
-										// if (event.target.value !== "Choose Job Number WOR") {
-										// 	let data = JSON.parse(event.target.value);
-										// }
+										setSubject(e.value.customerPo.quotations.subject);
+										setJobDesc(e.value.job_description)
 									}}
 									required={true}
 									withLabel={true}
@@ -270,7 +270,7 @@ export const FormCreateDrawing = ({ content, showModal }: props) => {
 									placeholder='Job Description'
 									label='Job Description'
 									type='text'
-									value={subject}
+									value={jobDesc}
 									disabled={true}
 									required={true}
 									withLabel={true}

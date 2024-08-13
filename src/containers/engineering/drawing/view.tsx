@@ -35,12 +35,17 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 										No Job
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.timeschedule.wor.job_no} (
+										{dataSelected.wor.job_no}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Customer
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{
-											dataSelected.timeschedule.wor.customerPo.quotations
-												.Customer.name
+											dataSelected.wor.customerPo.quotations.Customer.name
 										}
-										)
 									</td>
 								</tr>
 								<tr>
@@ -48,7 +53,7 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 										Subject
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.timeschedule.wor.subject}
+										{dataSelected.wor.customerPo.quotations.subject}
 									</td>
 								</tr>
 								<tr>
@@ -56,7 +61,7 @@ export const ViewDrawing = ({ dataSelected }: props) => {
 										Job Description
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.timeschedule.wor.job_desk}
+										{dataSelected.wor.job_description}
 									</td>
 								</tr>
 							</table>
