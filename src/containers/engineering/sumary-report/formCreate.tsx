@@ -37,6 +37,7 @@ interface data {
 	itn: string;
 	introduction: string;
 	inimg: any;
+	type_srimg: string;
 	srimgdetail: [
 		{
 			name_part: string;
@@ -74,6 +75,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		itn: "",
 		introduction: "",
 		inimg: "",
+		type_srimg: "",
 		srimgdetail: [
 			{
 				name_part: "",
@@ -85,6 +87,17 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 			},
 		],
 	});
+
+	const listType = [
+		{
+			label: "Incoming",
+			value: "Incoming"
+		},
+		{
+			label: "Final",
+			value: "Final"
+		}
+	]
 
 	useEffect(() => {
 		getWor();
@@ -143,7 +156,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: `${res.wor.job_no} - ${res.wor.customerPo.quotations.Customer.name}`,
+						label: `${res.job_no}`,
 					});
 				});
 				setListWor(datasWor);
@@ -155,9 +168,9 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 
 	const selectWor = (data: any) => {
 		let part: any = [];
-		setCustomerName(data.wor.customerPo.quotations.Customer.name);
+		setCustomerName(data.customerPo.quotations.Customer.name);
 		// setDateWor(moment(data.wor.date_wor).format("DD-MM-YYYY"));
-		setSubject(data.wor.customerPo.quotations.subject);
+		setSubject(data.customerPo.quotations.subject);
 		// setEquipment(data.wor.customerPo.quotations.eqandpart[0].equipment.nama);
 		// setEquipmentModel(data.wor.eq_model);
 		// if (data.wor.customerPo.quotations.eqandpart.length > 0) {
@@ -192,7 +205,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		const form = new FormData();
 		form.append("id_summary", generateIdNum());
-		form.append("timeschId", payload.timeschId);
+		form.append("worId", payload.timeschId);
 		form.append("inimg", payload.inimg);
 		form.append("date_of_summary", payload.date_of_summary);
 		form.append("introduction", payload.introduction);
@@ -202,6 +215,7 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 		form.append("equipment", payload.equipment);
 		form.append("model", payload.model);
 		form.append("qty", payload.qty);
+		form.append("type_srimg", payload.type_srimg);
 		form.append("srimgdetail", JSON.stringify(payload.srimgdetail));
 		try {
 			const response = await AddSummary(form);
@@ -479,6 +493,21 @@ export const FormCreateSummaryReport = ({ content, showModal }: props) => {
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={listType}
+									id='type_srimg'
+									name='type_srimg'
+									placeholder='Type Summary'
+									label='Type Summary'
+									onChange={(e: any) => {
+										setFieldValue("type_srimg", e.value);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
 							</div>
 						</Section>

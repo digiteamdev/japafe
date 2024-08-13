@@ -5,6 +5,7 @@ import {
 	InputSelect,
 	InputDate,
 	InputArea,
+	InputSelectSearch,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { sumarySchema } from "../../../schema/engineering/sumary-report/SumarySchema";
@@ -33,7 +34,7 @@ interface data {
 	customer: string;
 	subject: string;
 	model: string;
-	ca_number: "",
+	ca_number: "";
 	qty: string;
 	ioem: string;
 	isr: string;
@@ -42,6 +43,8 @@ interface data {
 	inimg: any;
 	srimgdetail: any;
 	delete: any;
+	type_srimg: string;
+	selectType: any;
 }
 
 export const FormEditSummaryReport = ({
@@ -77,10 +80,23 @@ export const FormEditSummaryReport = ({
 		itn: "",
 		introduction: "",
 		inimg: "",
+		type_srimg: "",
 		srimgdetail: [],
-		delete: []
+		delete: [],
+		selectType: []
 	});
 
+	const listType = [
+		{
+			label: "Incoming",
+			value: "Incoming"
+		},
+		{
+			label: "Final",
+			value: "Final"
+		}
+	]
+console.log(dataSummary)
 	useEffect(() => {
 		getWor();
 		settingData();
@@ -93,12 +109,11 @@ export const FormEditSummaryReport = ({
 			part.push(res);
 		});
 		setData({
-			job_no: dataSummary.timeschedule.wor.job_no,
+			job_no: dataSummary.wor.job_no,
 			date_of_summary: new Date(dataSummary.date_of_summary),
 			timeschId: dataSummary.timeschId,
-			customer:
-				dataSummary.timeschedule.wor.customerPo.quotations.Customer.name,
-			subject: dataSummary.timeschedule.wor.customerPo.quotations.subject,
+			customer: dataSummary.wor.customerPo.quotations.Customer.name,
+			subject: dataSummary.wor.customerPo.quotations.subject,
 			equipment: dataSummary.equipment,
 			model: dataSummary.model,
 			ca_number: dataSummary.ca_number,
@@ -108,8 +123,10 @@ export const FormEditSummaryReport = ({
 			itn: dataSummary.itn,
 			introduction: dataSummary.introduction,
 			inimg: dataSummary.inimg,
+			type_srimg: dataSummary.type_srimg,
 			srimgdetail: part,
-			delete: []
+			delete: [],
+			selectType: { label: dataSummary.type_srimg, value: dataSummary.type_srimg }
 		});
 	};
 
@@ -120,7 +137,7 @@ export const FormEditSummaryReport = ({
 
 	const getWor = async () => {
 		let wor: any = [];
-		wor.push(dataSummary.timeschedule.wor);
+		wor.push(dataSummary.wor);
 		try {
 			const response = await GetSummaryTimeSchedulle();
 			if (response.data) {
@@ -212,10 +229,12 @@ export const FormEditSummaryReport = ({
 		form.append("qty", payload.qty);
 		form.append("isr", payload.isr);
 		form.append("itn", payload.itn);
+		form.append("ca_number", payload.ca_number);
+		form.append("type_srimg", payload.type_srimg);
 		form.append("introduction", payload.introduction);
 		form.append("inimg", payload.inimg);
 		form.append("sumarydetail", JSON.stringify(detail));
-		form.append("delete", JSON.stringify(payload.delete))
+		form.append("delete", JSON.stringify(payload.delete));
 		try {
 			const response = await EditSummary(form, dataSummary.id);
 			if (response.data) {
@@ -393,6 +412,21 @@ export const FormEditSummaryReport = ({
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
+									id='ca_number'
+									name='ca_number'
+									placeholder='Certificate Number'
+									label='Certificate Number'
+									type='text'
+									value={values.ca_number}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
 									id='isr'
 									name='isr'
 									placeholder='Serial Number'
@@ -436,56 +470,75 @@ export const FormEditSummaryReport = ({
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
+						</Section>
+						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-							{values.inimg !== null &&
-									values.inimg.includes("https://res.cloudinary.com/") ? (
-										<div>
-											<label className='block mb-2 text-sm font-medium text-gray-900'>
-												Quotation File
-											</label>
-											<div className='flex'>
-												<a
-													href={values.inimg}
-													target='_blank'
-													className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 mr-2'
-												>
-													Show File
-												</a>
-												<p
-													className='justify-center rounded-full border border-transparent bg-orange-500 px-4 py-1 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 cursor-pointer'
-													onClick={() => showUpload("inimg")}
-												>
-													Change File
-												</p>
-												<input
-													id='inimg'
-													name='inimg'
-													placeholder='Image'
-													type='file'
-													accept='image/*'
-													className='hidden'
-													onChange={(event: any) => {
-														setFieldValue("inimg", event.currentTarget.files[0]);
-													}}
-												/>
-											</div>
+								{values.inimg !== null &&
+								values.inimg.includes("https://res.cloudinary.com/") ? (
+									<div>
+										<label className='block mb-2 text-sm font-medium text-gray-900'>
+											Quotation File
+										</label>
+										<div className='flex'>
+											<a
+												href={values.inimg}
+												target='_blank'
+												className='justify-center rounded-full border border-transparent bg-green-500 px-4 py-1 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 mr-2'
+											>
+												Show File
+											</a>
+											<p
+												className='justify-center rounded-full border border-transparent bg-orange-500 px-4 py-1 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 mt-2 cursor-pointer'
+												onClick={() => showUpload("inimg")}
+											>
+												Change File
+											</p>
+											<input
+												id='inimg'
+												name='inimg'
+												placeholder='Image'
+												type='file'
+												accept='image/*'
+												className='hidden'
+												onChange={(event: any) => {
+													setFieldValue("inimg", event.currentTarget.files[0]);
+												}}
+											/>
 										</div>
-									) : (
-										<Input
-											id='inimg'
-											name='inimg'
-											placeholder='Image'
-											label='Image'
-											type='file'
-											accept='image/*'
-											onChange={(event: any) => {
-												setFieldValue("inimg", event.currentTarget.files[0]);
-											}}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									)}
+									</div>
+								) : (
+									<Input
+										id='inimg'
+										name='inimg'
+										placeholder='Image'
+										label='Image'
+										type='file'
+										accept='image/*'
+										onChange={(event: any) => {
+											setFieldValue("inimg", event.currentTarget.files[0]);
+										}}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								)}
+							</div>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={listType}
+									id='type_srimg'
+									name='type_srimg'
+									placeholder='Type Summary'
+									label='Type Summary'
+									onChange={(e: any) => {
+										setFieldValue("selectType", e);
+										setFieldValue("type_srimg", e.value);
+									}}
+									value={values.selectType}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
@@ -607,7 +660,7 @@ export const FormEditSummaryReport = ({
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>
-													<div className="w-full">
+													<div className='w-full'>
 														{i === values.srimgdetail.length - 1 ? (
 															<a
 																className='inline-flex text-green-500 mt-10 mr-6 cursor-pointer'
@@ -623,25 +676,26 @@ export const FormEditSummaryReport = ({
 																	});
 																}}
 															>
-																<Plus size={18} className='mr-1 mt-1' /> Add Detail
+																<Plus size={18} className='mr-1 mt-1' /> Add
+																Detail
 															</a>
 														) : null}
 														{values.srimgdetail.length !== 1 ? (
 															<a
 																className='inline-flex text-red-500  mt-10 cursor-pointer mt-1'
 																onClick={() => {
-																	let detailDelete: any = values.delete
-																	if( res.id !== "" ){
+																	let detailDelete: any = values.delete;
+																	if (res.id !== "") {
 																		detailDelete.push({
-																			id: res.id
-																		})
+																			id: res.id,
+																		});
 																	}
-																	setFieldValue('delete', detailDelete)
+																	setFieldValue("delete", detailDelete);
 																	arrayHelper.remove(i);
 																}}
 															>
-																<Trash2 size={18} className='mr-1 mt-1' /> Remove
-																Detail
+																<Trash2 size={18} className='mr-1 mt-1' />{" "}
+																Remove Detail
 															</a>
 														) : null}
 													</div>

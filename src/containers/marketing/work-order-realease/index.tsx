@@ -205,6 +205,7 @@ export const Wor = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
@@ -295,7 +296,7 @@ export const Wor = () => {
 											>
 												Drawing
 											</button>
-											<button
+											{/* <button
 												className={`${
 													res.timeschedule === null ||
 													res.timeschedule.srimg === null ||
@@ -305,7 +306,7 @@ export const Wor = () => {
 												} text-white p-1 rounded-md mr-2`}
 											>
 												Dispatch
-											</button>
+											</button> */}
 											{/* <button className='bg-orange-500 text-white py-1 px-1 rounded-md mr-2'>
 												Cost
 											</button>

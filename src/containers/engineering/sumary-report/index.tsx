@@ -26,7 +26,7 @@ export const SummaryReport = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Job No" },
-		{ name: "WOR Date" },
+		{ name: "Type Summary" },
 		{ name: "Customer" },
 		{ name: "Subject" },
 		{ name: "Action" },
@@ -174,16 +174,16 @@ export const SummaryReport = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.timeschedule.wor.job_no}
+										{res.wor.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{moment(res.timeschedule.wor.date_of_order).format("DD-MM-YYYY")}
+										{ res.type_srimg }
 									</td>
 									<td className='p-1'>
-										{res.timeschedule.wor.customerPo.quotations.Customer.name}
+										{res.wor.customerPo.quotations.Customer.name}
 									</td>
 									<td className='p-1'>
-										{res.timeschedule.wor.customerPo.quotations.subject}
+										{res.wor.customerPo.quotations.subject}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

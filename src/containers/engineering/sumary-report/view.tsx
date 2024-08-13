@@ -14,7 +14,7 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 	const showModalPdf = (val: boolean) => {
 		setIsModal(val);
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{/* <PdfSummary
@@ -47,12 +47,26 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 											No Job
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.timeschedule.wor.job_no} (
+											{dataSelected.wor.job_no}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Customer
+										</td>
+										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{
-												dataSelected.timeschedule.wor.customerPo.quotations
+												dataSelected.wor.customerPo.quotations
 													.Customer.name
 											}
-											)
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Type Summary
+										</td>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
+											{dataSelected.type_srimg}
 										</td>
 									</tr>
 									<tr>
@@ -89,10 +103,26 @@ export const ViewSummaryReport = ({ dataSelected }: props) => {
 									</tr>
 									<tr>
 										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-											Serial Number / Tag Number
+											Certificate Number
 										</td>
 										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.isr} / {dataSelected.itn}
+											{dataSelected.ca_number}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Serial Number
+										</td>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
+											{dataSelected.isr}
+										</td>
+									</tr>
+									<tr>
+										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+											Tag Number
+										</td>
+										<td className='sm:w-[50%] md: w-[75%] pl-2 border border-gray-200'>
+											{dataSelected.itn}
 										</td>
 									</tr>
 									<tr>
