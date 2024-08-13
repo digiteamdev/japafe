@@ -14,10 +14,13 @@ import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateWor } from "./formCreate";
 import { ViewWor } from "./view";
 import { FormEditWor } from "./formEdit";
-import { GetWor, SearchWor, DeleteWor } from "../../../services";
+import { GetWor, SearchWor, DeleteWor, GetAllHoliday } from "../../../services";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { cekDivisiMarketing } from "@/src/utils";
+import { ViewSummaryReport } from "@/src/containers/engineering/sumary-report/view";
+import { ViewDrawing } from "@/src/containers/engineering/drawing/view";
+import { ViewSchedule } from "@/src/containers/production/time-schedule/view";
 
 export const Wor = () => {
 	const router = useRouter();
@@ -34,6 +37,7 @@ export const Wor = () => {
 	const [data, setData] = useState<any>([]);
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [position, setPosition] = useState<any>(null);
+	const [holiday, setHoliday] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const headerTabel = [
 		{ name: "Job No" },
@@ -45,6 +49,7 @@ export const Wor = () => {
 
 	useEffect(() => {
 		let position = getPosition()
+		getHolidays()
 		if(position === 'Director' || position === 'Manager'){
 			setIsDropdown(true)
 		}
@@ -69,6 +74,17 @@ export const Wor = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [divisiMarketing]);
+
+	const getHolidays = async () => {
+		try {
+			const response = await GetAllHoliday();
+			if (response.data) {
+				setHoliday(response.data.result);
+			}
+		} catch (error) {
+			setHoliday([]);
+		}
+	};
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -273,46 +289,45 @@ export const Wor = () => {
 														? "bg-red-500"
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
+												onClick={() => {
+													if(res.srimg.length > 0){
+														setDataSelected(res.timeschedule);
+														showModal(true, "schedule", false);
+													}
+												}}
 											>
 												Schedule
 											</button>
 											<button
 												className={`${
-													res.timeschedule === null ||
-													res.timeschedule.srimg === null
+													res.srimg.length === 0 
 														? "bg-red-500"
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
+												onClick={() => {
+													if(res.srimg.length > 0){
+														setDataSelected(res.srimg[0]);
+														showModal(true, "summary", false);
+													}
+												}}
 											>
 												Summary
 											</button>
 											<button
 												className={`${
-													res.timeschedule === null ||
-													res.timeschedule.drawing === null
+													res.drawing.length === 0
 														? "bg-red-500"
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
+												onClick={() => {
+													if(res.drawing.length > 0){
+														setDataSelected(res.drawing[0]);
+														showModal(true, "drawing", false);
+													}
+												}}
 											>
 												Drawing
 											</button>
-											{/* <button
-												className={`${
-													res.timeschedule === null ||
-													res.timeschedule.srimg === null ||
-													res.timeschedule.srimg.dispacth === null
-														? "bg-red-500"
-														: "bg-green-500"
-												} text-white p-1 rounded-md mr-2`}
-											>
-												Dispatch
-											</button> */}
-											{/* <button className='bg-orange-500 text-white py-1 px-1 rounded-md mr-2'>
-												Cost
-											</button>
-											<button className='bg-orange-500 text-white py-1 px-1 rounded-md'>
-												Man Our
-											</button> */}
 										</td>
 									</tr>
 								</React.Fragment>
@@ -358,6 +373,12 @@ export const Wor = () => {
 						/>
 					) : modalContent === "add" ? (
 						<FormCreateWor content={modalContent} showModal={showModal} />
+					) : modalContent === "summary" ? (
+						<ViewSummaryReport dataSelected={dataSelected} />
+					) :  modalContent === "drawing" ? (
+						<ViewDrawing dataSelected={dataSelected}/>
+					) :   modalContent === "schedule" ? (
+						<ViewSchedule  content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
 					) : (
 						<FormEditWor
 							content={modalContent}
