@@ -299,6 +299,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									label='ID Purchase Recieve'
 									onChange={(e: any) => {
 										if (e.type === "mr") {
+											setFieldValue("mr", []);
 											e.value.detailMr.map((res: any, i: number) => {
 												setFieldValue("pb", [
 													{
@@ -332,6 +333,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												);
 											});
 										} else {
+											setFieldValue("mr", []);
 											e.value.detailMr.map((res: any, i: number) => {
 												setFieldValue("pb", [
 													{
@@ -522,7 +524,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='No Mr'
 															label='No Mr'
 															type='text'
-															value={result.no_mr}
+															value={result?.no_mr}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -536,7 +538,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Material Name'
 															label='Material Name'
 															type='text'
-															value={result.materialName}
+															value={result?.materialName}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -550,7 +552,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Job No'
 															label='Job No'
 															type='text'
-															value={result.job_no}
+															value={result?.job_no}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -564,7 +566,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Request By'
 															label='Request By'
 															type='text'
-															value={result.requestBy}
+															value={result?.requestBy}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -578,7 +580,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Quantity'
 															label='Quantity'
 															type='text'
-															value={result.qty_out}
+															value={result?.qty_out}
 															disabled={true}
 															required={true}
 															withLabel={true}
@@ -592,7 +594,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Stock'
 															label='Stock'
 															type='text'
-															value={result.stock}
+															value={result?.stock}
 															disabled={true}
 															required={true}
 															withLabel={true}
