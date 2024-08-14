@@ -221,7 +221,6 @@ export const Wor = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
@@ -290,7 +289,7 @@ export const Wor = () => {
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
 												onClick={() => {
-													if(res.srimg.length > 0){
+													if(res.timeschedule !== null){
 														setDataSelected(res.timeschedule);
 														showModal(true, "schedule", false);
 													}
