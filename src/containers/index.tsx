@@ -12,3 +12,4 @@ export * from './purchasing-logistic';
 export * from './director';
 export * from './finance-accounting';
 export * from './hrd';
+export * from './absensi';

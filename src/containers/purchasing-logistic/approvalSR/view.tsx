@@ -76,15 +76,22 @@ export const ViewApprovalSR = () => {
 	const approveSr = async (payload: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
+		let remove:any = [];
 		let isWarning: boolean = false;
 		payload.SrDetail.map((res: any) => {
 			if (res.srappr !== null) {
-				listDetail.push({
-					id: res.id,
-					srappr: res.srappr,
-					// supId: res.supId,
-					qtyAppr: parseInt(res.qtyAppr),
-				});
+				if(res.srappr === 'Remove'){
+					remove.push({
+						id: res.id
+					})
+				}else{
+					listDetail.push({
+						id: res.id,
+						srappr: res.srappr,
+						// supId: res.supId,
+						qtyAppr: parseInt(res.qtyAppr),
+					});
+				}
 				isWarning = false;
 			} else {
 				toast.warning("Purchase Type Not yet entered", {
@@ -106,6 +113,7 @@ export const ViewApprovalSR = () => {
 			dateApprove: new Date(),
 			approveById: userId,
 			srDetail: listDetail,
+			delete: remove
 		};
 		if (!isWarning) {
 			try {
@@ -292,6 +300,7 @@ export const ViewApprovalSR = () => {
 																	</option>
 																	<option value='SO'>SO</option>
 																	<option value='DSO'>DSO</option>
+																	<option value='Remove'>Remove</option>
 																</InputSelect>
 															</td>
 															<td className='pr-1 w-[5%]'>

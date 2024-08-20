@@ -97,10 +97,6 @@ export const Dashboard = () => {
 								<h2 className='mt-3 text-3xl font-semibold text-gray-600'>
 									{ value.id === 'customer' ? totalCustomer : value.id === 'employe' ? totalEmploye : totalSupplier }
 								</h2>
-								{/* <h4 className='mt-3 text-base font-semibold text-gray-400'>
-									<span className='text-green-400'>{value.percentage}</span>{" "}
-									Customer from last month
-								</h4> */}
 							</div>
 							<div
 								className='bg-red-500 p-2 flex justify-center items-center'
