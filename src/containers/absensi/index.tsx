@@ -11,7 +11,8 @@ export const Absensi = () => {
 	const ref = useRef(null);
 	const [cardId, setCardId] = useState<string>("");
 	const [image, setImage] = useState<any>(false);
-	const [isClock, setIsClock] = useState(false);
+	const [isClock, setIsClock] = useState<boolean>(false);
+	const [data, setData] = useState<any>([]);
 
 	useEffect(() => {
 		if (!isClock) {
@@ -25,7 +26,6 @@ export const Absensi = () => {
 	const ScreenShoot = async () => {
 		let images: any = ref.current;
 		setImage(images.getScreenshot());
-		setIsClock(false);
 		const trimmedString = images.getScreenshot().replace('data:image/jpeg;base64', '');
 		const imageContent = window.btoa(trimmedString)
 		let time: any = new Date()
@@ -34,12 +34,15 @@ export const Absensi = () => {
 		formData.append('scan_in', imageContent);
 		formData.append('scan_in_time', time);
 		try {
-			await AddAbsensi(formData)
+			const response = await AddAbsensi(formData)
+			setData(response.data.results)
+			setIsClock(false);
 		} catch (error:any) {
+			setData([])
 			console.log(error)
 		}
 	};
-
+console.log(data)
 	return (
 		<div>
 			{isClock ? (
@@ -100,10 +103,10 @@ export const Absensi = () => {
 				<div className='flex space-x-4 p-2 bg-white rounded-lg'>
 					<img src={image} className='w-60' />
 					<div className='text-lg font-semibold'>
-						<p>Nama: Joko</p>
-						<p>Position: Direktur</p>
-						<p>Tanggal: {moment(new Date()).format("DD-MMMM-YYYY")}</p>
-						<p>Jam masuk: {moment(new Date()).format("HH:mm:ss")}</p>
+						<p>Nama: { data?.name }</p>
+						<p>Position: { data?.position }</p>
+						<p>Jam masuk: { data?.scan_in_time ? moment(new Date(data?.scan_in_time)).format("DD-MMMM-YYYY, HH:mm:ss") : '-'}</p>
+						<p>Jam masuk: { data?.scan_out_time ? moment(new Date(data?.scan_out_time)).format("DD-MMMM-YYYY, HH:mm:ss") : '-'}</p>
 					</div>
 				</div>
 			) : null}
