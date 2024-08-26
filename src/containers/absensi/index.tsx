@@ -17,7 +17,7 @@ export const Absensi = () => {
 	useEffect(() => {
 		if (!isClock) {
 			setTimeout(() => {
-				setCardId("")
+				setCardId("");
 				setIsClock(true);
 			}, 3000);
 		}
@@ -26,25 +26,31 @@ export const Absensi = () => {
 	const ScreenShoot = async () => {
 		let images: any = ref.current;
 		setImage(images.getScreenshot());
-		const trimmedString = images.getScreenshot().replace('data:image/jpeg;base64', '');
-		const imageContent = window.btoa(trimmedString)
-		let time: any = new Date()
+		const trimmedString = images
+			.getScreenshot()
+			.replace("data:image/jpeg;base64", "");
+		const imageContent = window.btoa(trimmedString);
+		let time: any = new Date();
 		const formData = new FormData();
-		formData.append('idCard', cardId);
-		formData.append('scan_in', imageContent);
-		formData.append('scan_in_time', time);
+		formData.append("idCard", cardId);
+		formData.append("scan_in", imageContent);
+		formData.append("scan_in_time", time);
 		try {
-			const response = await AddAbsensi(formData)
-			setData(response.data.results)
+			const response = await AddAbsensi(formData);
+			setData(response.data.results);
 			setIsClock(false);
-		} catch (error:any) {
-			setData([])
-			console.log(error)
+		} catch (error: any) {
+			setData([]);
+			console.log(error);
 		}
 	};
-console.log(data)
+
 	return (
 		<div>
+			<div className="absolute top-10">
+				<h1 className='flex text-4xl font-semibold justify-center'>Absensi</h1>
+				<h1 className='flex text-4xl font-semibold justify-center'>PT DWITAMA MULYA PERSADA</h1>
+			</div>
 			{isClock ? (
 				<>
 					<Clock
@@ -103,10 +109,24 @@ console.log(data)
 				<div className='flex space-x-4 p-2 bg-white rounded-lg'>
 					<img src={image} className='w-60' />
 					<div className='text-lg font-semibold'>
-						<p>Nama: { data?.name }</p>
-						<p>Position: { data?.position }</p>
-						<p>Jam masuk: { data?.scan_in_time ? moment(new Date(data?.scan_in_time)).format("DD-MMMM-YYYY, HH:mm:ss") : '-'}</p>
-						<p>Jam masuk: { data?.scan_out_time ? moment(new Date(data?.scan_out_time)).format("DD-MMMM-YYYY, HH:mm:ss") : '-'}</p>
+						<p>Nama: {data?.name}</p>
+						<p>Position: {data?.position}</p>
+						<p>
+							Jam masuk:{" "}
+							{data?.scan_in_time
+								? moment(new Date(data?.scan_in_time)).format(
+										"DD-MMMM-YYYY, HH:mm:ss"
+								  )
+								: "-"}
+						</p>
+						<p>
+							Jam masuk:{" "}
+							{data?.scan_out_time
+								? moment(new Date(data?.scan_out_time)).format(
+										"DD-MMMM-YYYY, HH:mm:ss"
+								  )
+								: "-"}
+						</p>
 					</div>
 				</div>
 			) : null}
@@ -116,4 +136,3 @@ console.log(data)
 function DataURIToBlob(images: any) {
 	throw new Error("Function not implemented.");
 }
-
