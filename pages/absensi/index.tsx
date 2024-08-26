@@ -7,9 +7,9 @@ export default function Home() {
 			<Head>
 				<title>DWITAMA E-WIS | Absensi</title>
 			</Head>
-			<div className='w-screen h-screen items-center justify-center flex space-x-2 bg-blue-200 p-6'>
-				<Absensi />
-			</div>
+			<Absensi />
+			{/* <div className='w-screen h-screen items-center justify-center flex space-x-2 bg-blue-200 p-6'>
+			</div> */}
 		</main>
 	);
 }

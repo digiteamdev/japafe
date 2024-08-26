@@ -4,12 +4,14 @@ import { useRef, useState, useEffect } from "react";
 import Webcam from "react-webcam";
 import Clock from "react-live-clock";
 import { toast } from "react-toastify";
+import Logo from "../../assets/logo/dwitama.png";
 import moment from "moment";
 import { AddAbsensi } from "@/src/services";
+import Image from "next/image";
 
 export const Absensi = () => {
 	const ref = useRef(null);
-	const [cardId, setCardId] = useState<string>("");
+	const [cardId, setCardId] = useState<string>("asd");
 	const [image, setImage] = useState<any>(false);
 	const [isClock, setIsClock] = useState<boolean>(false);
 	const [data, setData] = useState<any>([]);
@@ -46,73 +48,82 @@ export const Absensi = () => {
 	};
 
 	return (
-		<div>
-			<div className="absolute top-10">
-				<h1 className='flex text-4xl font-semibold justify-center'>Absensi</h1>
-				<h1 className='flex text-4xl font-semibold justify-center'>PT DWITAMA MULYA PERSADA</h1>
-			</div>
+		<>
 			{isClock ? (
 				<>
-					<Clock
-						format={"HH:mm:ss"}
-						ticking={true}
-						timezone={"Asia/Jakarta"}
-						className='text-9xl'
-					/>
-					<div className='fixed opacity-0'>
-						<Webcam
-							ref={ref}
-							audio={false}
-							screenshotFormat='image/jpeg'
-							className='-z-10'
-						/>
+					<div className='w-2/4 h-screen items-center mx-auto justify-center hidden md:flex lg:flex bg-white'>
+						<div className=''>
+							<Webcam
+								ref={ref}
+								audio={false}
+								screenshotFormat='image/jpeg'
+								className='border border-black rounded-lg w-[500px]'
+							/>
+						</div>
 					</div>
-					<div className='flex justify-center mt-8'>
-						<input
-							id='card_id'
-							name='card_id'
-							placeholder='Card Id'
-							type='text'
-							onChange={(e: any) => {
-								setCardId(e.target.value);
-							}}
-							value={cardId}
-							required={false}
-							disabled={false}
-							className='bg-white z-50 border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600'
-						/>
-						<button
-							type='button'
-							className='mx-1 z-50 bg-green-500 hover:bg-green-700 text-white p-2 rounded-lg '
-							onClick={() => {
-								if (cardId !== "") {
-									ScreenShoot();
-								} else {
-									toast.warning("Card id not empty", {
-										position: "top-center",
-										autoClose: 1000,
-										hideProgressBar: true,
-										closeOnClick: true,
-										pauseOnHover: true,
-										draggable: true,
-										progress: undefined,
-										theme: "colored",
-									});
-								}
-							}}
-						>
-							Absen
-						</button>
+					<div className='lg:w-2/4 md:w-2/4 w-full bg-white h-screen flex items-center justify-center'>
+						<div className=''>
+							<div className='w-full justify-center flex p-3'>
+								<Image
+									className='w-[50%] h-[50%] mr-2 mb-2'
+									src={Logo}
+									alt='logo'
+								/>
+							</div>
+							<Clock
+								format={"HH:mm:ss"}
+								ticking={true}
+								timezone={"Asia/Jakarta"}
+								className='text-9xl'
+							/>
+							<div className='flex justify-center mt-8'>
+								<input
+									id='card_id'
+									name='card_id'
+									placeholder='Card Id'
+									type='text'
+									onChange={(e: any) => {
+										setCardId(e.target.value);
+									}}
+									value={cardId}
+									required={false}
+									disabled={false}
+									className='bg-white z-50 border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600'
+								/>
+								<button
+									type='button'
+									className='mx-1 z-50 bg-green-500 hover:bg-green-700 text-white p-2 rounded-lg '
+									onClick={() => {
+										if (cardId !== "") {
+											ScreenShoot();
+										} else {
+											toast.warning("Card id not empty", {
+												position: "top-center",
+												autoClose: 1000,
+												hideProgressBar: true,
+												closeOnClick: true,
+												pauseOnHover: true,
+												draggable: true,
+												progress: undefined,
+												theme: "colored",
+											});
+										}
+									}}
+								>
+									Absen
+								</button>
+							</div>
+						</div>
 					</div>
 				</>
 			) : !isClock && cardId !== "" ? (
-				<div className='flex space-x-4 p-2 bg-white rounded-lg'>
-					<img src={image} className='w-60' />
+				<div className='flex justify-center mx-auto space-x-4 p-2 bg-white rounded-lg'>
+					<img src={image} className='w-96' />
 					<div className='text-lg font-semibold'>
-						<p>Nama: {data?.name}</p>
+						<p>Name: {data?.name}</p>
 						<p>Position: {data?.position}</p>
 						<p>
-							Jam masuk:{" "}
+							Check in:{" "}
 							{data?.scan_in_time
 								? moment(new Date(data?.scan_in_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
@@ -120,7 +131,7 @@ export const Absensi = () => {
 								: "-"}
 						</p>
 						<p>
-							Jam masuk:{" "}
+							Check out:{" "}
 							{data?.scan_out_time
 								? moment(new Date(data?.scan_out_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
@@ -130,9 +141,6 @@ export const Absensi = () => {
 					</div>
 				</div>
 			) : null}
-		</div>
+		</>
 	);
 };
-function DataURIToBlob(images: any) {
-	throw new Error("Function not implemented.");
-}

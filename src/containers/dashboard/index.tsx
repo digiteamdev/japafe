@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {useRouter} from "next/router";
 import { removeToken } from "../../configs/session";
 import { DataOverview } from "./data";
-import { GetCustomer, GetEmploye, GetSupplier } from "../../services";
+import { GetCustomer, GetEmploye, GetSupplier, GetAbsensi } from "../../services";
 
 export const Dashboard = () => {
 
@@ -10,11 +10,13 @@ export const Dashboard = () => {
 	const [totalCustomer, setTotalCustomer] = useState<number>(0);
 	const [totalEmploye, setTotalEmploye] = useState<number>(0);
 	const [totalSupplier, setTotalSupplier] = useState<number>(0);
+	const [listAbsensi, setListAbsen] = useState<any>([]);
 
 	useEffect( () => {
 		getCustomer();
 		getEmploye();
 		getSupplier();
+		getAbsensi();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
@@ -81,6 +83,22 @@ export const Dashboard = () => {
 		}
 	};
 
+	const getAbsensi = async () => {
+		try {
+			const response = await GetAbsensi();
+			if (response.data) {
+				setListAbsen(response.data.results);
+			}
+		} catch (error: any) {
+			if(error.response.data.login){
+				setListAbsen([]);
+			}else{
+				removeToken();
+				router.push('/');
+			}
+		}
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20'>
 			<div className='flex items-center mt-5 gap-5 lg:flex-row flex-col'>
@@ -108,6 +126,20 @@ export const Dashboard = () => {
 					);
 				})}
 			</div>
+			{/* <div className='flex items-center mt-5 gap-5 lg:flex-row flex-col'>
+				<table>
+					<thead>
+						<th>Image</th>
+						<th>Employee</th>
+						<th>Check in</th>
+					</thead>
+					<tbody>
+						{ listAbsensi?.map((res:any, i:number) => {
+							console.log(res)
+						}) }
+					</tbody>
+				</table>
+			</div> */}
 		</div>
 	);
 };
