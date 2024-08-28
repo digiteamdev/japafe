@@ -85,7 +85,7 @@ export const Dashboard = () => {
 
 	const getAbsensi = async () => {
 		try {
-			const response = await GetAbsensi();
+			const response = await GetAbsensi(1,10);
 			if (response.data) {
 				setListAbsen(response.data.results);
 			}
