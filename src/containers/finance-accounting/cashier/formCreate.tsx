@@ -11,7 +11,7 @@ import { cashierSchema } from "../../../schema/finance-accounting/cashier/cashie
 import { GetCashier, AddCashier, GetAllCoa } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 import { Plus, Trash2 } from "react-feather";
 
 interface props {
@@ -40,6 +40,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const [isDirrect, setIsDirrect] = useState<boolean>(true);
 	const [dataPurchase, setDataPurchase] = useState<any>([]);
 	const [dataCoa, setDataCoa] = useState<any>([]);
+	const [detailCdv, setDetailCdv] = useState<any>([]);
+	const [jobno, setJobno] = useState<string>("");
 	const [idCashier, setIdCashier] = useState<string>("");
 	const [currency, setCurrency] = useState<string>("");
 	const [total, setTotal] = useState<number>(0);
@@ -334,9 +336,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
+										console.log(e);
 										if (e.label === "Direct") {
 											setCurrency("IDR");
 											setTotal(0);
+											setDetailCdv([]);
+											setJobno("");
 											setTotalAmount(0);
 											setFieldValue("pay_to", "");
 											setFieldValue("account_name", "");
@@ -352,14 +357,18 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setPpn(0);
 											setPph(0);
 											setIsDirrect(false);
-											setFieldValue("journal_cashier", [{
-												coa_id: "",
-												coa_name: "",
-												status_transaction: "Debet",
-												grandtotal: 0,
-											},])
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: 0,
+												},
+											]);
 										} else if (e.type === "kontrabon") {
 											setIsDirrect(true);
+											setDetailCdv([]);
+											setJobno("");
 											let listJournal: any = [];
 											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
 												(res: any) => {
@@ -527,6 +536,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("journal_cashier", listJournal);
 										} else if (e.type === "purchase") {
 											setIsDirrect(false);
+											setDetailCdv([]);
+											setJobno("");
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
 											setTotalAmount(grandTotalPaid(e.value));
@@ -632,6 +643,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											}
 										} else {
 											setIsDirrect(false);
+											setDetailCdv(e.value.cdv_detail);
+											setJobno(e.value.job_no)
 											setDisc(0);
 											setPpn(0);
 											setPph(0);
@@ -654,12 +667,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("idPurchase", null);
 											setFieldValue("total", totalCa(e.value));
 											setFieldValue("status_payment", e.value.status_payment);
-											setFieldValue("journal_cashier", [{
-												coa_id: "",
-												coa_name: "",
-												status_transaction: "Debet",
-												grandtotal: 0,
-											},])
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: 0,
+												},
+											]);
 										}
 									}}
 									required={true}
@@ -699,6 +714,51 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
+						{ detailCdv.length > 0 ? (
+							<h1 className="font-semibold text-xl mt-2">Cash Advance Detail</h1>
+						) : null }
+						{detailCdv.map((res: any, i: number) => {
+							return (
+								<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2' key={i}>
+									<Input
+										id='jobno'
+										name='jobno'
+										placeholder='Job No'
+										label='Job No'
+										type='text'
+										value={jobno}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Total'
+										label='Total'
+										type='text'
+										value={rupiahFormat(res.total)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<InputArea
+										id='description'
+										name='description'
+										placeholder='description'
+										label='Description'
+										type='text'
+										required={true}
+										disabled={true}
+										withLabel={true}
+										value={res.description}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</Section>
+							);
+						})}
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -979,14 +1039,22 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														placeholder='total'
 														label='total'
 														type='text'
-														pattern="\d*"
-														onChange={(e:any) => {
+														pattern='\d*'
+														onChange={(e: any) => {
 															let totals: number = 0;
 															if (e.target.value !== "") {
-																totals = parseInt(e.target.value.replace(/\./g, ""));
-																setFieldValue(`journal_cashier.${i}.grandtotal`, totals);
+																totals = parseInt(
+																	e.target.value.replace(/\./g, "")
+																);
+																setFieldValue(
+																	`journal_cashier.${i}.grandtotal`,
+																	totals
+																);
 															} else {
-																setFieldValue(`journal_cashier.${i}.grandtotal`, totals);
+																setFieldValue(
+																	`journal_cashier.${i}.grandtotal`,
+																	totals
+																);
 															}
 														}}
 														required={true}

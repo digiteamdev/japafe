@@ -37,7 +37,7 @@ export const formatRupiah = (angka: any) => {
 };
 
 export const rupiahFormat = (angka: any) => {
-	let rupiah = new Intl.NumberFormat("id-ID").format(1000000.9);
+	let rupiah = new Intl.NumberFormat("id-ID").format(angka);
 	return rupiah
 };
 

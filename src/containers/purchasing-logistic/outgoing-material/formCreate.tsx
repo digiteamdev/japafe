@@ -581,7 +581,10 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															label='Quantity'
 															type='text'
 															value={result?.qty_out}
-															disabled={true}
+															onChange={(e:any) => {
+																setFieldValue(`mr.${i}.qty_out`, parseInt(e.target.value))
+															}}
+															disabled={false}
 															required={true}
 															withLabel={true}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

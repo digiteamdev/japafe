@@ -335,7 +335,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 													pattern='\d*'
 													value={formatRupiah(res.value.toString())}
 													onChange={(e: any) => {
-														setFieldValue(`detail.${i}.value`, e.target.value);
+														setFieldValue(`detail.${i}.value`, e.target.value.replaceAll(".", ""));
 													}}
 													required={true}
 													withLabel={true}
