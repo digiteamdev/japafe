@@ -10,14 +10,15 @@ import {
 	Pagination,
 } from "../../../components";
 import { Edit, Eye, Clock } from "react-feather";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { GetAbsensi, SearchCashAdvance, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
 import { changeDivisi, formatRupiah } from "@/src/utils";
+import { ViewAbsensi } from './view';
 
-export const Absensi = () => {
+export const AbsensiPages = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -56,9 +57,10 @@ export const Absensi = () => {
 	const getCashAdvance = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCashAdvance(page, perpage);
+			const response = await GetAbsensi(page, perpage);
+			console.log(response)
 			if (response.data) {
-				setData(response.data.result);
+				setData(response.data.results);
 				setCountData(response.data.totalData);
 				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
@@ -138,7 +140,7 @@ export const Absensi = () => {
 			/>
 			<Content
 				title='Absensi'
-				print={true}
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -185,22 +187,23 @@ export const Absensi = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{moment(res.date_cash_advance).format("DD-MMMM-YYYY")}
+										{moment(res.createdAt).format("DD-MMMM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.wor ? res.wor.job_no : "Internal"}
+										{res.employee?.employee_name}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{res.user.employee.employee_name}
+										{res.scan_in_time ? moment(res.scan_in_time).format("HH:mm:ss") : '-'}
 									</td>
 									<td className='whitespace-nowrap px-6 py-4 text-center'>
-										{total(res.cdv_detail)}
+										{res.scan_out_time ? moment(res.scan_out_time).format("HH:mm:ss") : '-'}
 									</td>
 									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
 										<div>
@@ -213,7 +216,7 @@ export const Absensi = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
+											{/* <Button
 												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
@@ -221,7 +224,7 @@ export const Absensi = () => {
 												}}
 											>
 												<Edit color='white' />
-											</Button>
+											</Button> */}
 										</div>
 									</td>
 								</tr>
@@ -252,18 +255,17 @@ export const Absensi = () => {
 				/>
 			) : (
 				<Modal
-					title='Cash Advance'
+					title='Absensi'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-                        // <ViewCashAdvance
-						// 	dataSelected={dataSelected}
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
+						<ViewAbsensi
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : null}
 				</Modal>
 			)}

@@ -11,12 +11,17 @@ import Image from "next/image";
 
 export const Absensi = () => {
 	const ref = useRef(null);
+	const refInput = useRef(null);
 	const [cardId, setCardId] = useState<string>("asd");
 	const [image, setImage] = useState<any>(false);
 	const [isClock, setIsClock] = useState<boolean>(false);
 	const [data, setData] = useState<any>([]);
 
 	useEffect(() => {
+		let input:any = refInput.current;
+		if(input){
+			input.focus()
+		}
 		if (!isClock) {
 			setTimeout(() => {
 				setCardId("");
@@ -28,6 +33,7 @@ export const Absensi = () => {
 	const ScreenShoot = async () => {
 		let images: any = ref.current;
 		setImage(images.getScreenshot());
+		console.log(images.getScreenshot())
 		const trimmedString = images
 			.getScreenshot()
 			.replace("data:image/jpeg;base64", "");
@@ -51,7 +57,7 @@ export const Absensi = () => {
 		<>
 			{isClock ? (
 				<>
-					<div className='w-2/4 h-screen items-center mx-auto justify-center hidden md:flex lg:flex bg-white'>
+					<div className='w-2/4 h-screen items-center mx-auto justify-center hidden md:flex lg:flex bg-white cursor-none'>
 						<div className=''>
 							<Webcam
 								ref={ref}
@@ -61,7 +67,7 @@ export const Absensi = () => {
 							/>
 						</div>
 					</div>
-					<div className='lg:w-2/4 md:w-2/4 w-full bg-white h-screen flex items-center justify-center'>
+					<div className='lg:w-2/4 cursor-none md:w-2/4 w-full bg-white h-screen flex items-center justify-center'>
 						<div className=''>
 							<div className='w-full justify-center flex p-3'>
 								<Image
@@ -78,6 +84,7 @@ export const Absensi = () => {
 							/>
 							<div className='flex justify-center mt-8'>
 								<input
+									ref={refInput}
 									id='card_id'
 									name='card_id'
 									placeholder='Card Id'
@@ -117,7 +124,7 @@ export const Absensi = () => {
 					</div>
 				</>
 			) : !isClock && cardId !== "" ? (
-				<div className='flex justify-center mx-auto space-x-4 p-2 bg-white rounded-lg'>
+				<div className='flex justify-center mx-auto space-x-4 p-2 bg-white rounded-lg cursor-none'>
 					<img src={image} className='w-96' />
 					<div className='text-lg font-semibold'>
 						<p>Name: {data?.name}</p>

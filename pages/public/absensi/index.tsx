@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import {useRouter} from "next/router";
 import { getToken } from "../../../src/configs/session";
-import { Absensi } from "../../../src/containers/";
+import { AbsensiPages } from "../../../src/containers/";
 import Layout from "../../../src/components/layout/Layout";
 import Head from 'next/head';
 
@@ -23,7 +23,7 @@ export default function AbsensiPage() {
 				<title>DWITAMA E-WIS | Absensi</title>
 			</Head>
 			<main className='w-full h-full bg-white'>
-				<Absensi />
+				<AbsensiPages />
 			</main>
 		</Layout>
 	);

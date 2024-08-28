@@ -86,31 +86,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 		let listDetail: any = [];
 		let isWarning: boolean = false;
 		payload.detailMr.map((res: any) => {
-			if(res.supId === null){
-				toast.warning("Supplier has not been filled in yet", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
-			}else if(res.price === 0){
-				toast.warning("Price cannot be 0", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
-			}else{
+			if(res.supId !== null){
 				listDetail.push({
 					id: res.id,
 					name_material: res.name_material,
@@ -124,6 +100,44 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 				});
 				isWarning = false
 			}
+			// if(res.supId === null){
+			// 	toast.warning("Supplier has not been filled in yet", {
+			// 		position: "top-center",
+			// 		autoClose: 5000,
+			// 		hideProgressBar: true,
+			// 		closeOnClick: true,
+			// 		pauseOnHover: true,
+			// 		draggable: true,
+			// 		progress: undefined,
+			// 		theme: "colored",
+			// 	});
+			// 	isWarning = true;
+			// }else if(res.price === 0){
+			// 	toast.warning("Price cannot be 0", {
+			// 		position: "top-center",
+			// 		autoClose: 5000,
+			// 		hideProgressBar: true,
+			// 		closeOnClick: true,
+			// 		pauseOnHover: true,
+			// 		draggable: true,
+			// 		progress: undefined,
+			// 		theme: "colored",
+			// 	});
+			// 	isWarning = true;
+			// }else{
+			// 	listDetail.push({
+			// 		id: res.id,
+			// 		name_material: res.name_material,
+			// 		supId: res.supId,
+			// 		taxpr: res.taxpr,
+			// 		currency: res.currency,
+			// 		qtyAppr: parseInt(res.qtyAppr),
+			// 		price: parseInt(res.price),
+			// 		disc: parseInt(res.disc),
+			// 		total: parseInt(res.total),
+			// 	});
+			// 	isWarning = false
+			// }
 		});
 		let data = {
 			dateOfPurchase: payload.dateOfPurchase,
