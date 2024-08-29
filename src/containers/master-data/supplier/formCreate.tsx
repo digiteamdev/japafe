@@ -5,6 +5,7 @@ import {
 	InputSelect,
 	InputSelectSearch,
 	InputWithIcon,
+	InputArea,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { supplierSchema } from "../../../schema/master-data/supplier/supplierSchema";
@@ -88,7 +89,8 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		getProvince();
+		// getProvince();
+		getCity();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -121,26 +123,31 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 		setListSubDistrict([]);
 	};
 
-	const getCity = (province: string) => {
+	const getCity = () => {
 		let dataCity: any = [];
-		const filtered = json.filter((res: any) => {
-			return res.province === province;
-		});
-		const keys = ["city"];
-		filtered
-			.filter(
-				(
-					(s) => (o: any) =>
-						((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
-				)(new Set())
-			)
-			.map((res: any) => {
-				dataCity.push({
-					value: res.city,
-					label: res.city,
-				});
+		// const filtered = json.filter((res: any) => {
+		// 	return res.province === province;
+		// });
+		// const keys = ["city"];
+		// filtered
+		// 	.filter(
+		// 		(
+		// 			(s) => (o: any) =>
+		// 				((k) => !s.has(k) && s.add(k))(keys.map((k) => o[k]).join("|"))
+		// 		)(new Set())
+		// 	)
+		// 	.map((res: any) => {
+		// 		dataCity.push({
+		// 			value: res.city,
+		// 			label: res.city,
+		// 		});
+		// 	});
+		json.map((res: any) => {
+			dataCity.push({
+				value: res.city,
+				label: res.city,
 			});
-
+		});
 		setListCity(dataCity);
 		setListDistrict([]);
 		setListSubDistrict([]);
@@ -193,55 +200,56 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 	};
 
 	const handleOnChanges = (event: any) => {
-		if (event.target.name === "provinces") {
-			getCity(event.target.value);
-		} else if (event.target.name === "cities") {
-			getDistrict(event.target.value);
-		} else if (event.target.name === "districts") {
-			getSubDistrict(event.target.value);
-		}
+		// if (event.target.name === "provinces") {
+		// 	getCity(event.target.value);
+		// } else if (event.target.name === "cities") {
+		// 	getDistrict(event.target.value);
+		// } else if (event.target.name === "districts") {
+		// 	getSubDistrict(event.target.value);
+		// }
 	};
 
 	const addSupplier = async (payload: any) => {
 		setIsLoading(true);
 		let bankEmpty: boolean = false;
-		payload.SupplierBank.map((res: any) => {
-			if (res.account_name === "") {
-				bankEmpty = true;
-				toast.warning("Bank Account Not Empty", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		});
-		payload.SupplierContact.map((res: any) => {
-			if (res.contact_person === "") {
-				bankEmpty = true;
-				toast.warning("Contact Person Not Empty", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-			}
-		});
+		// payload.SupplierBank.map((res: any) => {
+		// 	if (res.account_name === "") {
+		// 		bankEmpty = true;
+		// 		toast.warning("Bank Account Not Empty", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 	}
+		// });
+		// payload.SupplierContact.map((res: any) => {
+		// 	if (res.contact_person === "") {
+		// 		bankEmpty = true;
+		// 		toast.warning("Contact Person Not Empty", {
+		// 			position: "top-center",
+		// 			autoClose: 5000,
+		// 			hideProgressBar: true,
+		// 			closeOnClick: true,
+		// 			pauseOnHover: true,
+		// 			draggable: true,
+		// 			progress: undefined,
+		// 			theme: "colored",
+		// 		});
+		// 	}
+		// });
 		if (!bankEmpty) {
 			let dataBody: any = {
 				type_supplier: payload.type_supplier,
 				id_sup: payload.id_sup,
-				supplier_name: payload.customerType !== ""
-				? `${payload.customerType} ${payload.supplier_name}`
-				: payload.supplier_name,
+				supplier_name:
+					payload.customerType !== ""
+						? `${payload.customerType} ${payload.supplier_name}`
+						: payload.supplier_name,
 				addresses_sup: payload.addresses_sup,
 				provinces: payload.provinces,
 				cities: payload.cities,
@@ -253,7 +261,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 				ppn: payload.ppn,
 				pph: payload.pph,
 				SupplierContact: payload.SupplierContact,
-				SupplierBank: payload.SupplierBank
+				SupplierBank: payload.SupplierBank,
 			};
 			try {
 				const response = await AddSupplier(dataBody);
@@ -308,8 +316,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						<h1 className='text-xl font-bold'>Supplier</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<div className="flex w-full">
-
+								<div className='flex w-full'>
 									<div className='w-[20%]'>
 										<InputSelect
 											id='customerType'
@@ -450,7 +457,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 						</Section>
 						<h1 className='text-xl font-bold mt-3'>Address</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<InputSelectSearch
 									datas={listProvince}
 									id='provinces'
@@ -465,28 +472,13 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
-								{/* <option defaultValue='' selected>
-										Choose Province
-									</option>
-									{listProvince.length === 0 ? (
-										<option value=''>No Data Province</option>
-									) : (
-										listProvince.map((res: any, i: number) => {
-											return (
-												<option value={res.province} key={i}>
-													{res.province}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSearch> */}
 								{errors.provinces && touched.provinces ? (
 									<span className='text-red-500 text-xs'>
 										{errors.provinces}
 									</span>
 								) : null}
-							</div>
-							<div className='w-full'>
+							</div> */}
+							{/* <div className='w-full'>
 								<InputSelectSearch
 									datas={listCity}
 									id='cities'
@@ -501,99 +493,22 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 								/>
-								{/* <option defaultValue='' selected>
-										Choose City
-									</option>
-									{listCity.length === 0 ? (
-										<option>No Data City</option>
-									) : (
-										listCity.map((res: any, i: number) => {
-											return (
-												<option value={res.city} key={i}>
-													{res.city}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSearch> */}
 								{errors.cities && touched.cities ? (
 									<span className='text-red-500 text-xs'>{errors.cities}</span>
 								) : null}
-							</div>
-							<div className='w-full'>
-								<InputSelectSearch
-									datas={listDistrict}
-									id='districts'
-									name='districts'
-									placeholder='District'
-									label='District'
-									onChange={(e: any) => {
-										getSubDistrict(e.value);
-										setFieldValue("districts", e.value);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-								{/* <option defaultValue='' selected>
-										Choose District
-									</option>
-									{listDistrict.length === 0 ? (
-										<option>No Data District</option>
-									) : (
-										listDistrict.map((res: any, i: number) => {
-											return (
-												<option value={res.district} key={i}>
-													{res.district}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSearch> */}
-								{errors.districts && touched.districts ? (
-									<span className='text-red-500 text-xs'>
-										{errors.districts}
-									</span>
-								) : null}
-							</div>
-						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<InputSelectSearch
-									datas={listSubDistrict}
-									id='sub_districts'
-									name='sub_districts'
-									placeholder='Sub District'
-									label='Sub District'
-									onChange={(e: any) => {
-										setFieldValue("sub_districts", e.value);
-										setFieldValue("ec_postalcode", parseInt(e.postal_code));
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-								{/* <option defaultValue='' selected>
-										Choose Sub District
-									</option>
-									{listSubDistrict.length === 0 ? (
-										<option>No Data Sub District</option>
-									) : (
-										listSubDistrict.map((res: any, i: number) => {
-											return (
-												<option value={res.subdistrict} key={i}>
-													{res.subdistrict}
-												</option>
-											);
-										})
-									)}
-								</InputSelectSearch> */}
-								{errors.sub_districts && touched.sub_districts ? (
-									<span className='text-red-500 text-xs'>
-										{errors.sub_districts}
-									</span>
-								) : null}
-							</div>
+							</div> */}
+							<Input
+								id='cities'
+								name='cities'
+								placeholder='City'
+								label='City'
+								type='text'
+								value={values.cities}
+								onChange={handleChange}
+								required={true}
+								withLabel={true}
+								className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+							/>
 							<div className='w-full'>
 								<Input
 									id='ec_postalcode'
@@ -607,14 +522,9 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-								{/* {errors.ec_postalcode && touched.ec_postalcode ? (
-									<span className='text-red-500 text-xs'>
-										{errors.ec_postalcode}
-									</span>
-								) : null} */}
 							</div>
 							<div className='w-full'>
-								<Input
+								<InputArea
 									id='addresses_sup'
 									name='addresses_sup'
 									placeholder='Address'
@@ -632,7 +542,84 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									</span>
 								) : null}
 							</div>
+							{/* <div className='w-full'>
+								<InputSelectSearch
+									datas={listDistrict}
+									id='districts'
+									name='districts'
+									placeholder='District'
+									label='District'
+									onChange={(e: any) => {
+										getSubDistrict(e.value);
+										setFieldValue("districts", e.value);
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{errors.districts && touched.districts ? (
+									<span className='text-red-500 text-xs'>
+										{errors.districts}
+									</span>
+								) : null}
+							</div> */}
 						</Section>
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'> */}
+						{/* <div className='w-full'>
+								<InputSelectSearch
+									datas={listSubDistrict}
+									id='sub_districts'
+									name='sub_districts'
+									placeholder='Sub District'
+									label='Sub District'
+									onChange={(e: any) => {
+										setFieldValue("sub_districts", e.value);
+										setFieldValue("ec_postalcode", parseInt(e.postal_code));
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+								{errors.sub_districts && touched.sub_districts ? (
+									<span className='text-red-500 text-xs'>
+										{errors.sub_districts}
+									</span>
+								) : null}
+							</div> */}
+						{/* <div className='w-full'>
+								<Input
+									id='ec_postalcode'
+									name='ec_postalcode'
+									placeholder='Postal Code'
+									label='Postal Code'
+									type='number'
+									value={values.ec_postalcode}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div> */}
+						{/* <div className='w-full'>
+								<Input
+									id='addresses_sup'
+									name='addresses_sup'
+									placeholder='Address'
+									label='Address'
+									type='text'
+									value={values.addresses_sup}
+									onChange={handleChange}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+								{errors.addresses_sup && touched.addresses_sup ? (
+									<span className='text-red-500 text-xs'>
+										{errors.addresses_sup}
+									</span>
+								) : null}
+							</div> */}
+						{/* </Section> */}
 						<FieldArray
 							name='SupplierBank'
 							render={(arrayBank) => (
@@ -740,7 +727,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 															</h1>
 														</Disclosure.Button>
 														<Disclosure.Panel>
-															<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+															<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 																<div className='w-full'>
 																	<Input
 																		id={`SupplierContact.${i}.contact_person`}
@@ -771,7 +758,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 																		classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3'
 																	/>
 																</div>
-																<div className='w-full'>
+																{/* <div className='w-full'>
 																	<Input
 																		id={`SupplierContact.${i}.email_person`}
 																		name={`SupplierContact.${i}.email_person`}
@@ -784,7 +771,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 																		withLabel={true}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																	/>
-																</div>
+																</div> */}
 															</Section>
 														</Disclosure.Panel>
 													</>

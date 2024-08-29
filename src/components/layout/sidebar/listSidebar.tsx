@@ -6,74 +6,6 @@ export const ListNav = [
 		role: "all",
 		subMenu: null,
 	},
-	// {
-	// 	id: "master-data",
-	// 	link: "/master-data",
-	// 	title: "Master Data",
-	// 	role: "all",
-	// 	subMenu: [
-	// 		{
-	// 		    id: 'supplier',
-	// 		    link: "/master-data/supplier",
-	// 		    title: "Supplier",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 		    id: 'customer',
-	// 		    link: "/master-data/customer",
-	// 		    title: "Customer",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 		    id: 'employe',
-	// 		    link: "/master-data/employe",
-	// 		    title: "Employe",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 		    id: 'equipment-part',
-	// 		    link: "/master-data/equipment-part",
-	// 		    title: "Equipment & Part",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 			id: "departement",
-	// 			link: "/master-data/departement",
-	// 			title: "Departement",
-	// 			subMenu: null,
-	// 		},
-	// 		{
-	// 		    id: 'worker-center',
-	// 		    link: "/master-data/worker-center",
-	// 		    title: "Worker Center",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 			id: "activity",
-	// 			link: "/master-data/activity",
-	// 			title: "Activity",
-	// 			subMenu: null,
-	// 		},
-	// 		{
-	// 		    id: 'holiday',
-	// 		    link: "/master-data/holiday",
-	// 		    title: "Holiday",
-	// 		    subMenu: null
-	// 		},
-	// 		{
-	// 			id: "material-type",
-	// 			link: "/master-data/material-type",
-	// 			title: "Material Type",
-	// 			subMenu: null,
-	// 		},
-	// 		{
-	// 			id: "material",
-	// 			link: "/master-data/material",
-	// 			title: "Material",
-	// 			subMenu: null,
-	// 		},
-	// 	],
-	// },
 	{
 		id: "public",
 		link: "/public",
@@ -101,13 +33,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "absensi",
-				link: "/public/absensi",
-				title: "Absensi",
+			// {
+			// 	id: "absensi",
+			// 	link: "/public/absensi",
+			// 	title: "Absensi",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "spj-cash-advance",
 				link: "/public/spj-cash-advance",
@@ -122,38 +54,10 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "permit-request",
-			// 	link: "/public/permit-request",
-			// 	title: "Permit Request",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "dispatch-record",
-			// 	link: "/public/dispatch-record",
-			// 	title: "Dispatch Record",
-
-			// 	subMenu: null,
-			// },
 			{
 				id: "employe",
 				link: "/public/employe",
 				title: "Employe",
-				subMenu: null,
-			},
-			// {
-			// 	id: "absen-today",
-			// 	link: "/public/absen-today",
-			// 	title: "Absen Today",
-
-			// 	subMenu: null,
-			// },
-			{
-				id: "master-material",
-				link: "/public/master-material",
-				title: "Master Material",
-
 				subMenu: null,
 			},
 			{
@@ -198,20 +102,6 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "marketing-opurtunity",
-			// 	link: "/marketing/marketing-opurtunity",
-			// 	title: "Marketing Opurtunity",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "sales-performance",
-			// 	link: "/marketing/sales-performance",
-			// 	title: "Sales Performance",
-
-			// 	subMenu: null,
-			// },
 			{
 				id: "job-status",
 				link: "/marketing/job-status",
@@ -410,26 +300,19 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "delivery-order",
-				link: "/general-affair/delivery-order",
-				title: "Delivery Order",
+			// {
+			// 	id: "delivery-order",
+			// 	link: "/general-affair/delivery-order",
+			// 	title: "Delivery Order",
 
-				subMenu: null,
-			},
-			{
-				id: "material-remaind-use",
-				link: "/general-affair/material-remaind-use",
-				title: "Material Remain Use",
-
-				subMenu: null,
-			},
-			{
-				id: "equipment-part",
-				link: "/general-affair/equipment-part",
-				title: "Equipment & Part",
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "equipment-part",
+			// 	link: "/general-affair/equipment-part",
+			// 	title: "Equipment & Part",
+			// 	subMenu: null,
+			// },
 			// {
 			// 	id: "material-type",
 			// 	link: "/general-affair/material-type",
@@ -672,27 +555,27 @@ export const ListNav = [
 				title: "Time Sheet",
 				subMenu: null,
 			},
-			{
-				id: "sallary-overtime",
-				link: "/hrd-ga/sallary-overtime",
-				title: "Sallary & Overtime",
+			// {
+			// 	id: "sallary-overtime",
+			// 	link: "/hrd-ga/sallary-overtime",
+			// 	title: "Sallary & Overtime",
 
-				subMenu: null,
-			},
-			{
-				id: "absent-list",
-				link: "/hrd-ga/absent-list",
-				title: "Absent List",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "absent-list",
+			// 	link: "/hrd-ga/absent-list",
+			// 	title: "Absent List",
 
-				subMenu: null,
-			},
-			{
-				id: "spd",
-				link: "/hrd-ga/spd",
-				title: "SPD",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "spd",
+			// 	link: "/hrd-ga/spd",
+			// 	title: "SPD",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 		],
 	},
 	{
@@ -702,19 +585,12 @@ export const ListNav = [
 		role: "ADMINISTRATOR,Ppic",
 		subMenu: [
 			// {
-			// 	id: "shift",
-			// 	link: "/production/shift",
-			// 	title: "Shift",
+			// 	id: "dispatch",
+			// 	link: "/production/dispatch",
+			// 	title: "Dispatch",
 
 			// 	subMenu: null,
 			// },
-			{
-				id: "dispatch",
-				link: "/production/dispatch",
-				title: "Dispatch",
-
-				subMenu: null,
-			},
 			{
 				id: "time-schedule",
 				link: "/production/time-schedule",
@@ -722,13 +598,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "dispatch-record",
-				link: "/production/dispatch-record",
-				title: "Dispatch Record",
+			// {
+			// 	id: "dispatch-record",
+			// 	link: "/production/dispatch-record",
+			// 	title: "Dispatch Record",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			// {
 			// 	id: "worker-center",
 			// 	link: "/production/worker-center",
@@ -756,34 +632,34 @@ export const ListNav = [
 			// 	title: "Activity",
 			// 	subMenu: null,
 			// },
-			{
-				id: "equipment-part",
-				link: "/production/equipment-part",
-				title: "Equipment & Part",
-				subMenu: null,
-			},
+			// {
+			// 	id: "equipment-part",
+			// 	link: "/production/equipment-part",
+			// 	title: "Equipment & Part",
+			// 	subMenu: null,
+			// },
 		],
 	},
 	{
 		id: "engineering",
 		link: "/engineering",
-		title: "Engineering",
+		title: "Engineering & Quality",
 		role: "ADMINISTRATOR,QA & ENG",
 		subMenu: [
 			{
 				id: "sumary-report",
 				link: "/engineering/sumary-report",
-				title: "Sumary Report",
+				title: "Inspection",
 
 				subMenu: null,
 			},
-			{
-				id: "bill-of-material",
-				link: "/engineering/bill-of-material",
-				title: "Bill Of Material",
+			// {
+			// 	id: "bill-of-material",
+			// 	link: "/engineering/bill-of-material",
+			// 	title: "Bill Of Material",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			// {
 			// 	id: "bom-dimension",
 			// 	link: "/engineering/bom-dimension",

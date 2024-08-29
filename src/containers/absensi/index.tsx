@@ -3,11 +3,13 @@
 import { useRef, useState, useEffect } from "react";
 import Webcam from "react-webcam";
 import Clock from "react-live-clock";
-import { toast } from "react-toastify";
 import Logo from "../../assets/logo/dwitama.png";
 import moment from "moment";
 import { AddAbsensi } from "@/src/services";
 import Image from "next/image";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
 export const Absensi = () => {
 	const ref = useRef(null);
@@ -18,9 +20,9 @@ export const Absensi = () => {
 	const [data, setData] = useState<any>([]);
 
 	useEffect(() => {
-		let input:any = refInput.current;
-		if(input){
-			input.focus()
+		let input: any = refInput.current;
+		if (input) {
+			input.focus();
 		}
 		if (!isClock) {
 			setTimeout(() => {
@@ -30,17 +32,16 @@ export const Absensi = () => {
 		}
 	}, [isClock]);
 
-	const ScreenShoot = async () => {
+	const ScreenShoot = async (id: string) => {
 		let images: any = ref.current;
 		setImage(images.getScreenshot());
-		console.log(images.getScreenshot())
 		const trimmedString = images
 			.getScreenshot()
 			.replace("data:image/jpeg;base64", "");
 		const imageContent = window.btoa(trimmedString);
 		let time: any = new Date();
 		const formData = new FormData();
-		formData.append("idCard", cardId);
+		formData.append("idCard", id);
 		formData.append("scan_in", imageContent);
 		formData.append("scan_in_time", time);
 		try {
@@ -49,8 +50,18 @@ export const Absensi = () => {
 			setIsClock(false);
 		} catch (error: any) {
 			setData([]);
-			console.log(error);
+			toast.error(`Absen Failed Try Angain`, {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
 		}
+		setCardId("");
 	};
 
 	return (
@@ -91,39 +102,20 @@ export const Absensi = () => {
 									type='text'
 									onChange={(e: any) => {
 										setCardId(e.target.value);
+										if (e.target.value.length === 10) {
+											ScreenShoot(e.target.value);
+										}
 									}}
 									value={cardId}
 									required={false}
 									disabled={false}
-									className='bg-white z-50 border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600'
+									className='bg-white z-50 border border-primary-300 text-gray-900 sm:text-sm rounded-lg w-full p-2.5 outline-primary-600 opacity-0'
 								/>
-								<button
-									type='button'
-									className='mx-1 z-50 bg-green-500 hover:bg-green-700 text-white p-2 rounded-lg '
-									onClick={() => {
-										if (cardId !== "") {
-											ScreenShoot();
-										} else {
-											toast.warning("Card id not empty", {
-												position: "top-center",
-												autoClose: 1000,
-												hideProgressBar: true,
-												closeOnClick: true,
-												pauseOnHover: true,
-												draggable: true,
-												progress: undefined,
-												theme: "colored",
-											});
-										}
-									}}
-								>
-									Absen
-								</button>
 							</div>
 						</div>
 					</div>
 				</>
-			) : !isClock && cardId !== "" ? (
+			) : !isClock && data ? (
 				<div className='flex justify-center mx-auto space-x-4 p-2 bg-white rounded-lg cursor-none'>
 					<img src={image} className='w-96' />
 					<div className='text-lg font-semibold'>
@@ -134,7 +126,7 @@ export const Absensi = () => {
 							{data?.scan_in_time
 								? moment(new Date(data?.scan_in_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
-								  )
+								)
 								: "-"}
 						</p>
 						<p>
@@ -142,12 +134,13 @@ export const Absensi = () => {
 							{data?.scan_out_time
 								? moment(new Date(data?.scan_out_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
-								  )
+								)
 								: "-"}
 						</p>
 					</div>
 				</div>
 			) : null}
+			<ToastContainer />
 		</>
 	);
 };

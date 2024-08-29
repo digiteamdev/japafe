@@ -284,12 +284,12 @@ console.log(dataSummary)
 					values,
 				}) => (
 					<Form onChange={handleOnChanges}>
-						<h1 className='text-xl font-bold mt-3'>Summary Report</h1>
+						<h1 className='text-xl font-bold mt-3'>Inspection</h1>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='date_of_summary'
-									label='Date Of Summary'
+									label='Date Of Inspection'
 									value={
 										values.date_of_summary === null
 											? new Date()
@@ -528,8 +528,8 @@ console.log(dataSummary)
 									datas={listType}
 									id='type_srimg'
 									name='type_srimg'
-									placeholder='Type Summary'
-									label='Type Summary'
+									placeholder='Type Inspection'
+									label='Type Inspection'
 									onChange={(e: any) => {
 										setFieldValue("selectType", e);
 										setFieldValue("type_srimg", e.value);

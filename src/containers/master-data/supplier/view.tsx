@@ -61,14 +61,7 @@ export const ViewSuplier = ({ dataSelected }: props) => {
 											Address
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.addresses_sup}
-										</td>
-									</tr>
-                                    <tr>
-										<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										</td>
-										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{dataSelected.provinces}, {dataSelected.cities}, {dataSelected.districts},{dataSelected.sub_districts}, {dataSelected.ec_postalcode},    
+											{dataSelected.addresses_sup}, {dataSelected.cities}, {dataSelected.ec_postalcode}
 										</td>
 									</tr>
 								</tbody>
