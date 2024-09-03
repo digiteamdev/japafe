@@ -649,7 +649,7 @@ export const ListNav = [
 			{
 				id: "sumary-report",
 				link: "/engineering/sumary-report",
-				title: "Inspection",
+				title: "Inspection report",
 
 				subMenu: null,
 			},

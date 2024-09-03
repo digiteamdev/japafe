@@ -39,6 +39,7 @@ interface data {
 			note: string;
 			qty: string;
 			detail: any;
+			file: any;
 		}
 	];
 }
@@ -77,6 +78,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				note: "",
 				qty: "",
 				detail: [],
+				file: null,
 			},
 		],
 	});
@@ -85,12 +87,12 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		if(!isCreate){
+		if (!isCreate) {
 			getEmploye();
 			getBom();
 			getMaterial();
-		}else{
-			createMR(listDetail)
+		} else {
+			createMR(listDetail);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isCreate]);
@@ -112,14 +114,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			let list_material: any = [];
 			let list_material_stock: any = [];
 			const response = await GetAllMaterialNew();
-			list_material.push({
-				label: "Input",
-				value: null,
-			});
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_material.push({
-						label: `${res.name} ${res.spesifikasi ? res.spesifikasi : ''}`,
+						label: `${res.name} ${res.spesifikasi ? res.spesifikasi : ""}`,
 						value: res,
 					});
 				});
@@ -219,7 +217,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	const addMr = (payload: data) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		payload.detailMr.map( (res: any, i: number) => {
+		payload.detailMr.map((res: any, i: number) => {
 			if (res.isInput) {
 				let dataBody: any = {
 					name: res.material,
@@ -231,7 +229,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					date_in: new Date(),
 					date_out: null,
 				};
-				AddMaterialNew(dataBody).then((resp:any) => {
+				AddMaterialNew(dataBody).then((resp: any) => {
 					listDetail.push({
 						bomIdD: res.bomId,
 						materialId: resp.data.results.id,
@@ -239,7 +237,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 						qty: parseInt(res.qty),
 						note: res.note,
 					});
-					if(payload.detailMr.length === listDetail.length){
+					if (payload.detailMr.length === listDetail.length) {
 						let data = {
 							userId: getIdUser(),
 							date_mr: new Date(),
@@ -248,10 +246,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 							job_no: jobNo,
 							detailMr: listDetail,
 						};
-						setListDetail(data)
-						setIsCreate(true)
+						setListDetail(data);
+						setIsCreate(true);
 					}
-				})
+				});
 			} else {
 				listDetail.push({
 					bomIdD: res.bomId,
@@ -259,28 +257,54 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					name_material: res.name_material,
 					qty: parseInt(res.qty),
 					note: res.note,
+					file: res.file
 				});
-				if(payload.detailMr.length === listDetail.length){
+				if (payload.detailMr.length === listDetail.length) {
 					let data = {
 						userId: getIdUser(),
 						date_mr: new Date(),
 						bomIdU: bomId,
 						worId: worID === "" ? null : worID,
 						job_no: jobNo,
+						file: "",
 						detailMr: listDetail,
 					};
-					setListDetail(data)
-					setIsCreate(true)
+					setListDetail(data);
+					setIsCreate(true);
 				}
 			}
 		});
 		setIsLoading(false);
 	};
 
-	const createMR = async (data:any) => {
+	const createMR = async (data: any) => {
 		setIsLoading(true);
+		let listDetail: any = [];
+		let userId: any = getIdUser() || '';
+		let date: any = new Date();
+		data?.detailMr.map((res: any) => {
+			listDetail.push({
+				bomIdD: res.bomId,
+				materialId: res.material,
+				name_material: res.name_material,
+				qty: parseInt(res.qty),
+				note: res.note
+			});
+		});
+		const formData = new FormData();
+		formData.append("userId", userId);
+		formData.append("date_mr", date);
+		formData.append("bomIdU", bomId);
+		formData.append("worId", worID === "" ? 'null' : worID);
+		formData.append("job_no", jobNo);
+		formData.append("detailMr", JSON.stringify(listDetail));
+		data?.detailMr.map((res:any) => {
+			if(res.file){
+				formData.append("file", res.file);
+			}
+		})
 		try {
-			const response = await AddMr(data);
+			const response = await AddMr(formData);
 			if (response.data) {
 				toast.success("Add Material Request Success", {
 					position: "top-center",
@@ -307,7 +331,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 			});
 		}
 		setIsLoading(false);
-	}
+	};
 
 	const addMaterialStock = async (payload: any) => {
 		setIsLoading(true);
@@ -465,7 +489,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 						initialValues={{ ...data }}
 						// validationSchema={departemenSchema}
 						onSubmit={(values) => {
-							addMr(values);
+							createMR(values);
 						}}
 						enableReinitialize
 					>
@@ -557,13 +581,14 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 								</Section>
 								{isMaterial ? (
 									<div>
+										<p className="mt-4 ">Note: Jika tidak ada material yang dicari harap hubungi purchasing atau gudang</p>
 										<FieldArray
 											name='detailMr'
 											render={(arrayMr) =>
 												values.detailMr.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	{result.isInput ? (
 																		<Input
@@ -698,6 +723,25 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																			setFieldValue(
 																				`detailMr.${i}.note`,
 																				e.target.value
+																			)
+																		}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.file`}
+																		name={`detailMr.${i}.file`}
+																		placeholder='File'
+																		label='File'
+																		type='file'
+																		accept='image/*, .pdf'
+																		onChange={(e: any) =>
+																			setFieldValue(
+																				`detailMr.${i}.file`,
+																				e.target.files[0]
 																			)
 																		}
 																		required={true}

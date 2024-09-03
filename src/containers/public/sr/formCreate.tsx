@@ -40,6 +40,7 @@ interface data {
 			unit: string;
 			qty: string;
 			note: string;
+			file: any;
 		}
 	];
 }
@@ -75,6 +76,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 				unit: "",
 				qty: "",
 				note: "",
+				file: null,
 			},
 		],
 	});
@@ -165,17 +167,20 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 				unit: res.unit,
 			});
 		});
-		let data = {
-			dispacthIDS: payload.dispacthIDS === "" ? null : payload.dispacthIDS,
-			userId: payload.userId,
-			worId: payload.worId === "" ? null : payload.worId,
-			job_no: jobNo,
-			date_sr: payload.date_sr,
-			SrDetail: listService,
-		};
-
+		const formData = new FormData();
+		formData.append("dispacthIDS", payload.dispacthIDS === "" ? "null" : payload.dispacthIDS);
+		formData.append("userId", payload.userId);
+		formData.append("worId", payload.worId === "" ? "null" : payload.worId);
+		formData.append("job_no", jobNo);
+		formData.append("date_sr", payload.date_sr);
+		formData.append("SrDetail", JSON.stringify(listService));
+		payload?.SrDetail.map((res:any) => {
+			if(res.file){
+				formData.append("file", res.file);
+			}
+		})
 		try {
-			const response = await AddSr(data);
+			const response = await AddSr(formData);
 			if (response.data) {
 				toast.success("Add Service Request Success", {
 					position: "top-center",
@@ -498,7 +503,7 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 												values.SrDetail.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	<InputArea
 																		id={`SrDetail.${i}.description`}
@@ -567,6 +572,25 @@ export const FormCreateSr = ({ content, showModal }: props) => {
 																			setFieldValue(
 																				`SrDetail.${i}.note`,
 																				e.target.value
+																			)
+																		}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`SrDetail.${i}.file`}
+																		name={`SrDetail.${i}.file`}
+																		placeholder='File'
+																		label='File'
+																		type='file'
+																		accept='image/*, .pdf'
+																		onChange={(e: any) =>
+																			setFieldValue(
+																				`SrDetail.${i}.file`,
+																				e.target.files[0]
 																			)
 																		}
 																		required={true}

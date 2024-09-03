@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,17 +7,22 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { GetDetailSr, SearchApprovalRequest, DeleteSr } from "../../../services";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
+import {
+	GetDetailSr,
+	SearchApprovalRequest,
+	DeleteSr,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
 export const ApprovalSr = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,15 +32,17 @@ export const ApprovalSr = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const headerTabel = [
 		{ name: "No Job" },
-        { name: "No SR" },
+		{ name: "No SR" },
 		{ name: "Description" },
 		{ name: "Date SR" },
 		{ name: "Request By" },
-        { name: "Action" }
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
@@ -57,28 +64,24 @@ export const ApprovalSr = () => {
 	const getSr = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetDetailSr(page,perpage);
+			const response = await GetDetailSr(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchApprSr = async (
-		page: number,
-		limit: number,
-		search: string
-	) => {
+	const searchApprSr = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
 			const response = await SearchApprovalRequest(page, limit, search, "SA");
@@ -94,7 +97,7 @@ export const ApprovalSr = () => {
 	const deleteSr = async (id: string) => {
 		try {
 			const response = await DeleteSr(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Service Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -122,20 +125,20 @@ export const ApprovalSr = () => {
 		setIsModal(false);
 	};
 
-	const showDesc = (data:any) => {
-		let desc:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				desc = `- `+res.desc
-			}else{
-				desc = desc +` \r\n ` + `- `+res.desc 
+	const showDesc = (data: any) => {
+		let desc: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				desc = `- ` + res.desc;
+			} else {
+				desc = desc + ` \r\n ` + `- ` + res.desc;
 			}
-		})
-		return desc
-	}
+		});
+		return desc;
+	};
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24 h-screen'>
 			<SectionTitle
 				title='Approval Service Request'
 				total={countData}
@@ -153,6 +156,45 @@ export const ApprovalSr = () => {
 				showModal={showModal}
 				search={searchApprSr}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/ApproveSrCsv?dateStar=${dateStart}&dateEnd=${dateFinish}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -195,17 +237,29 @@ export const ApprovalSr = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.no_sr }</td>
-									<td className='whitespace-pre-line p-1'>{ showDesc(res.SrDetail) }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateApprove).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_sr}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{showDesc(res.SrDetail)}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.dateApprove).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.employee.employee_name}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													router.push(`/purchasing-logistic/approval-sr/${res.id}`)
+													router.push(
+														`/purchasing-logistic/approval-sr/${res.id}`
+													);
 												}}
 											>
 												<Eye color='white' />
@@ -235,20 +289,18 @@ export const ApprovalSr = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getSr(value, perPage, "SA");
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getSr(value, perPage, "SA");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete

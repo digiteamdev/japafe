@@ -8,8 +8,10 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye } from "react-feather";
+import { Send, Edit, Eye, Printer } from "react-feather";
 import {
 	GetApprovalRequest,
 	SearchApprovalRequest,
@@ -33,6 +35,8 @@ export const ApprovalMr = () => {
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const headerTabel = [
 		{ name: "Job No" },
 		{ name: "No MR" },
@@ -126,20 +130,20 @@ export const ApprovalMr = () => {
 		setIsModal(false);
 	};
 
-	const showMaterial = (data:any) => {
-		let material:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				material = `- `+res.name_material
-			}else{
-				material = material +` \r\n ` + `- `+res.name_material 
+	const showMaterial = (data: any) => {
+		let material: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = `- ` + res.name_material;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.name_material;
 			}
-		})
-		return material
-	}
+		});
+		return material;
+	};
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24 h-screen'>
 			<SectionTitle
 				title='Approval Material Request'
 				total={countData}
@@ -157,6 +161,45 @@ export const ApprovalMr = () => {
 				showModal={showModal}
 				search={searchApprovalMr}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/ApproveMrCsv?dateStar=${dateStart}&dateEnd=${dateFinish}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -219,7 +262,9 @@ export const ApprovalMr = () => {
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
-													router.push(`/purchasing-logistic/approval-mr/${res.id}`)
+													router.push(
+														`/purchasing-logistic/approval-mr/${res.id}`
+													);
 												}}
 											>
 												<Eye color='white' />
@@ -270,7 +315,7 @@ export const ApprovalMr = () => {
 					showModal={showModal}
 					onDelete={deleteMR}
 				/>
-			) : null }
+			) : null}
 		</div>
 	);
 };

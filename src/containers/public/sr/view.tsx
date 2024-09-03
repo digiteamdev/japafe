@@ -149,7 +149,7 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 			}
 		}
 	};
-
+	console.log(dataSelected);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{/* <PdfSr
@@ -240,6 +240,7 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 									</th>
 									<th className='border border-black text-center'>Quantity</th>
 									<th className='border border-black text-center'>Unit</th>
+									<th className='border border-black text-center'>File</th>
 									<th className='border border-black text-center'>Note</th>
 								</tr>
 							</thead>
@@ -255,6 +256,19 @@ export const ViewSR = ({ dataSelected, content, showModal }: props) => {
 											</td>
 											<td className='border border-black text-center'>
 												{res.unit}
+											</td>
+											<td className='border border-black text-center'>
+												{res.file ? (
+													<a
+														href={res.file}
+														target='_blank'
+														className='text-blue-500 underline hover:text-blue-700'
+													>
+														Show File
+													</a>
+												) : (
+													"-"
+												)}
 											</td>
 											<td className='border border-black text-center'>
 												{res.note}

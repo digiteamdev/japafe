@@ -5,14 +5,13 @@ import moment from "moment";
 import {
 	Input,
 	InputSelect,
-	InputSelectSearch,
 	Section,
 } from "../../../components";
 import { FieldArray, Form, Formik } from "formik";
 import { getIdUser } from "@/src/configs/session";
 import { ApprovalMr, GetMrId } from "@/src/services";
 import { toast } from "react-toastify";
-import { ArrowLeft, Check, Send } from "react-feather";
+import { ArrowLeft, Check, Printer, Send } from "react-feather";
 
 export const ViewApprovalMR = () => {
 	const router = useRouter();
@@ -48,6 +47,7 @@ export const ViewApprovalMR = () => {
 						stock: res.Material_Master.jumlah_Stock,
 						note: res.note,
 						qtyAppr: res.qty,
+						file: res.file,
 					});
 				});
 				setData({
@@ -76,15 +76,15 @@ export const ViewApprovalMR = () => {
 	const approveMr = async (payload: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		let remove:any = [];
+		let remove: any = [];
 		let isWarning: boolean = false;
 		payload.detailMr.map((res: any) => {
 			if (res.mrappr !== null) {
-				if(res.mrappr === 'Remove'){
+				if (res.mrappr === "Remove") {
 					remove.push({
-						id: res.id
-					})
-				}else{
+						id: res.id,
+					});
+				} else {
 					listDetail.push({
 						id: res.id,
 						mrappr: res.mrappr,
@@ -102,7 +102,7 @@ export const ViewApprovalMR = () => {
 			dateApprove: new Date(),
 			approveById: userId,
 			detailMr: listDetail,
-			delete: remove
+			delete: remove,
 		};
 		if (!isWarning) {
 			try {
@@ -249,10 +249,12 @@ export const ViewApprovalMR = () => {
 														<th className='text-center'>Qty Approval</th>
 														<th className='text-center'>Stock</th>
 														<th className='text-center'>Note</th>
+														<th className='text-center'>File</th>
 													</tr>
 												</thead>
 												<tbody>
 													{values.detailMr.map((result: any, i: number) => {
+														console.log(result);
 														return (
 															<tr key={i}>
 																<td className='pr-1 w-[40%]'>
@@ -355,7 +357,7 @@ export const ViewApprovalMR = () => {
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600 text-center'
 																	/>
 																</td>
-																<td className='w-[30%]'>
+																<td className='w-[20%]'>
 																	<Input
 																		id={`detailMr.${i}.note`}
 																		name={`detailMr.${i}.note`}
@@ -368,6 +370,19 @@ export const ViewApprovalMR = () => {
 																		withLabel={false}
 																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
 																	/>
+																</td>
+																<td className='w-[10%] text-center'>
+																	{result.file ? (
+																		<a
+																			href={result.file}
+																			target='_blank'
+																			className='text-blue-500 underline hover:text-blue-700'
+																		>
+																			Show File
+																		</a>
+																	) : (
+																		"-"
+																	)}
 																</td>
 															</tr>
 														);

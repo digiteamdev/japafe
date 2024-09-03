@@ -48,6 +48,7 @@ export const ViewApprovalSR = () => {
 						qty: res.qty,
 						note: res.note,
 						qtyAppr: res.qty,
+						file: res.file
 					});
 				});
 				setData({
@@ -76,15 +77,15 @@ export const ViewApprovalSR = () => {
 	const approveSr = async (payload: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		let remove:any = [];
+		let remove: any = [];
 		let isWarning: boolean = false;
 		payload.SrDetail.map((res: any) => {
 			if (res.srappr !== null) {
-				if(res.srappr === 'Remove'){
+				if (res.srappr === "Remove") {
 					remove.push({
-						id: res.id
-					})
-				}else{
+						id: res.id,
+					});
+				} else {
 					listDetail.push({
 						id: res.id,
 						srappr: res.srappr,
@@ -113,7 +114,7 @@ export const ViewApprovalSR = () => {
 			dateApprove: new Date(),
 			approveById: userId,
 			srDetail: listDetail,
-			delete: remove
+			delete: remove,
 		};
 		if (!isWarning) {
 			try {
@@ -258,6 +259,7 @@ export const ViewApprovalSR = () => {
 													<th className='text-center'>Qty</th>
 													<th className='text-center'>Qty Approval</th>
 													<th className='text-center'>Note</th>
+													<th className='text-center'>File</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -337,7 +339,7 @@ export const ViewApprovalSR = () => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
-															<td className='w-[30%]'>
+															<td className='w-[20%]'>
 																<Input
 																	id={`SrDetail.${i}.note`}
 																	name={`SrDetail.${i}.note`}
@@ -350,6 +352,19 @@ export const ViewApprovalSR = () => {
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
 																/>
+															</td>
+															<td className='w-[10%] text-center'>
+																{result.file ? (
+																	<a
+																		href={result.file}
+																		target='_blank'
+																		className='text-blue-500 underline hover:text-blue-700'
+																	>
+																		Show File
+																	</a>
+																) : (
+																	"-"
+																)}
 															</td>
 														</tr>
 													);

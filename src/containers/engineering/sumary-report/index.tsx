@@ -115,12 +115,12 @@ export const SummaryReport = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Inspection'
+				title='Inspection report'
 				total={countData}
 				icon={<BookOpen className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Inspection'
+				title='Inspection report'
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -246,7 +246,7 @@ export const SummaryReport = () => {
 				/>
 			) : (
 				<Modal
-				title='Inspection'
+				title='Inspection report'
 				isModal={isModal}
 				content={modalContent}
 				showModal={showModal}

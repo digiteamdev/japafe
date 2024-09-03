@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,20 +7,25 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
 import { FormCreatePurchaseSr } from "./formCreate";
 import { ViewPurchaseSR } from "./view";
 import { FormEditPurchaseSr } from "./formEdit";
-import { GetPurchaseSR, SearchPurchaseSR, DeletePurchaseMR } from "../../../services";
+import {
+	GetPurchaseSR,
+	SearchPurchaseSR,
+	DeletePurchaseMR,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
 export const PurchaseSR = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,19 +35,21 @@ export const PurchaseSR = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const headerTabel = [
 		{ name: "No Job" },
-        { name: "No SR" },
+		{ name: "No SR" },
 		{ name: "Description" },
 		{ name: "Date SR" },
 		{ name: "Request By" },
-        { name: "Action" }
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getPurchaseSR(page, perPage, 'SO');
+		getPurchaseSR(page, perPage, "SO");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,25 +60,25 @@ export const PurchaseSR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseSR(page, perPage, 'SO');
+			getPurchaseSR(page, perPage, "SO");
 		}
 	};
 
-	const getPurchaseSR = async (page: number, perpage: number, type:string) => {
+	const getPurchaseSR = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
 			const response = await GetPurchaseSR(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -84,7 +91,7 @@ export const PurchaseSR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseSR(page, limit, search, 'SO');
+			const response = await SearchPurchaseSR(page, limit, search, "SO");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -97,7 +104,7 @@ export const PurchaseSR = () => {
 	const deletePurchaseMR = async (id: string) => {
 		try {
 			const response = await DeletePurchaseMR(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -108,7 +115,7 @@ export const PurchaseSR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseSR(1, 10, 'SO');
+				getPurchaseSR(1, 10, "SO");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -125,20 +132,20 @@ export const PurchaseSR = () => {
 		setIsModal(false);
 	};
 
-	const showDesc = (data:any) => {
-		let desc:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				desc = `- `+res.desc
-			}else{
-				desc = desc +` \r\n ` + `- `+res.desc 
+	const showDesc = (data: any) => {
+		let desc: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				desc = `- ` + res.desc;
+			} else {
+				desc = desc + ` \r\n ` + `- ` + res.desc;
 			}
-		})
-		return desc
-	}
+		});
+		return desc;
+	};
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24 h-screen'>
 			<SectionTitle
 				title='Purchase Service Request'
 				total={countData}
@@ -156,6 +163,45 @@ export const PurchaseSR = () => {
 				showModal={showModal}
 				search={searchPurchaseSR}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/PurchaseSrCsv?dateStar=${dateStart}&dateEnd=${dateFinish}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -198,11 +244,21 @@ export const PurchaseSR = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.no_sr }</td>
-									<td className='whitespace-pre-line p-1'>{ showDesc(res.SrDetail) }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_sr}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{showDesc(res.SrDetail)}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.dateOfPurchase).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.employee.employee_name}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -251,20 +307,18 @@ export const PurchaseSR = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getPurchaseSR(value, perPage, 'SO');
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getPurchaseSR(value, perPage, "SO");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -282,11 +336,22 @@ export const PurchaseSR = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewPurchaseSR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+						<ViewPurchaseSR
+							dataSelected={dataSelected}
+							showModal={showModal}
+							content={modalContent}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreatePurchaseSr content={modalContent} showModal={showModal} />
+						<FormCreatePurchaseSr
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : (
-                        <FormEditPurchaseSr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditPurchaseSr
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

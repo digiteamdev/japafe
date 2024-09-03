@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,20 +7,25 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
 import { FormCreateDirectMr } from "./formCreate";
 import { ViewDirectMR } from "./view";
 import { FormEditDirectMr } from "./formEdit";
-import { GetAllMRPo, SearchPurchaseMR, DeletePurchaseMR } from "../../../services";
+import {
+	GetAllMRPo,
+	SearchPurchaseMR,
+	DeletePurchaseMR,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
 export const DirectPurchaseMR = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -30,19 +35,21 @@ export const DirectPurchaseMR = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const headerTabel = [
 		{ name: "Job No" },
 		{ name: "No MR" },
 		{ name: "Date" },
 		{ name: "Material" },
-        { name: "Request By" },
-        { name: "Action" }
+		{ name: "Request By" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getPurchaseMR(page, perPage, 'DP');
+		getPurchaseMR(page, perPage, "DP");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,25 +60,25 @@ export const DirectPurchaseMR = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getPurchaseMR(page, perPage, 'DP');
+			getPurchaseMR(page, perPage, "DP");
 		}
 	};
 
-	const getPurchaseMR = async (page: number, perpage: number, type:string) => {
+	const getPurchaseMR = async (page: number, perpage: number, type: string) => {
 		setIsLoading(true);
 		try {
 			const response = await GetAllMRPo(page, perpage, type);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -84,7 +91,7 @@ export const DirectPurchaseMR = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPurchaseMR(page, limit, search, 'DMR');
+			const response = await SearchPurchaseMR(page, limit, search, "DMR");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -97,7 +104,7 @@ export const DirectPurchaseMR = () => {
 	const deletePurchaseMR = async (id: string) => {
 		try {
 			const response = await DeletePurchaseMR(id);
-			if(response.data){
+			if (response.data) {
 				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
@@ -108,7 +115,7 @@ export const DirectPurchaseMR = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getPurchaseMR(1, 10, 'DP');
+				getPurchaseMR(1, 10, "DP");
 			}
 		} catch (error) {
 			toast.error("Delete Purchase Request Failed", {
@@ -125,20 +132,20 @@ export const DirectPurchaseMR = () => {
 		setIsModal(false);
 	};
 
-	const showMaterial = (data:any) => {
-		let material:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				material = `- `+res.name_material
-			}else{
-				material = material +` \r\n ` + `- `+res.name_material 
+	const showMaterial = (data: any) => {
+		let material: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = `- ` + res.name_material;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.name_material;
 			}
-		})
-		return material
-	}
+		});
+		return material;
+	};
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24 h-screen'>
 			<SectionTitle
 				title='Direct Material Request'
 				total={countData}
@@ -156,6 +163,45 @@ export const DirectPurchaseMR = () => {
 				showModal={showModal}
 				search={searchPurchaseMR}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/DirectMrCsv?dateStar=${dateStart}&dateEnd=${dateFinish}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -198,11 +244,21 @@ export const DirectPurchaseMR = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.job_no }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ res.no_mr }</td>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.dateOfPurchase).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-pre-line p-1'>{ showMaterial(res.detailMr) }</td>
-                                    <td className='whitespace-nowrap p-1 text-center'>{ res.user.employee.employee_name }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_mr}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.dateOfPurchase).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{showMaterial(res.detailMr)}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.user.employee.employee_name}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -251,20 +307,18 @@ export const DirectPurchaseMR = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getPurchaseMR(value, perPage, 'DP');
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getPurchaseMR(value, perPage, "DP");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -282,11 +336,19 @@ export const DirectPurchaseMR = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <ViewDirectMR dataSelected={dataSelected} showModal={showModal} content={modalContent} />
+						<ViewDirectMR
+							dataSelected={dataSelected}
+							showModal={showModal}
+							content={modalContent}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreateDirectMr content={modalContent} showModal={showModal} />
+						<FormCreateDirectMr content={modalContent} showModal={showModal} />
 					) : (
-                        <FormEditDirectMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditDirectMr
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

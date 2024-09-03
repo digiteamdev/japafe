@@ -245,6 +245,7 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 										Quantity
 									</th>
 									<th className='border border-black text-center'>Satuan</th>
+									<th className='border border-black text-center'>File</th>
 									<th className='border border-black text-center'>Note</th>
 								</tr>
 							</thead>
@@ -263,6 +264,11 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 											</td>
 											<td className='border border-black text-center'>
 												{ res.Material_Master.satuan }
+											</td>
+											<td className='border border-black text-center'>
+												{ res.file ? (
+													<a href={res.file} target="_blank" className="text-blue-500 underline hover:text-blue-700">Show File</a>
+												) : '-' }
 											</td>
 											<td className='border border-black text-center'>
 												{res.note}
