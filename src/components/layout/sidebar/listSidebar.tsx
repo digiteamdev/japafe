@@ -67,6 +67,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "delivery-order",
+				link: "/public/delivery-order",
+				title: "Delivery Order",
+
+				subMenu: null,
+			},
 		],
 	},
 	{
@@ -300,13 +307,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "delivery-order",
-			// 	link: "/general-affair/delivery-order",
-			// 	title: "Delivery Order",
+			{
+				id: "delivery-order",
+				link: "/general-affair/delivery-order",
+				title: "Delivery Order",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			// {
 			// 	id: "equipment-part",
 			// 	link: "/general-affair/equipment-part",

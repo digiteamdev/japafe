@@ -5,20 +5,19 @@ import {
 	Content,
 	Modal,
 	Table,
-	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
+	Button
 } from "../../../components";
-import { Truck, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateCashAdvance } from "./formCreate";
-// import { ViewCashAdvance } from "./view";
+import { Eye, Truck } from "react-feather";
+import { FormCreateDo } from "./formCreate";
+import { ViewDo } from "./view";
 // import { FormEditMr } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { GetDo, DeleteMR } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken } from "../../../configs/session";
+import { getDepartement, getSubDepartement, removeToken } from "../../../configs/session";
 import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { changeDivisi, formatRupiah } from "@/src/utils";
+import { changeDivisi } from "@/src/utils";
 
 export const DeliveryOrder = () => {
 
@@ -29,21 +28,27 @@ export const DeliveryOrder = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
+	const [search, setSearch] = useState<string>("");
+	const [departement, setDepartement] = useState<any>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Type" },
         { name: "Do Number" },
-		{ name: "Prepared" },
-        { name: "Vendor/Customer" },
+		{ name: "Job No" },
+		{ name: "Date DO" },
+        { name: "Ship To" },
         { name: "Contact" },
         { name: "Action" }
 	];
 
 	useEffect(() => {
-		getCashAdvance(page, perPage);
+		getDo(page, perPage);
+		let departement = getDepartement();
+		if (departement !== undefined){
+			setDepartement(departement)
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -54,14 +59,14 @@ export const DeliveryOrder = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCashAdvance(page, perPage);
+			getDo(page, perPage);
 		}
 	};
 
-	const getCashAdvance = async (page: number, perpage: number) => {
+	const getDo = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetCashAdvance(page, perpage);
+			const response = await GetDo(page, perpage, search);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -84,8 +89,9 @@ export const DeliveryOrder = () => {
 		search: string
 	) => {
 		setIsLoading(true);
+		setSearch(search)
 		try {
-			const response = await SearchCashAdvance(page, limit, search);
+			const response = await GetDo(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -109,7 +115,7 @@ export const DeliveryOrder = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getCashAdvance(1, 10);
+				getDo(page, perPage);
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -135,7 +141,7 @@ export const DeliveryOrder = () => {
 			/>
 			<Content
 				title='Delivery Order'
-				print={true}
+				print={ departement === 'Purchasing & Logistic' ? true : false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -183,30 +189,29 @@ export const DeliveryOrder = () => {
 					) : (
 						data.map((res: any, i: number) => {
 							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap p-1'>{ res.id_cash_advance }</td>
-								// 	<td className='whitespace-nowrap p-1'>{ res.employee.employee_name }</td>
-								// 	<td className='whitespace-nowrap p-1'>{ res.description }</td>
-								// 	<td className='whitespace-nowrap p-1'>{ res.user.username }</td>
-                                //     <td className='whitespace-nowrap p-1'>{ formatRupiah(res.total.toString()) }</td>
-								// 	<td className='whitespace-nowrap text-center p-1 w-[10%]'>
-								// 		<div>
-								// 			<Button
-								// 				className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-								// 				onClick={() => {
-								// 					setDataSelected(res);
-								// 					showModal(true, "view", false);
-								// 				}}
-								// 			>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 		</div>
-								// 	</td>
-								// </tr>
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
+									key={i}
+								>
+									<td className='whitespace-nowrap p-1'>{ res.no_do }</td>
+									<td className='whitespace-nowrap p-1'>{ res.no_job ? res.no_job : 'Internal' }</td>
+									<td className='whitespace-nowrap p-1'>{ moment(res.date_do).format("DD-MMMM-YYYY") }</td>
+									<td className='whitespace-nowrap p-1'>{ res.ship_to }</td>
+									<td className='whitespace-nowrap p-1'>{ res.contact } - { res.phone }</td>
+									<td className='whitespace-nowrap text-center p-1 w-[10%]'>
+										<div>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
+												<Eye color='white' />
+											</Button>
+										</div>
+									</td>
+								</tr>
 							);
 						})
 					)}
@@ -220,7 +225,7 @@ export const DeliveryOrder = () => {
 							totalCount={countData} 
 							onChangePage={(value: any) => {
 								setCurrentPage(value);
-								getCashAdvance(value, perPage);
+								getDo(value, perPage);
 							}}
 						/>
 					) : null
@@ -242,11 +247,9 @@ export const DeliveryOrder = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewDo dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateCashAdvance content={modalContent} showModal={showModal} />
+                        <FormCreateDo content={modalContent} showModal={showModal} />
 					) : (
                         <></>
                         // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>

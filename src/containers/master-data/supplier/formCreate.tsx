@@ -403,7 +403,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='npwp'
 									name='NPWP'
@@ -419,7 +419,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 								{errors.NPWP && touched.NPWP ? (
 									<span className='text-red-500 text-xs'>{errors.NPWP}</span>
 								) : null}
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<Input
 									id='ppn'
@@ -620,7 +620,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 								) : null}
 							</div> */}
 						{/* </Section> */}
-						<FieldArray
+						{/* <FieldArray
 							name='SupplierBank'
 							render={(arrayBank) => (
 								<>
@@ -711,7 +711,7 @@ export const FormCreateSupplier = ({ content, showModal }: props) => {
 									))}
 								</>
 							)}
-						/>
+						/> */}
 						<FieldArray
 							name='SupplierContact'
 							render={(arrayContact) => (

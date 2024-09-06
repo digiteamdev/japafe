@@ -47,12 +47,12 @@ export const Sr = () => {
 	];
 
 	useEffect(() => {
-		let role:any = getRole()
+		let role: any = getRole();
 		getSr(page, perPage);
-		if(role){
-			JSON.parse(role).map((res:any) => {
-				res.role?.role_name === 'PURCHASING' ? setIsShowPrint(true) : null
-			})
+		if (role) {
+			JSON.parse(role).map((res: any) => {
+				res.role?.role_name === "PURCHASING" ? setIsShowPrint(true) : null;
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusSr]);
@@ -156,8 +156,8 @@ export const Sr = () => {
 	};
 
 	const changeSr = (data: string) => {
-		setStatusSr(data)
-	}
+		setStatusSr(data);
+	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
@@ -208,7 +208,7 @@ export const Sr = () => {
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
-								{ isShowPrint ? (
+				{isShowPrint ? (
 					<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
 						<div className='w-full'>
 							<InputDate
@@ -238,13 +238,17 @@ export const Sr = () => {
 						<div className='flex'>
 							<Button
 								className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-								onClick={ async () => window.location.href = process.env.BASE_URL+`/SRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusSr}` }
+								onClick={async () =>
+									(window.location.href =
+										process.env.BASE_URL +
+										`/SRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusSr}`)
+								}
 							>
 								<Printer color='white' className='mx-auto' />
 							</Button>
 						</div>
 					</Section>
-				) : null }
+				) : null}
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
