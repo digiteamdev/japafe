@@ -11,7 +11,7 @@ import { kontraBonSchema } from "../../../schema/finance-accounting/kontra-bon/k
 import { GetReceive, AddKontraBon } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -234,7 +234,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				setPph(0);
 				setPpn(0);
 			}
-			setTax(taxType);
+			setTax(data.taxPsrDmr);
 			setDataAccBank(dataAcc);
 			setBillAmount(bill);
 			setBillPaid(billPaid);
@@ -344,6 +344,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									placeholder='ID Purchase'
 									label='ID Purchase'
 									onChange={(e: any) => {
+										console.log(e)
 										selectPO(e.value);
 										if (e.value.cdv_detail !== undefined) {
 											let totalAmount = 0;
@@ -481,7 +482,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(billPaid.toString())}
+									value={rupiahFormat(billPaid)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -495,7 +496,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(billAmount.toString())}
+									value={rupiahFormat(billAmount)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -510,7 +511,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									disabled={true}
 									withLabel={true}
 									value={
-										values.tax_invoice ? formatRupiah(ppn.toString()) : "0"
+										values.tax_invoice ? rupiahFormat(ppn) : "0"
 									}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
@@ -527,7 +528,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(pph.toString())}
+									value={rupiahFormat(pph)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -541,7 +542,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(disc.toString())}
+									value={rupiahFormat(disc)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -561,7 +562,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 						</Section>
 						{Account ? (
 							<>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='tax'
@@ -570,18 +571,19 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Pay Tax'
 											onChange={(e: any) => {
 												if (e.target.value === "yes") {
+													console.log(e.target.value, tax)
 													setFieldValue("tax_invoice", true);
 													if (tax === "ppn") {
-														setTotalAmount(billPaid + ppn);
-														setFieldValue("grandtotal", billPaid + ppn);
+														setTotalAmount(billPaid + ppn - disc);
+														setFieldValue("grandtotal", billPaid + ppn - disc);
 													} else {
-														setTotalAmount(billPaid);
-														setFieldValue("grandtotal", billPaid);
+														setTotalAmount(billPaid - disc);
+														setFieldValue("grandtotal", billPaid - disc);
 													}
 												} else {
-													setTotalAmount(billPaid);
+													setTotalAmount(billPaid - disc);
 													setFieldValue("tax_invoice", false);
-													setFieldValue("grandtotal", billPaid);
+													setFieldValue("grandtotal", billPaid - disc);
 												}
 											}}
 											disabled={payTax}
@@ -607,11 +609,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											required={true}
 											disabled={true}
 											withLabel={true}
-											value={formatRupiah(totalAmount.toString())}
+											value={rupiahFormat(totalAmount)}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-									<div className='w-full'>
+									{/* <div className='w-full'>
 										<InputSelectSearch
 											datas={dataAccBank}
 											id='account_namec'
@@ -629,9 +631,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 										/>
-									</div>
+									</div> */}
 								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+								{/* <Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='bankName'
@@ -640,7 +642,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Bank Name'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={bankName}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -654,7 +656,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Account Name'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={accName}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -668,13 +670,13 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Account Number'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={accNo}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-								</Section>
+								</Section> */}
 							</>
 						) : null}
 						<div className='mt-8 flex justify-end'>

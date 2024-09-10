@@ -361,6 +361,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "approval So",
+				link: "/director/approvalSo",
+				title: "Approval SO",
+
+				subMenu: null,
+			},
+			{
 				id: "approval MR",
 				link: "/director/approvalMr",
 				title: "Approval MR",
