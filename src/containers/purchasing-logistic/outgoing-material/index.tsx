@@ -34,8 +34,8 @@ export const OutgoingMaterial = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id" },
-        { name: "Prepare" },
+		{ name: "Date" },
+        { name: "Employee" },
 		{ name: "Reference" },
         { name: "Type" },
         { name: "Action" }
@@ -186,8 +186,12 @@ export const OutgoingMaterial = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1'>{ res.id_outgoing_material }</td>
 									<td className='whitespace-nowrap p-1'>{ moment(res.date_outgoing_material).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
+										return (
+											<p key={i}>{ res.Material_Master?.name }</p>
+										)
+									}) }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material[0].poandsoId === null ? '-' : res.stock_outgoing_material[0].poandso.id_receive }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material[0].poandsoId === null ? 'Dirrect' : 'Purchase Request' }</td>
 									<td className='whitespace-nowrap text-center p-1 w-[10%]'>

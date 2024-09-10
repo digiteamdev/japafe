@@ -363,14 +363,6 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 										label='Customer'
 										onChange={(input: any) => {
 											let dataContacts: any = [];
-											// if (input.target.value === "create") {
-											// 	formCreateCustomer(values, true);
-											// } else if (input.target.value === "Choose Customer") {
-											// 	setFieldValue("customerId", "");
-											// } else if (input.target.value === "no data") {
-											// 	setFieldValue("customerId", "");
-											// } else {
-											// }
 											input.contact.map((res: any) => {
 												dataContacts.push({
 													...res,

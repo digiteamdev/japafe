@@ -13,6 +13,7 @@ import {
 	AddOutgoingMaterial,
 	GetOutgoingMaterialAll,
 	GetAllMaterialNew,
+	GetBom,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -38,6 +39,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 	const [listCoa, setListCoa] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [listMaterial, setListMaterial] = useState<any>([]);
+	const [listWor,setListWor] = useState<any>([]);
 	const [idPR, setIdPR] = useState<string>("");
 	const [data, setData] = useState<data>({
 		date_outgoing_material: new Date(),
@@ -57,6 +59,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 		pb: [
 			{
 				coa_id: null,
+				worId: null,
 				materialStockId: null,
 				employeeId: null,
 				qty_out: 0,
@@ -71,6 +74,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 		getMaterial();
 		getEmploye();
 		getCoa();
+		getBom();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -80,20 +84,49 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 			const response = await GetOutgoingMaterialAll();
 			if (response) {
 				response.data.result.map((res: any) => {
-					dataRecieve.push({
-						label: res.id_so
-							? res.id_so
-							: res.idPurchase
-							? res.idPurchase
-							: res.no_mr,
-						value: res,
-						type: res.no_mr ? "mr" : "purchase",
-					});
+					if (res.no_mr) {
+						dataRecieve.push({
+							label: res.id_so
+								? res.id_so
+								: res.idPurchase
+								? res.idPurchase
+								: res.no_mr,
+							value: res,
+							type: res.no_mr ? "mr" : "purchase",
+						});
+					}
 				});
 			}
 			setListRecieve(dataRecieve);
 		} catch (error) {
 			setListRecieve([]);
+		}
+	};
+
+	const getBom = async () => {
+		let datasWor: any = [
+			{
+				value: [
+					{
+						job_no: "Internal",
+					},
+				],
+				label: "Internal",
+			},
+		];
+		try {
+			const response = await GetBom();
+			if (response) {
+				response.data.result.map((res: any) => {
+					datasWor.push({
+						value: res,
+						label: `${res.job_no} - ${res.customerPo.quotations.Customer.name}`,
+					});
+				});
+				setListWor(datasWor);
+			}
+		} catch (error) {
+			setListWor(datasWor);
 		}
 	};
 
@@ -170,7 +203,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 		if (isType === "dirrect") {
 			payload.pb.map((res: any) => {
 				listDetail.push({
-					coa_id: res.coa_id,
+					// coa_id: res.coa_id,
+					worId: res.worId,
 					qty_out: parseInt(res.qty_out),
 					employeeId: res.employeeId,
 					materialStockId: res.materialStockId,
@@ -381,8 +415,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 									values.pb.map((result: any, i: number) => {
 										return (
 											<div key={i}>
-												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'>
-													<div className='w-full'>
+												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
+													{/* <div className='w-full'>
 														<InputSelectSearch
 															datas={listCoa}
 															id={`pb.${i}.coa_id`}
@@ -391,6 +425,25 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															label='Akun'
 															onChange={(e: any) => {
 																setFieldValue(`pb.${i}.coa_id`, e.value.id);
+															}}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													</div> */}
+													<div className='w-full'>
+														<InputSelectSearch
+															datas={listWor}
+															id={`pb.${i}.worId`}
+															name={`pb.${i}.worId`}
+															placeholder='Job no'
+															label='Job no'
+															onChange={(e: any) => {
+																if(e.label === "Internal"){
+																	setFieldValue(`pb.${i}.worId`, null);
+																}else{
+																	setFieldValue(`pb.${i}.worId`, e.value.id);
+																}
 															}}
 															required={true}
 															withLabel={true}
@@ -482,6 +535,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 																onClick={() =>
 																	arrayPb.push({
 																		coa_id: null,
+																		worId: null,
 																		materialStockId: null,
 																		employeeId: null,
 																		qty_out: 0,
@@ -581,8 +635,11 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															label='Quantity'
 															type='text'
 															value={result?.qty_out}
-															onChange={(e:any) => {
-																setFieldValue(`mr.${i}.qty_out`, parseInt(e.target.value))
+															onChange={(e: any) => {
+																setFieldValue(
+																	`mr.${i}.qty_out`,
+																	parseInt(e.target.value)
+																);
 															}}
 															disabled={false}
 															required={true}
