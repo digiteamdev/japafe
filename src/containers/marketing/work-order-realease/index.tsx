@@ -21,6 +21,7 @@ import { cekDivisiMarketing } from "@/src/utils";
 import { ViewSummaryReport } from "@/src/containers/engineering/sumary-report/view";
 import { ViewDrawing } from "@/src/containers/engineering/drawing/view";
 import { ViewSchedule } from "@/src/containers/production/time-schedule/view";
+import { ViewDo } from "@/src/containers/purchasing-logistic/delivery-order/view";
 
 export const Wor = () => {
 	const router = useRouter();
@@ -221,6 +222,7 @@ export const Wor = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
@@ -327,6 +329,21 @@ export const Wor = () => {
 											>
 												Drawing
 											</button>
+											<button
+												className={`${
+													res.DO.length === 0
+														? "bg-red-500"
+														: "bg-green-500"
+												} text-white p-1 rounded-md mr-2`}
+												onClick={() => {
+													if(res.DO.length > 0){
+														setDataSelected(res.DO[0]);
+														showModal(true, "do", false);
+													}
+												}}
+											>
+												DO
+											</button>
 										</td>
 									</tr>
 								</React.Fragment>
@@ -378,6 +395,8 @@ export const Wor = () => {
 						<ViewDrawing dataSelected={dataSelected}/>
 					) :   modalContent === "schedule" ? (
 						<ViewSchedule  content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
+					) : modalContent === "do" ? (
+						<ViewDo dataSelected={dataSelected} content={modalContent} showModal={showModal} />
 					) : (
 						<FormEditWor
 							content={modalContent}
