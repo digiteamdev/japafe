@@ -47,6 +47,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			// {
+			// 	id: "spkl",
+			// 	link: "/public/spkl",
+			// 	title: "Spkl",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "time-sheet",
 				link: "/public/time-sheet",

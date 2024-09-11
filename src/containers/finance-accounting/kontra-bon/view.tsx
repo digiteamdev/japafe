@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ApprovalKontraBon } from "../../../services";
 import { Section } from "../../../components";
-import { formatRupiah } from "../../../utils/index";
+import { formatRupiah, rupiahFormat } from "../../../utils/index";
 import { getPosition } from "../../../configs/session";
 import { Check, X, Printer } from "react-feather";
 import { PdfKontraBon } from "./pdfKontraBon";
@@ -56,10 +56,10 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 				total = total + res.total;
 			});
 		} else {
-			dataSelected.term_of_pay_po_so.poandso.detailMr.map((res: any) => {
+			dataSelected.term_of_pay_po_so?.poandso?.detailMr.map((res: any) => {
 				total = total + res.total;
 			});
-			dataSelected.term_of_pay_po_so.poandso.SrDetail.map((res: any) => {
+			dataSelected.term_of_pay_po_so?.poandso?.SrDetail.map((res: any) => {
 				total = total + res.total;
 			});
 		}
@@ -185,7 +185,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const typePurchase = (data: string) => {
-		if (data.startsWith("PO")) {
+		if (data.includes("PO")) {
 			return "Purchase Order";
 		} else if (data.startsWith("SO")) {
 			return "Servise Order";
@@ -194,7 +194,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 		} else if (data.startsWith("DSR")) {
 			return "Dirrect Service Order";
 		} else {
-			return "Spj Cash Advance"
+			return "Spj Cash Advance";
 		}
 	};
 
@@ -212,7 +212,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 							{dataSelected.purchase.currency})
 						</td>
 						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(ppn().toString())}
+							{rupiahFormat(ppn())}
 						</td>
 					</tr>
 				);
@@ -224,7 +224,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 							{dataSelected.purchase.currency})
 						</td>
 						<td className='w-[50%] pl-2 border border-gray-200'>
-							{formatRupiah(pph().toString())}
+							{rupiahFormat(pph())}
 						</td>
 					</tr>
 				);
@@ -237,7 +237,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 								{dataSelected.purchase.currency})
 							</td>
 							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(ppn().toString())}
+								{rupiahFormat(ppn())}
 							</td>
 						</tr>
 						<tr>
@@ -246,7 +246,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 								{dataSelected.purchase.currency})
 							</td>
 							<td className='w-[50%] pl-2 border border-gray-200'>
-								{formatRupiah(pph().toString())}
+								{rupiahFormat(pph())}
 							</td>
 						</tr>
 					</>
@@ -255,7 +255,10 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 				return false;
 			}
 		} else {
-			if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn") {
+			if (
+				dataSelected.term_of_pay_po_so.tax_invoice &&
+				dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn"
+			) {
 				return (
 					<tr>
 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
@@ -267,7 +270,10 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 						</td>
 					</tr>
 				);
-			} else if ( dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "pph") {
+			} else if (
+				dataSelected.term_of_pay_po_so.tax_invoice &&
+				dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "pph"
+			) {
 				return (
 					<tr>
 						<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
@@ -280,7 +286,8 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 					</tr>
 				);
 			} else if (
-				dataSelected.term_of_pay_po_so.tax_invoice && dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
+				dataSelected.term_of_pay_po_so.tax_invoice &&
+				dataSelected.term_of_pay_po_so.poandso.taxPsrDmr === "ppn_and_pph"
 			) {
 				return (
 					<>
@@ -321,11 +328,6 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 			/> */}
 			{dataSelected ? (
 				<>
-					{/* <div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
-						<div className='text-right mr-6'>
-							{showButtonValid(dataSelected)}
-						</div>
-					</div> */}
 					<h1 className='font-bold text-xl'>Kontra Bon</h1>
 					<Section className='grid grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
@@ -358,11 +360,15 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											{`${typePurchase(
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.poandso.id_so
-													: dataSelected.purchase ? dataSelected.purchase.idPurchase : dataSelected.cash_advance.id_spj
+													: dataSelected.purchase
+													? dataSelected.purchase.idPurchase
+													: dataSelected.cash_advance.id_spj
 											)} / ${
 												dataSelected.term_of_pay_po_so
 													? dataSelected.term_of_pay_po_so.poandso.id_so
-													: dataSelected.purchase ? dataSelected.purchase.idPurchase : dataSelected.cash_advance.id_spj
+													: dataSelected.purchase
+													? dataSelected.purchase.idPurchase
+													: dataSelected.cash_advance.id_spj
 											}`}
 										</td>
 									</tr>
@@ -374,7 +380,9 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.supplier
 														.supplier_name
-												: dataSelected.purchase ? dataSelected.purchase.supplier.supplier_name : "-"}
+												: dataSelected.purchase
+												? dataSelected.purchase.supplier.supplier_name
+												: "-"}
 										</td>
 									</tr>
 									<tr>
@@ -406,14 +414,16 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Bill Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
+												: dataSelected.purchase
+												? dataSelected.purchase.currency
+												: "IDR"}
 											)
 										</td>
 										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
-											{formatRupiah(
+											{rupiahFormat(
 												dataSelected.term_of_pay_po_so
-													? dataSelected.term_of_pay_po_so.price.toString()
-													: dataSelected.purchase ? total().toString() : formatRupiah(dataSelected.grandtotal.toString())
+													? total()
+													: rupiahFormat(dataSelected.grandtotal)
 											)}
 										</td>
 									</tr>
@@ -422,30 +432,40 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											Discount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
+												: dataSelected.purchase
+												? dataSelected.purchase.currency
+												: "IDR"}
 											)
 										</td>
 										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
-											{ dataSelected.cash_advance ? 0 : formatRupiah(discount().toString())}
+											{dataSelected.cash_advance
+												? 0
+												: formatRupiah(discount().toString())}
 										</td>
 									</tr>
-									{ dataSelected.cash_advance ? null : showTax()}
+									{dataSelected.cash_advance ? null : showTax()}
 									<tr>
 										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Cash Advant (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
+												: dataSelected.purchase
+												? dataSelected.purchase.currency
+												: "IDR"}
 											)
 										</td>
-										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>{0}</td>
+										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
+											{0}
+										</td>
 									</tr>
 									<tr>
 										<td className='sm:w-[50%] md:[25%] bg-gray-300 pl-2 border border-gray-200'>
 											Total Amount (
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.poandso.currency
-												: dataSelected.purchase ? dataSelected.purchase.currency : "IDR"}
+												: dataSelected.purchase
+												? dataSelected.purchase.currency
+												: "IDR"}
 											)
 										</td>
 										<td className='sm:w-[50%] md:[75%] pl-2 border border-gray-200'>
@@ -459,7 +479,9 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										<td className='sm:w-[50%] md:[25%] pl-2 border border-gray-200'>
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.limitpay
-												: dataSelected.purchase ? dataSelected.purchase.note : "IDR"}{" "}
+												: dataSelected.purchase
+												? dataSelected.purchase.note
+												: "IDR"}{" "}
 											(
 											{dataSelected.term_of_pay_po_so
 												? dataSelected.term_of_pay_po_so.percent
@@ -488,6 +510,55 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 								</tbody>
 							</table>
 						</div>
+						{dataSelected.term_of_pay_po_so ? (
+							<div className='w-full'>
+								{dataSelected.term_of_pay_po_so?.poandso?.detailMr.length >
+								0 ? (
+									<table className='w-full'>
+										<thead>
+											<th className='border border-black p-1 text-center'>
+												Material
+											</th>
+											<th className='border border-black p-1 text-center'>
+												Quantity
+											</th>
+											<th className='border border-black p-1 text-center'>
+												Price
+											</th>
+											<th className='border border-black p-1 text-center'>
+												Discount
+											</th>
+											<th className='border border-black p-1 text-center'>
+												Total
+											</th>
+										</thead>
+										<tbody>
+											{ dataSelected.term_of_pay_po_so?.poandso?.detailMr.map((res:any, i:number) => {
+												return (
+													<tr>
+														<td className="border border-black p-1">
+															{ res.name_material }
+														</td>
+														<td className="border border-black p-1">
+															{ res.qtyAppr }
+														</td>
+														<td className="border border-black p-1">
+															{ rupiahFormat(res.price) }
+														</td>
+														<td className="border border-black p-1">
+															{ rupiahFormat(res.disc) }
+														</td>
+														<td className="border border-black p-1">
+															{ rupiahFormat(res.total) }
+														</td>
+													</tr>
+												)
+											}) }
+										</tbody>
+									</table>
+								) : null}
+							</div>
+						) : null}
 					</Section>
 				</>
 			) : null}

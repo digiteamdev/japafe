@@ -227,13 +227,13 @@ export const Cashier = () => {
 											</Button>
 											{ res.status_valid ? null : (
 												<>
-													<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+													{/* <Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
 													onClick={ () => {
 														setDataSelected(res);
 														showModal(true,'edit', false);
 													}}>
 														<Edit color='white' />
-													</Button>
+													</Button> */}
 													{/* <Button 
 														className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 														onClick={ () => {

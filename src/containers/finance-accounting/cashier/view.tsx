@@ -25,7 +25,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
+console.log(dataSelected)
 	const discount = (data: any) => {
 		let discount: number = 0;
 		data.detailMr.map((res: any) => {
@@ -448,7 +448,7 @@ export const ViewCashier = ({ dataSelected, content, showModal }: props) => {
 											Transfer Info
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{`Cash To ${dataSelected.pay_to}`}
+											{`${dataSelected.status_payment === "Cash" ? `Cash to ${dataSelected.pay_to}` : dataSelected.bank_name ? `Transfer to ${dataSelected.bank_name} - ${dataSelected.rekening} - ${dataSelected.account_name}` : ''}`}
 										</td>
 									</tr>
 									<tr>

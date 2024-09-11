@@ -7,11 +7,9 @@ import {
 	InputSelect,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { cashierSchema } from "../../../schema/finance-accounting/cashier/cashierSchema";
 import { GetCashier, AddCashier, GetAllCoa } from "../../../services";
 import { toast } from "react-toastify";
-import moment from "moment";
-import { formatRupiah, rupiahFormat } from "@/src/utils";
+import { rupiahFormat } from "@/src/utils";
 import { Plus, Trash2 } from "react-feather";
 
 interface props {
@@ -160,10 +158,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const totalPaid = (data: any) => {
 		let totalPaidPurchase: number = 0;
 		data.detailMr.map((res: any) => {
-			totalPaidPurchase = totalPaidPurchase + res.total + res.disc;
+			totalPaidPurchase = totalPaidPurchase + res.total - res.disc;
 		});
 		data.SrDetail.map((res: any) => {
-			totalPaidPurchase = totalPaidPurchase + res.total + res.disc;
+			totalPaidPurchase = totalPaidPurchase + res.total - res.disc;
 		});
 		return totalPaidPurchase;
 	};
@@ -369,21 +367,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setIsDirrect(true);
 											setDetailCdv([]);
 											setJobno("");
-											let listJournal: any = [];
-											e.value.term_of_pay_po_so.poandso.journal_cashier.map(
-												(res: any) => {
-													listJournal.push({
-														coa: { label: res.coa?.coa_name, value: res.coa },
-														coa_id: res.coa_id,
-														coa_name: res.coa?.coa_name,
-														status_transaction: res.status_transaction,
-														grandtotal:
-															e.value.id_kontrabon === undefined
-																? e.value.grand_tot
-																: e.value.grandtotal,
-													});
-												}
-											);
 											setFieldValue(
 												"pay_to",
 												e.value.id_kontrabon === undefined
@@ -404,7 +387,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												e.value.id_kontrabon === undefined
 													? e.value.grand_tot
 													: e.value.term_of_pay_po_so
-													? e.value.term_of_pay_po_so.price
+													? totalPaid(e.value.term_of_pay_po_so?.poandso)
 													: totalPaid(e.value.purchase)
 											);
 											setTotalAmount(
@@ -533,7 +516,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
-											setFieldValue("journal_cashier", listJournal);
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: 0,
+												},
+											]);
 										} else if (e.type === "purchase") {
 											setIsDirrect(false);
 											setDetailCdv([]);
@@ -784,7 +774,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									}}
 									disabled={isDirrect}
 									withLabel={true}
-									value={formatRupiah(total.toString())}
+									value={rupiahFormat(total.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -812,7 +802,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									required={true}
 									disabled={isDirrect}
 									withLabel={true}
-									value={formatRupiah(ppn.toString())}
+									value={rupiahFormat(ppn.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -840,7 +830,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									required={true}
 									disabled={isDirrect}
 									withLabel={true}
-									value={formatRupiah(pph.toString())}
+									value={rupiahFormat(pph.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -868,7 +858,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									required={true}
 									disabled={isDirrect}
 									withLabel={true}
-									value={formatRupiah(disc.toString())}
+									value={rupiahFormat(disc.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -884,7 +874,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(totalAmount.toString())}
+									value={rupiahFormat(totalAmount.toString())}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -1059,7 +1049,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 														}}
 														required={true}
 														withLabel={false}
-														value={formatRupiah(result.grandtotal.toString())}
+														value={rupiahFormat(result.grandtotal.toString())}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 													/>
 												</div>
