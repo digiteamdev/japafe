@@ -12,7 +12,7 @@ import {
 	Section,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
-// import { FormCreateMr } from "./formCreate";
+import { FormCreateSpkl } from "./formCreate";
 // import { ViewMR } from "./view";
 // import { FormEditMr } from "./formEdit";
 import { GetMr, SearchMr, DeleteMR } from "../../../services";
@@ -47,17 +47,11 @@ export const Spkl = () => {
 	];
 
 	useEffect(() => {
-		let role:any = getRole()
-        let position:any = getPosition()
-		getMr(page, perPage);
+		let position:any = getPosition()
+		getSpkl(page, perPage);
         if(position){
             setPosition(position)
         }
-		if(role){
-			JSON.parse(role).map((res:any) => {
-				res.role?.role_name === 'PURCHASING' ? setIsShowPrint(true) : null
-			})
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusMr]);
 
@@ -68,11 +62,11 @@ export const Spkl = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getMr(page, perPage);
+			getSpkl(page, perPage);
 		}
 	};
 
-	const getMr = async (page: number, perpage: number) => {
+	const getSpkl = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
 			const response = await GetMr(page, perpage, statusMr);
@@ -123,7 +117,7 @@ export const Spkl = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMr(1, 10);
+				getSpkl(1, 10);
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -138,29 +132,6 @@ export const Spkl = () => {
 			});
 		}
 		setIsModal(false);
-	};
-
-	const bgMr = (status: string) => {
-		switch (status) {
-			case "Request":
-				return "hover:bg-gray-200";
-			case "Approval":
-				return "bg-yellow-500 hover:bg-yellow-200";
-			case "Purchase":
-				return "bg-orange-500 hover:bg-orange-200";
-			case "Receive":
-				return "bg-blue-500 hover:bg-blue-200";
-			case "Finish":
-				return "bg-green-500 hover:bg-green-200";
-			case "Reject":
-				return "bg-red-500 hover:bg-red-200";
-			default:
-				return "hover:bg-gray-200";
-		}
-	};
-
-	const changeMr = (data: string) => {
-		setStatusMr(data);
 	};
 
 	return (
@@ -178,7 +149,7 @@ export const Spkl = () => {
 				timeSheet={false}
 				changeTimeSheet={changeDivisi}
 				mr={false}
-				changeMr={changeMr}
+				changeMr={changeDivisi}
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
@@ -219,63 +190,64 @@ export const Spkl = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
-								<tr
-									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
-									key={i}
-								>
-									<td className='whitespace-nowrap p-1 text-center'>
+							console.log(res)
+							// return (
+							// 	<tr
+							// 		className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
+							// 		key={i}
+							// 	>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
 										
-									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
 										
-									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
 										
-									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
 										
-									</td>
-									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-										<div>
-											<Button
-												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "view", false);
-												}}
-											>
-												<Eye color='white' />
-											</Button>
-											{res.status_spv !== "valid" ||
-											res.status_manager !== "valid" ? (
-												<>
-													<Button
-														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true, "edit", false);
-														}}
-													>
-														<Edit color='white' />
-													</Button>
-												</>
-											) : null}
-											{res.statusMr === "Request" ? (
-												<Button
-													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "delete", false);
-													}}
-												>
-													<Trash2 color='white' />
-												</Button>
-											) : null}
-										</div>
-									</td>
-								</tr>
-							);
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 w-[10%] text-center'>
+							// 			<div>
+							// 				<Button
+							// 					className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+							// 					onClick={() => {
+							// 						setDataSelected(res);
+							// 						showModal(true, "view", false);
+							// 					}}
+							// 				>
+							// 					<Eye color='white' />
+							// 				</Button>
+							// 				{res.status_spv !== "valid" ||
+							// 				res.status_manager !== "valid" ? (
+							// 					<>
+							// 						<Button
+							// 							className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+							// 							onClick={() => {
+							// 								setDataSelected(res);
+							// 								showModal(true, "edit", false);
+							// 							}}
+							// 						>
+							// 							<Edit color='white' />
+							// 						</Button>
+							// 					</>
+							// 				) : null}
+							// 				{res.statusMr === "Request" ? (
+							// 					<Button
+							// 						className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+							// 						onClick={() => {
+							// 							setDataSelected(res);
+							// 							showModal(true, "delete", false);
+							// 						}}
+							// 					>
+							// 						<Trash2 color='white' />
+							// 					</Button>
+							// 				) : null}
+							// 			</div>
+							// 		</td>
+							// 	</tr>
+							// );
 						})
 					)}
 				</Table>
@@ -287,7 +259,7 @@ export const Spkl = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getMr(value, perPage);
+							getSpkl(value, perPage);
 						}}
 					/>
 				) : null}
@@ -315,8 +287,7 @@ export const Spkl = () => {
 						// 	showModal={showModal}
 						// />
 					) : modalContent === "add" ? (
-						<></>
-                        // <FormCreateMr content={modalContent} showModal={showModal} />
+                        <FormCreateSpkl content={modalContent} showModal={showModal} />
 					) : (
                         <></>
 						// <FormEditMr

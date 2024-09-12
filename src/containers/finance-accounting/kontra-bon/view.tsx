@@ -535,7 +535,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 										<tbody>
 											{ dataSelected.term_of_pay_po_so?.poandso?.detailMr.map((res:any, i:number) => {
 												return (
-													<tr>
+													<tr key={i}>
 														<td className="border border-black p-1">
 															{ res.name_material }
 														</td>
