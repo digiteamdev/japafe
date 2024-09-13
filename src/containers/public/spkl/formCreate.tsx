@@ -10,7 +10,8 @@ import {
 import { Formik, Form, FieldArray } from "formik";
 import moment from "moment";
 import { Plus, Trash2 } from "react-feather";
-import { GetEmployeDepartement } from "@/src/services";
+import { GetEmployeDepartement, AddSpkl } from "@/src/services";
+import { toast } from "react-toastify";
 
 interface props {
 	content: string;
@@ -18,29 +19,77 @@ interface props {
 }
 
 export const FormCreateSpkl = ({ content, showModal }: props) => {
+	const [employee, setEmployee] = useState<any>([]);
+	const [isLoading, setIsloading] = useState<boolean>(false);
 	const [data, setData] = useState<any>({
 		employeeId: "",
 		date: new Date(),
 		departement: "",
 		shift: "",
-		detail: [
+		time_sheet_spkl: [
 			{
-				job_no: "",
-				description: "",
 				actual_start: new Date(),
 				actual_finish: new Date(),
+				job: "",
+				job_description: "",
+				part_name: "",
 			},
 		],
 	});
 
-    const getEmployee = async () => {
-        try {
-            const response = await GetEmployeDepartement()
-            console.log(response)
-        } catch (error) {
-            
-        }
-    }
+	useEffect(() => {
+		getEmployee();
+	}, []);
+
+	const getEmployee = async () => {
+		try {
+			const response = await GetEmployeDepartement();
+			if (response.data) {
+				let listEmployee: any = [];
+				response.data.result?.map((res: any) => {
+					listEmployee.push({
+						label: res.employee_name,
+						value: res,
+					});
+				});
+				setEmployee(listEmployee);
+			}
+		} catch (error) {
+			setEmployee([]);
+		}
+	};
+
+	const addSpkl = async (payload: any) => {
+		setIsloading(true)
+		try {
+			const response = await AddSpkl(payload);
+			if (response.data) {
+				toast.success("Add Spkl Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			}
+		} catch (error) {
+			toast.error("Add Spkl Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+		setIsloading(false)
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
@@ -48,7 +97,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 				initialValues={data}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					console.log(values);
+					addSpkl(values);
 				}}
 				enableReinitialize
 			>
@@ -78,12 +127,15 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 								</div>
 								<div>
 									<InputSelectSearch
-										datas={[]}
+										datas={employee}
 										id='employeeId'
 										name='employeeId'
 										placeholder='Employee'
 										label='Employee'
-										onChange={(e: any) => {}}
+										onChange={(e: any) => {
+											setFieldValue("employeeId", e.value.id);
+											setFieldValue("departement", e.value.sub_depart?.name);
+										}}
 										required={true}
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
@@ -111,7 +163,8 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 										label='Shift'
 										type='text'
 										value={values.shift}
-										disabled={true}
+										onChange={handleChange}
+										disabled={false}
 										required={true}
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -119,21 +172,26 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 								</div>
 							</Section>
 							<FieldArray
-								name='detail'
+								name='time_sheet_spkl'
 								render={(arrayDetail) =>
-									values.detail.map((res: any, i: number) => {
+									values.time_sheet_spkl.map((res: any, i: number) => {
 										return (
 											<div key={i}>
-												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2 border-b-[3px] border-b-red-500 pb-2'>
+												<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 													<div className='w-full'>
 														<InputArea
-															id={`detail.${i}.job_no`}
-															name={`detail.${i}.job_no`}
+															id={`time_sheet_spkl.${i}.job`}
+															name={`time_sheet_spkl.${i}.job`}
 															placeholder='Job No'
 															label='Job No'
 															type='text'
-															value={res.job_no}
-															onChange={handleChange}
+															value={res.job}
+															onChange={(e:any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.job`,
+																	e.target.value
+																);
+															}}
 															disabled={false}
 															row={3}
 															required={true}
@@ -143,13 +201,18 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 													</div>
 													<div className='w-full'>
 														<InputArea
-															id={`detail.${i}.description`}
-															name={`detail.${i}.description`}
-															placeholder='Description'
-															label='Description'
+															id={`time_sheet_spkl.${i}.part_name`}
+															name={`time_sheet_spkl.${i}.part_name`}
+															placeholder='Part Name'
+															label='Part Name'
 															type='text'
-															value={res.description}
-															onChange={handleChange}
+															value={res.part_name}
+															onChange={(e:any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.part_name`,
+																	e.target.value
+																);
+															}}
 															disabled={false}
 															row={3}
 															required={true}
@@ -158,8 +221,31 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 														/>
 													</div>
 													<div className='w-full'>
+														<InputArea
+															id={`time_sheet_spkl.${i}.job_description`}
+															name={`time_sheet_spkl.${i}.job_description`}
+															placeholder='Description'
+															label='Description'
+															type='text'
+															value={res.job_description}
+															onChange={(e:any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.job_description`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															row={3}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2 border-b-[3px] border-b-red-500 pb-2'>
+													<div className='w-full'>
 														<InputDate
-															id={`detail.${i}.start`}
+															id={`time_sheet_spkl.${i}.start`}
 															label='Start'
 															minDate={values.date}
 															maxDate={values.date}
@@ -176,12 +262,8 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 																	moment.duration(finish.diff(start)).asHours()
 																);
 																setFieldValue(
-																	`time_sheet_add.${i}.actual_start`,
+																	`time_sheet_spkl.${i}.actual_start`,
 																	value
-																);
-																setFieldValue(
-																	`time_sheet_add.${i}.total_hours`,
-																	`${calculate} jam`
 																);
 															}}
 															withLabel={true}
@@ -191,7 +273,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 													</div>
 													<div className='w-full'>
 														<InputDate
-															id={`time_sheet_add.${i}.actual_finish`}
+															id={`time_sheet_spkl.${i}.actual_finish`}
 															label='Finish'
 															minDate={values.date}
 															showTimeSelect={true}
@@ -205,12 +287,8 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 																	moment.duration(finish.diff(start)).asHours()
 																);
 																setFieldValue(
-																	`time_sheet_add.${i}.actual_finish`,
+																	`time_sheet_spkl.${i}.actual_finish`,
 																	value
-																);
-																setFieldValue(
-																	`time_sheet_add.${i}.total_hours`,
-																	`${calculate} jam`
 																);
 															}}
 															withLabel={true}
@@ -219,13 +297,14 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 														/>
 													</div>
 													<div className='flex w-full'>
-														{i + 1 === values.detail.length ? (
+														{i + 1 === values.time_sheet_spkl.length ? (
 															<a
 																className='flex mr-4 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 																onClick={() =>
 																	arrayDetail.push({
-																		job_no: "",
-																		description: "",
+																		job: "",
+																		job_description: "",
+																		part_name: "",
 																		actual_start: new Date(),
 																		actual_finish: new Date(),
 																	})
@@ -235,7 +314,8 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 																Add
 															</a>
 														) : null}
-														{i === 0 && values.detail.length === 1 ? null : (
+														{i === 0 &&
+														values.time_sheet_spkl.length === 1 ? null : (
 															<a
 																className='flex text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
 																onClick={() => arrayDetail.remove(i)}
@@ -251,6 +331,44 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 									})
 								}
 							/>
+							<div className='mt-8 flex justify-end'>
+								<div className='flex gap-2 items-center'>
+									<button
+										type='button'
+										className='inline-flex justify-center rounded-full border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+										disabled={isLoading}
+										onClick={() => {
+											handleSubmit();
+										}}
+									>
+										{isLoading ? (
+											<>
+												<svg
+													role='status'
+													className='inline mr-3 w-4 h-4 text-white animate-spin'
+													viewBox='0 0 100 101'
+													fill='none'
+													xmlns='http://www.w3.org/2000/svg'
+												>
+													<path
+														d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
+														fill='#E5E7EB'
+													/>
+													<path
+														d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
+														fill='currentColor'
+													/>
+												</svg>
+												Loading
+											</>
+										) : content === "add" ? (
+											"Save"
+										) : (
+											"Edit"
+										)}
+									</button>
+								</div>
+							</div>
 						</Form>
 					);
 				}}

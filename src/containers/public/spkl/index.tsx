@@ -15,7 +15,7 @@ import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
 import { FormCreateSpkl } from "./formCreate";
 // import { ViewMR } from "./view";
 // import { FormEditMr } from "./formEdit";
-import { GetMr, SearchMr, DeleteMR } from "../../../services";
+import { GetMr, SearchMr, DeleteMR, GetSpkl } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken, getRole, getPosition } from "../../../configs/session";
 import moment from "moment";
@@ -29,31 +29,28 @@ export const Spkl = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
-    const [position, setPosition] = useState<string>("");
-	const [statusMr, setStatusMr] = useState<string>("all");
+	const [position, setPosition] = useState<string>("");
+	const [search, setSearch] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
-	const [dateStart, setDateStart] = useState<any>(new Date());
-	const [dateFinish, setDateFinish] = useState<any>(new Date());
-	const [isShowPrint, setIsShowPrint] = useState<any>(false);
 	const headerTabel = [
 		{ name: "Employee" },
 		{ name: "Date" },
-        { name: "Description" },
-		{ name: "Created By" },
+		{ name: "Start" },
+		{ name: "Finish" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		let position:any = getPosition()
-		getSpkl(page, perPage);
-        if(position){
-            setPosition(position)
-        }
+		let position: any = getPosition();
+		getSpkl(page, perPage, search);
+		if (position) {
+			setPosition(position);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [statusMr]);
+	}, []);
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -62,14 +59,14 @@ export const Spkl = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getSpkl(page, perPage);
+			getSpkl(page, perPage, search);
 		}
 	};
 
-	const getSpkl = async (page: number, perpage: number) => {
+	const getSpkl = async (page: number, perpage: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetMr(page, perpage, statusMr);
+			const response = await GetSpkl(page, perpage, search);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -82,23 +79,6 @@ export const Spkl = () => {
 				removeToken();
 				router.push("/");
 			}
-		}
-		setIsLoading(false);
-	};
-
-	const searchMaterialStock = async (
-		page: number,
-		limit: number,
-		search: string
-	) => {
-		setIsLoading(true);
-		try {
-			const response = await SearchMr(page, limit, search, statusMr);
-			if (response.data) {
-				setData(response.data.result);
-			}
-		} catch (error) {
-			setData([]);
 		}
 		setIsLoading(false);
 	};
@@ -117,7 +97,7 @@ export const Spkl = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getSpkl(1, 10);
+				getSpkl(1, 10, search);
 			}
 		} catch (error) {
 			toast.error("Delete Material Request Failed", {
@@ -143,7 +123,7 @@ export const Spkl = () => {
 			/>
 			<Content
 				title='Spkl'
-				print={position === 'Manager' ? true : false}
+				print={position === 'Manager' || position === 'Supervisor' || position === 'Director' ? true : false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -151,7 +131,7 @@ export const Spkl = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={searchMaterialStock}
+				search={getSpkl}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -190,64 +170,55 @@ export const Spkl = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
-							// return (
-							// 	<tr
-							// 		className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
-							// 		key={i}
-							// 	>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-										
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-										
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-										
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-										
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-							// 			<div>
-							// 				<Button
-							// 					className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-							// 					onClick={() => {
-							// 						setDataSelected(res);
-							// 						showModal(true, "view", false);
-							// 					}}
-							// 				>
-							// 					<Eye color='white' />
-							// 				</Button>
-							// 				{res.status_spv !== "valid" ||
-							// 				res.status_manager !== "valid" ? (
-							// 					<>
-							// 						<Button
-							// 							className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-							// 							onClick={() => {
-							// 								setDataSelected(res);
-							// 								showModal(true, "edit", false);
-							// 							}}
-							// 						>
-							// 							<Edit color='white' />
-							// 						</Button>
-							// 					</>
-							// 				) : null}
-							// 				{res.statusMr === "Request" ? (
-							// 					<Button
-							// 						className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-							// 						onClick={() => {
-							// 							setDataSelected(res);
-							// 							showModal(true, "delete", false);
-							// 						}}
-							// 					>
-							// 						<Trash2 color='white' />
-							// 					</Button>
-							// 				) : null}
-							// 			</div>
-							// 		</td>
-							// 	</tr>
-							// );
+							return (
+								<tr
+									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
+									key={i}
+								>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.employee?.employee_name}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.date).format("DD-MM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.date).format("DD-MM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'></td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
+										<div>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
+												<Eye color='white' />
+											</Button>
+											{ position === 'Manager' || position === 'Supervisor' || position === 'Director' }
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "edit", false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											<Button
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "delete", false);
+												}}
+											>
+												<Trash2 color='white' />
+											</Button>
+										</div>
+									</td>
+								</tr>
+							);
 						})
 					)}
 				</Table>
@@ -259,7 +230,7 @@ export const Spkl = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getSpkl(value, perPage);
+							getSpkl(value, perPage, search);
 						}}
 					/>
 				) : null}
@@ -281,15 +252,15 @@ export const Spkl = () => {
 				>
 					{modalContent === "view" ? (
 						<></>
-                        // <ViewMR
-						// 	dataSelected={dataSelected}
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
-					) : modalContent === "add" ? (
-                        <FormCreateSpkl content={modalContent} showModal={showModal} />
+					) : // <ViewMR
+					// 	dataSelected={dataSelected}
+					// 	content={modalContent}
+					// 	showModal={showModal}
+					// />
+					modalContent === "add" ? (
+						<FormCreateSpkl content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
+						<></>
 						// <FormEditMr
 						// 	content={modalContent}
 						// 	showModal={showModal}

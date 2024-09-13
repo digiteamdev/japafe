@@ -210,48 +210,48 @@ export const Dispatch = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
-								<tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
-									key={i}
-								>
-									<td className='whitespace-nowrap p-1'>
-										{ res.srimg.timeschedule.wor.job_no }
-									</td>
-									<td className='p-1'>
-										{ res.srimg.timeschedule.wor.customerPo.quotations.Customer.name }
-									</td>
-									<td className='p-1'>
-										{ res.srimg.timeschedule.wor.customerPo.quotations.subject }
-									</td>
-									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-										<div>
-											<Button className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'view', false);
-											}}>
-												<Eye color='white' />
-											</Button>
-											<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-											onClick={ () => {
-												setDataSelected(res);
-												showModal(true,'edit', false);
-											}}>
-												<Edit color='white' />
-											</Button>
-											<Button 
-												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-												onClick={ () => {
-													setDataSelected(res);
-													showModal(true,'delete', false);
-												}}>
-												<Trash2 color='white' />
-											</Button>
-										</div>
-									</td>
-								</tr>
-							);
+							// return (
+							// 	<tr
+							// 		className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
+							// 		key={i}
+							// 	>
+							// 		<td className='whitespace-nowrap p-1'>
+							// 			{ res.srimg.timeschedule.wor.job_no }
+							// 		</td>
+							// 		<td className='p-1'>
+							// 			{ res.srimg.timeschedule.wor.customerPo.quotations.Customer.name }
+							// 		</td>
+							// 		<td className='p-1'>
+							// 			{ res.srimg.timeschedule.wor.customerPo.quotations.subject }
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 w-[10%] text-center'>
+							// 			<div>
+							// 				<Button className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+							// 				onClick={ () => {
+							// 					setDataSelected(res);
+							// 					showModal(true,'view', false);
+							// 				}}>
+							// 					<Eye color='white' />
+							// 				</Button>
+							// 				<Button className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+							// 				onClick={ () => {
+							// 					setDataSelected(res);
+							// 					showModal(true,'edit', false);
+							// 				}}>
+							// 					<Edit color='white' />
+							// 				</Button>
+							// 				<Button 
+							// 					className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+							// 					onClick={ () => {
+							// 						setDataSelected(res);
+							// 						showModal(true,'delete', false);
+							// 					}}>
+							// 					<Trash2 color='white' />
+							// 				</Button>
+							// 			</div>
+							// 		</td>
+							// 	</tr>
+							// );
 						})
 					)}
 				</Table>

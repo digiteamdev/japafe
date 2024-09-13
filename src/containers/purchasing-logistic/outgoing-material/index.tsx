@@ -35,9 +35,9 @@ export const OutgoingMaterial = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Date" },
+		{ name: "Job no" },
         { name: "Employee" },
-		{ name: "Reference" },
-        { name: "Type" },
+		{ name: "Material" },
         { name: "Action" }
 	];
 
@@ -189,11 +189,19 @@ export const OutgoingMaterial = () => {
 									<td className='whitespace-nowrap p-1'>{ moment(res.date_outgoing_material).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
 										return (
+											<p key={i}>{ res.no_job }</p>
+										)
+									}) }</td>
+									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
+										return (
+											<p key={i}>{ res.employee?.employee_name }</p>
+										)
+									}) }</td>
+									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
+										return (
 											<p key={i}>{ res.Material_Master?.name }</p>
 										)
 									}) }</td>
-									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material[0].poandsoId === null ? '-' : res.stock_outgoing_material[0].poandso.id_receive }</td>
-									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material[0].poandsoId === null ? 'Dirrect' : 'Purchase Request' }</td>
 									<td className='whitespace-nowrap text-center p-1 w-[10%]'>
 										<div>
 											<Button

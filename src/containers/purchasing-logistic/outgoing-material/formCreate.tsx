@@ -442,6 +442,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 																if(e.label === "Internal"){
 																	setFieldValue(`pb.${i}.worId`, null);
 																}else{
+																	console.log(e)
 																	setFieldValue(`pb.${i}.worId`, e.value.id);
 																}
 															}}
