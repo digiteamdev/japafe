@@ -170,6 +170,7 @@ export const Spkl = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}

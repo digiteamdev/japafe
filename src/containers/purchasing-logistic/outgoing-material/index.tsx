@@ -189,7 +189,7 @@ export const OutgoingMaterial = () => {
 									<td className='whitespace-nowrap p-1'>{ moment(res.date_outgoing_material).format('DD-MMMM-YYYY') }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
 										return (
-											<p key={i}>{ res.no_job }</p>
+											<p key={i}>{ res.wor?.job_no ? res.wor?.job_no : "Internal" }</p>
 										)
 									}) }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
