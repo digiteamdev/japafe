@@ -39,6 +39,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 	const [dataPurchase, setDataPurchase] = useState<any>([]);
 	const [dataCoa, setDataCoa] = useState<any>([]);
 	const [detailCdv, setDetailCdv] = useState<any>([]);
+	const [detailPurchase, setDetailPurchase] = useState<any>([]);
 	const [jobno, setJobno] = useState<string>("");
 	const [idCashier, setIdCashier] = useState<string>("");
 	const [currency, setCurrency] = useState<string>("");
@@ -291,7 +292,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-
+	console.log(detailPurchase);
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -334,7 +335,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									placeholder='Reference'
 									label='Reference'
 									onChange={(e: any) => {
-										console.log(e);
 										if (e.label === "Direct") {
 											setCurrency("IDR");
 											setTotal(0);
@@ -366,6 +366,9 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										} else if (e.type === "kontrabon") {
 											setIsDirrect(true);
 											setDetailCdv([]);
+											setDetailPurchase(
+												e.value.detailMr ? e.value.detailMr : e.value.SrDetail
+											);
 											setJobno("");
 											setFieldValue(
 												"pay_to",
@@ -525,8 +528,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												},
 											]);
 										} else if (e.type === "purchase") {
+											console.log(e);
 											setIsDirrect(false);
 											setDetailCdv([]);
+											setDetailPurchase(
+												e.value.detailMr ? e.value.detailMr : e.value.SrDetail
+											);
 											setJobno("");
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
@@ -634,7 +641,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										} else {
 											setIsDirrect(false);
 											setDetailCdv(e.value.cdv_detail);
-											setJobno(e.value.job_no)
+											setDetailPurchase([]);
+											setJobno(e.value.job_no);
 											setDisc(0);
 											setPpn(0);
 											setPph(0);
@@ -704,51 +712,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						{ detailCdv.length > 0 ? (
-							<h1 className="font-semibold text-xl mt-2">Cash Advance Detail</h1>
-						) : null }
-						{detailCdv.map((res: any, i: number) => {
-							return (
-								<Section className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2' key={i}>
-									<Input
-										id='jobno'
-										name='jobno'
-										placeholder='Job No'
-										label='Job No'
-										type='text'
-										value={jobno}
-										required={true}
-										disabled={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-									<Input
-										id='total'
-										name='total'
-										placeholder='Total'
-										label='Total'
-										type='text'
-										value={rupiahFormat(res.total)}
-										required={true}
-										disabled={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-									<InputArea
-										id='description'
-										name='description'
-										placeholder='description'
-										label='Description'
-										type='text'
-										required={true}
-										disabled={true}
-										withLabel={true}
-										value={res.description}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-								</Section>
-							);
-						})}
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
@@ -967,7 +930,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								values.journal_cashier.map((result: any, i: number) => {
 									return (
 										<div key={i}>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2'>
+											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2 border-b-2 border-blue-500 pb-2'>
 												<div className='w-full'>
 													<InputSelectSearch
 														datas={dataCoa}
@@ -1087,6 +1050,128 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								})
 							}
 						/>
+						{detailCdv.length > 0 ? (
+							<h1 className='font-semibold text-xl mt-2'>
+								Cash Advance Detail
+							</h1>
+						) : null}
+						{detailCdv.map((res: any, i: number) => {
+							return (
+								<Section
+									className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
+									key={i}
+								>
+									<Input
+										id='jobno'
+										name='jobno'
+										placeholder='Job No'
+										label='Job No'
+										type='text'
+										value={jobno}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Total'
+										label='Total'
+										type='text'
+										value={rupiahFormat(res.total)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<InputArea
+										id='description'
+										name='description'
+										placeholder='description'
+										label='Description'
+										type='text'
+										required={true}
+										disabled={true}
+										withLabel={true}
+										value={res.description}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</Section>
+							);
+						})}
+						{detailPurchase.length > 0 ? (
+							<h1 className='font-semibold text-xl mt-2'>Detail Purchase</h1>
+						) : null}
+						{detailPurchase.map((res: any, i: number) => {
+							return (
+								<Section
+									className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
+									key={i}
+								>
+									<InputArea
+										id='jobno'
+										name='jobno'
+										placeholder='Material'
+										label='Material'
+										type='text'
+										value={res?.Material_Master?.name}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Quantity'
+										label='Quantity'
+										type='text'
+										value={rupiahFormat(res?.qtyAppr)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Price'
+										label='Price'
+										type='text'
+										value={rupiahFormat(res?.price)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Discon'
+										label='Discon'
+										type='text'
+										value={rupiahFormat(res?.disc)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+									<Input
+										id='total'
+										name='total'
+										placeholder='Total'
+										label='Total'
+										type='text'
+										value={rupiahFormat(res?.total)}
+										required={true}
+										disabled={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</Section>
+							);
+						})}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
