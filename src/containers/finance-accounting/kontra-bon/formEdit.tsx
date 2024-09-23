@@ -108,14 +108,14 @@ export const FormEditKontraBon = ({
 				disc = disc + res.disc;
 				bill = bill + res.total;
 			});
-			dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
-				(bank: any) => {
-					dataAcc.push({
-						label: `${bank.account_name} - ${bank.bank_name}`,
-						value: bank,
-					});
-				}
-			);
+			// dataSelected.term_of_pay_po_so.poandso.supplier.SupplierBank.map(
+			// 	(bank: any) => {
+			// 		dataAcc.push({
+			// 			label: `${bank.account_name} - ${bank.bank_name}`,
+			// 			value: bank,
+			// 		});
+			// 	}
+			// );
 		} else {
 			datas = dataSelected.purchase;
 			typePurchase = "dirrect"
@@ -128,12 +128,12 @@ export const FormEditKontraBon = ({
 				disc = disc + res.disc;
 				bill = bill + res.total;
 			});
-			dataSelected.purchase.supplier.SupplierBank.map((bank: any) => {
-				dataAcc.push({
-					label: `${bank.account_name} - ${bank.bank_name}`,
-					value: bank,
-				});
-			});
+			// dataSelected.purchase.supplier.SupplierBank.map((bank: any) => {
+			// 	dataAcc.push({
+			// 		label: `${bank.account_name} - ${bank.bank_name}`,
+			// 		value: bank,
+			// 	});
+			// });
 		}
 
 		if (typeTax === "ppn") {
@@ -181,10 +181,10 @@ export const FormEditKontraBon = ({
 				setTotalAmount(bill - disc)
 			}
 		}
-		setBankSelected({
-			label: `${dataSelected.SupplierBank.account_name} - ${dataSelected.SupplierBank.bank_name}`,
-			value: dataSelected.SupplierBank,
-		});
+		// setBankSelected({
+		// 	label: `${dataSelected.SupplierBank.account_name} - ${dataSelected.SupplierBank.bank_name}`,
+		// 	value: dataSelected.SupplierBank,
+		// });
 
 		setPpn(ppn);
 		setPph(pph);
@@ -192,9 +192,9 @@ export const FormEditKontraBon = ({
 		setBillAmount(bill);
 		setDisc(disc);
 		setDataAccBank(dataAcc);
-		setBankName(dataSelected.SupplierBank.bank_name);
-		setAccName(dataSelected.SupplierBank.account_name);
-		setAccNo(dataSelected.SupplierBank.rekening);
+		// setBankName(dataSelected.SupplierBank.bank_name);
+		// setAccName(dataSelected.SupplierBank.account_name);
+		// setAccNo(dataSelected.SupplierBank.rekening);
 		setData({
 			termId: dataSelected.termId,
 			poandsoId: dataSelected.term_of_pay_po_so ? dataSelected.term_of_pay_po_so.poandso.id_so : null,

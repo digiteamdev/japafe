@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,20 +7,23 @@ import {
 	Table,
 	ModalDelete,
 	Pagination,
-	Button
+	Button,
 } from "../../../components";
-import { Eye, Truck } from "react-feather";
+import { Edit, Eye, Trash2, Truck } from "react-feather";
 import { FormCreateDo } from "./formCreate";
 import { ViewDo } from "./view";
-// import { FormEditMr } from "./formEdit";
-import { GetDo, DeleteMR } from "../../../services";
+import { FormEditDo } from "./formEdit";
+import { GetDo, DeleteDo } from "../../../services";
 import { toast } from "react-toastify";
-import { getDepartement, getSubDepartement, removeToken } from "../../../configs/session";
+import {
+	getDepartement,
+	getSubDepartement,
+	removeToken,
+} from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
 export const DeliveryOrder = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,22 +35,22 @@ export const DeliveryOrder = () => {
 	const [departement, setDepartement] = useState<any>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-        { name: "Do Number" },
+		{ name: "Do Number" },
 		{ name: "Job No" },
 		{ name: "Date DO" },
-        { name: "Ship To" },
-        { name: "Contact" },
-        { name: "Action" }
+		{ name: "Ship To" },
+		{ name: "Contact" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
 		getDo(page, perPage);
 		let departement = getDepartement();
-		if (departement !== undefined){
-			setDepartement(departement)
+		if (departement !== undefined) {
+			setDepartement(departement);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -70,14 +73,14 @@ export const DeliveryOrder = () => {
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
@@ -89,7 +92,7 @@ export const DeliveryOrder = () => {
 		search: string
 	) => {
 		setIsLoading(true);
-		setSearch(search)
+		setSearch(search);
 		try {
 			const response = await GetDo(page, limit, search);
 			if (response.data) {
@@ -101,11 +104,11 @@ export const DeliveryOrder = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deleteDo = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
-			if(response.data){
-				toast.success("Delete Material Request Success", {
+			const response = await DeleteDo(id);
+			if (response.data) {
+				toast.success("Delete Delivery Order Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -118,7 +121,7 @@ export const DeliveryOrder = () => {
 				getDo(page, perPage);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Delivery Order Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -141,7 +144,7 @@ export const DeliveryOrder = () => {
 			/>
 			<Content
 				title='Delivery Order'
-				print={ departement === 'Purchasing & Logistic' ? true : false}
+				print={departement === "Purchasing & Logistic" ? true : false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -193,13 +196,19 @@ export const DeliveryOrder = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1'>{ res.no_do }</td>
-									<td className='whitespace-nowrap p-1'>{ res.no_job ? res.no_job : 'Internal' }</td>
-									<td className='whitespace-nowrap p-1'>{ moment(res.date_do).format("DD-MMMM-YYYY") }</td>
-									<td className='whitespace-nowrap p-1'>{ res.ship_to }</td>
-									<td className='whitespace-nowrap p-1'>{ res.contact } - { res.phone }</td>
+									<td className='whitespace-nowrap p-1'>{res.no_do}</td>
+									<td className='whitespace-nowrap p-1'>
+										{res.no_job ? res.no_job : "Internal"}
+									</td>
+									<td className='whitespace-nowrap p-1'>
+										{moment(res.date_do).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-nowrap p-1'>{res.ship_to}</td>
+									<td className='whitespace-nowrap p-1'>
+										{res.contact} - {res.phone}
+									</td>
 									<td className='whitespace-nowrap text-center p-1 w-[10%]'>
-										<div>
+										<div className='space-x-1'>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
@@ -209,6 +218,28 @@ export const DeliveryOrder = () => {
 											>
 												<Eye color='white' />
 											</Button>
+											{departement === "Purchasing & Logistic" ? (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "edit", false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+													<Button
+														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "delete", false);
+														}}
+													>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) : null}
 										</div>
 									</td>
 								</tr>
@@ -216,20 +247,18 @@ export const DeliveryOrder = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getDo(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getDo(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -237,7 +266,7 @@ export const DeliveryOrder = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deleteDo}
 				/>
 			) : (
 				<Modal
@@ -247,12 +276,15 @@ export const DeliveryOrder = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewDo dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewDo
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : modalContent === "add" ? (
-                        <FormCreateDo content={modalContent} showModal={showModal} />
+						<FormCreateDo content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
-                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditDo content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

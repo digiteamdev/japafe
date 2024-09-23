@@ -5,13 +5,14 @@ import {
 	InputSelectSearch,
 	InputDate,
 	InputSelect,
+	InputArea,
 } from "../../../components";
 import { Formik, Form } from "formik";
 import { kontraBonSchema } from "../../../schema/finance-accounting/kontra-bon/kontrabonSchema";
 import { GetReceive, AddKontraBon } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -31,6 +32,7 @@ interface data {
 	DO: string;
 	grandtotal: number;
 	tax_invoice: boolean;
+	detail: any;
 }
 
 export const FormCreateKontraBon = ({ content, showModal }: props) => {
@@ -66,6 +68,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		DO: "",
 		grandtotal: 0,
 		tax_invoice: true,
+		detail: [],
 	});
 
 	useEffect(() => {
@@ -234,7 +237,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				setPph(0);
 				setPpn(0);
 			}
-			setTax(taxType);
+			setTax(data.taxPsrDmr);
 			setDataAccBank(dataAcc);
 			setBillAmount(bill);
 			setBillPaid(billPaid);
@@ -357,6 +360,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("tax_invoice", false);
 											setFieldValue("grandtotal", totalAmount);
 											setFieldValue("account_name", null);
+											setFieldValue("detail", []);
 											setPayTax(true);
 										} else if (
 											e.value.term_of_pay_po_so &&
@@ -367,6 +371,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", false);
+											setFieldValue("detail", []);
 											setPayTax(true);
 										} else if (
 											e.value.term_of_pay_po_so &&
@@ -377,6 +382,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("poandsoId", e.value.id);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue("tax_invoice", true);
+											setFieldValue("detail", []);
 											setPayTax(true);
 										} else if (!e.value.term_of_pay_po_so) {
 											setFieldValue("poandsoId", null);
@@ -384,6 +390,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("cdvId", null);
 											setFieldValue("purchaseID", e.value.id);
 											setFieldValue("tax_invoice", true);
+											setFieldValue("detail", []);
 											setPayTax(true);
 											if (e.value.taxPsrDmr === "nontax") {
 												setFieldValue("tax_invoice", false);
@@ -394,6 +401,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											setFieldValue("purchaseID", null);
 											setFieldValue("cdvId", null);
 											setFieldValue("poandsoId", e.value.id);
+											setFieldValue("detail", e.value.detailMr);
 											setFieldValue("termId", e.value.term_of_pay_po_so[0].id);
 											setFieldValue(
 												"invoice",
@@ -481,7 +489,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(billPaid.toString())}
+									value={rupiahFormat(billPaid)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -495,7 +503,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(billAmount.toString())}
+									value={rupiahFormat(billAmount)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -509,9 +517,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={
-										values.tax_invoice ? formatRupiah(ppn.toString()) : "0"
-									}
+									value={values.tax_invoice ? rupiahFormat(ppn) : "0"}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -527,7 +533,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(pph.toString())}
+									value={rupiahFormat(pph)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -541,7 +547,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									required={true}
 									disabled={true}
 									withLabel={true}
-									value={formatRupiah(disc.toString())}
+									value={rupiahFormat(disc)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
 							</div>
@@ -561,7 +567,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 						</Section>
 						{Account ? (
 							<>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+								<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2  border-b-2 border-blue-500 pb-2'>
 									<div className='w-full'>
 										<InputSelect
 											id='tax'
@@ -570,18 +576,19 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Pay Tax'
 											onChange={(e: any) => {
 												if (e.target.value === "yes") {
+													console.log(e.target.value, tax);
 													setFieldValue("tax_invoice", true);
 													if (tax === "ppn") {
-														setTotalAmount(billPaid + ppn);
-														setFieldValue("grandtotal", billPaid + ppn);
+														setTotalAmount(billPaid + ppn - disc);
+														setFieldValue("grandtotal", billPaid + ppn - disc);
 													} else {
-														setTotalAmount(billPaid);
-														setFieldValue("grandtotal", billPaid);
+														setTotalAmount(billPaid - disc);
+														setFieldValue("grandtotal", billPaid - disc);
 													}
 												} else {
-													setTotalAmount(billPaid);
+													setTotalAmount(billPaid - disc);
 													setFieldValue("tax_invoice", false);
-													setFieldValue("grandtotal", billPaid);
+													setFieldValue("grandtotal", billPaid - disc);
 												}
 											}}
 											disabled={payTax}
@@ -607,11 +614,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											required={true}
 											disabled={true}
 											withLabel={true}
-											value={formatRupiah(totalAmount.toString())}
+											value={rupiahFormat(totalAmount)}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-									<div className='w-full'>
+									{/* <div className='w-full'>
 										<InputSelectSearch
 											datas={dataAccBank}
 											id='account_namec'
@@ -629,9 +636,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											withLabel={true}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 										/>
-									</div>
+									</div> */}
 								</Section>
-								<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
+								{/* <Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 									<div className='w-full'>
 										<Input
 											id='bankName'
@@ -640,7 +647,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Bank Name'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={bankName}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -654,7 +661,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Account Name'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={accName}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -668,15 +675,97 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Account Number'
 											type='text'
 											required={true}
-											disabled={true}
+											disabled={false}
 											withLabel={true}
 											value={accNo}
 											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 										/>
 									</div>
-								</Section>
+								</Section> */}
 							</>
 						) : null}
+						{values.detail.length > 0 ? (
+							<h5 className='font-semibold text-lg'>Detail Purchase</h5>
+						) : null}
+						{values.detail.map((res: any, i: number) => {
+							return (
+								<Section
+									className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
+									key={i}
+								>
+									<div className='w-full'>
+										<InputArea
+											id='invoice'
+											name='invoice'
+											placeholder='Material'
+											label='Material'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={res?.Material_Master?.name}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='invoice'
+											name='invoice'
+											placeholder='Quantity'
+											label='Quantity'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={res?.qtyAppr}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='invoice'
+											name='invoice'
+											placeholder='Price'
+											label='Price'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={rupiahFormat(res?.price)}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='invoice'
+											name='invoice'
+											placeholder='Disc'
+											label='Disc'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={rupiahFormat(res?.disc)}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<Input
+											id='invoice'
+											name='invoice'
+											placeholder='Total'
+											label='Total'
+											type='text'
+											required={true}
+											disabled={true}
+											withLabel={true}
+											value={rupiahFormat(res?.total)}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+								</Section>
+							);
+						})}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button

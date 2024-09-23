@@ -138,13 +138,13 @@ export const FormEditCashier = ({
 			cdvId: dataSelected.cdvId,
 			kontrabonId: dataSelected.kontrabonId,
 			date_cashier: dataSelected.date_cashier,
-			reference: dataSelected.kontrabonId === null ? dataSelected.cash_advance.id_cash_advance : `${dataSelected.kontrabon.id_kontrabon} - ${
+			reference: dataSelected.kontrabonId === null ? dataSelected.cash_advance?.id_cash_advance : `${dataSelected.kontrabon.id_kontrabon} - ${
 				dataSelected.kontrabon.term_of_pay_po_so === null
 					? dataSelected.kontrabon.purchase.idPurchase
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.id_so
 			}`,
 			suplier:
-			dataSelected.kontrabonId === null ? dataSelected.cash_advance.employee.employee_name : dataSelected.kontrabon.term_of_pay_po_so === null
+			dataSelected.kontrabonId === null ? dataSelected.cash_advance?.employee?.employee_name : dataSelected.kontrabon.term_of_pay_po_so === null
 					? dataSelected.kontrabon.purchase.supplier.supplier_name
 					: dataSelected.kontrabon.term_of_pay_po_so.poandso.supplier
 							.supplier_name,
@@ -184,7 +184,7 @@ export const FormEditCashier = ({
 			journal_cashier: jurnal,
 		});
 	};
-
+console.log(dataSelected)
 	const getCashier = async () => {
 		setIsLoading(true);
 		let data: any = [];

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,21 +7,23 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
-import { Database, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateOutgoingMaterial } from "./formCreate";
-import { ViewOutgoingMaterial } from "./view";
-// import { FormEditMr } from "./formEdit";
-import { GetOutgoingMaterial, SearchOutgoingMaterial, DeleteMR } from "../../../services";
+import { Send, CheckSquare, Eye } from "react-feather";
+// import { FormCreateDirectMr } from "./formCreate";
+import { ViewApprovalSo } from "./view";
+// import { FormEditApproval } from "./formEdit";
+import {
+	GetApprovalSo,
+	SearchPurchaseApproval,
+	DeletePurchaseMR,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { changeDivisi, formatRupiah } from "@/src/utils";
+import { changeDivisi } from "../../../utils/index";
 
-export const OutgoingMaterial = () => {
-
+export const ApprovalSo = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,18 +33,17 @@ export const OutgoingMaterial = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Date" },
-		{ name: "Job no" },
-        { name: "Employee" },
-		{ name: "Material" },
-        { name: "Action" }
+		{ name: "Job No" },
+        { name: "No SR" },
+        { name: "Description" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getOutgoingMaterial(page, perPage);
+		getApprovalPo(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -53,38 +54,38 @@ export const OutgoingMaterial = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getOutgoingMaterial(page, perPage);
+			getApprovalPo(page, perPage);
 		}
 	};
 
-	const getOutgoingMaterial = async (page: number, perpage: number) => {
+	const getApprovalPo = async (page: number, perpage: number) => {
 		setIsLoading(true);
 		try {
-			const response = await GetOutgoingMaterial(page, perpage);
+			const response = await GetApprovalSo(page, perpage);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
 			}
 		} catch (error: any) {
-			if(error.response.data.login){
+			if (error.response.data.login) {
 				setData([]);
-			}else{
+			} else {
 				removeToken();
-				router.push('/');
+				router.push("/");
 			}
 		}
 		setIsLoading(false);
 	};
 
-	const searchOutgoingMaterial = async (
+	const searchPurchaseApproval = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchOutgoingMaterial(page, limit, search);
+			const response = await SearchPurchaseApproval(page, limit, search);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -94,11 +95,11 @@ export const OutgoingMaterial = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deletePurchaseMR = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
-			if(response.data){
-				toast.success("Delete Material Request Success", {
+			const response = await DeletePurchaseMR(id);
+			if (response.data) {
+				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -108,10 +109,10 @@ export const OutgoingMaterial = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getOutgoingMaterial(1, 10);
+				getApprovalPo(page, perPage);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Purchase Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -125,16 +126,28 @@ export const OutgoingMaterial = () => {
 		setIsModal(false);
 	};
 
+	const showMaterial = (data:any) => {
+		let material:string = ""
+		data?.map((res: any, i:number) => {
+			if(i === 0){
+				material = `- `+res.desc
+			}else{
+				material = material +` \r\n ` + `- `+res.desc 
+			}
+		})
+		return material
+	}
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Outgoing Material'
+				title='Approval SO'
 				total={countData}
-				icon={<Database className='w-[36px] h-[36px]' />}
+				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Outgoing Material'
-				print={true}
+				title='Approval SO'
+				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -142,7 +155,7 @@ export const OutgoingMaterial = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={searchOutgoingMaterial}
+				search={searchPurchaseApproval}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -182,27 +195,20 @@ export const OutgoingMaterial = () => {
 					) : (
 						data.map((res: any, i: number) => {
 							return (
-                                <tr
-									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1'>{ moment(res.date_outgoing_material).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
-										return (
-											<p key={i}>{ res.wor?.job_no ? res.wor?.job_no : "Internal" }</p>
-										)
-									}) }</td>
-									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
-										return (
-											<p key={i}>{ res.employee?.employee_name }</p>
-										)
-									}) }</td>
-									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
-										return (
-											<p key={i}>{ res.Material_Master?.name }</p>
-										)
-									}) }</td>
-									<td className='whitespace-nowrap text-center p-1 w-[10%]'>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ res.SrDetail[0]?.sr?.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{ res.SrDetail[0]?.sr?.no_sr }
+									</td>
+									<td className='whitespace-pre-line p-1'>
+										{ showMaterial(res.SrDetail) }
+									</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
@@ -220,20 +226,18 @@ export const OutgoingMaterial = () => {
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getOutgoingMaterial(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getApprovalPo(value, perPage);
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -241,23 +245,22 @@ export const OutgoingMaterial = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deletePurchaseMR}
 				/>
 			) : (
 				<Modal
-					title='Outgoing Material'
+					title='Purchase Order'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewOutgoingMaterial dataSelected={dataSelected} content={modalContent} showModal={showModal} />
-					) : modalContent === "add" ? (
-                        <FormCreateOutgoingMaterial content={modalContent} showModal={showModal} />
-					) : (
-                        <></>
-                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
-					)}
+						<ViewApprovalSo
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
+					) : null}
 				</Modal>
 			)}
 		</div>

@@ -87,12 +87,17 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		let mr: any = [];
 		let sr: any = [];
+		const formData = new FormData();
 		payload.detailMr.map((res: any) => {
+			console.log(res)
 			mr.push({
 				id: res.id,
 				qty_receive: parseInt(res.qty_receive),
 				status_stock: res.status_stock === "" ? "non" : res.status_stock,
 			});
+			if(res.file_receive){
+				formData.append("file_receive", res.file_receive)
+			}
 		});
 		payload.srDetail.map((res: any) => {
 			sr.push({
@@ -100,15 +105,20 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 				qty_receive: res.qtyAppr,
 			});
 		});
-		let data: any = {
-			id: idPurchase,
-			type: type,
-			date_receive: payload.date_receive,
-			id_receive: idPR,
-			detailMr: mr,
-			srDetail: sr,
-		};
-
+		// let data: any = {
+		// 	id: idPurchase,
+		// 	type: type,
+		// 	date_receive: payload.date_receive,
+		// 	id_receive: idPR,
+		// 	detailMr: mr,
+		// 	srDetail: sr,
+		// };
+		formData.append("id", idPurchase);
+		formData.append("type", type);
+		formData.append("date_receive", payload.date_receive);
+		formData.append("id_receive", idPR);
+		formData.append("detailMr", JSON.stringify(mr));
+		formData.append("SrDetail", JSON.stringify(sr));
 		if (idPurchase === "") {
 			toast.warning("Choice Purchase Number", {
 				position: "top-center",
@@ -122,7 +132,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 			});
 		} else {
 			try {
-				const response = await AddPurchaseReceive(data);
+				const response = await AddPurchaseReceive(formData);
 				if (response) {
 					toast.success("Purchase Receive Success", {
 						position: "top-center",
@@ -232,7 +242,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 												setFieldValue("detailMr", []);
 											}
 										} else {
-											setIdPurchase(e.value.id)
+											setIdPurchase(e.value.id);
 											if (e.value.detailMr.length > 0) {
 												setFieldValue("detailMr", e.value.detailMr);
 												setFieldValue("srDetail", []);
@@ -349,7 +359,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 												return values.detailMr.map((res: any, i: number) => {
 													return (
 														<Section
-															className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+															className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 															key={i}
 														>
 															<div className='w-full'>
@@ -373,7 +383,11 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={`${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`}
+																	value={`${res.Material_Master.name} ${
+																		res.Material_Master.spesifikasi
+																			? res.Material_Master.spesifikasi
+																			: ""
+																	}`}
 																	disabled={true}
 																	required={true}
 																	withLabel={true}
@@ -413,25 +427,25 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																/>
 															</div>
-															{/* <div className='w-full'>
-																<InputSelect
-																	id={`detailMr.${i}.status_stock`}
-																	name={`detailMr.${i}.status_stock`}
-																	placeholder='Status'
-																	label='Status'
-																	onChange={(e:any) => {
-																		setFieldValue(`detailMr.${i}.status_stock`, e.target.value)
-																	}}
+															<div className='w-full'>
+																<Input
+																	id={`detailMr.${i}.file_receive`}
+																	name={`detailMr.${i}.file_receive`}
+																	placeholder='File'
+																	label='File'
+																	type='file'
+																	accept='image/*, .pdf'
+																	onChange={(e: any) =>
+																		setFieldValue(
+																			`detailMr.${i}.file_receive`,
+																			e.target.files[0]
+																		)
+																	}
 																	required={true}
 																	withLabel={true}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																>
-																	<option value='non' selected>
-																		Non
-																	</option>
-																	<option value='stock'>Stock</option>
-																</InputSelect>
-															</div> */}
+																/>
+															</div>
 															<div className='w-full'>
 																{i > 0 ? (
 																	<a

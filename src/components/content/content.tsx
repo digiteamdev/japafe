@@ -111,7 +111,7 @@ export const Content = ({
 								<option value='Request'>Request</option>
 								<option value='Approval'>Approval</option>
 								<option value='Purchase'>Purchase</option>
-								<option value='Receive'>Receive</option>
+								{/* <option value='Receive'>Receive</option> */}
 								<option value='Finish'>Finish</option>
 								<option value='Reject'>Reject</option>
 							</InputSelect>

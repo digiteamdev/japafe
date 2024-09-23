@@ -9,6 +9,7 @@ export const SearchEmploye = (page: number, perpage: number, search: string) => 
 export const AddEmploye = (data: any) => Axios.post(process.env.BASE_URL+'/employe', data);
 export const DeleteEmploye = (id: string) => Axios.delete(process.env.BASE_URL+`/employe/${id}`);
 export const EditEmploye = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/employe/${id}`, data);
+export const GetEmployeDepartement = () => Axios.get(process.env.BASE_URL+`/getEmployeetimesheet`);
 
 //Employee Child
 export const EditEmployeChild = (data: any) => Axios.put(process.env.BASE_URL+`/employechild`, data);

@@ -145,7 +145,7 @@ export const Sr = () => {
 			case "Purchase":
 				return "bg-orange-500 hover:bg-orange-200";
 			case "Receive":
-				return "bg-blue-500 hover:bg-blue-200";
+				return "bg-green-500 hover:bg-green-200";
 			case "Finish":
 				return "bg-green-500 hover:bg-green-200";
 			case "Reject":
@@ -180,10 +180,10 @@ export const Sr = () => {
 								<div className='bg-orange-500 border border-black w-4 h-4 mt-1 mr-2'></div>
 								<div className='text-sm'>Purchase</div>
 							</div>
-							<div className='flex'>
+							{/* <div className='flex'>
 								<div className='bg-blue-500 border border-black w-4 h-4 mt-1 mr-2'></div>
 								<div className='text-sm'>Receive</div>
-							</div>
+							</div> */}
 							<div className='flex'>
 								<div className='bg-green-500 border border-black w-4 h-4 mt-1 mr-2'></div>
 								<div className='text-sm'>Finish</div>

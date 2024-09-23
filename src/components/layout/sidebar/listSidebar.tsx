@@ -47,6 +47,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			// {
+			// 	id: "spkl",
+			// 	link: "/public/spkl",
+			// 	title: "Spkl",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "time-sheet",
 				link: "/public/time-sheet",
@@ -143,44 +150,9 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "approval-sr",
-				link: "/purchasing-logistic/approval-sr",
-				title: "Approval SR",
-
-				subMenu: null,
-			},
-			// {
-			// 	id: "spj-purchase",
-			// 	link: "/purchasing-logistic/spj-purchase",
-			// 	title: "SPJ Purchase",
-
-			// 	subMenu: null,
-			// },
-			{
 				id: "purchase-mr",
 				link: "/purchasing-logistic/purchase-mr",
 				title: "Purchase MR",
-
-				subMenu: null,
-			},
-			{
-				id: "purchase-sr",
-				link: "/purchasing-logistic/purchase-sr",
-				title: "Purchase SR",
-
-				subMenu: null,
-			},
-			{
-				id: "direct-mr",
-				link: "/purchasing-logistic/direct-mr",
-				title: "Direct MR",
-
-				subMenu: null,
-			},
-			{
-				id: "direct-sr",
-				link: "/purchasing-logistic/direct-sr",
-				title: "Direct SR",
 
 				subMenu: null,
 			},
@@ -192,9 +164,9 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "service-order",
-				link: "/purchasing-logistic/service-order",
-				title: "Service Order",
+				id: "direct-mr",
+				link: "/purchasing-logistic/direct-mr",
+				title: "Direct MR",
 
 				subMenu: null,
 			},
@@ -206,16 +178,44 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "list-so",
-				link: "/purchasing-logistic/list-so",
-				title: "List SO",
+				id: "list-dirrect-purchase",
+				link: "/purchasing-logistic/list-dirrect-purchase",
+				title: "List Dirrect Purchase",
 
 				subMenu: null,
 			},
 			{
-				id: "list-dirrect-purchase",
-				link: "/purchasing-logistic/list-dirrect-purchase",
-				title: "List Dirrect Purchase",
+				id: "approval-sr",
+				link: "/purchasing-logistic/approval-sr",
+				title: "Approval SR",
+
+				subMenu: null,
+			},
+			{
+				id: "purchase-sr",
+				link: "/purchasing-logistic/purchase-sr",
+				title: "Purchase SR",
+
+				subMenu: null,
+			},
+			{
+				id: "service-order",
+				link: "/purchasing-logistic/service-order",
+				title: "Service Order",
+
+				subMenu: null,
+			},
+			{
+				id: "direct-sr",
+				link: "/purchasing-logistic/direct-sr",
+				title: "Direct SR",
+
+				subMenu: null,
+			},
+			{
+				id: "list-so",
+				link: "/purchasing-logistic/list-so",
+				title: "List SO",
 
 				subMenu: null,
 			},
@@ -225,66 +225,7 @@ export const ListNav = [
 				title: "List Dirrect Service",
 
 				subMenu: null,
-			},
-			// {
-			// 	id: "purchase-receive",
-			// 	link: "/purchasing-logistic/purchase-receive",
-			// 	title: "Purchase Receive",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "service-receive",
-			// 	link: "/purchasing-logistic/service-receive",
-			// 	title: "Service Receive",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "outgoing-material",
-			// 	link: "/purchasing-logistic/outgoing-material",
-			// 	title: "Outgoing Material",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "delivery-order",
-			// 	link: "/purchasing-logistic/delivery-order",
-			// 	title: "Delivery Order",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "material-remaind-use",
-			// 	link: "/purchasing-logistic/material-remaind-use",
-			// 	title: "Material Remain Use",
-
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "equipment-part",
-			// 	link: "/purchasing-logistic/equipment-part",
-			// 	title: "Equipment & Part",
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "material-type",
-			// 	link: "/purchasing-logistic/material-type",
-			// 	title: "Material Type",
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "material",
-			// 	link: "/purchasing-logistic/material",
-			// 	title: "Material",
-			// 	subMenu: null,
-			// },
-			// {
-			// 	id: "warehouse",
-			// 	link: "/purchasing-logistic/warehouse",
-			// 	title: "Warehouse",
-			// 	subMenu: null,
-			// },
+			}
 		],
 	},
 	{
@@ -347,9 +288,9 @@ export const ListNav = [
 		role: "ADMINISTRATOR",
 		subMenu: [
 			{
-				id: "approval",
-				link: "/director/approval",
-				title: "Approval",
+				id: "register-new-user",
+				link: "/director/register-new-user",
+				title: "User",
 
 				subMenu: null,
 			},
@@ -357,6 +298,13 @@ export const ListNav = [
 				id: "approval Po",
 				link: "/director/approvalPo",
 				title: "Approval PO",
+
+				subMenu: null,
+			},
+			{
+				id: "approval So",
+				link: "/director/approvalSo",
+				title: "Approval SO",
 
 				subMenu: null,
 			},
@@ -547,13 +495,6 @@ export const ListNav = [
 				id: "departement",
 				link: "/hrd-ga/departement",
 				title: "Departement",
-				subMenu: null,
-			},
-			{
-				id: "register-new-user",
-				link: "/hrd-ga/register-new-user",
-				title: "Register New User",
-
 				subMenu: null,
 			},
 			{

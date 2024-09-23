@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-	Input,
-	InputSelect,
-	InputSelectSearch,
-	Section,
-} from "../../../components";
+import { Input, InputArea, Section } from "../../../components";
 import moment from "moment";
 import { FieldArray, Form, Formik } from "formik";
-import { AddPrSr, GetAllSupplier } from "../../../services";
+import { ApprovalSo } from "../../../services";
 import { formatRupiah } from "../../../utils";
 import { toast } from "react-toastify";
 
@@ -22,19 +17,18 @@ interface data {
 	idPurchase: string;
 	taxPsrDmr: string;
 	currency: string;
-	detailMr: any;
+	SrDetail: any;
 }
 
-export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
+export const ViewApprovalSo = ({ dataSelected, content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isModal, setIsModal] = useState<boolean>(false);
-	const [listSupplier, setListSupplier] = useState<any>([]);
+	const [status, setStatus] = useState<string>("");
 	const [data, setData] = useState<data>({
 		dateOfPurchase: new Date(),
 		idPurchase: "",
 		taxPsrDmr: "ppn",
 		currency: "IDR",
-		detailMr: [],
+		SrDetail: [],
 	});
 
 	useEffect(() => {
@@ -44,110 +38,42 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 		});
 		setData({
 			dateOfPurchase: new Date(),
-			idPurchase: generateIdNum(),
+			idPurchase: "",
 			taxPsrDmr: "non_tax",
 			currency: "IDR",
-			detailMr: detail,
+			SrDetail: detail,
 		});
-		getSupplier();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getSupplier = async () => {
-		let listSup: any = [];
-		try {
-			const response = await GetAllSupplier();
-			if (response) {
-				response.data.result.map((res: any) => {
-					listSup.push({
-						label: res.supplier_name,
-						value: res,
-					});
-				});
-			}
-		} catch (error) {}
-		setListSupplier(listSup);
-	};
-
-	const generateIdNum = () => {
-		var dateObj = new Date();
-		var month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
-		var year = dateObj.getUTCFullYear();
-		const id =
-			"DSR" +
-			year.toString() +
-			month.toString() +
-			Math.floor(Math.random() * 10000);
-		return id;
-	};
-
-	const purchaseMr = async (payload: data) => {
+	const approval = async (payload: any) => {
 		setIsLoading(true);
-		let listDetail: any = [];
-		let isWarning: boolean = false
-		payload.detailMr.map((res: any) => {
-			if(res.supId === null){
-				toast.warning("Supplier has not been filled in yet", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
-			}else if(res.price === 0){
-				toast.warning("Price cannot be 0", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
-			}else{
-				listDetail.push({
-					id: res.id,
-					supId: res.supId,
-					desc: res.desc,
-					qtyAppr: parseInt(res.qtyAppr),
-					price: parseInt(res.price),
-					disc: parseInt(res.disc),
-					total: parseInt(res.total),
-				});
-				isWarning = false
-			}
+		let revisi: any = [];
+		payload.SrDetail.map((res: any) => {
+			revisi.push({
+				id: res.id,
+				note_revision: res.note_revision,
+			});
 		});
-		let data = {
-			dateOfPurchase: payload.dateOfPurchase,
-			idPurchase: payload.idPurchase,
-			taxPsrDmr: payload.taxPsrDmr,
-			currency: payload.currency,
-			srDetail: listDetail,
-		};
-		if(!isWarning){
-			try {
-				const response = await AddPrSr(data);
-				if (response.data) {
-					toast.success("Purchase Material Request Success", {
-						position: "top-center",
-						autoClose: 5000,
-						hideProgressBar: true,
-						closeOnClick: true,
-						pauseOnHover: true,
-						draggable: true,
-						progress: undefined,
-						theme: "colored",
-					});
-					showModal(false, content, true);
-				}
-			} catch (error) {
-				toast.error("Purchase Material Request Failed", {
+		let data: any = {};
+		if (revisi.length === 0) {
+			data = {
+				statusApprove: {
+					status_manager_director: status,
+				},
+			};
+		} else {
+			data = {
+				statusApprove: {
+					status_manager_director: status,
+				},
+				revision: revisi,
+			};
+		}
+		try {
+			const response = await ApprovalSo(dataSelected.id, data);
+			if (response.data) {
+				toast.success("Approval so Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -157,7 +83,19 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 					progress: undefined,
 					theme: "colored",
 				});
+				showModal(false, content, true);
 			}
+		} catch (error) {
+			toast.error("Approval so Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
 		}
 		setIsLoading(false);
 	};
@@ -166,7 +104,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
 				<>
-					<h1 className='font-bold text-xl'>Material Request</h1>
+					<h1 className='font-bold text-xl'>Service Request</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -175,7 +113,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										Job No
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.job_no}
+										{dataSelected.SrDetail[0]?.sr?.job_no}
 									</td>
 								</tr>
 								<tr>
@@ -183,7 +121,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										No SR
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.no_sr}
+										{dataSelected.SrDetail[0]?.sr?.no_sr}
 									</td>
 								</tr>
 								<tr>
@@ -191,7 +129,9 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										Date SR
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{moment(dataSelected.date_sr).format("DD-MMMM-YYYY")}
+										{moment(dataSelected.SrDetail[0]?.sr?.date_sr).format(
+											"DD-MMMM-YYYY"
+										)}
 									</td>
 								</tr>
 								<tr>
@@ -199,7 +139,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										Request By
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.user.employee.employee_name}
+										{dataSelected.SrDetail[0]?.sr?.user.employee.employee_name}
 									</td>
 								</tr>
 								<tr>
@@ -207,7 +147,10 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										Departement
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.user.employee.sub_depart.name}
+										{
+											dataSelected.SrDetail[0]?.sr?.user.employee.sub_depart
+												.name
+										}
 									</td>
 								</tr>
 							</table>
@@ -216,51 +159,48 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 					<h1 className='font-bold text-xl py-2'>Detail Service Request</h1>
 					<Formik
 						initialValues={{ ...data }}
-						// validationSchema={departemenSchema}
 						onSubmit={(values) => {
-							purchaseMr(values);
+							approval(values);
 						}}
 						enableReinitialize
 					>
-						{({
-							handleChange,
-							handleSubmit,
-							setFieldValue,
-							errors,
-							touched,
-							values,
-						}) => (
+						{({ handleSubmit, setFieldValue, handleChange, values }) => (
 							<Form>
 								<FieldArray
-									name='detailMr'
+									name='SrDetail'
 									render={(arrayMr) => (
 										<table className='w-full text-xs'>
 											<thead>
 												<tr>
 													<th className='text-center'>Description</th>
-													<th className='text-center'>Qty</th>
-													<th className='text-center'>Supplier</th>
+													<th className='text-center'>Quantity</th>
 													<th className='text-center'>Price</th>
-													<th className='text-center'>Disc</th>
 													<th className='text-center'>Total Price</th>
+													<th className='text-center'>Supplier</th>
+													<th className='text-center'>Discount</th>
+													<th className='text-center'>Note Revision</th>
 												</tr>
 											</thead>
 											<tbody>
-												{values.detailMr.map((result: any, i: number) => {
+												{values.SrDetail.map((result: any, i: number) => {
+													console.log(result)
 													return (
 														<tr key={i}>
-															<td className='pr-1 w-[30%]'>
+															<td className='pr-1 w-[15%]'>
 																<Input
-																	id={`detailMr.${i}.desc`}
-																	name={`detailMr.${i}.desc`}
+																	id={`SrDetail.${i}.desc`}
+																	name={`SrDetail.${i}.desc`}
 																	placeholder='Description'
 																	label='Description'
 																	type='text'
 																	value={result.desc}
-																	disabled={false}
 																	onChange={(e: any) => {
-																		setFieldValue(`detailMr.${i}.desc`,e.target.value)
+																		setFieldValue(
+																			`SrDetail.${i}.desc`,
+																			e.target.value
+																		);
 																	}}
+																	disabled={false}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
@@ -268,20 +208,22 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 															</td>
 															<td className='pr-1 w-[5%]'>
 																<Input
-																	id={`detailMr.${i}.qtyAppr`}
-																	name={`detailMr.${i}.qtyAppr`}
+																	id={`SrDetail.${i}.qtyAppr`}
+																	name={`SrDetail.${i}.qtyAppr`}
 																	placeholder='Stock'
 																	label='Stock'
 																	type='text'
 																	pattern='\d*'
 																	onChange={(e: any) => {
-																		let qty: number = e.target.value
+																		let qty = e.target.value
 																			.toString()
 																			.replaceAll(".", "");
-																		setFieldValue(`detailMr.${i}.qtyAppr`, qty);
+																		setFieldValue(`SrDetail.${i}.qtyAppr`, qty);
 																		setFieldValue(
-																			`detailMr.${i}.total`,
-																			(result.price * qty) - result.disc
+																			`SrDetail.${i}.total`,
+																			parseFloat(result.price) *
+																				parseFloat(qty) -
+																				parseFloat(result.disc)
 																		);
 																	}}
 																	disabled={false}
@@ -291,45 +233,30 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
-															<td className='pr-1 w-[20%]'>
-																<InputSelectSearch
-																	datas={listSupplier}
-																	id={`detailMr.${i}.supId`}
-																	name={`detailMr.${i}.supId`}
+															<td className='pr-1 w-[15%]'>
+																<Input
+																	id={`SrDetail.${i}.supplier`}
+																	name={`SrDetail.${i}.supplier`}
 																	placeholder='Supplier'
 																	label='Supplier'
-																	value={result.supplier}
-																	onChange={(e: any) => {
-																		setFieldValue(
-																			`detailMr.${i}.supId`,
-																			e.value.id
-																		);
-																		setFieldValue(`detailMr.${i}.supplier`, e)
-																	}}
+																	type='text'
+																	pattern='\d*'
+																	disabled={true}
+																	value={result.supplier?.supplier_name}
 																	required={true}
 																	withLabel={false}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
 															<td className='pr-1 w-[15%]'>
 																<Input
-																	id={`detailMr.${i}.price`}
-																	name={`detailMr.${i}.price`}
+																	id={`SrDetail.${i}.price`}
+																	name={`SrDetail.${i}.price`}
 																	placeholder='Price'
 																	label='Price'
 																	type='text'
 																	pattern='\d*'
-																	onChange={(e: any) => {
-																		let price: number = e.target.value
-																			.toString()
-																			.replaceAll(".", "");
-																		setFieldValue(`detailMr.${i}.price`, price);
-																		setFieldValue(
-																			`detailMr.${i}.total`,
-																			(price * result.qtyAppr) - result.disc
-																		);
-																	}}
-																	disabled={false}
+																	disabled={true}
 																	value={formatRupiah(result.price.toString())}
 																	required={true}
 																	withLabel={false}
@@ -338,33 +265,23 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 															</td>
 															<td className='pr-1 w-[15%]'>
 																<Input
-																	id={`detailMr.${i}.disc`}
-																	name={`detailMr.${i}.disc`}
+																	id={`SrDetail.${i}.disc`}
+																	name={`SrDetail.${i}.disc`}
 																	placeholder='Discount'
 																	label='Discount'
 																	type='text'
 																	pattern='\d*'
-																	onChange={(e: any) => {
-																		let disc: number = e.target.value
-																			.toString()
-																			.replaceAll(".", "");
-																		setFieldValue(`detailMr.${i}.disc`, disc);
-																		setFieldValue(
-																			`detailMr.${i}.total`,
-																			(result.price * result.qtyAppr) - disc
-																		);
-																	}}
-																	disabled={false}
+																	disabled={true}
 																	value={formatRupiah(result.disc.toString())}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
-															<td className='w-[15%]'>
+															<td className='pr-1 w-[15%]'>
 																<Input
-																	id={`detailMr.${i}.qtyAppr`}
-																	name={`detailMr.${i}.qtyAppr`}
+																	id={`SrDetail.${i}.qtyAppr`}
+																	name={`SrDetail.${i}.qtyAppr`}
 																	placeholder='Total Price'
 																	type='text'
 																	pattern='\d*'
@@ -375,6 +292,21 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
 																/>
 															</td>
+															<td className='w-[20%]'>
+																<InputArea
+																	id={`SrDetail.${i}.note_revision`}
+																	name={`SrDetail.${i}.note_revision`}
+																	placeholder='Note Revisi'
+																	label='Note Revisi'
+																	onChange={handleChange}
+																	value={result.note_revision}
+																	required={true}
+																	disabled={false}
+																	row={2}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</td>
 														</tr>
 													);
 												})}
@@ -382,7 +314,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 										</table>
 									)}
 								/>
-								{values.detailMr.length > 0 ? (
+								{values.SrDetail.length > 0 ? (
 									<div className='mt-8 flex justify-end'>
 										<div className='flex gap-2 items-center'>
 											<button
@@ -390,6 +322,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 												className='inline-flex justify-center rounded-full border border-transparent bg-green-500 px-4 py-2 text-sm font-medium text-white hover:bg-green-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
 												disabled={isLoading}
 												onClick={() => {
+													setStatus("approve");
 													handleSubmit();
 												}}
 											>
@@ -415,6 +348,72 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 													</>
 												) : (
 													"Approval"
+												)}
+											</button>
+											<button
+												type='button'
+												className='inline-flex justify-center rounded-full border border-transparent bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+												disabled={isLoading}
+												onClick={() => {
+													setStatus("revision");
+													handleSubmit();
+												}}
+											>
+												{isLoading ? (
+													<>
+														<svg
+															role='status'
+															className='inline mr-3 w-4 h-4 text-white animate-spin'
+															viewBox='0 0 100 101'
+															fill='none'
+															xmlns='http://www.w3.org/2000/svg'
+														>
+															<path
+																d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
+																fill='#E5E7EB'
+															/>
+															<path
+																d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
+																fill='currentColor'
+															/>
+														</svg>
+														Loading
+													</>
+												) : (
+													"Revision"
+												)}
+											</button>
+											<button
+												type='button'
+												className='inline-flex justify-center rounded-full border border-transparent bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2'
+												disabled={isLoading}
+												onClick={() => {
+													setStatus("reject");
+													handleSubmit();
+												}}
+											>
+												{isLoading ? (
+													<>
+														<svg
+															role='status'
+															className='inline mr-3 w-4 h-4 text-white animate-spin'
+															viewBox='0 0 100 101'
+															fill='none'
+															xmlns='http://www.w3.org/2000/svg'
+														>
+															<path
+																d='M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z'
+																fill='#E5E7EB'
+															/>
+															<path
+																d='M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z'
+																fill='currentColor'
+															/>
+														</svg>
+														Loading
+													</>
+												) : (
+													"Reject"
 												)}
 											</button>
 										</div>

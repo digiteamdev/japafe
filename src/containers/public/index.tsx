@@ -4,3 +4,4 @@ export * from './cash-advance';
 export * from './spj-cash-advance';
 export * from './time-sheet';
 export * from './absensi';
+export * from './spkl';

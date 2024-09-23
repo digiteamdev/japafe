@@ -10,8 +10,10 @@ import {
 	ModalDelete,
 	Pagination,
 	InputSelect,
+	Section,
+	InputDate,
 } from "../../../components";
-import { BookOpen, Edit, Eye, Trash2 } from "react-feather";
+import { BookOpen, Edit, Eye, Printer, Trash2 } from "react-feather";
 import { FormCreateQuotation } from "./formCreate";
 import { ViewQuotation } from "./view";
 import { FormEditQuotation } from "./formEdit";
@@ -40,6 +42,8 @@ export const Quotation = () => {
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "No Qoutation" },
@@ -51,14 +55,14 @@ export const Quotation = () => {
 	];
 
 	useEffect(() => {
-		let position = getPosition()
-		if(position === 'Director' || position === 'Manager'){
-			setIsDropdown(true)
+		let position = getPosition();
+		if (position === "Director" || position === "Manager") {
+			setIsDropdown(true);
 		}
-		if(divisiMarketing !== ""){
+		if (divisiMarketing !== "") {
 			getQuatation(page, perPage, divisiMarketing);
-		}else{
-			setDivisiMarketing(cekDivisiMarketing())
+		} else {
+			setDivisiMarketing(cekDivisiMarketing());
 		}
 		getCustomer();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,8 +168,8 @@ export const Quotation = () => {
 	};
 
 	const changeDivisi = (data: string) => {
-		setDivisiMarketing(data)
-	} 
+		setDivisiMarketing(data);
+	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
@@ -186,6 +190,45 @@ export const Quotation = () => {
 				showModal={showModal}
 				search={searchQuotation}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/quotationcsv?dateStar=${dateStart}&dateEnd=${dateFinish}&divisi=${divisiMarketing}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -228,9 +271,7 @@ export const Quotation = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
 									key={i}
 								>
-									<td className='p-1 w-[5%]'>
-										{res.quo_num}
-									</td>
+									<td className='p-1 w-[5%]'>{res.quo_num}</td>
 									<td className='p-1'>{res.Customer.name}</td>
 									<td className='whitespace-nowrap p-1'>
 										{`+62${res.CustomerContact.phone}`}

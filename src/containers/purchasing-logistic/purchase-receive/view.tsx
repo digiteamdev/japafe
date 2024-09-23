@@ -100,6 +100,9 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                         <th className="border border-black p-1 text-center">
                                             Qty Receive
                                         </th>
+                                        <th className="border border-black p-1 text-center">
+                                            File Receive
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,6 +126,11 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                             <td className="border border-black p-1 text-center">
                                                 { res.qty_receive }
                                             </td>
+											<td className='border border-black text-center'>
+												{ res.file_receive ? (
+													<a href={res.file_receive} target="_blank" className="text-blue-500 underline hover:text-blue-700 cursor-pointer">Show File</a>
+												) : '-' }
+											</td>
                                         </tr>
                                     ) ) }
                                 </tbody>

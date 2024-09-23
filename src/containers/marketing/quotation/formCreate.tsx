@@ -152,9 +152,13 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 				value: "Unit",
 			},
 			{
+				label: "Pcs",
+				value: "Pcs",
+			},
+			{
 				label: "Input",
 				value: "Input",
-			},
+			}
 		];
 		setDatasUnit(data);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,14 +367,6 @@ export const FormCreateQuotation = ({ content, showModal }: props) => {
 										label='Customer'
 										onChange={(input: any) => {
 											let dataContacts: any = [];
-											// if (input.target.value === "create") {
-											// 	formCreateCustomer(values, true);
-											// } else if (input.target.value === "Choose Customer") {
-											// 	setFieldValue("customerId", "");
-											// } else if (input.target.value === "no data") {
-											// 	setFieldValue("customerId", "");
-											// } else {
-											// }
 											input.contact.map((res: any) => {
 												dataContacts.push({
 													...res,
