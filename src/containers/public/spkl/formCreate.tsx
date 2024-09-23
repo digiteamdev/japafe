@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
 	Section,
 	Input,
-	InputSelect,
 	InputSelectSearch,
 	InputDate,
 	InputArea,
@@ -21,8 +20,7 @@ interface props {
 export const FormCreateSpkl = ({ content, showModal }: props) => {
 	const [employee, setEmployee] = useState<any>([]);
 	const [isLoading, setIsloading] = useState<boolean>(false);
-	const [data, setData] = useState<any>({
-		employeeId: "",
+	const [data] = useState<any>({
 		date: new Date(),
 		departement: "",
 		shift: "",
@@ -30,6 +28,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 			{
 				actual_start: new Date(),
 				actual_finish: new Date(),
+				employeeId: "",
 				job: "",
 				job_description: "",
 				part_name: "",
@@ -60,7 +59,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 	};
 
 	const addSpkl = async (payload: any) => {
-		setIsloading(true)
+		setIsloading(true);
 		try {
 			const response = await AddSpkl(payload);
 			if (response.data) {
@@ -88,7 +87,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 				theme: "colored",
 			});
 		}
-		setIsloading(false)
+		setIsloading(false);
 	};
 
 	return (
@@ -111,7 +110,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 				}) => {
 					return (
 						<Form>
-							<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+							<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 								<div>
 									<InputDate
 										id='date'
@@ -125,7 +124,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 										classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 									/>
 								</div>
-								<div>
+								{/* <div>
 									<InputSelectSearch
 										datas={employee}
 										id='employeeId'
@@ -154,7 +153,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 										withLabel={true}
 										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 									/>
-								</div>
+								</div> */}
 								<div>
 									<Input
 										id='shift'
@@ -178,72 +177,20 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 										return (
 											<div key={i}>
 												<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-													<div className='w-full'>
-														<InputArea
-															id={`time_sheet_spkl.${i}.job`}
-															name={`time_sheet_spkl.${i}.job`}
-															placeholder='Job No'
-															label='Job No'
-															type='text'
-															value={res.job}
-															onChange={(e:any) => {
-																setFieldValue(
-																	`time_sheet_spkl.${i}.job`,
-																	e.target.value
-																);
-															}}
-															disabled={false}
-															row={3}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='w-full'>
-														<InputArea
-															id={`time_sheet_spkl.${i}.part_name`}
-															name={`time_sheet_spkl.${i}.part_name`}
-															placeholder='Part Name'
-															label='Part Name'
-															type='text'
-															value={res.part_name}
-															onChange={(e:any) => {
-																setFieldValue(
-																	`time_sheet_spkl.${i}.part_name`,
-																	e.target.value
-																);
-															}}
-															disabled={false}
-															row={3}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-													<div className='w-full'>
-														<InputArea
-															id={`time_sheet_spkl.${i}.job_description`}
-															name={`time_sheet_spkl.${i}.job_description`}
-															placeholder='Description'
-															label='Description'
-															type='text'
-															value={res.job_description}
-															onChange={(e:any) => {
-																setFieldValue(
-																	`time_sheet_spkl.${i}.job_description`,
-																	e.target.value
-																);
-															}}
-															disabled={false}
-															row={3}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div>
-												</Section>
-												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2 border-b-[3px] border-b-red-500 pb-2'>
-													<div className='w-full'>
+													<InputSelectSearch
+														datas={employee}
+														id={`time_sheet_spkl.${i}.employeeId`}
+														name={`time_sheet_spkl.${i}.employeeId`}
+														placeholder='Employee'
+														label='Employee'
+														onChange={(e: any) => {
+															setFieldValue(`time_sheet_spkl.${i}.employeeId`, e.value.id);
+														}}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+													/>
+																										<div className='w-full'>
 														<InputDate
 															id={`time_sheet_spkl.${i}.start`}
 															label='Start'
@@ -296,6 +243,71 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 															classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 														/>
 													</div>
+													<div className='w-full'>
+														<InputArea
+															id={`time_sheet_spkl.${i}.job`}
+															name={`time_sheet_spkl.${i}.job`}
+															placeholder='Job No'
+															label='Job No'
+															type='text'
+															value={res.job}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.job`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															row={3}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<InputArea
+															id={`time_sheet_spkl.${i}.part_name`}
+															name={`time_sheet_spkl.${i}.part_name`}
+															placeholder='Part Name'
+															label='Part Name'
+															type='text'
+															value={res.part_name}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.part_name`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															row={3}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<InputArea
+															id={`time_sheet_spkl.${i}.job_description`}
+															name={`time_sheet_spkl.${i}.job_description`}
+															placeholder='Description'
+															label='Description'
+															type='text'
+															value={res.job_description}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`time_sheet_spkl.${i}.job_description`,
+																	e.target.value
+																);
+															}}
+															disabled={false}
+															row={3}
+															required={true}
+															withLabel={true}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+												</Section>
+												<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2 border-b-[3px] border-b-red-500 pb-2'>
 													<div className='flex w-full'>
 														{i + 1 === values.time_sheet_spkl.length ? (
 															<a
@@ -304,6 +316,7 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 																	arrayDetail.push({
 																		job: "",
 																		job_description: "",
+																		employeeId: "",
 																		part_name: "",
 																		actual_start: new Date(),
 																		actual_finish: new Date(),

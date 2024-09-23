@@ -28,7 +28,7 @@ export const Absensi = () => {
 			setTimeout(() => {
 				setCardId("");
 				setIsClock(true);
-			}, 3000);
+			}, 2000);
 		}
 	}, [isClock]);
 

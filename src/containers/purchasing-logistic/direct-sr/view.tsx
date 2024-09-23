@@ -114,6 +114,7 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 				listDetail.push({
 					id: res.id,
 					supId: res.supId,
+					desc: res.desc,
 					qtyAppr: parseInt(res.qtyAppr),
 					price: parseInt(res.price),
 					disc: parseInt(res.disc),
@@ -256,7 +257,10 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 																	label='Description'
 																	type='text'
 																	value={result.desc}
-																	disabled={true}
+																	disabled={false}
+																	onChange={(e: any) => {
+																		setFieldValue(`detailMr.${i}.desc`,e.target.value)
+																	}}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'

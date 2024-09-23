@@ -8,14 +8,12 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
-	InputDate,
-	Section,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
+import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateSpkl } from "./formCreate";
-// import { ViewMR } from "./view";
+import { ViewSpkl } from "./view";
 // import { FormEditMr } from "./formEdit";
-import { GetMr, SearchMr, DeleteMR, GetSpkl } from "../../../services";
+import { DeleteSpkl, GetSpkl } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken, getRole, getPosition } from "../../../configs/session";
 import moment from "moment";
@@ -36,6 +34,7 @@ export const Spkl = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
+		{ name: "No Spkl" },
 		{ name: "Employee" },
 		{ name: "Date" },
 		{ name: "Start" },
@@ -83,11 +82,11 @@ export const Spkl = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deleteSpkl = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
+			const response = await DeleteSpkl(id);
 			if (response.data) {
-				toast.success("Delete Material Request Success", {
+				toast.success("Delete Spkl Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -100,7 +99,7 @@ export const Spkl = () => {
 				getSpkl(1, 10, search);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Spkl Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -123,7 +122,13 @@ export const Spkl = () => {
 			/>
 			<Content
 				title='Spkl'
-				print={position === 'Manager' || position === 'Supervisor' || position === 'Director' ? true : false}
+				print={
+					position === "Manager" ||
+					position === "Supervisor" ||
+					position === "Director"
+						? true
+						: false
+				}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -170,12 +175,14 @@ export const Spkl = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
 									key={i}
 								>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.no_spkl}
+									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{res.employee?.employee_name}
 									</td>
@@ -183,9 +190,15 @@ export const Spkl = () => {
 										{moment(res.date).format("DD-MM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{moment(res.date).format("DD-MM-YYYY")}
+										{moment(res.time_sheet_spkl[0]?.actual_start).format(
+											"DD-MM-YYYY: HH:mm"
+										)}
 									</td>
-									<td className='whitespace-nowrap p-1 text-center'></td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.time_sheet_spkl[0]?.actual_finish).format(
+											"DD-MM-YYYY: HH:mm"
+										)}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -197,25 +210,30 @@ export const Spkl = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{ position === 'Manager' || position === 'Supervisor' || position === 'Director' }
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
+											{position === "Manager" && res.time_sheet.length == 0 ||
+												position === "Supervisor" && res.time_sheet.length == 0 ||
+												position === "Director" && res.time_sheet.length == 0 ? (
+													<>
+														<Button
+															className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true, "edit", false);
+															}}
+														>
+															<Edit color='white' />
+														</Button>
+														<Button
+															className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+															onClick={() => {
+																setDataSelected(res);
+																showModal(true, "delete", false);
+															}}
+														>
+															<Trash2 color='white' />
+														</Button>
+													</>
+												) : null }
 										</div>
 									</td>
 								</tr>
@@ -242,7 +260,7 @@ export const Spkl = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deleteSpkl}
 				/>
 			) : (
 				<Modal
@@ -252,13 +270,12 @@ export const Spkl = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-					) : // <ViewMR
-					// 	dataSelected={dataSelected}
-					// 	content={modalContent}
-					// 	showModal={showModal}
-					// />
-					modalContent === "add" ? (
+						<ViewSpkl
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
+					) : modalContent === "add" ? (
 						<FormCreateSpkl content={modalContent} showModal={showModal} />
 					) : (
 						<></>

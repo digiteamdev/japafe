@@ -89,6 +89,7 @@ export const ViewApprovalSR = () => {
 					listDetail.push({
 						id: res.id,
 						srappr: res.srappr,
+						desc: res.desc,
 						// supId: res.supId,
 						qtyAppr: parseInt(res.qtyAppr),
 					});
@@ -275,7 +276,10 @@ export const ViewApprovalSR = () => {
 																	type='text'
 																	row={2}
 																	value={result.desc}
-																	disabled={true}
+																	onChange={(e: any) => {
+																		setFieldValue(`SrDetail.${i}.desc`, e.target.value)
+																	}}
+																	disabled={false}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
