@@ -16,7 +16,7 @@ export const Dashboard = () => {
 		getCustomer();
 		getEmploye();
 		getSupplier();
-		getAbsensi();
+		// getAbsensi();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 

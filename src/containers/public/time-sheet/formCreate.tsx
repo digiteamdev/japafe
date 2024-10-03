@@ -6,10 +6,10 @@ import {
 	InputSelect,
 	InputTime,
 	InputArea,
+	InputSelectSearch,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { activitySchema } from "../../../schema/master-data/activity/activitySchema";
-import { AddTimeSheet, GetEmployeById } from "../../../services";
+import { AddTimeSheet, GetEmployeById, GetSpkl } from "../../../services";
 import { toast } from "react-toastify";
 import { getIdUser } from "@/src/configs/session";
 import moment from "moment";
@@ -24,6 +24,7 @@ interface data {
 	date: any;
 	userId: string;
 	type_timesheet: string;
+	spklId: any;
 	time_sheet_add: [
 		{
 			job: string;
@@ -38,15 +39,18 @@ interface data {
 
 export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isOvertime, setIsOvertime] = useState<boolean>(false);
 	const [typeSheet, setTypeSheet] = useState<string>("overtime");
 	const [userID, setUserId] = useState<string>("");
 	const [employe, setEmploye] = useState<string>("");
 	const [depart, setDepart] = useState<string>("");
 	const [minDate, setMinDate] = useState<any>(new Date());
+	const [listSpkl, setListSpkl] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		date: new Date(),
 		userId: "",
 		type_timesheet: "worktime",
+		spklId: null,
 		time_sheet_add: [
 			{
 				job: "",
@@ -62,6 +66,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 	useEffect(() => {
 		getEmploye();
 		dateInput();
+		getSpkl();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -77,6 +82,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 					date: new Date(),
 					userId: id ? id : "",
 					type_timesheet: "worktime",
+					spklId: null,
 					time_sheet_add: [
 						{
 							job: "",
@@ -90,6 +96,34 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 				});
 			}
 		} catch (error) {}
+	};
+
+	const getSpkl = async () => {
+		try {
+			const response = await GetSpkl(0, 0, "");
+			if (response) {
+				let spkl: any = [
+					{
+						label: "Work Time Sheet",
+						value: "worktime",
+					},
+				];
+				response.data.result.map((res: any) => {
+					spkl.push({
+						label: "Over time - " + res.no_spkl,
+						value: res,
+					});
+				});
+				setListSpkl(spkl);
+			}
+		} catch (error) {
+			setListSpkl([
+				{
+					label: "Work Time Sheet",
+					value: "worktime",
+				},
+			]);
+		}
 	};
 
 	const dateInput = () => {
@@ -182,18 +216,19 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 									id='date'
 									label='date'
 									// minDate={minDate}
-									minDate={new Date('2024-05-26')}
+									minDate={new Date("2024-05-26")}
 									maxDate={new Date()}
 									dateFormat='dd/MM/yyyy'
 									value={values.date}
 									onChange={(value: any) => setFieldValue("date", value)}
 									withLabel={true}
+									disabled={isOvertime}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>
-								<InputSelect
+								{/* <InputSelect
 									id='type_timesheet'
 									name='type_timesheet'
 									placeholder='Type'
@@ -209,7 +244,61 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 										Work Time Sheet
 									</option>
 									<option value='overtime'>Over Time Report</option>
-								</InputSelect>
+								</InputSelect> */}
+								<InputSelectSearch
+									datas={listSpkl}
+									id='type_timesheet'
+									name='type_timesheet'
+									placeholder='Type'
+									label='Type'
+									onChange={(e: any) => {
+										if (e.value === "worktime") {
+											setData({
+												date: values.date,
+												userId: values.userId,
+												type_timesheet: e.value,
+												spklId: null,
+												time_sheet_add: [{
+													job: "",
+													job_description: "",
+													part_name: "",
+													actual_start: new Date(),
+													actual_finish: new Date(),
+													total_hours: "",
+												}]
+											});
+											setIsOvertime(false);
+										} else {
+											let listDesc: any = [];
+											e.value.time_sheet_spkl?.map((res: any) => {
+												let start = moment(new Date(res.actual_start));
+												let finish = moment(new Date(res.actual_finish));
+												let calculate = Math.ceil(
+													moment.duration(finish.diff(start)).asHours()
+												);
+												listDesc.push({
+													job: res.job,
+													job_description: res.job_description,
+													part_name: res.part_name,
+													actual_start: new Date(res.actual_start),
+													actual_finish: new Date(res.actual_finish),
+													total_hours: `${calculate} jam`,
+												});
+											});
+											setData({
+												date: e.value.date,
+												userId: values.userId,
+												type_timesheet: "overtime",
+												spklId: e.value.id,
+												time_sheet_add: listDesc,
+											});
+											setIsOvertime(true);
+										}
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
 							</div>
 						</Section>
 						<FieldArray
@@ -228,7 +317,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														type='text'
 														value={res.job}
 														onChange={handleChange}
-														disabled={false}
+														disabled={isOvertime}
 														row={3}
 														required={true}
 														withLabel={true}
@@ -244,7 +333,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														type='text'
 														value={res.part_name}
 														onChange={handleChange}
-														disabled={false}
+														disabled={isOvertime}
 														row={3}
 														required={true}
 														withLabel={true}
@@ -260,7 +349,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														type='text'
 														value={res.job_description}
 														onChange={handleChange}
-														disabled={false}
+														disabled={isOvertime}
 														row={3}
 														required={true}
 														withLabel={true}
@@ -285,9 +374,16 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 															let calculate = Math.ceil(
 																moment.duration(finish.diff(start)).asHours()
 															);
-															setFieldValue(`time_sheet_add.${i}.actual_start`, value);
-															setFieldValue(`time_sheet_add.${i}.total_hours`, `${calculate} jam`);
+															setFieldValue(
+																`time_sheet_add.${i}.actual_start`,
+																value
+															);
+															setFieldValue(
+																`time_sheet_add.${i}.total_hours`,
+																`${calculate} jam`
+															);
 														}}
+														disabled={isOvertime}
 														withLabel={true}
 														className='z-50 bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
@@ -308,9 +404,16 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 															let calculate = Math.ceil(
 																moment.duration(finish.diff(start)).asHours()
 															);
-															setFieldValue(`time_sheet_add.${i}.actual_finish`, value);
-															setFieldValue(`time_sheet_add.${i}.total_hours`, `${calculate} jam`);
+															setFieldValue(
+																`time_sheet_add.${i}.actual_finish`,
+																value
+															);
+															setFieldValue(
+																`time_sheet_add.${i}.total_hours`,
+																`${calculate} jam`
+															);
 														}}
+														disabled={isOvertime}
 														withLabel={true}
 														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
 														classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
@@ -350,8 +453,8 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 														Add
 													</a>
 												) : null}
-												{i === 0 &&
-												values.time_sheet_add.length === 1 ? null : (
+												{(i === 0 && values.time_sheet_add.length === 1) ||
+												isOvertime ? null : (
 													<a
 														className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
 														onClick={() => arrayTime.remove(i)}

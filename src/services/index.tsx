@@ -10,3 +10,4 @@ export * from './purchasing-logistic';
 export * from './director';
 export * from './finance-accounting';
 export * from './public/absen';
+export * from './hrd';

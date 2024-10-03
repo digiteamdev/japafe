@@ -306,6 +306,7 @@ export const ViewApprovalSR = () => {
 																	</option>
 																	<option value='SO'>SO</option>
 																	<option value='DSO'>DSO</option>
+																	<option value='Internal'>Internal</option>
 																	<option value='Remove'>Remove</option>
 																</InputSelect>
 															</td>

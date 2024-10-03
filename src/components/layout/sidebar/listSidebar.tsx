@@ -47,13 +47,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "spkl",
-			// 	link: "/public/spkl",
-			// 	title: "Spkl",
+			{
+				id: "spkl",
+				link: "/public/spkl",
+				title: "Spkl",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "time-sheet",
 				link: "/public/time-sheet",
@@ -503,13 +503,20 @@ export const ListNav = [
 				title: "Time Sheet",
 				subMenu: null,
 			},
-			// {
-			// 	id: "sallary-overtime",
-			// 	link: "/hrd-ga/sallary-overtime",
-			// 	title: "Sallary & Overtime",
+			{
+				id: "holiday-setting",
+				link: "/hrd-ga/holiday-setting",
+				title: "Holiday Setting",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
+			{
+				id: "master-permit",
+				link: "/hrd-ga/master-permit",
+				title: "Master Permit",
+
+				subMenu: null,
+			},
 			// {
 			// 	id: "absent-list",
 			// 	link: "/hrd-ga/absent-list",

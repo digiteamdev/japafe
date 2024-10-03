@@ -116,6 +116,7 @@ export const ViewPurchaseSR = ({ dataSelected, content, showModal }: props) => {
 					id: res.id,
 					supId: res.supId,
 					taxpr: res.taxpr,
+					desc: res.desc,
 					currency: res.currency,
 					qtyAppr: parseInt(res.qtyAppr),
 					price: parseInt(res.price),

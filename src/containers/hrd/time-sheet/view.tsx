@@ -133,6 +133,79 @@ export const ViewTimeSheetHrd = ({ dataSelected, showModal }: props) => {
 							</tbody>
 						</table>
 					</Section>
+					{ dataSelected.spkl ? (
+						<>
+							<h1 className='font-bold text-xl mt-3 border-t-blue-500 border-2 border-x-0 border-b-0'>Spkl</h1>
+							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<div className='w-full'>
+									<table className='w-full'>
+										<tr>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+												No SPKL
+											</td>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+												{dataSelected.spkl?.no_spkl}
+											</td>
+										</tr>
+										<tr>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+												Date Overtime
+											</td>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+												{moment(dataSelected.spkl?.date).format("DD-MM-YYYY")}
+											</td>
+										</tr>
+										<tr>
+											<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+												Shift
+											</td>
+											<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+												{dataSelected.spkl?.shift}
+											</td>
+										</tr>
+									</table>
+								</div>
+							</Section>
+							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
+								<table>
+									<thead>
+										<tr>
+											<th className='border border-black text-center'>Job No</th>
+											<th className='border border-black text-center'>Partname</th>
+											<th className='border border-black text-center'>
+												Job description
+											</th>
+											<th className='border border-black text-center'>Start</th>
+											<th className='border border-black text-center'>Finish</th>
+										</tr>
+									</thead>
+									<tbody>
+										{dataSelected.spkl?.time_sheet_spkl.map((res: any, i: number) => {
+											return (
+												<tr key={i}>
+													<td className='border border-black text-center'>
+														{res.job}
+													</td>
+													<td className='border border-black text-center'>
+														{res.part_name}
+													</td>
+													<td className='border border-black text-center'>
+														{res.job_description}
+													</td>
+													<td className='border border-black text-center'>
+														{moment(res.actual_start).format("DD-MM-YYYY HH:mm")}
+													</td>
+													<td className='border border-black text-center'>
+														{moment(res.actual_finish).format("DD-MM-YYYY HH:mm")}
+													</td>
+												</tr>
+											);
+										})}
+									</tbody>
+								</table>
+							</Section>
+						</>
+					) : null }
 				</>
 			) : null}
 		</div>

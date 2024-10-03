@@ -305,7 +305,7 @@ export const Sr = () => {
 										{moment(res.date_sr).format("DD-MMMM-YYYY")}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.user.username}
+										{res.user?.employee?.employee_name}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
