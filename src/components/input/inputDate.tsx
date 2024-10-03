@@ -38,7 +38,7 @@ export const InputDate = ({
 	onChange,
 }: props) => {
 	return (
-		<div>
+		<div className='w-full'>
 			{withLabel ? (
 				<label
 					htmlFor={id}
@@ -54,6 +54,7 @@ export const InputDate = ({
 				<DatePicker
 					id={id}
 					name={name}
+					wrapperClassName='w-full'
 					selected={new Date(value)}
 					onChange={onChange}
 					className={`${className}`}
