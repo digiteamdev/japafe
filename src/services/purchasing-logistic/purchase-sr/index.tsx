@@ -7,3 +7,4 @@ export const GetAllSRPo = (type: string) => Axios.get(process.env.BASE_URL+`/srP
 export const ApprovalPrSr = (id: any, data: any) => Axios.put(process.env.BASE_URL+`/psrStatusMgr/${id}`, data);
 export const DeletePurchaseSR = (id: string) => Axios.delete(process.env.BASE_URL+`/srPR/${id}`);
 export const SearchPurchaseSR = (page: number, perpage: number, search: string, type: string) => Axios.get(process.env.BASE_URL+`/srPR?page=${page}&limit=${perpage}&search=${search}&type=${type}`);
+export const BackToApprovalSr = (data: any) => Axios.put(process.env.BASE_URL+'/backApprovalSr', data);

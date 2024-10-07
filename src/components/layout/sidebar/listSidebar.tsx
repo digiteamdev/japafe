@@ -61,6 +61,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			// {
+			// 	id: "permit",
+			// 	link: "/public/permit",
+			// 	title: "Permit",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "employe",
 				link: "/public/employe",
