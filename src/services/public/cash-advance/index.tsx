@@ -8,3 +8,4 @@ export const GetCashAdvance = (page: number, perpage: number) => Axios.get(proce
 export const SearchCashAdvance = (page: number, perpage: number, search: string) => Axios.get(process.env.BASE_URL+`/cashAdv?page=${page}&limit=${perpage}&search=${search}`);
 export const ApproveCashSpv = (id: string) => Axios.put(process.env.BASE_URL+`/cashAdvStatusSpv/${id}`);
 export const ApproveCashManager = (id: string) => Axios.put(process.env.BASE_URL+`/cashAdvStatusMgr/${id}`);
+export const DeleteCashAdvance = (id: string) => Axios.delete(process.env.BASE_URL+`/cashAdv/${id}`);

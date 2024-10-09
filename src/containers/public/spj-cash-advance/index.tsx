@@ -179,6 +179,7 @@ export const SpjCashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -186,7 +187,7 @@ export const SpjCashAdvance = () => {
 								>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.id_spj }</td>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-									<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
+									<td className='whitespace-nowrap px-6 py-4'>{ res.user.employee.employee_name }</td>
 									<td className='whitespace-nowrap px-6 py-4'>{ res.note }</td>
 									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
 										<div>

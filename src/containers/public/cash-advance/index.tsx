@@ -13,7 +13,11 @@ import { DollarSign, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateCashAdvance } from "./formCreate";
 import { ViewCashAdvance } from "./view";
 import { FormEditCashAdvance } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import {
+	GetCashAdvance,
+	SearchCashAdvance,
+	DeleteCashAdvance,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -93,11 +97,11 @@ export const CashAdvance = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deleteCa = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
+			const response = await DeleteCashAdvance(id);
 			if (response.data) {
-				toast.success("Delete Material Request Success", {
+				toast.success("Delete Cash advance Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -110,7 +114,7 @@ export const CashAdvance = () => {
 				getCashAdvance(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Cash advance Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -188,6 +192,7 @@ export const CashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -216,15 +221,28 @@ export const CashAdvance = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
+											{res.cashier?.length > 0 ? null : (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "edit", false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+													<Button
+														className='bg-red-500 hover:bg-red-700 text-white p-2 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "delete", false);
+														}}
+													>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											)}
 										</div>
 									</td>
 								</tr>
@@ -251,7 +269,7 @@ export const CashAdvance = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deleteCa}
 				/>
 			) : (
 				<Modal
@@ -272,7 +290,11 @@ export const CashAdvance = () => {
 							showModal={showModal}
 						/>
 					) : (
-						<FormEditCashAdvance content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						<FormEditCashAdvance
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+						/>
 					)}
 				</Modal>
 			)}

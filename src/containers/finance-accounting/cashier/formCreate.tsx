@@ -122,8 +122,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 						});
 					} else {
 						data.push({
-							label: res.id_cash_advance,
-							type: "ca",
+							label: res.id_spj ? res.id_spj : res.id_cash_advance,
+							type: res.id_spj ? "spj" : "ca",
 							value: res,
 						});
 					}
@@ -171,6 +171,14 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		let totalPaidCa: number = 0;
 		data.cdv_detail.map((res: any) => {
 			totalPaidCa = totalPaidCa + res.total;
+		});
+		return totalPaidCa;
+	};
+
+	const totalSpj = (data: any) => {
+		let totalPaidCa: number = 0;
+		data.cdv_detail.map((res: any) => {
+			totalPaidCa = totalPaidCa + res.balance;
 		});
 		return totalPaidCa;
 	};
@@ -292,7 +300,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		}
 		setIsLoading(false);
 	};
-	console.log(detailPurchase);
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			<Formik
@@ -528,7 +536,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												},
 											]);
 										} else if (e.type === "purchase") {
-											console.log(e);
 											setIsDirrect(false);
 											setDetailCdv([]);
 											setDetailPurchase(
@@ -638,7 +645,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
-										} else {
+										} else if (e.type === "ca") {
 											setIsDirrect(false);
 											setDetailCdv(e.value.cdv_detail);
 											setDetailPurchase([]);
@@ -664,6 +671,41 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											);
 											setFieldValue("idPurchase", null);
 											setFieldValue("total", totalCa(e.value));
+											setFieldValue("status_payment", e.value.status_payment);
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: 0,
+												},
+											]);
+										} else {
+											setIsDirrect(false);
+											setDetailCdv(e.value.cdv_detail);
+											setDetailPurchase([]);
+											setJobno(e.value.job_no);
+											setDisc(0);
+											setPpn(0);
+											setPph(0);
+											setCurrency("IDR");
+											setTotal(totalSpj(e.value));
+											setTotalAmount(totalSpj(e.value));
+											setFieldValue("account_name", "");
+											setFieldValue(
+												"pay_to",
+												e.value.user.employee.employee_name
+											);
+											setFieldValue("bank_name", "");
+											setFieldValue("rekening", "");
+											setFieldValue("note", e.value.note);
+											setFieldValue("kontrabonId", null);
+											setFieldValue(
+												"id_cash_advance",
+												e.type === "ca" || e.type === "spj" ? e.value.id : null
+											);
+											setFieldValue("idPurchase", null);
+											setFieldValue("total", totalSpj(e.value));
 											setFieldValue("status_payment", e.value.status_payment);
 											setFieldValue("journal_cashier", [
 												{
@@ -879,7 +921,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						{values.status_payment === "Transfer" ? (
-							<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2 pb-2 border-b border-b-gray-500 '>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2 pb-2 border-b border-b-gray-500'>
 								<div className='w-full'>
 									<Input
 										id='bank_name'
@@ -1058,45 +1100,112 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 						{detailCdv.map((res: any, i: number) => {
 							return (
 								<Section
-									className='grid md:grid-cols-3 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'
+									className={`grid ${res.actual ? 'md:grid-cols-5' : 'md:grid-cols-3'} sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2 border-b-2 border-blue-500 pb-2`}
 									key={i}
 								>
-									<Input
-										id='jobno'
-										name='jobno'
-										placeholder='Job No'
-										label='Job No'
-										type='text'
-										value={jobno}
-										required={true}
-										disabled={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-									<Input
-										id='total'
-										name='total'
-										placeholder='Total'
-										label='Total'
-										type='text'
-										value={rupiahFormat(res.total)}
-										required={true}
-										disabled={true}
-										withLabel={true}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
-									<InputArea
-										id='description'
-										name='description'
-										placeholder='description'
-										label='Description'
-										type='text'
-										required={true}
-										disabled={true}
-										withLabel={true}
-										value={res.description}
-										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-									/>
+									{res.actual ? (
+										<>
+											<Input
+												id='jobno'
+												name='jobno'
+												placeholder='Job No'
+												label='Job No'
+												type='text'
+												value={jobno}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<InputArea
+												id='description'
+												name='description'
+												placeholder='description'
+												label='Description'
+												type='text'
+												required={true}
+												disabled={true}
+												withLabel={true}
+												value={res.description}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<Input
+												id='total'
+												name='total'
+												placeholder='Total'
+												label='Total'
+												type='text'
+												value={rupiahFormat(res.total)}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<Input
+												id='total'
+												name='total'
+												placeholder='Total'
+												label='Actual'
+												type='text'
+												value={rupiahFormat(res.actual)}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<Input
+												id='total'
+												name='total'
+												placeholder='Total'
+												label='Balance'
+												type='text'
+												value={rupiahFormat(res.balance)}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</>
+									) : (
+										<>
+											<Input
+												id='jobno'
+												name='jobno'
+												placeholder='Job No'
+												label='Job No'
+												type='text'
+												value={jobno}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<Input
+												id='total'
+												name='total'
+												placeholder='Total'
+												label='Total'
+												type='text'
+												value={rupiahFormat(res.total)}
+												required={true}
+												disabled={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<InputArea
+												id='description'
+												name='description'
+												placeholder='description'
+												label='Description'
+												type='text'
+												required={true}
+												disabled={true}
+												withLabel={true}
+												value={res.description}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+										</>
+									)}
 								</Section>
 							);
 						})}
