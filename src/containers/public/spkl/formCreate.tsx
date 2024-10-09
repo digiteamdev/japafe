@@ -115,7 +115,6 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 									<InputDate
 										id='date'
 										label='Date'
-										minDate={new Date()}
 										dateFormat='dd/MM/yyyy'
 										value={values.date}
 										onChange={(value: any) => setFieldValue("date", value)}
@@ -194,7 +193,6 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 														<InputDate
 															id={`time_sheet_spkl.${i}.start`}
 															label='Start'
-															minDate={values.date}
 															maxDate={values.date}
 															showTimeSelect={true}
 															showTimeSelectOnly={false}
@@ -222,7 +220,6 @@ export const FormCreateSpkl = ({ content, showModal }: props) => {
 														<InputDate
 															id={`time_sheet_spkl.${i}.actual_finish`}
 															label='Finish'
-															minDate={values.date}
 															showTimeSelect={true}
 															showTimeSelectOnly={false}
 															value={res.actual_finish}
