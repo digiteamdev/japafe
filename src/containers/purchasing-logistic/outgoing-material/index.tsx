@@ -194,7 +194,7 @@ export const OutgoingMaterial = () => {
 									}) }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
 										return (
-											<p key={i}>{ res.employee?.employee_name }</p>
+											<p key={i}>{ res.employee?.employee_name ? res.employee?.employee_name : res.request }</p>
 										)
 									}) }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {

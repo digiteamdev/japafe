@@ -4,6 +4,7 @@ import {
 	Input,
 	InputSelect,
 	InputSelectSearch,
+	InputDate,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
@@ -39,7 +40,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 	const [listCoa, setListCoa] = useState<any>([]);
 	const [listEmploye, setListEmploye] = useState<any>([]);
 	const [listMaterial, setListMaterial] = useState<any>([]);
-	const [listWor,setListWor] = useState<any>([]);
+	const [listWor, setListWor] = useState<any>([]);
 	const [idPR, setIdPR] = useState<string>("");
 	const [data, setData] = useState<data>({
 		date_outgoing_material: new Date(),
@@ -62,6 +63,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 				worId: null,
 				materialStockId: null,
 				employeeId: null,
+				request: "",
 				qty_out: 0,
 				stock: 0,
 			},
@@ -168,7 +170,20 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 
 	const getEmploye = async () => {
 		try {
-			let list_employe: any = [];
+			let list_employe: any = [
+				{
+					label: "Guest",
+					value: {},
+				},
+				{
+					label: "Pkl",
+					value: {},
+				},
+				{
+					label: "Vendor",
+					value: {},
+				},
+			];
 			const response = await GetAllEmploye();
 			if (response) {
 				response.data.result.map((res: any) => {
@@ -207,6 +222,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 					worId: res.worId,
 					qty_out: parseInt(res.qty_out),
 					employeeId: res.employeeId,
+					request: res.request,
+					no_job: res.worId ? res?.worId?.job_no : "Internal",
 					materialStockId: res.materialStockId,
 				});
 			});
@@ -294,17 +311,16 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<Input
+								<InputDate
 									id='date_outgoing_material'
-									name='date_outgoing_material'
-									placeholder='Date Of Outgoing Material'
 									label='Date Of Outgoing Material'
-									type='text'
-									value={moment(new Date()).format("DD-MMMM-YYYY")}
-									disabled={true}
-									required={true}
+									value={values.date_outgoing_material}
+									onChange={(value: any) =>
+										setFieldValue("date_outgoing_material", value)
+									}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>
@@ -439,10 +455,10 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Job no'
 															label='Job no'
 															onChange={(e: any) => {
-																if(e.label === "Internal"){
+																if (e.label === "Internal") {
 																	setFieldValue(`pb.${i}.worId`, null);
-																}else{
-																	console.log(e)
+																} else {
+																	console.log(e);
 																	setFieldValue(`pb.${i}.worId`, e.value.id);
 																}
 															}}
@@ -483,6 +499,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															label='Request By'
 															onChange={(e: any) => {
 																setFieldValue(`pb.${i}.employeeId`, e.value.id);
+																setFieldValue(`pb.${i}.request`, e.label);
 															}}
 															required={true}
 															withLabel={true}

@@ -61,7 +61,7 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 											<td className="text-center border border-black">{res.materialStockId === null && res.mr === null ? `${res.poandso?.detailMr[0]?.Material_Master?.name} ${res.poandso?.detailMr[0]?.Material_Master?.spesifikasi ? res.poandso.detailMr[0].Material_Master?.spesifikasi : ''}` : res.mr !== null ? `${ res.mr?.detailMr[i]?.Material_Master?.name }` : `${res.Material_Master?.name} ${res.Material_Master?.spesifikasi ? res.Material_Master?.spesifikasi : ''}` }</td>
 											{/* <td className="text-center border border-black">{res.poandso.detailMr[0].mr.job_no }</td> */}
 											<td className="text-center border border-black">{res.qty_out }</td>
-											<td className="text-center border border-black">{res.poandsoId === null && res.mr === null ? res.employee.employee_name : res.mr ? res.mr.user.employee.employee_name : res.poandso.detailMr[0].mr.user.employee.employee_name }</td>
+											<td className="text-center border border-black">{res.request }</td>
 										</tr>
 									)
 								}) }
