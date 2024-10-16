@@ -234,14 +234,6 @@ export const FormEditTimeSheet = ({
 									>
 										Work Time Sheet
 									</option>
-									<option
-										value='overtime'
-										selected={
-											values.type_timesheet === "overtime" ? true : false
-										}
-									>
-										Over Time Report
-									</option>
 								</InputSelect>
 							</div>
 						</Section>
