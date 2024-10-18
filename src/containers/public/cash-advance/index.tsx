@@ -37,6 +37,7 @@ export const CashAdvance = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
+		{ name: "ID Cash Advance" },
 		{ name: "Date" },
 		{ name: "Job No" },
 		{ name: "Request By" },
@@ -142,6 +143,24 @@ export const CashAdvance = () => {
 				title='Cash Advance'
 				total={countData}
 				icon={<DollarSign className='w-[36px] h-[36px]' />}
+				informasi={
+					<div className='right-2 mt-3'>
+						<div className='grid grid-cols-3 gap-2'>
+							<div className='flex'>
+								<div className='bg-white border border-black w-4 h-4 mr-2'></div>
+								<div className='text-sm'>Request</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-yellow-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Paid cashier</div>
+							</div>
+							<div className='flex'>
+								<div className='bg-green-500 border border-black w-4 h-4 mt-1 mr-2'></div>
+								<div className='text-sm'>Finish</div>
+							</div>
+						</div>
+					</div>
+				}
 			/>
 			<Content
 				title='Cash Advance'
@@ -192,28 +211,30 @@ export const CashAdvance = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className={`whitespace-nowrap p-2 text-center ${res.id_spj ? 'bg-green-500' : res.cashier?.length > 0 ? 'bg-yellow-500' : `bg-white` }`}>
+										{res.id_cash_advance}
+									</td>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{moment(res.date_cash_advance).format("DD-MMMM-YYYY")}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{res.wor ? res.wor.job_no : "Internal"}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{res.user.employee.employee_name}
 									</td>
-									<td className='whitespace-nowrap px-6 py-4 text-center'>
+									<td className='whitespace-nowrap p-2 text-center'>
 										{total(res.cdv_detail)}
 									</td>
-									<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
+									<td className='whitespace-nowrap text-center p-2 w-[10%]'>
 										<div>
 											<Button
-												className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
 													setDataSelected(res);
 													showModal(true, "view", false);
@@ -224,7 +245,7 @@ export const CashAdvance = () => {
 											{res.cashier?.length > 0 ? null : (
 												<>
 													<Button
-														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white py-2 px-2 rounded-md'
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 														onClick={() => {
 															setDataSelected(res);
 															showModal(true, "edit", false);
@@ -233,7 +254,7 @@ export const CashAdvance = () => {
 														<Edit color='white' />
 													</Button>
 													<Button
-														className='bg-red-500 hover:bg-red-700 text-white p-2 rounded-md'
+														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
 														onClick={() => {
 															setDataSelected(res);
 															showModal(true, "delete", false);
