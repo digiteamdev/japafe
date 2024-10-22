@@ -1,25 +1,24 @@
-name: Node.js CI
+name: Deploy Frontend
 
 on:
   push:
-    branches: [ "main" ]
-
+    branches:
+      - staging
+    #   branch yang digunakan di server
 
 jobs:
-  build:
-
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+  deploy:
+    runs-on: ubuntu-latest
+    
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm i
+        host: 103.186.0.158
+        username: root
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          bash /var/www/deploy_frontend.sh
