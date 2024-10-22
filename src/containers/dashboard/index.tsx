@@ -102,7 +102,7 @@ export const Dashboard = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20'>
 			<div className='flex items-center mt-5 gap-5 lg:flex-row flex-col'>
-				{DataOverview.map((value, i) => {
+				{/* {DataOverview.map((value, i) => {
 					return (
 						<div
 							className='flex border rounded-xl shadow-md py-4 px-5 w-full justify-between'
@@ -124,7 +124,7 @@ export const Dashboard = () => {
 							</div>
 						</div>
 					);
-				})}
+				})} */}
 			</div>
 			{/* <div className='flex items-center mt-5 gap-5 lg:flex-row flex-col'>
 				<table>
