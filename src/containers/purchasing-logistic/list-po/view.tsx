@@ -18,12 +18,12 @@ interface props {
 
 export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
   const [dataPdf, setDataPdf] = useState<ResponsePurchaseOrder | null>();
-  console.log(dataSelected);
 
   useEffect(() => {
     fetchDataPdf();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const Total = (detail: any) => {
     let jumlahTotal: any = 0;
     detail.map((res: any) => {
@@ -71,12 +71,6 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
               <PDFDownloadLink
                 document={<DocumentPDFListOrder data={dataPdf} />}
                 fileName={`${dataPdf?.Number}-${dataPdf?.you_ref}`}
-                // onClick={() =>
-                //   window.open(
-                //     process.env.BASE_URL + `/pdfPo/${dataSelected.id}`,
-                //     "_blank"
-                //   )
-                // }
               >
                 <button className="justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3">
                   <div className="flex px-1 py-1">

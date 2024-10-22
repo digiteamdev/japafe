@@ -76,7 +76,6 @@ const Header = () => (
       <Image
         style={{ width: "100%", height: "46px" }}
         src="/images/banner.jpg"
-        alt="banner"
       />
     </View>
     <View style={styles.subheader}>
@@ -405,57 +404,6 @@ export const DocumentPDFListOrder = (_props: Props) => {
                 </View>
               </View>
 
-              {/* <View style={[styles.table]}>
-                <View
-                  style={{
-                    width: "4%",
-                    padding: 2,
-                  }}
-                >
-                  <Text style={{ opacity: 0 }}>1</Text>
-                </View>
-                <View
-                  style={{
-                    width: "60%",
-                    padding: 2,
-                    borderRight: "1px solid black",
-                    borderLeft: "1px solid black",
-                  }}
-                ></View>
-
-                <View
-                  style={{
-                    width: "8%",
-                    padding: 2,
-                    borderRight: "1px solid black",
-                  }}
-                ></View>
-                <View
-                  style={{
-                    width: "8%",
-                    padding: 2,
-                    borderRight: "1px solid black",
-                  }}
-                ></View>
-
-                <View
-                  style={{
-                    width: "20%",
-                    textAlign: "center",
-                    padding: 2,
-                    borderRight: "1px solid black",
-                  }}
-                ></View>
-
-                <View
-                  style={{
-                    width: "20%",
-                    textAlign: "center",
-                    padding: 2,
-                  }}
-                ></View>
-              </View> */}
-
               {data?.note_spesifikation && (
                 <View style={[styles.table]}>
                   <View
@@ -510,7 +458,7 @@ export const DocumentPDFListOrder = (_props: Props) => {
                 </View>
               )}
 
-              {pageData.map((item, index) => (
+              {pageData?.map((item, index) => (
                 <View key={index} style={[styles.table]}>
                   <View
                     style={{

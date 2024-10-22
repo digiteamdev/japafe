@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { ResponseGetDeliveryOrder } from "@/src/services/document-pdf";
 import {
   Page,
@@ -72,7 +71,6 @@ const Header = () => (
       <Image
         style={{ width: "100%", height: "46px" }}
         src="/images/banner.jpg"
-        alt="banner"
       />
     </View>
     <View style={styles.subheader}>
@@ -256,7 +254,6 @@ export const DocumentPDF = (_props: Props) => {
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text>:</Text>
                     </View>
-
                     <View>
                       <Text style={{ marginBottom: 4 }}>
                         {data?.number ?? "-"}
@@ -447,7 +444,7 @@ export const DocumentPDF = (_props: Props) => {
                 </View>
               )}
 
-              {pageData.map((value, index) => (
+              {pageData?.map((value, index) => (
                 <View
                   key={index}
                   style={[
