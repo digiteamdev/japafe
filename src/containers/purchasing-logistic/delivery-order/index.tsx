@@ -144,7 +144,7 @@ export const DeliveryOrder = () => {
 			/>
 			<Content
 				title='Delivery Order'
-				print={departement === "Purchasing & Logistic" ? true : false}
+				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
