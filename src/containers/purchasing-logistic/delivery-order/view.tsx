@@ -133,9 +133,8 @@ export const ViewDo = ({ dataSelected, content, showModal }: props) => {
               (subDepartement === "security" && dataSelected.checkedDo === null)
                 ? buttonApprove(dataSelected.id)
                 : null}
-              {(departement === "Engineering" &&
-                dataSelected.approveDo === null) ||
-              (departement === "ENGINEERING" && dataSelected.approveDo === null)
+              {departement.includes("ENGINEERING") &&
+                dataSelected.approveDo === null
                 ? buttonApprove(dataSelected.id)
                 : null}
             </div>
