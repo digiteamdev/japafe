@@ -531,8 +531,16 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									label='PPH'
 									type='text'
 									required={true}
-									disabled={true}
+									disabled={false}
 									withLabel={true}
+									onChange={(e: any) => {
+										let pph: any = e.target.value.replaceAll(".", "")
+										setPph(pph)
+										if(values.tax_invoice){
+											setTotalAmount((billPaid + ppn) - pph - disc);
+											setFieldValue("grandtotal", (billPaid + ppn) - pph - disc);
+										}
+									}}
 									value={rupiahFormat(pph)}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
@@ -576,14 +584,13 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 											label='Pay Tax'
 											onChange={(e: any) => {
 												if (e.target.value === "yes") {
-													console.log(e.target.value, tax);
 													setFieldValue("tax_invoice", true);
 													if (tax === "ppn") {
-														setTotalAmount(billPaid + ppn - disc);
-														setFieldValue("grandtotal", billPaid + ppn - disc);
+														setTotalAmount((billPaid + ppn) - pph - disc);
+														setFieldValue("grandtotal", (billPaid + ppn) - pph - disc);
 													} else {
-														setTotalAmount(billPaid - disc);
-														setFieldValue("grandtotal", billPaid - disc);
+														setTotalAmount((billPaid - pph) - disc);
+														setFieldValue("grandtotal", (billPaid - pph) - disc);
 													}
 												} else {
 													setTotalAmount(billPaid - disc);

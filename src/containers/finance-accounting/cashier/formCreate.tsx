@@ -796,12 +796,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											ppns = parseInt(e.target.value.replace(/\./g, ""));
 											setPpn(ppns);
-											setTotalAmount(total + ppns + pph - disc);
-											setFieldValue("total", total + ppns + pph - disc);
+											setTotalAmount(total + ppns - pph - disc);
+											setFieldValue("total", total + ppns - pph - disc);
 										} else {
 											setPpn(0);
-											setTotalAmount(total + 0 + pph - disc);
-											setFieldValue("total", total + 0 + pph - disc);
+											setTotalAmount(total + 0 - pph - disc);
+											setFieldValue("total", total + 0 - pph - disc);
 										}
 									}}
 									required={true}
@@ -824,12 +824,12 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										if (e.target.value !== "") {
 											pphs = parseInt(e.target.value.replace(/\./g, ""));
 											setPph(pphs);
-											setTotalAmount(total + ppn + pphs - disc);
-											setFieldValue("total", total + ppn + pphs - disc);
+											setTotalAmount(total + ppn - pphs - disc);
+											setFieldValue("total", total + ppn - pphs - disc);
 										} else {
 											setPph(0);
-											setTotalAmount(total + ppn + 0 - disc);
-											setFieldValue("total", total + ppn + 0 - disc);
+											setTotalAmount(total + ppn - 0 - disc);
+											setFieldValue("total", total + ppn - 0 - disc);
 										}
 									}}
 									required={true}
