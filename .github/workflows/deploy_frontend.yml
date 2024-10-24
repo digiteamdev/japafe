@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main 
-    #   branch yang digunakan di server ini adalah main
 
 jobs:
   deploy:
