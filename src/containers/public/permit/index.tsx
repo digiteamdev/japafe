@@ -10,16 +10,16 @@ import {
 	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateSpkl } from "./formCreate";
+import { FormCreatePermitEmployee } from "./formCreate";
 // import { ViewSpkl } from "./view";
 // import { FormEditSpkl } from "./formEdit";
-import { DeleteSpkl, GetSpkl } from "../../../services";
+import { GetPermitEmployee, DeletePermit } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken, getRole, getPosition } from "../../../configs/session";
+import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
-export const Spkl = () => {
+export const PermitPublic = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -34,20 +34,14 @@ export const Spkl = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "No Spkl" },
-		{ name: "Employee" },
 		{ name: "Date" },
-		{ name: "Start" },
-		{ name: "Finish" },
+		{ name: "Employee" },
+		{ name: "Description Permit" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		let position: any = getPosition();
-		getSpkl(page, perPage, search);
-		if (position) {
-			setPosition(position);
-		}
+		getPermit(page, perPage, search);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -58,14 +52,14 @@ export const Spkl = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getSpkl(page, perPage, search);
+			getPermit(page, perPage, search);
 		}
 	};
 
-	const getSpkl = async (page: number, perpage: number, search: string) => {
+	const getPermit = async (page: number, perpage: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await GetSpkl(page, perpage, search);
+			const response = await GetPermitEmployee(page, perpage, search);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -82,11 +76,11 @@ export const Spkl = () => {
 		setIsLoading(false);
 	};
 
-	const deleteSpkl = async (id: string) => {
+	const deletePermit = async (id: string) => {
 		try {
-			const response = await DeleteSpkl(id);
+			const response = await DeletePermit(id);
 			if (response.data) {
-				toast.success("Delete Spkl Success", {
+				toast.success("Delete Permit Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -96,10 +90,10 @@ export const Spkl = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getSpkl(1, 10, search);
+				getPermit(1, 10, search);
 			}
 		} catch (error) {
-			toast.error("Delete Spkl Failed", {
+			toast.error("Delete Permit Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -113,67 +107,16 @@ export const Spkl = () => {
 		setIsModal(false);
 	};
 
-	const showData = (data: any, type: string) => {
-		let list: string = "";
-		if (type === "employe") {
-			data.map((res: any) => {
-				if (list === "") {
-					list = res.employee.employee_name;
-				} else {
-					list = list + ` \r\n ` + res.employee.employee_name;
-				}
-			});
-		} else if (type === "start") {
-			data.map((res: any) => {
-				if (list === "") {
-					list = moment(res.actual_start).format("DD-MM-YYYY: HH:mm");
-				} else {
-					list =
-						list +
-						` \r\n ` +
-						moment(res.actual_start).format("DD-MM-YYYY: HH:mm");
-				}
-			});
-		} else if (type === "finish") {
-			data.map((res: any) => {
-				if (list === "") {
-					list = moment(res.actual_finish).format("DD-MM-YYYY: HH:mm");
-				} else {
-					list =
-						list +
-						` \r\n ` +
-						moment(res.actual_finish).format("DD-MM-YYYY: HH:mm");
-				}
-			});
-		} else {
-			data.map((res: any) => {
-				if (list === "") {
-					list = moment(res.actual_start).format("DD-MM-YYYY");
-				} else {
-					list =
-						list + ` \r\n ` + moment(res.actual_start).format("DD-MM-YYYY");
-				}
-			});
-		}
-		return list;
-	};
-
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='Spkl'
+				title='Permit'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Spkl'
-				print={
-					position === "Manager" ||
-					position === "Supervisor" ||
-					position === "Director"
-						? true
-						: false
-				}
+				title='Permit'
+				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
 				timeSheet={false}
@@ -181,7 +124,7 @@ export const Spkl = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={getSpkl}
+				search={getPermit}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -220,26 +163,15 @@ export const Spkl = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>
-										{res.no_spkl}
-									</td>
-									<td className='whitespace-pre-line p-1'>
-										{showData(res.time_sheet_spkl, "employe")}
-									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{showData(res.time_sheet_spkl, "date")}
-									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{showData(res.time_sheet_spkl, "start")}
-									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{showData(res.time_sheet_spkl, "finish")}
-									</td>
+									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.date).format('DD-MMMM-YYYY') }</td>
+									<td className='whitespace-pre-line p-1'></td>
+									<td className='whitespace-pre-line p-1 text-center'>{ res.desc }</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
@@ -251,32 +183,24 @@ export const Spkl = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{(position === "Manager" && res.time_sheet.length == 0) ||
-											(position === "Supervisor" &&
-												res.time_sheet.length == 0) ||
-											(position === "Director" &&
-												res.time_sheet.length == 0) ? (
-												<>
-													<Button
-														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true, "edit", false);
-														}}
-													>
-														<Edit color='white' />
-													</Button>
-													<Button
-														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-														onClick={() => {
-															setDataSelected(res);
-															showModal(true, "delete", false);
-														}}
-													>
-														<Trash2 color='white' />
-													</Button>
-												</>
-											) : null}
+											<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "edit", false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											<Button
+												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "delete", false);
+												}}
+											>
+												<Trash2 color='white' />
+											</Button>
 										</div>
 									</td>
 								</tr>
@@ -292,7 +216,7 @@ export const Spkl = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getSpkl(value, perPage, search);
+							getPermit(value, perPage, search);
 						}}
 					/>
 				) : null}
@@ -303,27 +227,26 @@ export const Spkl = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteSpkl}
+					onDelete={deletePermit}
 				/>
 			) : (
 				<Modal
-					title='Spkl'
+					title='Permit'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
 						<></>
-                        // <ViewSpkl
-						// 	dataSelected={dataSelected}
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
-					) : modalContent === "add" ? (
-						<></>
-                        // <FormCreateSpkl content={modalContent} showModal={showModal} />
+					) : // <ViewSpkl
+					// 	dataSelected={dataSelected}
+					// 	content={modalContent}
+					// 	showModal={showModal}
+					// />
+					modalContent === "add" ? (
+						<FormCreatePermitEmployee content={modalContent} showModal={showModal} />
 					) : (
-                        <></>
+						<></>
 						// <FormEditSpkl
 						// 	content={modalContent}
 						// 	showModal={showModal}

@@ -519,7 +519,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									label='Subject'
 									type='text'
 									value={deskription}
-									disabled={true}
+									disabled={false}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'

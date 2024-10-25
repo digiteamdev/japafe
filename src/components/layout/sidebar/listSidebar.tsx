@@ -48,9 +48,9 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
-				id: "spkl",
+				id: "SPKL",
 				link: "/public/spkl",
-				title: "Spkl",
+				title: "SPKL",
 
 				subMenu: null,
 			},
@@ -504,6 +504,13 @@ export const ListNav = [
 				title: "Departement",
 				subMenu: null,
 			},
+			// {
+			// 	id: "Permit",
+			// 	link: "/hrd-ga/permit",
+			// 	title: "Permit",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "time-sheet",
 				link: "/hrd-ga/time-sheet",
@@ -656,187 +663,187 @@ export const ListNav = [
 			// },
 		],
 	},
-	{
-		id: "report",
-		link: "/report",
-		title: "Report",
-		role: "ADMINISTRATOR",
-		subMenu: [
-			{
-				id: "material-name-info",
-				link: "/report/material-name-info",
-				title: "Material Name Info",
+	// {
+	// 	id: "report",
+	// 	link: "/report",
+	// 	title: "Report",
+	// 	role: "ADMINISTRATOR",
+	// 	subMenu: [
+	// 		{
+	// 			id: "material-name-info",
+	// 			link: "/report/material-name-info",
+	// 			title: "Material Name Info",
 
-				subMenu: null,
-			},
-			{
-				id: "remove-mr-sr",
-				link: "/report/remove-mr-sr",
-				title: "Remove MR/SR",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "remove-mr-sr",
+	// 			link: "/report/remove-mr-sr",
+	// 			title: "Remove MR/SR",
 
-				subMenu: null,
-			},
-			{
-				id: "material-stok",
-				link: "/report/material-stok",
-				title: "Material Stok",
-				subMenu: null,
-			},
-			{
-				id: "payment-schedule",
-				link: "/report/payment-schedule",
-				title: "Payment Schedule",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "material-stok",
+	// 			link: "/report/material-stok",
+	// 			title: "Material Stok",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "payment-schedule",
+	// 			link: "/report/payment-schedule",
+	// 			title: "Payment Schedule",
 
-				subMenu: null,
-			},
-			{
-				id: "purchasing-list",
-				link: "/report/purchasing-list",
-				title: "Purchasing List",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "purchasing-list",
+	// 			link: "/report/purchasing-list",
+	// 			title: "Purchasing List",
 
-				subMenu: null,
-			},
-			{
-				id: "outgoing-list",
-				link: "/report/outgoing-list",
-				title: "Outgoing List",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "outgoing-list",
+	// 			link: "/report/outgoing-list",
+	// 			title: "Outgoing List",
 
-				subMenu: null,
-			},
-			{
-				id: "mr-sr-by-job",
-				link: "/report/mr-sr-by-job",
-				title: "MR/SR By Job",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "mr-sr-by-job",
+	// 			link: "/report/mr-sr-by-job",
+	// 			title: "MR/SR By Job",
 
-				subMenu: null,
-			},
-			{
-				id: "incoming-purchase-report",
-				link: "/report/incoming-purchase-report",
-				title: "Incoming Purchase Report",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "incoming-purchase-report",
+	// 			link: "/report/incoming-purchase-report",
+	// 			title: "Incoming Purchase Report",
 
-				subMenu: null,
-			},
-			{
-				id: "outgoing-material-report",
-				link: "/report/outgoing-material-report",
-				title: "Outgoing Material Report",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "outgoing-material-report",
+	// 			link: "/report/outgoing-material-report",
+	// 			title: "Outgoing Material Report",
 
-				subMenu: null,
-			},
-		],
-	},
-	{
-		id: "utility",
-		link: "/utility",
-		title: "Utility",
-		role: "ADMINISTRATOR,Utility/ty",
-		subMenu: [
-			{
-				id: "invoice",
-				link: "/utility/invoice",
-				title: "Invoice",
+	// 			subMenu: null,
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	id: "utility",
+	// 	link: "/utility",
+	// 	title: "Utility",
+	// 	role: "ADMINISTRATOR,Utility/ty",
+	// 	subMenu: [
+	// 		{
+	// 			id: "invoice",
+	// 			link: "/utility/invoice",
+	// 			title: "Invoice",
 
-				subMenu: null,
-			},
-			{
-				id: "spj-purchase",
-				link: "/utility/spj-purchase",
-				title: "SPJ Purchase",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "spj-purchase",
+	// 			link: "/utility/spj-purchase",
+	// 			title: "SPJ Purchase",
 
-				subMenu: null,
-			},
-			{
-				id: "absen-dl-setting",
-				link: "/utility/absen-dl-setting",
-				title: "Absen Dl Setting",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "absen-dl-setting",
+	// 			link: "/utility/absen-dl-setting",
+	// 			title: "Absen Dl Setting",
 
-				subMenu: null,
-			},
-			{
-				id: "register-new-user",
-				link: "/utility/register-new-user",
-				title: "Register New User",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "register-new-user",
+	// 			link: "/utility/register-new-user",
+	// 			title: "Register New User",
 
-				subMenu: null,
-			},
-			{
-				id: "holiday-setting",
-				link: "/utility/holiday-setting",
-				title: "Holiday Setting",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "holiday-setting",
+	// 			link: "/utility/holiday-setting",
+	// 			title: "Holiday Setting",
 
-				subMenu: null,
-			},
-			{
-				id: "spd",
-				link: "/utility/spd",
-				title: "SPD",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "spd",
+	// 			link: "/utility/spd",
+	// 			title: "SPD",
 
-				subMenu: null,
-			},
-			{
-				id: "inventory-check-balance",
-				link: "/utility/inventory-check-balance",
-				title: "Inventory Check Balance",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "inventory-check-balance",
+	// 			link: "/utility/inventory-check-balance",
+	// 			title: "Inventory Check Balance",
 
-				subMenu: null,
-			},
-			{
-				id: "incoming-statement",
-				link: "/utility/incoming-statement",
-				title: "Incoming Statement",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "incoming-statement",
+	// 			link: "/utility/incoming-statement",
+	// 			title: "Incoming Statement",
 
-				subMenu: null,
-			},
-			{
-				id: "personal-loan",
-				link: "/utility/personal-loan",
-				title: "Personal Loan",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "personal-loan",
+	// 			link: "/utility/personal-loan",
+	// 			title: "Personal Loan",
 
-				subMenu: null,
-			},
-			{
-				id: "payrol",
-				link: "/utility/payrol",
-				title: "Payrol",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "payrol",
+	// 			link: "/utility/payrol",
+	// 			title: "Payrol",
 
-				subMenu: null,
-			},
-			{
-				id: "chart-of-accounts",
-				link: "/utility/chart-of-accounts",
-				title: "Charts Of Accounts",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "chart-of-accounts",
+	// 			link: "/utility/chart-of-accounts",
+	// 			title: "Charts Of Accounts",
 
-				subMenu: null,
-			},
-			{
-				id: "beginning-balance",
-				link: "/utility/beginning-balance",
-				title: "Beginning Balance",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "beginning-balance",
+	// 			link: "/utility/beginning-balance",
+	// 			title: "Beginning Balance",
 
-				subMenu: null,
-			},
-			{
-				id: "cash-advance",
-				link: "/utility/cash-advance",
-				title: "Cash Advance",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "cash-advance",
+	// 			link: "/utility/cash-advance",
+	// 			title: "Cash Advance",
 
-				subMenu: null,
-			},
-			{
-				id: "approval-cash-advance",
-				link: "/utility/approval-cash-advance",
-				title: "Approval Cash Advance",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "approval-cash-advance",
+	// 			link: "/utility/approval-cash-advance",
+	// 			title: "Approval Cash Advance",
 
-				subMenu: null,
-			},
-			{
-				id: "spj-cash-advance",
-				link: "/utility/spj-cash-advance",
-				title: "SPJ Cash Advance",
+	// 			subMenu: null,
+	// 		},
+	// 		{
+	// 			id: "spj-cash-advance",
+	// 			link: "/utility/spj-cash-advance",
+	// 			title: "SPJ Cash Advance",
 
-				subMenu: null,
-			},
-		],
-	},
+	// 			subMenu: null,
+	// 		},
+	// 	],
+	// },
 ];

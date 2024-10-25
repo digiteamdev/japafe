@@ -12,7 +12,7 @@ import {
 import { Airplay, Eye, Edit, Trash2 } from "react-feather";
 import { FormCreatePermit } from "./formCreate";
 import { FormEditPermit } from "./formEdit";
-// import { ViewTimeSheetHrd } from "./view";
+import { ViewMasterPermit } from "./view";
 import { GetPermit, DeletePermit } from "../../../services";
 import { changeDivisi } from "../../../utils/index";
 import { toast } from "react-toastify";
@@ -243,8 +243,8 @@ export const MasterPermit = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-					) : // <ViewTimeSheetHrd dataSelected={dataSelected}  showModal={showModal}/>
+						<ViewMasterPermit dataSelected={dataSelected}  showModal={showModal}/>
+					) : 
 					modalContent === "add" ? (
 						<FormCreatePermit content={modalContent} showModal={showModal} />
 					) : (
