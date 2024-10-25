@@ -32,6 +32,7 @@ interface data {
 	date_of_po: Date | null;
 	date_delivery: Date | null;
 	vat: string;
+	subject: string;
 	grand_tot: string;
 	discount: number;
 	total: string;
@@ -76,6 +77,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		noted: "",
 		vat: "",
 		grand_tot: "",
+		subject: "",
 		discount: 0,
 		total: "",
 		date_of_po: new Date(),
@@ -261,20 +263,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 				total_price: parseInt(res.total_price),
 			});
 		});
-		// const dataBody = {
-		// 	id_po: payload.id_po,
-		// 	po_num_auto: idAutoNum,
-		// 	quo_id: quoId,
-		// 	tax: payload.tax,
-		// 	noted: payload.noted,
-		// 	date_of_po: payload.date_of_po,
-		// 	date_delivery: payload.date_delivery,
-		// 	Deskription_CusPo: desc,
-		// 	term_of_pay: term,
-		// 	vat: parseInt(vattotal),
-		// 	grand_tot: parseInt(htmlGrandTotal.value),
-		// 	total: parseInt(htmlTotals.value),
-		// };
 		const form = new FormData();
 
 		form.append("id_po", payload.id_po);
@@ -282,6 +270,7 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 		form.append("job_no", payload.job_no);
 		form.append("quo_id", quoId);
 		form.append("tax", payload.tax);
+		form.append("subject", payload.subject);		
 		form.append("noted", payload.noted);
 		form.append("discount", payload.discount);
 		form.append("date_of_po", payload.date_of_po);
@@ -402,12 +391,12 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									onChange={(e: any) => {
 										let total: number = 0;
 										setCustomerName(e.value.Customer.name);
-										setDeskription(e.value.subject);
 										// setEquipment(e.value.eqandpart[0].equipment.nama);
 										setListPriceQuotation(e.value.price_quotation);
 										setQuoId(e.value.id);
 										setTaxPPH(e.value.Customer.pph);
 										setTaxPPN(e.value.Customer.ppn);
+										setFieldValue("subject", e.value.subject);
 										setFieldValue("price_po", e.value.price_quotation);
 										setFieldValue(
 											"Deskription_CusPo",
@@ -518,7 +507,8 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 									placeholder='Subject'
 									label='Subject'
 									type='text'
-									value={deskription}
+									value={values.subject}
+									onChange={handleChange}
 									disabled={false}
 									required={true}
 									withLabel={true}
@@ -663,47 +653,6 @@ export const FormCreatePo = ({ content, dataCustomer, showModal }: props) => {
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														/>
 													</div>
-													{/* <div className='w-full'>
-														<Input
-															id={`price_po.${i}.discount`}
-															name={`price_po.${i}.discount`}
-															placeholder='Discount'
-															label='Discount (%)'
-															type='text'
-															pattern='\d*'
-															value={formatRupiah(res.discount.toString())}
-															onChange={(e: any) => {
-																let qty = res.qty
-																	.toString()
-																	.replaceAll(".", "");
-																let unitPrice = res.unit_price
-																	.toString()
-																	.replaceAll(".", "");
-																let discount = e.target.value
-																	.toString()
-																	.replaceAll(".", "");
-																let totalPrice = qty * unitPrice;
-																let totalDisc = (totalPrice * discount) / 100;
-																setFieldValue(
-																	`price_po.${i}.discount`,
-																	discount
-																);
-																setFieldValue(
-																	`price_po.${i}.total_price`,
-																	totalPrice - Math.ceil(totalDisc)
-																);
-																grandTotalChange(
-																	values.price_po,
-																	totalPrice - Math.ceil(totalDisc),
-																	i
-																);
-															}}
-															disabled={false}
-															required={true}
-															withLabel={true}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</div> */}
 													<div className='w-full'>
 														<Input
 															id={`price_po.${i}.total_price`}

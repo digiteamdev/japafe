@@ -220,7 +220,7 @@ export const Po = () => {
 									</td>
 									<td className='p-1'>{res.quotations.quo_num}</td>
 									<td className='p-1'>{res.quotations.Customer.name}</td>
-									<td className='p-1'>{res.quotations.subject}</td>
+									<td className='p-1'>{res.subject}</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button

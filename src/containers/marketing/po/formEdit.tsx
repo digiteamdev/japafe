@@ -310,6 +310,7 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 		form.append("job_no", payload.job_no);
 		form.append("quo_id", payload.quo_id);
 		form.append("tax", payload.tax);
+		form.append("subject", payload.subject);
 		form.append("noted", payload.noted);
 		form.append("date_of_po", payload.date_of_po);
 		form.append("discount", payload.discount);
@@ -417,35 +418,6 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								{/* <InputSelectSearch
-									datas={listQuotation}
-									id='quotation'
-									name='quotation'
-									placeholder='Quotation'
-									label='Quotation'
-									onChange={(e: any) => {
-										let total: number = 0;
-										setCustomerName(e.value.Customer.name);
-										setDeskription(e.value.subject);
-										setEquipment(e.value.eqandpart[0].equipment.nama);
-										setListPriceQuotation(e.value.price_quotation);
-										setQuoId(e.value.id);
-										setTaxPPH(e.value.Customer.pph);
-										setTaxPPN(e.value.Customer.ppn);
-										setFieldValue("price_po", e.value.price_quotation);
-										setFieldValue(
-											"Deskription_CusPo",
-											e.value.Quotations_Detail
-										);
-										e.value.price_quotation.map((res: any) => {
-											total = total + res.total_price;
-										});
-										setTotal(total);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/> */}
 								<InputSelect
 									id='quotation'
 									name='quotation'
@@ -606,7 +578,8 @@ export const FormEditPo = ({ content, dataPo, showModal }: props) => {
 									label='Subject'
 									type='text'
 									value={values.subject}
-									disabled={true}
+									disabled={false}
+									onChange={handleChange}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
