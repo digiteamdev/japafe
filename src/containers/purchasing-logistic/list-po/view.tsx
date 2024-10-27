@@ -2,13 +2,6 @@ import moment from "moment";
 import { Section } from "../../../components";
 import { formatRupiah } from "@/src/utils";
 import { Printer } from "react-feather";
-import { useEffect, useState } from "react";
-import {
-  GetDataPDFListOrder,
-  ResponsePurchaseOrder,
-} from "@/src/services/document-pdf";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { DocumentPDFListOrder } from "./document";
 
 interface props {
   dataSelected: any;
@@ -17,13 +10,6 @@ interface props {
 }
 
 export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
-  const [dataPdf, setDataPdf] = useState<ResponsePurchaseOrder | null>();
-
-  useEffect(() => {
-    fetchDataPdf();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const Total = (detail: any) => {
     let jumlahTotal: any = 0;
     detail.map((res: any) => {
@@ -50,13 +36,8 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
     }
   };
 
-  const fetchDataPdf = async () => {
-    try {
-      const response = await GetDataPDFListOrder(dataSelected?.id);
-      setDataPdf(response.data.result);
-    } catch (error) {
-      console.error(error);
-    }
+  const onPreviewPdf = () => {
+    window.open(`/preview-pdf?type=listOrder&id=${dataSelected?.id}`);
   };
 
   return (
@@ -68,16 +49,14 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
               <h1 className="font-bold text-xl">Purchase Order</h1>
             </div>
             <div className="text-right mr-6">
-              <PDFDownloadLink
-                document={<DocumentPDFListOrder data={dataPdf} />}
-                fileName={`${dataPdf?.Number}-${dataPdf?.you_ref}`}
+              <button
+                onClick={() => onPreviewPdf()}
+                className="justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3"
               >
-                <button className="justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3">
-                  <div className="flex px-1 py-1">
-                    <Printer size={16} className="mr-1" /> Print
-                  </div>
-                </button>
-              </PDFDownloadLink>
+                <div className="flex px-1 py-1">
+                  <Printer size={16} className="mr-1" /> Print
+                </div>
+              </button>
             </div>
           </div>
           <Section className="grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2">

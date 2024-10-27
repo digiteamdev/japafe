@@ -13,8 +13,6 @@ import {
   GetDataPDFDeliveryOrder,
   ResponseGetDeliveryOrder,
 } from "@/src/services/document-pdf";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { DocumentPDF } from "./document";
 
 interface props {
   dataSelected: any;
@@ -102,6 +100,10 @@ export const ViewDo = ({ dataSelected, content, showModal }: props) => {
     );
   };
 
+  const onPreviewPrint = () => {
+    window.open(`/preview-pdf?type=deliveryOrder&id=${dataSelected?.id}`);
+  };
+
   return (
     <div className="px-5 pb-2 mt-4 overflow-auto">
       {dataSelected ? (
@@ -112,9 +114,9 @@ export const ViewDo = ({ dataSelected, content, showModal }: props) => {
             </div>
             <div className="text-right mr-6 flex justify-end">
               {dataSelected.approveDo && dataSelected.checkedDo ? (
-                <PDFDownloadLink
-                  document={<DocumentPDF data={dataPdf} />}
-                  fileName={`${dataPdf?.number}-${dataPdf?.dateCreate}`}
+                <button
+                  // document={<DocumentPDF data={dataPdf} />}
+                  // fileName={`${dataPdf?.number}-${dataPdf?.dateCreate}`}
                   className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
                   // onClick={() =>
                   //   window.open(
@@ -122,11 +124,12 @@ export const ViewDo = ({ dataSelected, content, showModal }: props) => {
                   //     "_blank"
                   //   )
                   // }
+                  onClick={() => onPreviewPrint()}
                 >
                   <div className="flex px-1 py-1">
                     <Printer size={16} className="mr-1" /> Print
                   </div>
-                </PDFDownloadLink>
+                </button>
               ) : null}
               {(subDepartement === "SECURITY" &&
                 dataSelected.checkedDo === null) ||
@@ -134,7 +137,7 @@ export const ViewDo = ({ dataSelected, content, showModal }: props) => {
                 ? buttonApprove(dataSelected.id)
                 : null}
               {departement.includes("ENGINEERING") &&
-                dataSelected.approveDo === null
+              dataSelected.approveDo === null
                 ? buttonApprove(dataSelected.id)
                 : null}
             </div>
