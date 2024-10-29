@@ -11,9 +11,9 @@ import {
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreatePermitEmployee } from "./formCreate";
-// import { ViewSpkl } from "./view";
+import { ViewPermit } from "./view";
 // import { FormEditSpkl } from "./formEdit";
-import { GetPermitEmployee, DeletePermit } from "../../../services";
+import { GetPermitEmployee, DeletePermitEmployee } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
@@ -27,7 +27,9 @@ export const PermitPublic = () => {
 	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalContent, setModalContent] = useState<string>("add");
-	const [position, setPosition] = useState<string>("");
+	const [date, setDate] = useState<any>(
+		Math.floor(new Date().getTime() / 1000)
+	);
 	const [search, setSearch] = useState<string>("");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
@@ -35,7 +37,6 @@ export const PermitPublic = () => {
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
 		{ name: "Date" },
-		{ name: "Employee" },
 		{ name: "Description Permit" },
 		{ name: "Action" },
 	];
@@ -78,7 +79,7 @@ export const PermitPublic = () => {
 
 	const deletePermit = async (id: string) => {
 		try {
-			const response = await DeletePermit(id);
+			const response = await DeletePermitEmployee(id);
 			if (response.data) {
 				toast.success("Delete Permit Success", {
 					position: "top-center",
@@ -163,17 +164,19 @@ export const PermitPublic = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<tr
 									className={`border-b cursor-pointer transition duration-300 ease-in-out  text-sm`}
 									key={i}
 								>
-									<td className='whitespace-nowrap p-1 text-center'>{ moment(res.date).format('DD-MMMM-YYYY') }</td>
-									<td className='whitespace-pre-line p-1'></td>
-									<td className='whitespace-pre-line p-1 text-center'>{ res.desc }</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{moment(res.date).format("DD-MMMM-YYYY")}
+									</td>
+									<td className='whitespace-pre-line p-1 text-center'>
+										{res.desc}
+									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-										<div>
+										<div className='space-x-2'>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
@@ -183,24 +186,29 @@ export const PermitPublic = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											<Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
-											>
-												<Edit color='white' />
-											</Button>
-											<Button
-												className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button>
+											{date <
+											Math.floor(new Date(res.date).getTime() / 1000) ? (
+												<>
+													<Button
+														className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "edit", false);
+														}}
+													>
+														<Edit color='white' />
+													</Button>
+													<Button
+														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "delete", false);
+														}}
+													>
+														<Trash2 color='white' />
+													</Button>
+												</>
+											) : null}
 										</div>
 									</td>
 								</tr>
@@ -237,14 +245,16 @@ export const PermitPublic = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-					) : // <ViewSpkl
-					// 	dataSelected={dataSelected}
-					// 	content={modalContent}
-					// 	showModal={showModal}
-					// />
-					modalContent === "add" ? (
-						<FormCreatePermitEmployee content={modalContent} showModal={showModal} />
+						<ViewPermit
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
+					) : modalContent === "add" ? (
+						<FormCreatePermitEmployee
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : (
 						<></>
 						// <FormEditSpkl
