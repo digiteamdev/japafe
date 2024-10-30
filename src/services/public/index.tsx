@@ -5,3 +5,4 @@ export * from './spj-cash-advance';
 export * from './time-sheet';
 export * from './spkl';
 export * from './permit';
+export * from './spd';

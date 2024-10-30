@@ -6,3 +6,4 @@ export * from './time-sheet';
 export * from './absensi';
 export * from './spkl';
 export * from './permit';
+export * from './spd';

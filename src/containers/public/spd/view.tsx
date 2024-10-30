@@ -12,13 +12,14 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewPermit = ({ dataSelected, content, showModal }: props) => {
+export const ViewSpd = ({ dataSelected, content, showModal }: props) => {
+	console.log(dataSelected);
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
 				<>
-					<h1 className='font-bold text-xl'>Permit</h1>
+					<h1 className='font-bold text-xl'>SPD</h1>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -32,7 +33,7 @@ export const ViewPermit = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Date permit
+										Date
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected?.date).format("DD-MMMM-YYYY")}
@@ -40,36 +41,50 @@ export const ViewPermit = ({ dataSelected, content, showModal }: props) => {
 								</tr>
 								<tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Permit
+										Berangkat
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected?.permit}
+                                        {moment(dataSelected?.berangkat).format("DD-MM-YYYY, h:mm a")}
 									</td>
 								</tr>
-								<tr>
+                                <tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Description
+										Kembali
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected?.desc}
+                                        {moment(dataSelected?.kembali).format("DD-MM-YYYY, h:mm a")}
 									</td>
 								</tr>
-								<tr>
+                                <tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										File
+										Tujuan
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected?.file ? (
-											<a
-												href={dataSelected?.file}
-												target='_blank'
-												className='text-blue-500 underline hover:text-blue-700'
-											>
-												Show File
-											</a>
-										) : (
-											"no file"
-										)}
+										{dataSelected?.tujuan}
+									</td>
+								</tr>
+                                <tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Aktivitas
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected?.aktivitas}
+									</td>
+								</tr>
+                                <tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Cash advance
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected?.cash_advance?.id_cash_advance}
+									</td>
+								</tr>
+                                <tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Note
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected?.note}
 									</td>
 								</tr>
 							</table>

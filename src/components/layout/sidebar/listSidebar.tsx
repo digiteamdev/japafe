@@ -61,13 +61,20 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "permit",
-				link: "/public/permit",
-				title: "Permit",
+			// {
+			// 	id: "permit",
+			// 	link: "/public/permit",
+			// 	title: "Permit",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "SPD",
+			// 	link: "/public/spd",
+			// 	title: "SPD",
+
+			// 	subMenu: null,
+			// },
 			{
 				id: "employe",
 				link: "/public/employe",
@@ -128,7 +135,8 @@ export const ListNav = [
 				link: "/marketing/job-status",
 				title: "Job Status",
 				subMenu: null,
-			},,
+			},
+			,
 			{
 				id: "material-stok",
 				link: "/marketing/material-stok",
@@ -232,7 +240,7 @@ export const ListNav = [
 				title: "List Dirrect Service",
 
 				subMenu: null,
-			}
+			},
 		],
 	},
 	{
@@ -286,7 +294,7 @@ export const ListNav = [
 				title: "Warehouse",
 				subMenu: null,
 			},
-		]
+		],
 	},
 	{
 		id: "director",
