@@ -93,9 +93,9 @@ export const Posting = () => {
 		let material: string = "Recieve Material: \r\n";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = material + `- ` + res.Material_Master.name;
+				material = material + `- ` + res.name_material;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+				material = material + ` \r\n ` + `- ` + res.name_material;
 			}
 		});
 		return material;
@@ -195,7 +195,7 @@ export const Posting = () => {
 											: moment(res.date_date_cashier).format("DD-MMMM-YYYY")}
 									</td>
 									<td className='whitespace-pre-line p-1'>
-										{res.id_receive ? showMaterial(res.detailMr) : res.note}
+										{res.id_receive ? showMaterial(res.detailMr) : res.purchase ? showMaterial(res.purchase?.detailMr) : res.note}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										<div>

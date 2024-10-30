@@ -57,15 +57,15 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 	useEffect(() => {
 		let journal: any = [];
 		getCoa();
-		if(dataSelected.journal_cashier){
+		if (dataSelected.journal_cashier) {
 			dataSelected.journal_cashier.map((res: any) => {
 				journal.push({
 					id: res.id,
 					coa_id: res.coa_id,
-					coa_name: res.coa.coa_name,
+					coa_name: res?.coa?.coa_name,
 					coa_select: {
-						label: res.coa.coa_name,
-						value: res.coa,
+						label: res?.coa?.coa_name,
+						value: res?.coa,
 					},
 					status_transaction: res.status_transaction,
 					grandtotal: res.grandtotal,
@@ -74,7 +74,7 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 					cashier_id: dataSelected.id_so ? null : dataSelected.id,
 				});
 			});
-		}else{
+		} else {
 			dataSelected.journal_general.map((res: any) => {
 				journal.push({
 					id: res.id,
@@ -218,7 +218,9 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 											{dataSelected.id_receive
 												? dataSelected.id_receive
-												: dataSelected.id_cashier ? dataSelected.id_cashier : 'General Ledger' }
+												: dataSelected.id_cashier
+												? dataSelected.id_cashier
+												: "General Ledger"}
 										</td>
 									</tr>
 									<tr>
@@ -240,7 +242,7 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 											Job No
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{ dataSelected.wor?.job_no }
+											{dataSelected.wor?.job_no}
 										</td>
 									</tr>
 									<tr>
@@ -248,14 +250,14 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 											Note
 										</td>
 										<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-											{ dataSelected.note }
+											{dataSelected.note}
 										</td>
 									</tr>
 								</tbody>
 							</table>
 						</div>
 					</Section>
-					{dataSelected.id_so ? (
+					{dataSelected?.id_so ? (
 						<>
 							<h1 className='font-bold text-lg mt-2'>Material</h1>
 							<Section className='grid grid-cols-1 gap-2 mt-2 text-xs'>
@@ -299,7 +301,53 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 								</table>
 							</Section>
 						</>
-					) : dataSelected.id_cashier ? (
+					) : dataSelected?.purchase ? (
+						<>
+							<h1 className='font-bold text-lg mt-2'>Material</h1>
+							<Section className='grid grid-cols-1 gap-2 mt-2 text-xs'>
+								<table className='w-full'>
+									<thead>
+										<tr>
+											<th className='border border-black text-center'>
+												Material
+											</th>
+											<th className='border border-black text-center'>Qty</th>
+											<th className='border border-black text-center'>Unit</th>
+											<th className='border border-black text-center'>Price</th>
+											<th className='border border-black text-center'>
+												Total Price
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{dataSelected.purchase.detailMr.map(
+											(res: any, i: number) => {
+												return (
+													<tr key={i}>
+														<td className='border border-black text-center'>
+															{res.name_material}
+														</td>
+														<td className='border border-black text-center'>
+															{res.qtyAppr}
+														</td>
+														<td className='border border-black text-center'>
+															{res.name_material}
+														</td>
+														<td className='border border-black text-center'>
+															{formatRupiah(res.price.toString())}
+														</td>
+														<td className='border border-black text-center'>
+															{formatRupiah(res.total.toString())}
+														</td>
+													</tr>
+												);
+											}
+										)}
+									</tbody>
+								</table>
+							</Section>
+						</>
+					) : dataSelected?.id_cashier ? (
 						<>
 							<h1 className='font-bold text-lg mt-2'>Cashier</h1>
 							<Section className='grid grid-cols-1 gap-2 mt-2 text-xs'>
@@ -333,7 +381,7 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 								</table>
 							</Section>
 						</>
-					) : null }
+					) : null}
 					<h1 className='font-bold text-lg mt-2'>Journal</h1>
 					<Formik
 						initialValues={{ ...data }}
@@ -506,8 +554,12 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 																				status_transaction: "Debet",
 																				grandtotal: 0,
 																				status: true,
-																				poandsoId: dataSelected.id_so ? dataSelected.id : null,
-																				cashier_id: dataSelected.id_so ? null : dataSelected.id,
+																				poandsoId: dataSelected.id_so
+																					? dataSelected.id
+																					: null,
+																				cashier_id: dataSelected.id_so
+																					? null
+																					: dataSelected.id,
 																			});
 																		}}
 																	>
