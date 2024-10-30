@@ -61,13 +61,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "permit",
-			// 	link: "/public/permit",
-			// 	title: "Permit",
+			{
+				id: "permit",
+				link: "/public/permit",
+				title: "Permit",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "employe",
 				link: "/public/employe",
@@ -504,13 +504,13 @@ export const ListNav = [
 				title: "Departement",
 				subMenu: null,
 			},
-			// {
-			// 	id: "Permit",
-			// 	link: "/hrd-ga/permit",
-			// 	title: "Permit",
+			{
+				id: "Permit",
+				link: "/hrd-ga/permit",
+				title: "Permit",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "time-sheet",
 				link: "/hrd-ga/time-sheet",
@@ -531,13 +531,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "absent-list",
-			// 	link: "/hrd-ga/absent-list",
-			// 	title: "Absent List",
+			{
+				id: "golongan",
+				link: "/hrd-ga/golongan",
+				title: "Golongan",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			// {
 			// 	id: "spd",
 			// 	link: "/hrd-ga/spd",

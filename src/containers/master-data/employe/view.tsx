@@ -8,6 +8,7 @@ interface props {
 }
 
 export const ViewEmploye = ({ dataSelected }: props) => {
+	console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto  h-[calc(100vh-100px)]'>
 			{dataSelected ? (

@@ -12,12 +12,13 @@ import {
 import { Formik, Form, FieldArray } from "formik";
 import { employeSchema } from "../../../schema/master-data/employe/employeSchema";
 import provinceJson from "../../../assets/data/kodepos.json";
-import { GetListYear } from "../../../utils";
+import { GetListYear, rupiahFormat } from "../../../utils";
 import { Plus, Trash2 } from "react-feather";
 import {
 	AddEmploye,
 	AddEmployeEdu,
 	AddEmployeCertificate,
+	GetGolongan
 } from "../../../services";
 import { toast } from "react-toastify";
 
@@ -62,6 +63,8 @@ interface data {
 	gender_spouse: any;
 	spouse_birth_place: any;
 	spouse_birth_date: any;
+	golId: string;
+	gaji_pokok: number;
 	Employee_Child: [
 		{
 			name: string | null;
@@ -109,6 +112,7 @@ export const FormCreateEmploye = ({
 	const [employeeID, setEmployeeID] = useState<string>("");
 	const [activeTab, setActiveTab] = useState<any>(dataTabs[0]);
 	const [listProvince, setListProvince] = useState<any>([]);
+	const [listGolongan, setListGolongan] = useState<any>([]);
 	const [files, setFiles] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		photo: null,
@@ -139,6 +143,8 @@ export const FormCreateEmploye = ({
 		gender_spouse: "Male",
 		spouse_birth_date: new Date(),
 		spouse_birth_place: null,
+		gaji_pokok: 0,
+		golId: "",
 		Employee_Child: [
 			{
 				name: null,
@@ -172,6 +178,7 @@ export const FormCreateEmploye = ({
 	const [listSubDistrict, setListSubDistrict] = useState<any>([]);
 
 	useEffect(() => {
+		getGolongan();
 		getProvince();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -317,11 +324,27 @@ export const FormCreateEmploye = ({
 		form.append("phone_number", payload.phone_number);
 		form.append("position", payload.position);
 		form.append("province", payload.province);
+		form.append("gaji_pokok", payload.gaji_pokok.toString());
+		form.append("golId", payload.golId);
 		form.append("remaining_days_of", payload.remaining_days_of);
-		form.append("spouse_birth_date", payload.spouse_name === null ? "" : payload.spouse_birth_date.toDateString());
-		form.append("spouse_birth_place", payload.spouse_birth_place === null ? "" : payload.spouse_birth_place );
-		form.append("spouse_name", payload.spouse_name === null ? "" : payload.spouse_name );
-		form.append("gender_spouse", payload.spouse_name === null ? "" : payload.gender_spouse);
+		form.append(
+			"spouse_birth_date",
+			payload.spouse_name === null
+				? ""
+				: payload.spouse_birth_date.toDateString()
+		);
+		form.append(
+			"spouse_birth_place",
+			payload.spouse_birth_place === null ? "" : payload.spouse_birth_place
+		);
+		form.append(
+			"spouse_name",
+			payload.spouse_name === null ? "" : payload.spouse_name
+		);
+		form.append(
+			"gender_spouse",
+			payload.spouse_name === null ? "" : payload.gender_spouse
+		);
 		form.append("start_join", payload.start_join.toDateString());
 		form.append("sub_districts", payload.sub_districts);
 		form.append("subdepartId", payload.subdepartId);
@@ -454,6 +477,24 @@ export const FormCreateEmploye = ({
 		setIsLoading(false);
 	};
 
+	const getGolongan = async () => {
+		try {
+			const response = await GetGolongan(undefined, undefined, "")
+			if (response.data) {
+				let listGolongan: any = []
+				response.data.result.map((res:any) => {
+					listGolongan.push({
+						label: `${res.golongan}${res.huruf}`,
+						value: res
+					})
+				});
+				setListGolongan(listGolongan);
+			}
+		} catch (e:any) {
+			setListGolongan([])
+		}
+	};
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto  h-[calc(100vh-100px)]'>
 			{activeTab.name === "Employe" ? (
@@ -485,8 +526,8 @@ export const FormCreateEmploye = ({
 											label='Photo Employe'
 											type='file'
 											accept='image/*'
-											onChange={ (e: any) => {
-												setFieldValue('photo', e.target.files[0])
+											onChange={(e: any) => {
+												setFieldValue("photo", e.target.files[0]);
 											}}
 											required={true}
 											withLabel={true}
@@ -859,6 +900,43 @@ export const FormCreateEmploye = ({
 												{/* {errors.start_join} */}
 											</span>
 										)}
+									</div>
+								</Section>
+								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mb-2'>
+									<div className='w-full'>
+										<Input
+											id='gaji_pokok'
+											name='gaji_pokok'
+											placeholder='Gaji pokok'
+											label='Gaji pokok'
+											type='text'
+											pattern='\d*'
+											value={rupiahFormat(values.gaji_pokok)}
+											onChange={(e: any) => {
+												let gaji = e.target.value
+													.toString()
+													.replaceAll(".", "");
+												setFieldValue("gaji_pokok", gaji);
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<InputSelectSearch
+											datas={listGolongan}
+											id='golId'
+											name='golId'
+											placeholder='Golongan'
+											label='Golongan'
+											onChange={(e: any) => {
+												setFieldValue("golId", e.value.id);
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
 									</div>
 								</Section>
 								<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>

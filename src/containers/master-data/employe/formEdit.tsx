@@ -6,13 +6,14 @@ import {
 	InputWithIcon,
 	InputDate,
 	InputArea,
+	InputSelectSearch,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import provinceJson from "../../../assets/data/kodepos.json";
 import { employeSchema } from "../../../schema/master-data/employe/employeSchema";
 import { Disclosure } from "@headlessui/react";
 import { Plus, Trash2 } from "react-feather";
-import { GetListYear } from "../../../utils";
+import { GetListYear, rupiahFormat } from "../../../utils";
 import {
 	EditEmploye,
 	EditEmployeChild,
@@ -21,6 +22,7 @@ import {
 	DeleteEmployeCertificate,
 	DeleteEmployeChild,
 	DeleteEmployeEdu,
+	GetGolongan,
 } from "../../../services";
 import { toast } from "react-toastify";
 
@@ -59,6 +61,9 @@ interface dataEmploye {
 	gender_spouse: any;
 	spouse_birth_place: any;
 	spouse_birth_date: Date | null;
+	golId: string;
+	selectGolongan: any;
+	gaji_pokok: number;
 }
 
 interface dataChild {
@@ -117,6 +122,7 @@ export const FormEditEmploye = ({
 	const [listSubDistrict, setListSubDistrict] = useState<any>([]);
 	const [activeTabs, setActiveTabs] = useState<any>(dataTabs[0]);
 	const [certiFiles, setCertiFiles] = useState<any>([]);
+	const [listGolongan, setListGolongan] = useState<any>([]);
 	const [eduFiles, setEduFiles] = useState<any>([]);
 	const [data, setData] = useState<dataEmploye>({
 		NIP: "",
@@ -146,6 +152,9 @@ export const FormEditEmploye = ({
 		gender_spouse: null,
 		spouse_birth_date: null,
 		spouse_birth_place: null,
+		golId: "",
+		selectGolongan: {},
+		gaji_pokok: 0,
 	});
 	const [dataChild, setDataChild] = useState<dataChild>({
 		Employee_Child: [
@@ -188,10 +197,29 @@ export const FormEditEmploye = ({
 	useEffect(() => {
 		getProvince();
 		setingData();
+		getGolongan();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const json: any = provinceJson;
+
+	const getGolongan = async () => {
+		try {
+			const response = await GetGolongan(undefined, undefined, "")
+			if (response.data) {
+				let listGolongan: any = []
+				response.data.result.map((res:any) => {
+					listGolongan.push({
+						label: `${res.golongan}${res.huruf}`,
+						value: res
+					})
+				});
+				setListGolongan(listGolongan);
+			}
+		} catch (e:any) {
+			setListGolongan([])
+		}
+	};
 
 	const setingData = () => {
 		let listChild: any = [];
@@ -294,6 +322,12 @@ export const FormEditEmploye = ({
 			gender_spouse: dataEmploye.gender_spouse,
 			spouse_birth_date: dataEmploye.spouse_birth_date,
 			spouse_birth_place: dataEmploye.spouse_birth_place,
+			golId: dataEmploye?.golId,
+			selectGolongan: {
+				label: `${dataEmploye?.golId?.golongan}${dataEmploye?.golId?.huruf}`,
+				value: dataEmploye?.gol
+			},
+			gaji_pokok: dataEmploye?.gaji_pokok ? dataEmploye?.gaji_pokok : 0
 		});
 
 		setDataChild({
@@ -1120,6 +1154,43 @@ export const FormEditEmploye = ({
 									)}
 								</div>
 							</Section>
+							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mb-2'>
+									<div className='w-full'>
+										<Input
+											id='gaji_pokok'
+											name='gaji_pokok'
+											placeholder='Gaji pokok'
+											label='Gaji pokok'
+											type='text'
+											pattern='\d*'
+											value={rupiahFormat(values.gaji_pokok)}
+											onChange={(e: any) => {
+												let gaji = e.target.value
+													.toString()
+													.replaceAll(".", "");
+												setFieldValue("gaji_pokok", parseFloat(gaji));
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+										/>
+									</div>
+									<div className='w-full'>
+										<InputSelectSearch
+											datas={listGolongan}
+											id='golId'
+											name='golId'
+											placeholder='Golongan'
+											label='Golongan'
+											onChange={(e: any) => {
+												setFieldValue("golId", e.value.id);
+											}}
+											required={true}
+											withLabel={true}
+											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+										/>
+									</div>
+								</Section>
 							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputSelect
