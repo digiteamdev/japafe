@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   qrCode: {
-    width: 42,
-    height: 44,
+    width: 62,
+    height: 62,
     alignSelf: "center",
     marginBottom: "18px",
     marginTop: "10px",
@@ -208,6 +208,7 @@ export const DocumentPDFListOrder = (_props: Props) => {
       .then((url) => setApprovedBy(url))
       .catch((err) => console.error(err));
   }, [data?.ttdDirut, data?.ttdPoFix]);
+
   return (
     <Document>
       {Array.from({ length: totalPages }).map((_, pageIndex) => {
@@ -250,16 +251,36 @@ export const DocumentPDFListOrder = (_props: Props) => {
                       </Text>
                       <Text style={{ marginBottom: 4 }}>Date</Text>
                       <Text style={{ marginBottom: 4 }}>Vendor</Text>
-                      <Text style={{ marginBottom: 4 }}>Address</Text>
+                      <Text
+                        style={{
+                          marginBottom: data
+                            ? data?.addresses_sup.length <= 32
+                              ? 4
+                              : 16
+                            : 4,
+                        }}
+                      >
+                        Address
+                      </Text>
                       <Text style={{ marginBottom: 4 }}>Phone</Text>
                       <Text style={{ marginBottom: 4 }}>Facsimile</Text>
                       <Text>Contact</Text>
                     </View>
-                    <View>
+                    <View style={{ paddingLeft: 6 }}>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
-                      <Text style={{ marginBottom: 4 }}>:</Text>
+                      <Text
+                        style={{
+                          marginBottom: data
+                            ? data?.addresses_sup.length <= 32
+                              ? 4
+                              : 16
+                            : 4,
+                        }}
+                      >
+                        :
+                      </Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text>:</Text>
@@ -291,7 +312,7 @@ export const DocumentPDFListOrder = (_props: Props) => {
                       <Text style={{ marginBottom: 4, fontWeight: "bold" }}>
                         Ship To
                       </Text>
-                      <Text style={{ marginBottom: 4 }}>Address</Text>
+                      <Text style={{ marginBottom: 16 }}>Address</Text>
                       <Text style={{ marginBottom: 4 }}>Phone</Text>
                       <Text style={{ marginBottom: 4 }}>Facsimile</Text>
                       <Text style={{ marginBottom: 4 }}>Requestor</Text>
@@ -299,9 +320,9 @@ export const DocumentPDFListOrder = (_props: Props) => {
                       <Text style={{ marginBottom: 4 }}>Mr/SR No</Text>
                       <Text>Your Ref</Text>
                     </View>
-                    <View>
+                    <View style={{ paddingLeft: 16 }}>
                       <Text style={{ marginBottom: 4 }}>:</Text>
-                      <Text style={{ marginBottom: 4 }}>:</Text>
+                      <Text style={{ marginBottom: 16 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
                       <Text style={{ marginBottom: 4 }}>:</Text>
@@ -738,8 +759,8 @@ export const DocumentPDFListOrder = (_props: Props) => {
                         style={{
                           marginBottom: "18px",
                           marginTop: "10px",
-                          width: 42,
-                          height: 42,
+                          width: 62,
+                          height: 66,
                           opacity: 0,
                         }}
                       />
