@@ -254,7 +254,6 @@ export const ViewApprovalMR = () => {
 												</thead>
 												<tbody>
 													{values.detailMr.map((result: any, i: number) => {
-														console.log(result);
 														return (
 															<tr key={i}>
 																<td className='pr-1 w-[40%]'>

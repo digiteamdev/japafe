@@ -68,13 +68,13 @@ export const ListNav = [
 
 			// 	subMenu: null,
 			// },
-			// {
-			// 	id: "SPD",
-			// 	link: "/public/spd",
-			// 	title: "SPD",
+			{
+				id: "SPD",
+				link: "/public/spd",
+				title: "SPD",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "employe",
 				link: "/public/employe",

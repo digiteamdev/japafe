@@ -190,9 +190,10 @@ export const Posting = () => {
 										{res.id_receive ? "Receive Material" : "Cashier"}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.id_receive
+										{moment(res.createdAt).format("DD-MMMM-YYYY")}
+										{/* {res.id_receive
 											? moment(res.date_prepared).format("DD-MMMM-YYYY")
-											: moment(res.date_date_cashier).format("DD-MMMM-YYYY")}
+											: moment(res.date_date_cashier).format("DD-MMMM-YYYY")} */}
 									</td>
 									<td className='whitespace-pre-line p-1'>
 										{res.id_receive ? showMaterial(res.detailMr) : res.purchase ? showMaterial(res.purchase?.detailMr) : res.note}
