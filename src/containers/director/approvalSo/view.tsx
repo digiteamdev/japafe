@@ -175,15 +175,14 @@ export const ViewApprovalSo = ({ dataSelected, content, showModal }: props) => {
 													<th className='text-center'>Description</th>
 													<th className='text-center'>Quantity</th>
 													<th className='text-center'>Price</th>
+													<th className='text-center'>Discount</th>
 													<th className='text-center'>Total Price</th>
 													<th className='text-center'>Supplier</th>
-													<th className='text-center'>Discount</th>
 													<th className='text-center'>Note Revision</th>
 												</tr>
 											</thead>
 											<tbody>
 												{values.SrDetail.map((result: any, i: number) => {
-													console.log(result)
 													return (
 														<tr key={i}>
 															<td className='pr-1 w-[15%]'>
@@ -235,21 +234,6 @@ export const ViewApprovalSo = ({ dataSelected, content, showModal }: props) => {
 															</td>
 															<td className='pr-1 w-[15%]'>
 																<Input
-																	id={`SrDetail.${i}.supplier`}
-																	name={`SrDetail.${i}.supplier`}
-																	placeholder='Supplier'
-																	label='Supplier'
-																	type='text'
-																	pattern='\d*'
-																	disabled={true}
-																	value={result.supplier?.supplier_name}
-																	required={true}
-																	withLabel={false}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
-																/>
-															</td>
-															<td className='pr-1 w-[15%]'>
-																<Input
 																	id={`SrDetail.${i}.price`}
 																	name={`SrDetail.${i}.price`}
 																	placeholder='Price'
@@ -287,6 +271,21 @@ export const ViewApprovalSo = ({ dataSelected, content, showModal }: props) => {
 																	pattern='\d*'
 																	disabled={true}
 																	value={formatRupiah(result.total.toString())}
+																	required={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'
+																/>
+															</td>
+															<td className='pr-1 w-[15%]'>
+																<Input
+																	id={`SrDetail.${i}.supplier`}
+																	name={`SrDetail.${i}.supplier`}
+																	placeholder='Supplier'
+																	label='Supplier'
+																	type='text'
+																	pattern='\d*'
+																	disabled={true}
+																	value={result.supplier?.supplier_name}
 																	required={true}
 																	withLabel={false}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg w-full block p-2 outline-primary-600 text-center'

@@ -12,6 +12,7 @@ import {
 } from "../../../components";
 import { FileText, Edit, Eye, Trash2 } from "react-feather";
 import { FormCreateWor } from "./formCreate";
+import { ViewWorJobCost } from "./job_cost";
 import { ViewWor } from "./view";
 import { FormEditWor } from "./formEdit";
 import { GetWor, SearchWor, DeleteWor, GetAllHoliday } from "../../../services";
@@ -49,22 +50,25 @@ export const Wor = () => {
 	];
 
 	useEffect(() => {
-		let position = getPosition()
-		getHolidays()
-		if(position === 'Director' || position === 'Manager'){
-			setIsDropdown(true)
+		let position = getPosition();
+		getHolidays();
+		if (position === "Director" || position === "Manager") {
+			setIsDropdown(true);
 		}
-		if(divisiMarketing !== "cek"){
+		if (divisiMarketing !== "cek") {
 			getWor(page, perPage, divisiMarketing);
-		}else{
-			setDivisiMarketing(cekDivisiMarketing())
+		} else {
+			setDivisiMarketing(cekDivisiMarketing());
 		}
 		let jabatan = getPosition();
 		let roleUsers: any = getRole();
 		if (roleUsers !== undefined) {
 			let roleUser = JSON.parse(roleUsers);
 			for (var i = 0; i < roleUser.length; i++) {
-				if (roleUser[i].role.role_name === "MARKETING SWASTA" || roleUser[i].role.role_name === "MARKETING BUMN" ) {
+				if (
+					roleUser[i].role.role_name === "MARKETING SWASTA" ||
+					roleUser[i].role.role_name === "MARKETING BUMN"
+				) {
 					setRoleMarketing(true);
 					break;
 				}
@@ -121,7 +125,12 @@ export const Wor = () => {
 	const searchwor = async (page: number, limit: number, search: string) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchWor(page, limit, search, cekDivisiMarketing());
+			const response = await SearchWor(
+				page,
+				limit,
+				search,
+				cekDivisiMarketing()
+			);
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -163,8 +172,8 @@ export const Wor = () => {
 	};
 
 	const changeDivisi = (data: string) => {
-		setDivisiMarketing(data)
-	}
+		setDivisiMarketing(data);
+	};
 
 	return (
 		<div className='w-full mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
@@ -222,13 +231,12 @@ export const Wor = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							console.log(res)
 							return (
 								<React.Fragment key={i}>
 									<tr className='transition duration-300 ease-in-out hover:bg-gray-200 text-sm'>
 										<td className='p-1 text-center'>
 											{res.job_no}{" "}
-											{res.refivision !== '0' ? res.refivision : ''}
+											{res.refivision !== "0" ? res.refivision : ""}
 										</td>
 										<td className='whitespace-nowrap p-1'>
 											{moment(res.date_wor).format("DD-MMMM-YYYY")}
@@ -236,9 +244,7 @@ export const Wor = () => {
 										<td className='p-1'>
 											{res.customerPo.quotations.Customer.name}
 										</td>
-										<td className='p-1'>
-											{res.customerPo.quotations.subject}
-										</td>
+										<td className='p-1'>{res.customerPo.quotations.subject}</td>
 										<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 											<div>
 												<Button
@@ -273,7 +279,7 @@ export const Wor = () => {
 																	<Trash2 color='white' />
 																</Button>
 															</>
-														) }
+														)}
 													</>
 												) : null}
 											</div>
@@ -285,13 +291,22 @@ export const Wor = () => {
 											className='whitespace-nowrap p-1'
 										>
 											<button
+												className="bg-green-500 text-white p-1 rounded-md mr-2"
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "job_cost", false);
+												}}
+											>
+												Job cost
+											</button>
+											<button
 												className={`${
 													res.timeschedule === null
 														? "bg-red-500"
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
 												onClick={() => {
-													if(res.timeschedule !== null){
+													if (res.timeschedule !== null) {
 														setDataSelected(res.timeschedule);
 														showModal(true, "schedule", false);
 													}
@@ -301,12 +316,10 @@ export const Wor = () => {
 											</button>
 											<button
 												className={`${
-													res.srimg.length === 0 
-														? "bg-red-500"
-														: "bg-green-500"
+													res.srimg.length === 0 ? "bg-red-500" : "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
 												onClick={() => {
-													if(res.srimg.length > 0){
+													if (res.srimg.length > 0) {
 														setDataSelected(res.srimg[0]);
 														showModal(true, "summary", false);
 													}
@@ -321,7 +334,7 @@ export const Wor = () => {
 														: "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
 												onClick={() => {
-													if(res.drawing.length > 0){
+													if (res.drawing.length > 0) {
 														setDataSelected(res.drawing[0]);
 														showModal(true, "drawing", false);
 													}
@@ -331,12 +344,10 @@ export const Wor = () => {
 											</button>
 											<button
 												className={`${
-													res.DO.length === 0
-														? "bg-red-500"
-														: "bg-green-500"
+													res.DO.length === 0 ? "bg-red-500" : "bg-green-500"
 												} text-white p-1 rounded-md mr-2`}
 												onClick={() => {
-													if(res.DO.length > 0){
+													if (res.DO.length > 0) {
 														setDataSelected(res.DO[0]);
 														showModal(true, "do", false);
 													}
@@ -391,12 +402,26 @@ export const Wor = () => {
 						<FormCreateWor content={modalContent} showModal={showModal} />
 					) : modalContent === "summary" ? (
 						<ViewSummaryReport dataSelected={dataSelected} />
-					) :  modalContent === "drawing" ? (
-						<ViewDrawing dataSelected={dataSelected}/>
-					) :   modalContent === "schedule" ? (
-						<ViewSchedule  content={modalContent} showModal={showModal} dataSelected={dataSelected} holiday={holiday} />
+					) : modalContent === "drawing" ? (
+						<ViewDrawing dataSelected={dataSelected} />
+					) : modalContent === "schedule" ? (
+						<ViewSchedule
+							content={modalContent}
+							showModal={showModal}
+							dataSelected={dataSelected}
+							holiday={holiday}
+						/>
 					) : modalContent === "do" ? (
-						<ViewDo dataSelected={dataSelected} content={modalContent} showModal={showModal} />
+						<ViewDo
+							dataSelected={dataSelected}
+							content={modalContent}
+							showModal={showModal}
+						/>
+					) : modalContent === "job_cost" ? (
+						<ViewWorJobCost
+							dataSelected={dataSelected}
+							showModal={showModal}
+						/>
 					) : (
 						<FormEditWor
 							content={modalContent}
