@@ -1,3 +1,4 @@
+import { rupiahFormat } from "@/src/utils";
 import { Section } from "../../../components";
 import moment from "moment";
 import Image from "next/image";
@@ -8,7 +9,7 @@ interface props {
 }
 
 export const ViewEmploye = ({ dataSelected }: props) => {
-	console.log(dataSelected)
+	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto  h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -151,6 +152,22 @@ export const ViewEmploye = ({ dataSelected }: props) => {
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{dataSelected.marital_status}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Golongan
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.pendapatan_employe?.golongan}{dataSelected.pendapatan_employe?.huruf}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Gaji pokok
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{rupiahFormat(dataSelected?.gaji_pokok)}
 									</td>
 								</tr>
 							</table>

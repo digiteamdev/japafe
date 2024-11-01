@@ -205,19 +205,19 @@ export const FormEditEmploye = ({
 
 	const getGolongan = async () => {
 		try {
-			const response = await GetGolongan(undefined, undefined, "")
+			const response = await GetGolongan(undefined, undefined, "");
 			if (response.data) {
-				let listGolongan: any = []
-				response.data.result.map((res:any) => {
+				let listGolongan: any = [];
+				response.data.result.map((res: any) => {
 					listGolongan.push({
 						label: `${res.golongan}${res.huruf}`,
-						value: res
-					})
+						value: res,
+					});
 				});
 				setListGolongan(listGolongan);
 			}
-		} catch (e:any) {
-			setListGolongan([])
+		} catch (e: any) {
+			setListGolongan([]);
 		}
 	};
 
@@ -324,10 +324,10 @@ export const FormEditEmploye = ({
 			spouse_birth_place: dataEmploye.spouse_birth_place,
 			golId: dataEmploye?.golId,
 			selectGolongan: {
-				label: `${dataEmploye?.golId?.golongan}${dataEmploye?.golId?.huruf}`,
-				value: dataEmploye?.gol
+				label: `${dataEmploye?.pendapatan_employe?.golongan}${dataEmploye?.pendapatan_employe?.huruf}`,
+				value: dataEmploye?.pendapatan_employe,
 			},
-			gaji_pokok: dataEmploye?.gaji_pokok ? dataEmploye?.gaji_pokok : 0
+			gaji_pokok: dataEmploye?.gaji_pokok ? dataEmploye?.gaji_pokok : 0,
 		});
 
 		setDataChild({
@@ -442,8 +442,39 @@ export const FormEditEmploye = ({
 
 	const editEmploye = async (data: any) => {
 		setIsLoading(true);
+		const body = {
+			NIP: data?.NIP,
+			NIK: data?.NIK,
+			employee_name: data?.employee_name,
+			nick_name: data?.nick_name,
+			gender: data?.gender,
+			id_card: data?.id_card,
+			NPWP: data?.NPWP,
+			birth_place: data?.birth_place,
+			birth_date: new Date(data?.birth_date),
+			address: data?.address,
+			province: data?.province,
+			city: data?.city,
+			districts: data?.districts,
+			position: data?.position,
+			sub_districts: data?.sub_district,
+			ec_postalcode: data?.ec_postalcode,
+			phone_number: data?.phone_number,
+			start_join: new Date(data?.start_join),
+			remaining_days_of: data?.remaining_days_of,
+			marital_status: data?.marital_status,
+			subdepartId: data?.subdepartId,
+			employee_status: data?.employee_status,
+			email: data?.email,
+			spouse_name: data?.spouse_name,
+			gender_spouse: data?.gender_spouse,
+			spouse_birth_date: new Date(data?.spouse_birth_date),
+			spouse_birth_place: data?.spouse_birth_place,
+			golId: data?.golId,
+			gaji_pokok: data?.gaji_pokok,
+		};
 		try {
-			const response = await EditEmploye(data, dataEmploye.id);
+			const response = await EditEmploye(body, dataEmploye.id);
 			if (response.data) {
 				toast.success("Edit Employe Success", {
 					position: "top-center",
@@ -723,7 +754,7 @@ export const FormEditEmploye = ({
 			{activeTabs === "Employe" ? (
 				<Formik
 					initialValues={{ ...data }}
-					validationSchema={employeSchema}
+					// validationSchema={employeSchema}
 					onSubmit={(values) => {
 						editEmploye(values);
 					}}
@@ -921,11 +952,36 @@ export const FormEditEmploye = ({
 										<option defaultValue='' selected>
 											Select Posision
 										</option>
-										<option value='Operator' selected={ values.position === 'Operator' }>Operator</option>
-										<option value='Staff' selected={ values.position === 'Staff' }>Staff</option>
-										<option value='Supervisor' selected={ values.position === 'Supervisor' }>Supervisor</option>
-										<option value='Manager' selected={ values.position === 'Manager' }>Manager</option>
-										<option value='Director' selected={ values.position === 'Director' }>Director</option>
+										<option
+											value='Operator'
+											selected={values.position === "Operator"}
+										>
+											Operator
+										</option>
+										<option
+											value='Staff'
+											selected={values.position === "Staff"}
+										>
+											Staff
+										</option>
+										<option
+											value='Supervisor'
+											selected={values.position === "Supervisor"}
+										>
+											Supervisor
+										</option>
+										<option
+											value='Manager'
+											selected={values.position === "Manager"}
+										>
+											Manager
+										</option>
+										<option
+											value='Director'
+											selected={values.position === "Director"}
+										>
+											Director
+										</option>
 									</InputSelect>
 									{touched.position && errors.position && (
 										<span className='mt-2 text-xs text-red-500 font-semibold'>
@@ -1155,42 +1211,41 @@ export const FormEditEmploye = ({
 								</div>
 							</Section>
 							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mb-2'>
-									<div className='w-full'>
-										<Input
-											id='gaji_pokok'
-											name='gaji_pokok'
-											placeholder='Gaji pokok'
-											label='Gaji pokok'
-											type='text'
-											pattern='\d*'
-											value={rupiahFormat(values.gaji_pokok)}
-											onChange={(e: any) => {
-												let gaji = e.target.value
-													.toString()
-													.replaceAll(".", "");
-												setFieldValue("gaji_pokok", parseFloat(gaji));
-											}}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<InputSelectSearch
-											datas={listGolongan}
-											id='golId'
-											name='golId'
-											placeholder='Golongan'
-											label='Golongan'
-											onChange={(e: any) => {
-												setFieldValue("golId", e.value.id);
-											}}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-										/>
-									</div>
-								</Section>
+								<div className='w-full'>
+									<Input
+										id='gaji_pokok'
+										name='gaji_pokok'
+										placeholder='Gaji pokok'
+										label='Gaji pokok'
+										type='text'
+										pattern='\d*'
+										value={rupiahFormat(values.gaji_pokok)}
+										onChange={(e: any) => {
+											let gaji = e.target.value.toString().replaceAll(".", "");
+											setFieldValue("gaji_pokok", parseFloat(gaji));
+										}}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									/>
+								</div>
+								<div className='w-full'>
+									<InputSelectSearch
+										datas={listGolongan}
+										id='golId'
+										name='golId'
+										placeholder='Golongan'
+										label='Golongan'
+										value={values.selectGolongan}
+										onChange={(e: any) => {
+											setFieldValue("golId", e.value.id);
+										}}
+										required={true}
+										withLabel={true}
+										className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+									/>
+								</div>
+							</Section>
 							<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2'>
 								<div className='w-full'>
 									<InputSelect

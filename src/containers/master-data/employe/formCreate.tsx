@@ -500,7 +500,7 @@ export const FormCreateEmploye = ({
 			{activeTab.name === "Employe" ? (
 				<Formik
 					initialValues={{ ...data }}
-					validationSchema={employeSchema}
+					// validationSchema={employeSchema}
 					onSubmit={(values) => {
 						addEmploye(values);
 					}}
