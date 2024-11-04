@@ -10,7 +10,7 @@ import {
 	ModalDelete,
 	Pagination
 } from "../../../components";
-import { DollarSign, Eye, Edit, Trash2 } from "react-feather";
+import { DollarSign, Eye } from "react-feather";
 import { FormCreateCashier } from "./formCreate";
 import {
 	GetAllCashier,
@@ -18,7 +18,6 @@ import {
 	SearchCashier
 } from "../../../services";
 import { toast } from "react-toastify";
-import moment from "moment";
 import { changeDivisi, formatRupiah } from "@/src/utils";
 import { ViewCashier } from './view';
 import { FormEditCashier } from "./formEdit";

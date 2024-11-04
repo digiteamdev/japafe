@@ -67,8 +67,8 @@ export const Absensi = () => {
 	return (
 		<>
 			{isClock ? (
-				<>
-					<div className='w-2/4 h-screen items-center mx-auto justify-center hidden md:flex lg:flex bg-white cursor-none'>
+				<div className="md:flex p-2">
+					<div className='md:w-2/4 w-1/2 md:h-screen items-center mx-auto justify-center md:flex lg:flex bg-white cursor-none'>
 						<div className=''>
 							<Webcam
 								ref={ref}
@@ -78,7 +78,7 @@ export const Absensi = () => {
 							/>
 						</div>
 					</div>
-					<div className='lg:w-2/4 cursor-none md:w-2/4 w-full bg-white h-screen flex items-center justify-center'>
+					<div className='lg:w-2/4 cursor-none md:w-2/4 w-full bg-white md:h-screen flex items-center justify-center'>
 						<div className=''>
 							<div className='w-full justify-center flex p-3'>
 								<Image
@@ -114,7 +114,7 @@ export const Absensi = () => {
 							</div>
 						</div>
 					</div>
-				</>
+				</div>
 			) : !isClock && data ? (
 				<div className='flex justify-center mx-auto space-x-4 p-2 bg-white rounded-lg cursor-none'>
 					<img src={image} className='w-96' />
