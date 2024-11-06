@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import {
 	SectionTitle,
 	Content,
@@ -7,21 +7,24 @@ import {
 	Table,
 	Button,
 	ModalDelete,
-	Pagination
+	Pagination,
 } from "../../../components";
-import { DollarSign, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreateCashAdvance } from "./formCreate";
-// import { ViewCashAdvance } from "./view";
-// import { FormEditMr } from "./formEdit";
-import { GetCashAdvance, SearchCashAdvance, DeleteMR } from "../../../services";
+import { Send, Edit, Eye, Trash2 } from "react-feather";
+// import { FormCreatePurchaseMr } from "./formCreate";
+// import { ViewDirrectPurchase } from "./view";
+// import { FormEditPurchaseMr } from "./formEdit";
+import {
+	GetDirrectPurchase,
+	SearchDirrectPurchase,
+	DeletePurchaseMR,
+	GetAllMRPo,
+} from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
-import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { changeDivisi, formatRupiah } from "@/src/utils";
+import { changeDivisi } from "@/src/utils";
 
 export const SpjPurchase = () => {
-
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,20 +34,38 @@ export const SpjPurchase = () => {
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id" },
-        { name: "Prepare" },
-		{ name: "Id Ref" },
-        { name: "Suplier" },
-        { name: "Action" }
+		{ name: "Id Dirrect Purchase" },
+		{ name: "Job No" },
+		{ name: "No MR" },
+		{ name: "Material" },
+		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getCashAdvance(page, perPage);
+		getMrPo(page, perPage, "DMR");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const getMrPo = async (page: number, perpage: number, type: string) => {
+		try {
+			const response: any = await GetDirrectPurchase(page, perpage, type);
+			if (response.data) {
+				setData(response.data.result);
+				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
+			}
+		} catch (error: any) {
+			if (error.response.data.login) {
+				setData([]);
+			} else {
+				// removeToken();
+				// router.push('/');
+			}
+		}
+	};
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -53,38 +74,18 @@ export const SpjPurchase = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getCashAdvance(page, perPage);
+			getMrPo(page, perPage, "DMR");
 		}
 	};
 
-	const getCashAdvance = async (page: number, perpage: number) => {
-		setIsLoading(true);
-		try {
-			const response = await GetCashAdvance(page, perpage);
-			if (response.data) {
-				setData(response.data.result);
-				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil( response.data.totalData / perpage));
-			}
-		} catch (error: any) {
-			if(error.response.data.login){
-				setData([]);
-			}else{
-				removeToken();
-				router.push('/');
-			}
-		}
-		setIsLoading(false);
-	};
-
-	const searchCashAdvance = async (
+	const searchPurchaseMR = async (
 		page: number,
 		limit: number,
 		search: string
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchCashAdvance(page, limit, search);
+			const response = await SearchDirrectPurchase(page, limit, search, "DMR");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -94,11 +95,11 @@ export const SpjPurchase = () => {
 		setIsLoading(false);
 	};
 
-	const deleteMR = async (id: string) => {
+	const deletePurchaseMR = async (id: string) => {
 		try {
-			const response = await DeleteMR(id);
-			if(response.data){
-				toast.success("Delete Material Request Success", {
+			const response = await DeletePurchaseMR(id);
+			if (response.data) {
+				toast.success("Delete Purchase Order Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -108,10 +109,10 @@ export const SpjPurchase = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getCashAdvance(1, 10);
+				getMrPo(1, 10, "DP");
 			}
 		} catch (error) {
-			toast.error("Delete Material Request Failed", {
+			toast.error("Delete Purchase Order Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -125,12 +126,24 @@ export const SpjPurchase = () => {
 		setIsModal(false);
 	};
 
+	const showMaterial = (data: any) => {
+		let material: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = `- ` + res.Material_Master.name;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+			}
+		});
+		return material;
+	};
+
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
 				title='SPJ Purchase'
 				total={countData}
-				icon={<DollarSign className='w-[36px] h-[36px]' />}
+				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
 				title='SPJ Purchase'
@@ -142,7 +155,7 @@ export const SpjPurchase = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={searchCashAdvance}
+				search={searchPurchaseMR}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -181,49 +194,53 @@ export const SpjPurchase = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							return (
-                                <></>
-								// <tr
-								// 	className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-								// 	key={i}
-								// >
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.id_cash_advance }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.employee.employee_name }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.description }</td>
-								// 	<td className='whitespace-nowrap px-6 py-4'>{ res.user.username }</td>
-                                //     <td className='whitespace-nowrap px-6 py-4'>{ formatRupiah(res.total.toString()) }</td>
-								// 	<td className='whitespace-nowrap text-center px-6 py-4 w-[10%]'>
-								// 		<div>
-								// 			<Button
-								// 				className='bg-green-500 hover:bg-green-700 text-white py-2 px-2 rounded-md'
-								// 				onClick={() => {
-								// 					setDataSelected(res);
-								// 					showModal(true, "view", false);
-								// 				}}
-								// 			>
-								// 				<Eye color='white' />
-								// 			</Button>
-								// 		</div>
-								// 	</td>
-								// </tr>
-							);
+							// return (
+							// 	<tr
+							// 		className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+							// 		key={i}
+							// 	>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
+							// 			{res.idPurchase}
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
+							// 			{res.detailMr[0]?.mr.job_no}
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
+							// 			{res.detailMr[0]?.mr.no_mr}
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 text-center'>
+							// 			{moment(res.date_prepared).format("DD-MM-yyyy")}
+							// 		</td>
+							// 		<td className='whitespace-nowrap p-1 w-[10%] text-center'>
+							// 			<div>
+							// 				<Button
+							// 					className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+							// 					onClick={() => {
+							// 						setDataSelected(res);
+							// 						showModal(true, "view", false);
+							// 					}}
+							// 				>
+							// 					<Eye color='white' />
+							// 				</Button>
+							// 			</div>
+							// 		</td>
+							// 	</tr>
+							// );
 						})
 					)}
 				</Table>
-				{
-					totalPage > 1 ? (
-						<Pagination 
-							currentPage={currentPage} 
-							pageSize={perPage} 
-							siblingCount={1} 
-							totalCount={countData} 
-							onChangePage={(value: any) => {
-								setCurrentPage(value);
-								getCashAdvance(value, perPage);
-							}}
-						/>
-					) : null
-				}
+				{totalPage > 1 ? (
+					<Pagination
+						currentPage={currentPage}
+						pageSize={perPage}
+						siblingCount={1}
+						totalCount={countData}
+						onChangePage={(value: any) => {
+							setCurrentPage(value);
+							getMrPo(value, perPage, "DMR");
+						}}
+					/>
+				) : null}
 			</Content>
 			{modalContent === "delete" ? (
 				<ModalDelete
@@ -231,24 +248,37 @@ export const SpjPurchase = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deleteMR}
+					onDelete={deletePurchaseMR}
 				/>
 			) : (
 				<Modal
-					title='SPJ Purchase'
+					title='List Dirrect Purchase'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-                        <></>
-						// <ViewCashAdvance dataSelected={dataSelected} content={modalContent} showModal={showModal} />
-					) : modalContent === "add" ? (
-                        <></>
-                        // <FormCreateCashAdvance content={modalContent} showModal={showModal} />
+						<></>
+						// <ViewDirrectPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+					) : 
+					// <ViewPoMR
+					// 	dataSelected={dataSelected}
+					// 	showModal={showModal}
+					// 	content={modalContent}
+					// />
+					modalContent === "add" ? (
+						<></>
 					) : (
-                        <></>
-                        // <FormEditMr content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
+						// <FormCreatePurchaseMr
+						// 	content={modalContent}
+						// 	showModal={showModal}
+						// />
+						<></>
+						// <FormEditPurchaseMr
+						// 	content={modalContent}
+						// 	showModal={showModal}
+						// 	dataSelected={dataSelected}
+						// />
 					)}
 				</Modal>
 			)}

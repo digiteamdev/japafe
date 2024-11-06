@@ -205,6 +205,8 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
             <table className="w-full">
               <thead>
                 <tr>
+                  <th className="text-center border border-black">Job no</th>
+                  <th className="text-center border border-black">No MR</th>
                   <th className="text-center border border-black">Material</th>
                   <th className="text-center border border-black">Qty</th>
                   <th className="text-center border border-black">Unit</th>
@@ -217,6 +219,12 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
                 {dataSelected.detailMr.map((res: any, i: number) => {
                   return (
                     <tr key={i}>
+                      <td className="text-center border border-black">
+                        {res.mr?.job_no}
+                      </td>
+                      <td className="text-center border border-black">
+                        {res.mr?.no_mr}
+                      </td>
                       <td className="text-center border border-black">
                         {res.name_material}
                       </td>

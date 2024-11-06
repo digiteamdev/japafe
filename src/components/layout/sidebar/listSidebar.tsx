@@ -186,6 +186,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "purchase-direct",
+				link: "/purchasing-logistic/purchase-dirrect",
+				title: "Purchase dirrect",
+
+				subMenu: null,
+			},
+			{
 				id: "list-po",
 				link: "/purchasing-logistic/list-po",
 				title: "List PO",
@@ -238,6 +245,13 @@ export const ListNav = [
 				id: "list-dirrect-service",
 				link: "/purchasing-logistic/list-dirrect-service",
 				title: "List Dirrect Service",
+
+				subMenu: null,
+			},
+			{
+				id: "SPJ purchase",
+				link: "/purchasing-logistic/spj-purchase",
+				title: "SPJ purchase",
 
 				subMenu: null,
 			},
@@ -323,20 +337,20 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "approval MR",
-				link: "/director/approvalMr",
-				title: "Approval MR",
+			// {
+			// 	id: "approval MR",
+			// 	link: "/director/approvalMr",
+			// 	title: "Approval MR",
 
-				subMenu: null,
-			},
-			{
-				id: "approval SR",
-				link: "/director/approvalSr",
-				title: "Approval SR",
+			// 	subMenu: null,
+			// },
+			// {
+			// 	id: "approval SR",
+			// 	link: "/director/approvalSr",
+			// 	title: "Approval SR",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			// {
 			// 	id: "job-cost-manhour",
 			// 	link: "/director/job-cost-manhour",

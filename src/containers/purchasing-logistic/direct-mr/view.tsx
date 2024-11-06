@@ -7,7 +7,7 @@ import {
 } from "../../../components";
 import moment from "moment";
 import { FieldArray, Form, Formik } from "formik";
-import { AddPrMr, BackToApprovalMr, GetAllSupplier } from "../../../services";
+import { AddSupplierMr, BackToApprovalMr, GetAllSupplier } from "../../../services";
 import { formatRupiah } from "../../../utils";
 import { toast } from "react-toastify";
 
@@ -86,7 +86,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 		let listDetail: any = [];
 		let isWarning: boolean = false;
 		payload.detailMr.map((res: any) => {
-			if(res.supId !== null){
+			if (res.supId !== null) {
 				listDetail.push({
 					id: res.id,
 					name_material: res.name_material,
@@ -98,57 +98,19 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 					disc: parseInt(res.disc),
 					total: parseInt(res.total),
 				});
-				isWarning = false
+				isWarning = false;
 			}
-			// if(res.supId === null){
-			// 	toast.warning("Supplier has not been filled in yet", {
-			// 		position: "top-center",
-			// 		autoClose: 5000,
-			// 		hideProgressBar: true,
-			// 		closeOnClick: true,
-			// 		pauseOnHover: true,
-			// 		draggable: true,
-			// 		progress: undefined,
-			// 		theme: "colored",
-			// 	});
-			// 	isWarning = true;
-			// }else if(res.price === 0){
-			// 	toast.warning("Price cannot be 0", {
-			// 		position: "top-center",
-			// 		autoClose: 5000,
-			// 		hideProgressBar: true,
-			// 		closeOnClick: true,
-			// 		pauseOnHover: true,
-			// 		draggable: true,
-			// 		progress: undefined,
-			// 		theme: "colored",
-			// 	});
-			// 	isWarning = true;
-			// }else{
-			// 	listDetail.push({
-			// 		id: res.id,
-			// 		name_material: res.name_material,
-			// 		supId: res.supId,
-			// 		taxpr: res.taxpr,
-			// 		currency: res.currency,
-			// 		qtyAppr: parseInt(res.qtyAppr),
-			// 		price: parseInt(res.price),
-			// 		disc: parseInt(res.disc),
-			// 		total: parseInt(res.total),
-			// 	});
-			// 	isWarning = false
-			// }
 		});
 		let data = {
-			dateOfPurchase: payload.dateOfPurchase,
-			idPurchase: payload.idPurchase,
-			taxPsrDmr: payload.taxPsrDmr,
-			currency: payload.currency,
+			// dateOfPurchase: payload.dateOfPurchase,
+			// idPurchase: payload.idPurchase,
+			// taxPsrDmr: payload.taxPsrDmr,
+			// currency: payload.currency,
 			detailMr: listDetail,
 		};
-		if(!isWarning){
+		if (!isWarning) {
 			try {
-				const response = await AddPrMr(data);
+				const response = await AddSupplierMr(data);
 				if (response.data) {
 					toast.success("Purchase Material Request Success", {
 						position: "top-center",
@@ -180,13 +142,13 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 
 	const backToApproval = async (data: any) => {
 		try {
-			let listData: any = []
+			let listData: any = [];
 			data.detailMr.map((res: any) => {
 				listData.push({
 					id: res.id,
-					approvedRequestId: res.approvedRequestId
-				})
-			})
+					approvedRequestId: res.approvedRequestId,
+				});
+			});
 			const response = await BackToApprovalMr(listData);
 			if (response.data) {
 				toast.success("Back to approval mr Success", {
@@ -213,7 +175,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 				theme: "colored",
 			});
 		}
-	}
+	};
 
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
@@ -311,7 +273,10 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																	type='text'
 																	value={result.name_material}
 																	onChange={(e: any) => {
-																		setFieldValue(`detailMr.${i}.name_material`, e.target.value)
+																		setFieldValue(
+																			`detailMr.${i}.name_material`,
+																			e.target.value
+																		);
 																	}}
 																	disabled={false}
 																	required={true}
@@ -334,7 +299,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																		setFieldValue(`detailMr.${i}.qtyAppr`, qty);
 																		setFieldValue(
 																			`detailMr.${i}.total`,
-																			(result.price * qty) - result.disc
+																			result.price * qty - result.disc
 																		);
 																	}}
 																	disabled={false}
@@ -378,7 +343,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																		setFieldValue(`detailMr.${i}.price`, price);
 																		setFieldValue(
 																			`detailMr.${i}.total`,
-																			(price * result.qtyAppr) - result.disc
+																			price * result.qtyAppr - result.disc
 																		);
 																	}}
 																	disabled={false}
@@ -403,7 +368,7 @@ export const ViewDirectMR = ({ dataSelected, content, showModal }: props) => {
 																		setFieldValue(`detailMr.${i}.disc`, disc);
 																		setFieldValue(
 																			`detailMr.${i}.total`,
-																			(result.price * result.qtyAppr) - disc
+																			result.price * result.qtyAppr - disc
 																		);
 																	}}
 																	disabled={false}

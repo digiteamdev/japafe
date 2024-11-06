@@ -7,8 +7,8 @@ import Logo from "../../assets/logo/dwitama.png";
 import moment from "moment";
 import { AddAbsensi } from "@/src/services";
 import Image from "next/image";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 
 export const Absensi = () => {
@@ -67,8 +67,8 @@ export const Absensi = () => {
 	return (
 		<>
 			{isClock ? (
-				<div className="md:flex p-2">
-					<div className='md:w-2/4 w-1/2 md:h-screen items-center mx-auto justify-center md:flex lg:flex bg-white cursor-none'>
+				<div className='md:flex p-2'>
+					<div className='md:w-2/4 w-1/2 md:h-screen items-center mx-auto justify-center md:flex lg:flex bg-white'>
 						<div className=''>
 							<Webcam
 								ref={ref}
@@ -126,7 +126,7 @@ export const Absensi = () => {
 							{data?.scan_in_time
 								? moment(new Date(data?.scan_in_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
-								)
+								  )
 								: "-"}
 						</p>
 						<p>
@@ -134,7 +134,7 @@ export const Absensi = () => {
 							{data?.scan_out_time
 								? moment(new Date(data?.scan_out_time)).format(
 										"DD-MMMM-YYYY, HH:mm:ss"
-								)
+								  )
 								: "-"}
 						</p>
 					</div>

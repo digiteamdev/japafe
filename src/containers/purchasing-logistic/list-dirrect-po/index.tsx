@@ -209,7 +209,7 @@ export const ListDirrectPurchase = () => {
 										{res.detailMr[0]?.mr.no_mr}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{moment(res.date_prepared).format("DD-MM-yyyy")}
+										{moment(res.dateOfPurchase).format("DD-MM-yyyy")}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>

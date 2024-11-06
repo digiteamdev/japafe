@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
-import {
-	Section,
-	Input,
-	InputSelect,
-	InputSelectSearch
-} from "../../../components";
-import { Formik, Form, FieldArray } from "formik";
-import {
-	GetAllPoMr,
-	AddPoMr,
-} from "../../../services";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 import moment from "moment";
-import { getIdUser } from "../../../configs/session";
-import { Trash2, Plus } from "react-feather";
-import { formatRupiah } from "@/src/utils";
+import { FieldArray, Form, Formik } from "formik";
+import {
+	AddPoMr,
+	ApprovalPoMr,
+	GetAllPoMr,
+	GetPurchaseDirrect,
+} from "../../../services";
+import {
+	Input,
+	InputDate,
+	InputSelect,
+	InputSelectSearch,
+	Section,
+} from "../../../components";
+import { formatRupiah, pembilang } from "../../../utils";
+import { getPosition } from "../../../configs/session";
+import { Check, X, Printer, Plus, Trash2 } from "react-feather";
+import { toast } from "react-toastify";
+import { PdfPo } from "./pdfPo";
 
 interface props {
 	content: string;
@@ -28,6 +32,7 @@ interface data {
 	note: string;
 	supplierId: string;
 	delivery_time: string;
+	tax: boolean;
 	franco: string;
 	payment_method: string;
 	dp: any;
@@ -37,27 +42,21 @@ interface data {
 
 export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [listSupplier, setListSupplier] = useState<any>([]);
-	const [listDataSuplier, setListDataSupplier] = useState<any>([]);
+	const [isModal, setIsModal] = useState<boolean>(false);
+	const [isTax, setIsTax] = useState<number>(0);
 	const [contact, setContact] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
+	const [date, setDate] = useState<any>(new Date());
 	const [address, setAddress] = useState<string>("");
-	const [currency, setCurrency] = useState<string>("");
-	const [listMr, setListMr] = useState<any>([]);
-	const [userId, setUserId] = useState<string>("");
-	const [suplierId, setSuplierId] = useState<string>("");
-	const [idPR, setIdPR] = useState<string>("");
-	const [total, setTotal] = useState<string>("");
-	const [tax, setTax] = useState<string>("");
-	const [countTax, setCountTax] = useState<string>("0");
-	const [amountPercent, setAmountPercent] = useState<number>(100);
-	const [grandTotal, setGrandTotal] = useState<string>("");
+	const [listSupplier, setListSupplier] = useState<any>([]);
+	const [listDetail, setListDetail] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		dateOfPO: new Date(),
 		idPO: "",
 		ref: "",
 		supplierId: "",
 		delivery_time: "",
+		tax: true,
 		franco: "",
 		payment_method: "",
 		dp: 0,
@@ -67,72 +66,44 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 	});
 
 	useEffect(() => {
-		let idUser = getIdUser();
-		setData({
-			dateOfPO: new Date(),
-			idPO: generateIdNum(),
-			ref: "",
-			supplierId: "",
-			note: "",
-			delivery_time: "",
-			franco: "",
-			payment_method: "",
-			dp: 0,
-			termOfPayment: [],
-			detailMr: [],
-		});
-		if (idUser !== undefined) {
-			setUserId(idUser);
-		}
-		setIdPR(generateIdNum());
-		getMrPo();
+		getPurchaseMR();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getMrPo = async () => {
+	const getPurchaseMR = async () => {
+		setIsLoading(true);
 		try {
-			const response:any = await GetAllPoMr(1,1,"PR");
-			if (response) {
+			const response = await GetAllPoMr(undefined, undefined, "PO");
+			if (response.data) {
 				let detail: any = [];
 				let suplier: any = [];
 				let dataListSupplier: any = [];
 				let dataSuplier: any = [];
-
-				response.data.result.map((res: any) => {
-					res.detailMr.map((result: any) => {
-						if (!suplier.includes(result.supplier.supplier_name)) {
-							suplier.push(result.supplier.supplier_name);
+				response.data.result.map((result: any) => {
+					result.detailMr.map((res: any) => {
+						if (!suplier.includes(res?.supplier.supplier_name)) {
+							suplier.push(res?.supplier.supplier_name);
 							dataListSupplier.push({
-								label: result.supplier.supplier_name,
-								value: result.supplier,
+								label: res?.supplier.supplier_name,
+								value: res?.supplier,
 							});
-							dataSuplier.push(result.supplier);
+							dataSuplier.push(res.supplier);
 						}
 						detail.push({
-							id: result.id,
-							no_mr: result.mr.no_mr,
-							user: result.mr.user.employee.employee_name,
-							supId: result.supId,
-							taxpr: res.taxPsrDmr,
-							akunId: result.akunId,
-							disc: result.disc,
-							currency: res.currency,
-							total: result.total,
-							material: `${result.Material_Master.name} ${result.Material_Master.spesifikasi}`,
-							qty: result.qtyAppr,
-							note: result.note,
-							price: result.price,
-							job_no: result.mr.job_no,
+							job_no: result.job_no,
+							no_mr: result.no_mr,
+							...res,
 						});
 					});
 				});
+
 				setListSupplier(dataListSupplier);
-				setListDataSupplier(dataSuplier);
-				setListMr(detail);
+				setListDetail(detail);
+				// setListDataSupplier(dataSuplier);
+				// setListMr(detail);
 			}
-		} catch (error) {
-			setListMr([]);
-		}
+		} catch (error: any) {}
+		setIsLoading(false);
 	};
 
 	const generateIdNum = () => {
@@ -147,6 +118,40 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		return id;
 	};
 
+	const Total = (detail: any) => {
+		let jumlahTotal: any = 0;
+		detail.map((res: any) => {
+			jumlahTotal = jumlahTotal + res.price * res.qtyAppr - res.disc;
+		});
+		return jumlahTotal.toString();
+	};
+
+	const Ppn = (detail: any, tax: boolean) => {
+		let totalBayar: any = Total(detail);
+		let totalPPN: any = (totalBayar * isTax) / 100;
+		return tax ? totalPPN.toString() : "0";
+	};
+
+	const GrandTotal = (detail: any, tax: boolean) => {
+		let totalBayar: any = Total(detail);
+		if (tax) {
+			let totalPPN: any = Ppn(detail, tax);
+			let total: any = parseInt(totalBayar) + parseInt(totalPPN);
+			return total;
+		} else {
+			let total: any = parseInt(totalBayar);
+			return total;
+		}
+	};
+
+	const totalTermOfPayment = (data: any, detail: any, tax: boolean) => {
+		let total: number = 0;
+		let grandTotals: any = GrandTotal(detail, tax);
+		total = (parseInt(grandTotals) * data) / 100;
+		total = Math.ceil(total);
+		return formatRupiah(total.toString());
+	};
+
 	const AddPurchaseOrder = async (payload: data) => {
 		setIsLoading(true);
 		let detail: any = [];
@@ -155,7 +160,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		let termOfPay: any = [];
 		let totalPercent: number = 0;
 		payload.detailMr.map((res: any) => {
-			(currency = res.currency), (tax = res.taxpr);
 			detail.push({
 				id: res.id,
 			});
@@ -171,15 +175,15 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 			});
 		});
 		let data = {
-			id_so: payload.idPO,
-			date_prepared: payload.dateOfPO,
+			id_so: generateIdNum(),
+			date_prepared: date,
 			your_reff: payload.ref,
-			supplierId: suplierId,
+			supplierId: payload.supplierId,
 			note: payload.note,
 			DP: payload.dp,
 			term_of_pay_po_so: termOfPay,
-			taxPsrDmr: tax,
-			currency: currency,
+			taxPsrDmr: payload.tax ? "ppn" : "non_tax",
+			currency: "IDR",
 			delivery_time: payload.delivery_time,
 			franco: payload.franco,
 			payment_method: payload.payment_method,
@@ -240,76 +244,13 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
-	const totalPrice = (price: number, qty: number) => {
-		return price * qty;
-	};
-
-	const handleOnChanges = (event: any) => {
-		if (event.target.name === "suplier") {
-			listDataSuplier.map((res: any) => {
-				if (res.supplier_name === event.target.value) {
-					let detail: any = [];
-					let total: number = 0;
-					let totalTax: number = 0;
-					let tax: boolean = false;
-					let termOfPayment: any = [
-						{
-							limitpay: "Normal",
-							percent: 0,
-							price: 0,
-							invoice: "",
-						},
-					];
-					listMr.map((mr: any) => {
-						if (mr.supId === res.id) {
-							detail.push(mr);
-							setCurrency(mr.currency);
-							total = total + mr.total;
-							if (mr.taxpr === "ppn") {
-								tax = true;
-							}
-						}
-					});
-					if (tax) {
-						totalTax = (total * res.ppn) / 100;
-						setCountTax(res.ppn);
-						setTax(formatRupiah(totalTax.toString()));
-					}
-					let grandTotal: number = total + totalTax;
-					setTotal(formatRupiah(total.toString()));
-					setGrandTotal(formatRupiah(grandTotal.toString()));
-					setContact(res.SupplierContact[0].contact_person);
-					setPhone(`+62${res.SupplierContact[0].phone}`);
-					setAddress(res.addresses_sup);
-					setSuplierId(res.id);
-					setData({
-						dateOfPO: data.dateOfPO,
-						idPO: data.idPO,
-						ref: "",
-						note: "",
-						delivery_time: "",
-						franco: "",
-						payment_method: "",
-						supplierId: "",
-						dp: 0,
-						termOfPayment: termOfPayment,
-						detailMr: detail,
-					});
-				}
-			});
-		}
-	};
-
-	const totalTermOfPayment = (data: any) => {
-		let total: number = 0;
-		let grandTotals: any = grandTotal.replace(/[$.]/g, "");
-		total = (parseInt(grandTotals) * data) / 100;
-		total = Math.ceil(total);
-		return formatRupiah(total.toString());
+	const showModalPdf = (val: boolean) => {
+		setIsModal(val);
 	};
 
 	return (
-		<div className='px-5 pb-2 mt-4 overflow-auto'>
+		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
+			<h1 className='font-bold text-xl'>Purchase Order</h1>
 			<Formik
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
@@ -326,20 +267,17 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 					touched,
 					values,
 				}) => (
-					<Form onChange={handleOnChanges}>
+					<Form>
 						<Section className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
-								<Input
+								<InputDate
 									id='datePR'
-									name='datePR'
-									placeholder='Date Of Purchase'
 									label='Date Of Purchase'
-									type='text'
-									value={moment(new Date()).format("DD-MMMM-YYYY")}
-									disabled={true}
-									required={true}
+									value={moment(date).format("DD-MMMM-YYYY")}
+									onChange={(value: any) => setDate(new Date(value))}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>
@@ -350,10 +288,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									placeholder='Supplier'
 									label='Supplier'
 									onChange={(e: any) => {
+										console.log(e);
 										let detail: any = [];
-										let total: number = 0;
-										let totalTax: number = 0;
-										let tax: boolean = false;
 										let termOfPayment: any = [
 											{
 												limitpay: "Normal",
@@ -362,24 +298,12 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 												invoice: "",
 											},
 										];
-										listMr.map((mr: any) => {
-											if (mr.supId === e.value.id) {
-												detail.push(mr);
-												setCurrency(mr.currency);
-												total = total + mr.price * mr.qty;
-												if (mr.taxpr === "ppn") {
-													tax = true;
-												}
+										listDetail.map((res: any) => {
+											console.log(res);
+											if (res.supplier.supplier_name === e.label) {
+												detail.push(res);
 											}
 										});
-										if (tax) {
-											totalTax = (total * e.value.ppn) / 100;
-											setCountTax(e.value.ppn);
-											setTax(formatRupiah(totalTax.toString()));
-										}
-										let grandTotal: number = total + totalTax;
-										setTotal(formatRupiah(total.toString()));
-										setGrandTotal(formatRupiah(grandTotal.toString()));
 										setContact(
 											e.value.SupplierContact.length === 0
 												? ""
@@ -393,17 +317,18 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											}`
 										);
 										setAddress(e.value.addresses_sup);
-										setSuplierId(e.value.id);
+										setIsTax(e.value.ppn);
 										setData({
-											dateOfPO: data.dateOfPO,
-											idPO: data.idPO,
-											ref: "",
-											note: "",
-											supplierId: "",
-											delivery_time: "",
-											franco: "",
-											payment_method: "",
-											dp: 0,
+											dateOfPO: new Date(),
+											idPO: values.idPO,
+											ref: values.ref,
+											supplierId: e.value.id,
+											delivery_time: values.delivery_time,
+											franco: values.franco,
+											tax: values.tax,
+											payment_method: values.payment_method,
+											dp: values.dp,
+											note: values.note,
 											termOfPayment: termOfPayment,
 											detailMr: detail,
 										});
@@ -472,18 +397,25 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<Input
-									id='curr'
-									name='curr'
-									placeholder='Currency'
-									label='Currency'
-									type='text'
-									value={currency}
-									disabled={true}
+								<InputSelect
+									id='taxPsrDmr'
+									name='taxPsrDmr'
+									placeholder='Tax'
+									label='Tax'
+									onChange={(e: any) => {
+										if (e.target.value === "ppn") {
+											setFieldValue("tax", true);
+										} else {
+											setFieldValue("tax", false);
+										}
+									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
+								>
+									<option value='ppn'>PPN</option>
+									<option value='non_tax'>Non Tax</option>
+								</InputSelect>
 							</div>
 							<div className='w-full'>
 								<Input
@@ -547,14 +479,16 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								/>
 							</div>
 						</Section>
-						<h5 className='mt-2'>Term Of Payment</h5>
+						{values.termOfPayment.length > 0 ? (
+							<h5 className='font-bold text-lg mt-2'>Term Of Payment</h5>
+						) : null}
 						<FieldArray
 							name='termOfPayment'
 							render={(arrayPayment) => {
 								return values.termOfPayment.map((res: any, i: number) => {
 									return (
 										<Section
-											className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2'
+											className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 border-b-[3px] border-b-green-500 pb-2'
 											key={i}
 										>
 											<div className='w-full'>
@@ -592,14 +526,25 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 													type='number'
 													value={res.percent}
 													onChange={(e: any) => {
-														setFieldValue(
-															`termOfPayment.${i}.percent`,
-															e.target.value
-														);
-														setFieldValue(
-															`termOfPayment.${i}.price`,
-															totalTermOfPayment(e.target.value)
-														);
+														if (e.target.value < 0 || e.target.value > 100) {
+															setFieldValue(
+																`termOfPayment.${i}.percent`,
+																res.percent
+															);
+														} else {
+															setFieldValue(
+																`termOfPayment.${i}.percent`,
+																e.target.value
+															);
+															setFieldValue(
+																`termOfPayment.${i}.price`,
+																totalTermOfPayment(
+																	e.target.value,
+																	values.detailMr,
+																	values.tax
+																)
+															);
+														}
 													}}
 													required={true}
 													withLabel={true}
@@ -669,10 +614,13 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 								});
 							}}
 						/>
+						{values.detailMr.length > 0 ? (
+							<h5 className='font-bold text-lg mt-2'>Detail Purchase</h5>
+						) : null}
 						{values.detailMr.map((result: any, i: number) => {
 							return (
 								<Section
-									className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4'
+									className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'
 									key={i}
 								>
 									<div className='w-full'>
@@ -696,7 +644,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											placeholder='Material'
 											label='Material'
 											type='text'
-											value={result.material}
+											value={result.Material_Master.name}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -710,7 +658,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											placeholder='Quantity'
 											label='Quantity'
 											type='text'
-											value={result.qty}
+											value={result.qtyAppr}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -752,9 +700,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											placeholder='Total'
 											label='Total'
 											type='text'
-											value={formatRupiah(
-												totalPrice(result.price, result.qty).toString()
-											)}
+											value={formatRupiah(result.total.toString())}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -767,11 +713,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 						{values.detailMr.length > 0 ? (
 							<div className='w-full'>
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
+									<div className='w-full col-span-5'>
 										<p className='text-xl mt-4 text-end'>Total</p>
 									</div>
 									<div className='w-full'>
@@ -780,7 +722,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											name='total'
 											placeholder='Total'
 											type='text'
-											value={total}
+											value={formatRupiah(Total(values.detailMr))}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -789,12 +731,8 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									</div>
 								</Section>
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>PPN {countTax}%</p>
+									<div className='w-full col-span-5'>
+										<p className='text-xl mt-4 text-end'>PPN</p>
 									</div>
 									<div className='w-full'>
 										<Input
@@ -802,7 +740,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											name='total'
 											placeholder='PPN'
 											type='text'
-											value={tax}
+											value={formatRupiah(Ppn(values.detailMr, values.tax))}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -811,11 +749,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 									</div>
 								</Section>
 								<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
+									<div className='w-full col-span-5'>
 										<p className='text-xl mt-4 text-end'>Grand Total</p>
 									</div>
 									<div className='w-full'>
@@ -824,7 +758,9 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											name='total'
 											placeholder='Grand Total'
 											type='text'
-											value={grandTotal}
+											value={formatRupiah(
+												GrandTotal(values.detailMr, values.tax).toString()
+											)}
 											disabled={true}
 											required={true}
 											withLabel={true}
@@ -832,28 +768,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 										/>
 									</div>
 								</Section>
-								{/* <Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2'>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'></div>
-									<div className='w-full'>
-										<p className='text-xl mt-4 text-end'>DP</p>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='dp'
-											name='dp'
-											placeholder='DP'
-											type='number'
-											value={values.dp}
-											onChange={handleChange}
-											required={true}
-											withLabel={true}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section> */}
 							</div>
 						) : null}
 						{values.detailMr.length === 0 ? null : (

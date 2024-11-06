@@ -8,23 +8,24 @@ import {
 	Button,
 	ModalDelete,
 	Pagination,
+	Section,
+	InputDate,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreatePurchaseMr } from "./formCreate";
-import { ViewPoMR } from "./view";
-import { FormEditPurchaseMr } from "./formEdit";
+import { Send, Edit, Eye, Trash2, Printer } from "react-feather";
+import { FormCreatePurchaseDirrect } from "./formCreate";
+import { ViewPurchaseDirect } from "./view";
+// import { FormEditDirectMr } from "./formEdit";
 import {
-	GetPoMr,
-	SearchPoMR,
+	GetPurchaseDirrect,
+	SearchPurchaseMR,
 	DeletePurchaseMR,
-	GetAllPoMr,
 } from "../../../services";
 import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
-export const PurchasePO = () => {
+export const DirectPurchase = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -36,36 +37,20 @@ export const PurchasePO = () => {
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
+	const [dateStart, setDateStart] = useState<any>(new Date());
+	const [dateFinish, setDateFinish] = useState<any>(new Date());
 	const headerTabel = [
 		{ name: "Job No" },
 		{ name: "No MR" },
 		{ name: "Material" },
-		{ name: "Request" },
+		{ name: "Supplier/vendor" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getMrPo(page, perPage, "PO");
+		getPurchaseMR(page, perPage, "DP");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const getMrPo = async (page: number, perpage: number, type: string) => {
-		try {
-			const response: any = await GetAllPoMr(page,perpage,type);
-			if(response.data){
-				setData(response.data.result);
-				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil(response.data.totalData / perpage));
-			}
-		} catch (error: any) {
-			if (error.response.data.login) {
-				setData([]);
-			} else {
-				// removeToken();
-				// router.push('/');
-			}
-		}
-	};
 
 	const showModal = (val: boolean, content: string, reload: boolean) => {
 		setIsModal(val);
@@ -74,8 +59,28 @@ export const PurchasePO = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getMrPo(page, perPage, "PO");
+			getPurchaseMR(page, perPage, "DP");
 		}
+	};
+
+	const getPurchaseMR = async (page: number, perpage: number, type: string) => {
+		setIsLoading(true);
+		try {
+			const response = await GetPurchaseDirrect(page, perpage, type);
+			if (response.data) {
+				setData(response.data.result);
+				setCountData(response.data.totalData);
+				setTotalPage(Math.ceil(response.data.totalData / perpage));
+			}
+		} catch (error: any) {
+			if (error.response.data.login) {
+				setData([]);
+			} else {
+				removeToken();
+				router.push("/");
+			}
+		}
+		setIsLoading(false);
 	};
 
 	const searchPurchaseMR = async (
@@ -85,7 +90,7 @@ export const PurchasePO = () => {
 	) => {
 		setIsLoading(true);
 		try {
-			const response = await SearchPoMR(page, limit, search, "PO");
+			const response = await GetPurchaseDirrect(page, limit, "DP");
 			if (response.data) {
 				setData(response.data.result);
 			}
@@ -99,7 +104,7 @@ export const PurchasePO = () => {
 		try {
 			const response = await DeletePurchaseMR(id);
 			if (response.data) {
-				toast.success("Delete Purchase Order Request Success", {
+				toast.success("Delete Purchase Request Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,10 +114,10 @@ export const PurchasePO = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMrPo(1, 10, "PO");
+				getPurchaseMR(1, 10, "DP");
 			}
 		} catch (error) {
-			toast.error("Delete Purchase Order Request Failed", {
+			toast.error("Delete Purchase Request Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -126,27 +131,27 @@ export const PurchasePO = () => {
 		setIsModal(false);
 	};
 
-	const showMaterial = (data:any) => {
-		let material:string = ""
-		data.map((res: any, i:number) => {
-			if(i === 0){
-				material = `- `+res.Material_Master.name
-			}else{
-				material = material +` \r\n ` + `- `+res.Material_Master.name 
+	const showMaterial = (data: any) => {
+		let material: string = "";
+		data.map((res: any, i: number) => {
+			if (i === 0) {
+				material = `- ` + res.Material_Master.name_material;
+			} else {
+				material = material + ` \r\n ` + `- ` + res.Material_Master.name_material;
 			}
-		})
-		return material
-	}
+		});
+		return material;
+	};
 
 	return (
-		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
+		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24 h-screen'>
 			<SectionTitle
-				title='Purchase Order Material Request'
+				title='Purchase Direct Material'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='Purchase Order Material Request'
+				title='Purchase Direct Material'
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -157,6 +162,45 @@ export const PurchasePO = () => {
 				showModal={showModal}
 				search={searchPurchaseMR}
 			>
+				<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							value={dateStart}
+							onChange={(value: any) => setDateStart(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='w-full'>
+						<InputDate
+							id='date'
+							label='date'
+							dateFormat='dd/MM/yyyy'
+							minDate={dateStart}
+							value={dateFinish}
+							onChange={(value: any) => setDateFinish(value)}
+							withLabel={false}
+							className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+							classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
+						/>
+					</div>
+					<div className='flex'>
+						<Button
+							className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
+							onClick={async () =>
+								(window.location.href =
+									process.env.BASE_URL +
+									`/DirectMrCsv?dateStar=${dateStart}&dateEnd=${dateFinish}`)
+							}
+						>
+							<Printer color='white' className='mx-auto' />
+						</Button>
+					</div>
+				</Section>
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -200,16 +244,16 @@ export const PurchasePO = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.job_no }
+										{res?.mr?.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.no_mr }
+										{res?.mr?.no_mr}
 									</td>
-									<td className='whitespace-pre-line p-1 text-center'>
-										{ showMaterial(res.detailMr) }
+									<td className='whitespace-pre-line p-1'>
+										{res?.Material_Master?.name}
 									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
-										{ res.user.employee.employee_name }
+                                    <td className='whitespace-nowrap p-1 text-center'>
+										{res?.supplier?.supplier_name}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -222,27 +266,27 @@ export const PurchasePO = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* {res.status_manager_director === "revision" ? (
+											{/* { res.status_manager_director === 'revision' ? (
+												<Button
+												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true,'edit', false);
+												}}
+											>
+												<Edit color='white' />
+											</Button>
+											) : res.status_manager_pr ? null : (
 												<Button
 													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
 													onClick={() => {
 														setDataSelected(res);
-														showModal(true, "edit", false);
+														showModal(true,'edit', false);
 													}}
 												>
 													<Edit color='white' />
 												</Button>
-											) : res.status_manager ? null : (
-												<Button
-													className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "edit", false);
-													}}
-												>
-													<Edit color='white' />
-												</Button>
-											)} */}
+											) } */}
 											{/* <Button
 												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
 												onClick={() => {
@@ -267,7 +311,7 @@ export const PurchasePO = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getMrPo(value, perPage, "PO");
+							getPurchaseMR(value, perPage, "DP");
 						}}
 					/>
 				) : null}
@@ -282,28 +326,26 @@ export const PurchasePO = () => {
 				/>
 			) : (
 				<Modal
-					title='Purchase Order Material Request'
+					title='Purchase Direct Material'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewPoMR
+                        <ViewPurchaseDirect
 							dataSelected={dataSelected}
 							showModal={showModal}
 							content={modalContent}
 						/>
 					) : modalContent === "add" ? (
-						<FormCreatePurchaseMr
-							content={modalContent}
-							showModal={showModal}
-						/>
+                        <FormCreatePurchaseDirrect content={modalContent} showModal={showModal} />
 					) : (
-						<FormEditPurchaseMr
-							content={modalContent}
-							showModal={showModal}
-							dataSelected={dataSelected}
-						/>
+                        <></>
+						// <FormEditDirectMr
+						// 	content={modalContent}
+						// 	showModal={showModal}
+						// 	dataSelected={dataSelected}
+						// />
 					)}
 				</Modal>
 			)}
