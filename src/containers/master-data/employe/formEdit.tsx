@@ -323,10 +323,10 @@ export const FormEditEmploye = ({
 			spouse_birth_date: dataEmploye.spouse_birth_date,
 			spouse_birth_place: dataEmploye.spouse_birth_place,
 			golId: dataEmploye?.golId,
-			selectGolongan: {
+			selectGolongan: dataEmploye?.pendapatan_employe ? {
 				label: `${dataEmploye?.pendapatan_employe?.golongan}${dataEmploye?.pendapatan_employe?.huruf}`,
 				value: dataEmploye?.pendapatan_employe,
-			},
+			} : null,
 			gaji_pokok: dataEmploye?.gaji_pokok ? dataEmploye?.gaji_pokok : 0,
 		});
 
