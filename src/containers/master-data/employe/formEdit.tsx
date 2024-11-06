@@ -1238,6 +1238,7 @@ export const FormEditEmploye = ({
 										label='Golongan'
 										value={values.selectGolongan}
 										onChange={(e: any) => {
+											setFieldValue("selectGolongan", e);
 											setFieldValue("golId", e.value.id);
 										}}
 										required={true}
