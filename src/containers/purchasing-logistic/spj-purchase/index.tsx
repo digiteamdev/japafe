@@ -10,11 +10,11 @@ import {
 	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreatePurchaseMr } from "./formCreate";
-// import { ViewDirrectPurchase } from "./view";
+import { FormCreateSPJPurchase } from "./formCreate";
+import { ViewSpjPurchase } from "./view";
 // import { FormEditPurchaseMr } from "./formEdit";
 import {
-	GetDirrectPurchase,
+	GetSpjPurchase,
 	SearchDirrectPurchase,
 	DeletePurchaseMR,
 	GetAllMRPo,
@@ -37,6 +37,7 @@ export const SpjPurchase = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
+		{ name: "Id Spj Purchase" },
 		{ name: "Id Dirrect Purchase" },
 		{ name: "Job No" },
 		{ name: "No MR" },
@@ -45,13 +46,13 @@ export const SpjPurchase = () => {
 	];
 
 	useEffect(() => {
-		getMrPo(page, perPage, "DMR");
+		getSpjPurchase(page, perPage, "");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getMrPo = async (page: number, perpage: number, type: string) => {
+	const getSpjPurchase = async (page: number, perpage: number, search: string) => {
 		try {
-			const response: any = await GetDirrectPurchase(page, perpage, type);
+			const response: any = await GetSpjPurchase(page, perpage, search);
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -74,7 +75,7 @@ export const SpjPurchase = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getMrPo(page, perPage, "DMR");
+			getSpjPurchase(page, perPage, "");
 		}
 	};
 
@@ -83,23 +84,14 @@ export const SpjPurchase = () => {
 		limit: number,
 		search: string
 	) => {
-		setIsLoading(true);
-		try {
-			const response = await SearchDirrectPurchase(page, limit, search, "DMR");
-			if (response.data) {
-				setData(response.data.result);
-			}
-		} catch (error) {
-			setData([]);
-		}
-		setIsLoading(false);
+		getSpjPurchase(page, limit, search);
 	};
 
 	const deletePurchaseMR = async (id: string) => {
 		try {
 			const response = await DeletePurchaseMR(id);
 			if (response.data) {
-				toast.success("Delete Purchase Order Request Success", {
+				toast.success("Delete Spj Purchase Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,10 +101,10 @@ export const SpjPurchase = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMrPo(1, 10, "DP");
+				getSpjPurchase(page, perPage, "");
 			}
 		} catch (error) {
-			toast.error("Delete Purchase Order Request Failed", {
+			toast.error("Delete Spj Purchase Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -194,38 +186,41 @@ export const SpjPurchase = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
-							// return (
-							// 	<tr
-							// 		className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
-							// 		key={i}
-							// 	>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-							// 			{res.idPurchase}
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-							// 			{res.detailMr[0]?.mr.job_no}
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-							// 			{res.detailMr[0]?.mr.no_mr}
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 text-center'>
-							// 			{moment(res.date_prepared).format("DD-MM-yyyy")}
-							// 		</td>
-							// 		<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-							// 			<div>
-							// 				<Button
-							// 					className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
-							// 					onClick={() => {
-							// 						setDataSelected(res);
-							// 						showModal(true, "view", false);
-							// 					}}
-							// 				>
-							// 					<Eye color='white' />
-							// 				</Button>
-							// 			</div>
-							// 		</td>
-							// 	</tr>
-							// );
+							return (
+								<tr
+									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
+									key={i}
+								>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.id_spj_purchase}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.detailMr[0]?.purchase?.idPurchase}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.detailMr[0]?.mr.job_no}
+									</td>
+									<td className='whitespace-nowrap p-1 text-center'>
+										{res.detailMr[0]?.mr.no_mr}
+									</td>
+									<td className='whitespace-pre p-1 text-center'>
+										{showMaterial(res.detailMr)}
+									</td>
+									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
+										<div>
+											<Button
+												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
+												onClick={() => {
+													setDataSelected(res);
+													showModal(true, "view", false);
+												}}
+											>
+												<Eye color='white' />
+											</Button>
+										</div>
+									</td>
+								</tr>
+							);
 						})
 					)}
 				</Table>
@@ -237,7 +232,7 @@ export const SpjPurchase = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getMrPo(value, perPage, "DMR");
+							getSpjPurchase(page, perPage, "");
 						}}
 					/>
 				) : null}
@@ -252,14 +247,13 @@ export const SpjPurchase = () => {
 				/>
 			) : (
 				<Modal
-					title='List Dirrect Purchase'
+					title='SPJ Purchase'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<></>
-						// <ViewDirrectPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+						<ViewSpjPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 					) : 
 					// <ViewPoMR
 					// 	dataSelected={dataSelected}
@@ -267,12 +261,11 @@ export const SpjPurchase = () => {
 					// 	content={modalContent}
 					// />
 					modalContent === "add" ? (
-						<></>
+						<FormCreateSPJPurchase
+							content={modalContent}
+							showModal={showModal}
+						/>
 					) : (
-						// <FormCreatePurchaseMr
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
 						<></>
 						// <FormEditPurchaseMr
 						// 	content={modalContent}

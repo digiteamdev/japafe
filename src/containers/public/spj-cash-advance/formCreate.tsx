@@ -385,6 +385,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 																	className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
 																	onClick={() =>
 																		arrayDetail.push({
+																			id: "",
 																			type_cdv: "Consumable",
 																			cdvId: res.cdvId,
 																			total: 0,

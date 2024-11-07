@@ -207,6 +207,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "SPJ purchase",
+				link: "/purchasing-logistic/spj-purchase",
+				title: "SPJ purchase",
+
+				subMenu: null,
+			},
+			{
 				id: "approval-sr",
 				link: "/purchasing-logistic/approval-sr",
 				title: "Approval SR",
@@ -245,13 +252,6 @@ export const ListNav = [
 				id: "list-dirrect-service",
 				link: "/purchasing-logistic/list-dirrect-service",
 				title: "List Dirrect Service",
-
-				subMenu: null,
-			},
-			{
-				id: "SPJ purchase",
-				link: "/purchasing-logistic/spj-purchase",
-				title: "SPJ purchase",
 
 				subMenu: null,
 			},

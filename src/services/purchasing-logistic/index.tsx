@@ -6,3 +6,4 @@ export * from "./purchase-order";
 export * from "./purchase-receive";
 export * from "./outgoing-material";
 export * from "./do";
+export * from "./spj-purchase";
