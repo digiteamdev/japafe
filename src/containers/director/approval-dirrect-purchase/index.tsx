@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { removeToken } from "../../../configs/session";
 import {
 	SectionTitle,
 	Content,
@@ -9,49 +10,61 @@ import {
 	ModalDelete,
 	Pagination,
 } from "../../../components";
-import { Send, Edit, Eye, Trash2 } from "react-feather";
-// import { FormCreatePurchaseMr } from "./formCreate";
-import { ViewDirrectPurchase } from "./view";
-// import { FormEditPurchaseMr } from "./formEdit";
+import { File, Edit, Eye, Trash2, Send } from "react-feather";
+// import { FormCreateDrawing } from "./formCreate";
+// import { ViewDrawing } from "./view";
+// import { FormEditDrawing } from "./formEdit";
 import {
-	GetDirrectPurchase,
-	SearchDirrectPurchase,
-	DeletePurchaseMR,
-	GetAllMRPo,
+	GetDrawing,
+	SearchDrawing,
+	DeleteSummary,
+	GetApprovalDirrect,
 } from "../../../services";
 import { toast } from "react-toastify";
-import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
+import { ViewApprovalDirrect } from "./view";
 
-export const ListDirrectPurchase = () => {
+export const ApprovalDirrectPurchase = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [countData, setCountData] = useState<number>(0);
-	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [data, setData] = useState<any>([]);
+	const [dataSelected, setDataSelected] = useState<any>(false);
 	const [modalContent, setModalContent] = useState<string>("add");
 	const [page, setPage] = useState<number>(1);
 	const [perPage, setperPage] = useState<number>(10);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id Dirrect Purchase" },
-		{ name: "Job No" },
-		{ name: "No MR" },
-		{ name: "Date" },
+		{ name: "Id Purchase" },
+		{ name: "Job no" },
+		{ name: "No Mr" },
+		{ name: "Material" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getMrPo(page, perPage, "DMR");
+		getPurchase(page, perPage);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getMrPo = async (page: number, perpage: number, type: string) => {
+	const showModal = (val: boolean, content: string, reload: boolean) => {
+		setIsModal(val);
+		setModalContent(content);
+		// if(!val){
+		// 	setDataSelected({id: '',name: ''})
+		// }
+		if (reload) {
+			getPurchase(page, perPage);
+		}
+	};
+
+	const getPurchase = async (page: number, perpage: number) => {
+		setIsLoading(true);
 		try {
-			const response: any = await GetDirrectPurchase(page, perpage, type);
+			const response = await GetApprovalDirrect(page, perpage, "DMR");
 			if (response.data) {
 				setData(response.data.result);
 				setCountData(response.data.totalData);
@@ -61,45 +74,24 @@ export const ListDirrectPurchase = () => {
 			if (error.response.data.login) {
 				setData([]);
 			} else {
-				// removeToken();
-				// router.push('/');
+				removeToken();
+				router.push("/");
 			}
-		}
-	};
-
-	const showModal = (val: boolean, content: string, reload: boolean) => {
-		setIsModal(val);
-		setModalContent(content);
-		// if(!val){
-		// 	setDataSelected({id: '',name: ''})
-		// }
-		if (reload) {
-			getMrPo(page, perPage, "DMR");
-		}
-	};
-
-	const searchPurchaseMR = async (
-		page: number,
-		limit: number,
-		search: string
-	) => {
-		setIsLoading(true);
-		try {
-			const response = await SearchDirrectPurchase(page, limit, search, "DMR");
-			if (response.data) {
-				setData(response.data.result);
-			}
-		} catch (error) {
-			setData([]);
 		}
 		setIsLoading(false);
 	};
 
-	const deletePurchaseMR = async (id: string) => {
+	const searchPo = async (page: number, limit: number, search: string) => {
+		setIsLoading(true);
+		getPurchase(page,limit)
+		setIsLoading(false);
+	};
+
+	const deleteSummary = async (id: string) => {
 		try {
-			const response = await DeletePurchaseMR(id);
+			const response = await DeleteSummary(id);
 			if (response.data) {
-				toast.success("Delete Purchase Order Request Success", {
+				toast.success("Delete Summary Report Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -109,10 +101,10 @@ export const ListDirrectPurchase = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getMrPo(1, 10, "DP");
+				getPurchase(1, 10);
 			}
 		} catch (error) {
-			toast.error("Delete Purchase Order Request Failed", {
+			toast.error("Delete Summary Report Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -126,45 +118,37 @@ export const ListDirrectPurchase = () => {
 		setIsModal(false);
 	};
 
-	const showMaterial = (data: any) => {
-		let material: string = "";
+	const showData = (data: any, field: string) => {
+		let datas: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.Material_Master.name;
+				datas =
+					field === "job_no"
+						? `- ` + res.mr?.job_no
+						: field === "no_mr"
+						? `- ` + res.mr?.no_mr
+						: `- ` + res.Material_Master.name;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+				datas =
+					field === "job_no"
+						? datas + `\r\n` + `- ` + res.mr?.job_no
+						: field === "no_mr"
+						? datas + `\r\n` + `- ` + res.mr?.no_mr
+						: datas + `\r\n` + `- ` + res.Material_Master.name;
 			}
 		});
-		return material;
+		return datas;
 	};
 
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='List Dirrect Purchase'
+				title='Approval Dirrect Purchase'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
-				informasi={
-					<div className='right-2 mt-3'>
-						<div className='grid grid-cols-3 gap-2'>
-							<div className='flex'>
-								<div className='bg-white border border-black w-4 h-4 mr-2'></div>
-								<div className='text-sm'>Waiting Approve</div>
-							</div>
-							<div className='flex'>
-								<div className='bg-green-500 border border-black w-4 h-4 mt-1 mr-2'></div>
-								<div className='text-sm'>Approve</div>
-							</div>
-							<div className='flex'>
-								<div className='bg-red-500 border border-black w-4 h-4 mt-1 mr-2'></div>
-								<div className='text-sm'>Reject</div>
-							</div>
-						</div>
-					</div>
-				}
 			/>
 			<Content
-				title='List Dirrect Purchase'
+				title='Approval Dirrect Purchase'
 				print={false}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -173,7 +157,7 @@ export const ListDirrectPurchase = () => {
 				mr={false}
 				changeMr={changeDivisi}
 				showModal={showModal}
-				search={searchPurchaseMR}
+				search={searchPo}
 			>
 				<Table header={headerTabel}>
 					{isLoading ? (
@@ -217,20 +201,14 @@ export const ListDirrectPurchase = () => {
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
 									key={i}
 								>
-									<td className={`whitespace-nowrap p-1 text-center ${res.status_manager_director === "approve" ? 'bg-green-500' : res.status_manager_director === "reject" ? 'bg-red-500' : ''}`}>
-										{res.idPurchase}
-									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0]?.mr.job_no}
+										{res?.idPurchase}
 									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0]?.mr.no_mr}
-									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
-										{moment(res.dateOfPurchase).format("DD-MM-yyyy")}
-									</td>
+									<td className='whitespace-pre p-1'>{showData(res?.detailMr, "job_no")}</td>
+									<td className='whitespace-pre p-1'>{showData(res?.detailMr, "no_mr")}</td>
+									<td className='whitespace-pre p-1'>{showData(res?.detailMr, "material")}</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
-										<div>
+										<div className='w-full space-x-2'>
 											<Button
 												className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md'
 												onClick={() => {
@@ -255,7 +233,7 @@ export const ListDirrectPurchase = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getMrPo(value, perPage, "DMR");
+							getPurchase(value, perPage);
 						}}
 					/>
 				) : null}
@@ -266,36 +244,23 @@ export const ListDirrectPurchase = () => {
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
-					onDelete={deletePurchaseMR}
+					onDelete={deleteSummary}
 				/>
 			) : (
 				<Modal
-					title='List Dirrect Purchase'
+					title='Approval Dirrect Purchase'
 					isModal={isModal}
 					content={modalContent}
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewDirrectPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
-					) : 
-					// <ViewPoMR
-					// 	dataSelected={dataSelected}
-					// 	showModal={showModal}
-					// 	content={modalContent}
-					// />
-					modalContent === "add" ? (
+						<ViewApprovalDirrect content={modalContent} showModal={showModal} dataSelected={dataSelected} />
+					) : modalContent === "add" ? (
 						<></>
 					) : (
-						// <FormCreatePurchaseMr
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// />
+						// <FormCreateDrawing content={modalContent} showModal={showModal} />
 						<></>
-						// <FormEditPurchaseMr
-						// 	content={modalContent}
-						// 	showModal={showModal}
-						// 	dataSelected={dataSelected}
-						// />
+						// <FormEditDrawing content={modalContent} showModal={showModal} dataSelected={dataSelected}/>
 					)}
 				</Modal>
 			)}

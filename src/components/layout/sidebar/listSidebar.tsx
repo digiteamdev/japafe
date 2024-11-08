@@ -331,6 +331,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "approval dirrect purchase",
+				link: "/director/approval-dirrect-purchase",
+				title: "Approval Dirrect Purchase",
+
+				subMenu: null,
+			},
+			{
 				id: "approval So",
 				link: "/director/approvalSo",
 				title: "Approval SO",

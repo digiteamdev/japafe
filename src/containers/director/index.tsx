@@ -6,3 +6,4 @@ export * from './approvalSo';
 export * from './approvalMR/view';
 export * from './approvalSR/view';
 export * from './approvalPo/view';
+export * from './approval-dirrect-purchase';
