@@ -124,18 +124,18 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 	};
 
 	const showButtonValid = (data: any) => {
-		if (position === "Manager") {
+		if (position === "Manager" || position === "Supervisor") {
 			if (data.status_valid) {
 				return (
 					<div>
-						<button
+						{/* <button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<button
 							className={`justify-center rounded-full border border-transparent bg-gray-500 hover:bg-gray-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -149,14 +149,14 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 			} else {
 				return (
 					<div>
-						<button
+						{/* <button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => showModalPdf(true)}
 						>
 							<div className='flex px-1 py-1'>
 								<Printer size={16} className='mr-1' /> Print
 							</div>
-						</button>
+						</button> */}
 						<button
 							className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 							onClick={() => approve()}
@@ -328,6 +328,11 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 			/> */}
 			{dataSelected ? (
 				<>
+					<div className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1'>
+						<div className='text-right mr-6'>
+							{showButtonValid(dataSelected)}
+						</div>
+					</div>
 					<h1 className='font-bold text-xl'>Kontra Bon</h1>
 					<Section className='grid grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
@@ -533,27 +538,29 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 											</th>
 										</thead>
 										<tbody>
-											{ dataSelected.term_of_pay_po_so?.poandso?.detailMr.map((res:any, i:number) => {
-												return (
-													<tr key={i}>
-														<td className="border border-black p-1">
-															{ res.name_material }
-														</td>
-														<td className="border border-black p-1">
-															{ res.qtyAppr }
-														</td>
-														<td className="border border-black p-1">
-															{ rupiahFormat(res.price) }
-														</td>
-														<td className="border border-black p-1">
-															{ rupiahFormat(res.disc) }
-														</td>
-														<td className="border border-black p-1">
-															{ rupiahFormat(res.total) }
-														</td>
-													</tr>
-												)
-											}) }
+											{dataSelected.term_of_pay_po_so?.poandso?.detailMr.map(
+												(res: any, i: number) => {
+													return (
+														<tr key={i}>
+															<td className='border border-black p-1'>
+																{res.name_material}
+															</td>
+															<td className='border border-black p-1'>
+																{res.qtyAppr}
+															</td>
+															<td className='border border-black p-1'>
+																{rupiahFormat(res.price)}
+															</td>
+															<td className='border border-black p-1'>
+																{rupiahFormat(res.disc)}
+															</td>
+															<td className='border border-black p-1'>
+																{rupiahFormat(res.total)}
+															</td>
+														</tr>
+													);
+												}
+											)}
 										</tbody>
 									</table>
 								) : null}

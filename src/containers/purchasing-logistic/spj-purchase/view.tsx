@@ -89,7 +89,7 @@ export const ViewSpjPurchase = ({
 				<>
 					<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
 						<div className="w-full">
-						<h1 className='font-bold text-xl'>Spj Purchase</h1>
+							<h1 className='font-bold text-xl'>Spj Purchase</h1>
 						</div>
 						<div className='text-right mr-6'>
 							{ position === "Supervisor" && !dataSelected?.status || position === "Manager" && !dataSelected?.status ? (

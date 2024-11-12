@@ -309,7 +309,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			<Formik
 				initialValues={data}
-				// validationSchema={kontraBonSchema}
+				validationSchema={kontraBonSchema}
 				onSubmit={(values) => {
 					addKontraBon(values);
 				}}
@@ -447,6 +447,9 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									onChange={handleChange}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
+								{errors.invoice && touched.invoice ? (
+									<span className='text-red-500 text-xs'>{errors.invoice}</span>
+								) : null}
 							</div>
 							<div className='w-full'>
 								<Input
@@ -534,11 +537,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									disabled={false}
 									withLabel={true}
 									onChange={(e: any) => {
-										let pph: any = e.target.value.replaceAll(".", "")
-										setPph(pph)
-										if(values.tax_invoice){
-											setTotalAmount((billPaid + ppn) - pph - disc);
-											setFieldValue("grandtotal", (billPaid + ppn) - pph - disc);
+										let pph: any = e.target.value.replaceAll(".", "");
+										setPph(pph);
+										if (values.tax_invoice) {
+											setTotalAmount(billPaid + ppn - pph - disc);
+											setFieldValue("grandtotal", billPaid + ppn - pph - disc);
 										}
 									}}
 									value={rupiahFormat(pph)}
@@ -586,11 +589,14 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 												if (e.target.value === "yes") {
 													setFieldValue("tax_invoice", true);
 													if (tax === "ppn") {
-														setTotalAmount((billPaid + ppn) - pph - disc);
-														setFieldValue("grandtotal", (billPaid + ppn) - pph - disc);
+														setTotalAmount(billPaid + ppn - pph - disc);
+														setFieldValue(
+															"grandtotal",
+															billPaid + ppn - pph - disc
+														);
 													} else {
-														setTotalAmount((billPaid - pph) - disc);
-														setFieldValue("grandtotal", (billPaid - pph) - disc);
+														setTotalAmount(billPaid - pph - disc);
+														setFieldValue("grandtotal", billPaid - pph - disc);
 													}
 												} else {
 													setTotalAmount(billPaid - disc);

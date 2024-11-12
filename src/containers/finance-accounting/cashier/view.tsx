@@ -120,7 +120,7 @@ console.log(dataSelected)
 	};
 
 	const showButtonValid = (data: any) => {
-		if (position === "Manager") {
+		if (position === "Manager" || position === "Supervisor") {
 			if (data.status_valid) {
 				return (
 					<div>
