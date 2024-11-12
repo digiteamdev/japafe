@@ -220,7 +220,6 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 													</thead>
 													<tbody>
 														{values.detailMr.map((res: any, i: number) => {
-															console.log(res);
 															return (
 																<tr key={i}>
 																	<td className='border border-black p-1 text-center'>
@@ -239,7 +238,8 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																		{res.qtyAppr}
 																	</td>
 																	<td className='w-[10%] border border-black p-1 text-center'>
-																		<Input
+																	{res.qty_receive}
+																		{/* <Input
 																			id='date_spj'
 																			name='date_spj'
 																			placeholder='Qty actual'
@@ -263,7 +263,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																			required={true}
 																			withLabel={false}
 																			className='bg-white border border-primary-300 text-gray-900 text-xs rounded-lg block w-full p-1 outline-primary-600'
-																		/>
+																		/> */}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
 																		<Input
@@ -277,7 +277,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																				let price: any =
 																					e.target.value.replaceAll(".", "");
 																				let total: any =
-																					price * res.qty_actual - res.disc;
+																					price * res.qty_receive - res.disc;
 																				setFieldValue(
 																					`detailMr.${i}.price`,
 																					price
@@ -304,7 +304,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																				let disc: any =
 																					e.target.value.replaceAll(".", "");
 																				let total: any =
-																					res.price * res.qty_actual - disc;
+																					res.price * res.qty_receive - disc;
 																				setFieldValue(
 																					`detailMr.${i}.disc`,
 																					disc

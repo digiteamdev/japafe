@@ -430,6 +430,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "spj-purchase",
+				link: "/finance-accounting/spj-purchase",
+				title: "Spj purchase",
+
+				subMenu: null,
+			},
+			{
 				id: "posting",
 				link: "/finance-accounting/posting",
 				title: "Posting",

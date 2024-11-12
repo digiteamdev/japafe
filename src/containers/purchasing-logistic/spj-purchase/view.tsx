@@ -8,6 +8,10 @@ import {
 	Section,
 } from "../../../components";
 import { formatRupiah } from "../../../utils";
+import { getPosition } from "@/src/configs/session";
+import { Check } from "react-feather";
+import { toast } from "react-toastify";
+import { ApprovalSpj } from "@/src/services";
 
 interface props {
 	dataSelected: any;
@@ -20,7 +24,15 @@ export const ViewSpjPurchase = ({
 	content,
 	showModal,
 }: props) => {
-	console.log(dataSelected);
+	const [position, setPosition] = useState<any>([]);
+
+	useEffect(() => {
+		let positionAkun = getPosition();
+		if (positionAkun !== undefined) {
+			setPosition(positionAkun);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const grandTotal = (data: any) => {
 		let total: any = 0;
@@ -30,11 +42,68 @@ export const ViewSpjPurchase = ({
 		return total;
 	};
 
+	const approve = async () => {
+		try {
+			const response = await ApprovalSpj(dataSelected.id);
+			if (response.status === 201) {
+				toast.success("Approve Success", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+				showModal(false, content, true);
+			} else {
+				toast.error("Approve Failed", {
+					position: "top-center",
+					autoClose: 5000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "colored",
+				});
+			}
+		} catch (error) {
+			toast.error("Approve Failed", {
+				position: "top-center",
+				autoClose: 5000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "colored",
+			});
+		}
+	};
+	
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
 				<>
-					<h1 className='font-bold text-xl'>Spj Purchase</h1>
+					<div className='grid md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1'>
+						<div className="w-full">
+						<h1 className='font-bold text-xl'>Spj Purchase</h1>
+						</div>
+						<div className='text-right mr-6'>
+							{ position === "Supervisor" && !dataSelected?.status || position === "Manager" && !dataSelected?.status ? (
+								<button
+									className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
+									onClick={() => approve()}
+								>
+									<div className='flex px-1 py-1'>
+										<Check size={16} className='mr-1' /> Approve
+									</div>
+								</button>
+							) : null }
+						</div>
+					</div>
 					<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 						<div className='w-full'>
 							<table className='w-full'>
@@ -94,7 +163,6 @@ export const ViewSpjPurchase = ({
 						</thead>
 						<tbody>
 							{dataSelected.detailMr.map((res: any, i: number) => {
-								console.log(res);
 								return (
 									<tr key={i}>
 										<td className='border border-black p-1 text-center'>

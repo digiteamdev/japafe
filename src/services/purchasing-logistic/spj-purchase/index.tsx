@@ -2,6 +2,7 @@ import { Axios } from '../../../configs/axios/';
 
 export const GetSpjPurchase = (page: any, perpage: any, search: string) => Axios.get(process.env.BASE_URL+`/spjpurchase?${page ? `page=${page}&limit=${perpage}&` : ''}search=${search}`);
 export const AddSpjPurchase = (data: any) => Axios.put(process.env.BASE_URL+'/spjpurchaseDmr', data);
+export const ApprovalSpj = (id: string) => Axios.put(process.env.BASE_URL+`/spjpurchaseApprove/${id}`);
 // export const EditPrSr = (data: any) => Axios.put(process.env.BASE_URL+'/srPsR', data);
 // export const GetAllSRPo = (type: string) => Axios.get(process.env.BASE_URL+`/srPR?type=${type}`);
 // export const ApprovalPrSr = (id: any, data: any) => Axios.put(process.env.BASE_URL+`/psrStatusMgr/${id}`, data);

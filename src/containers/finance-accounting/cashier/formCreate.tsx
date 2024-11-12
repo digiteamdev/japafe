@@ -1209,10 +1209,10 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								</Section>
 							);
 						})}
-						{detailPurchase.length > 0 ? (
+						{detailPurchase?.length > 0 ? (
 							<h1 className='font-semibold text-xl mt-2'>Detail Purchase</h1>
 						) : null}
-						{detailPurchase.map((res: any, i: number) => {
+						{detailPurchase?.map((res: any, i: number) => {
 							return (
 								<Section
 									className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
