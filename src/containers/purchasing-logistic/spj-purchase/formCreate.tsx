@@ -229,7 +229,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																		{res.mr?.no_mr}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
-																		{res.mr?.job_no}
+																		{res.Material_Master?.name}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
 																		{res.supplier?.supplier_name}
