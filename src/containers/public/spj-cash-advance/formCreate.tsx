@@ -13,7 +13,7 @@ import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -26,6 +26,7 @@ interface data {
 	job_no: string;
 	pic: string;
 	status_payment: string;
+	grand_tot: any;
 	date_cash_advance: Date | null;
 	cdv_detail: any;
 }
@@ -33,12 +34,14 @@ interface data {
 export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [caID, setCaID] = useState<string>("");
+	const [balance, setBalance] = useState<any>(0);
 	const [listCashAdvance, setListCashAdvance] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		id_cash_advance: "",
 		id: "",
 		job_no: "",
 		pic: "",
+		grand_tot: 0,
 		status_payment: "",
 		date_cash_advance: null,
 		cdv_detail: [],
@@ -81,11 +84,11 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 	};
 
 	const totalBalances = (data: any) => {
-		let total: number = 0;
+		let total: any = 0;
 		data.map((res: any) => {
-			total = total + res.balance;
+			total = total + parseFloat(res.actual);
 		});
-		return total;
+		return balance - total;
 	};
 
 	const addSpjCashAdvance = async (payload: data) => {
@@ -96,7 +99,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 				id: res.id,
 				actual: parseInt(res.actual),
 				balance: parseInt(res.balance),
-				cdvId: res.cdvId
+				cdvId: res.cdvId,
 			});
 		});
 		let data = {
@@ -155,7 +158,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
 						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
+							{/* <div className='w-full'>
 								<Input
 									id='id_cash_advance'
 									name='id_cash_advance'
@@ -168,7 +171,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 								/>
-							</div>
+							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listCashAdvance}
@@ -181,11 +184,13 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 										setFieldValue("job_no", e.value.job_no);
 										setFieldValue("pic", e.value.user.employee.employee_name);
 										setFieldValue("status_payment", e.value.status_payment);
+										setFieldValue("grand_tot", e.value.grand_tot);
 										setFieldValue(
 											"date_cash_advance",
 											e.value.date_cash_advance
 										);
 										setFieldValue("cdv_detail", e.value.cdv_detail);
+										setBalance(e.value.grand_tot);
 									}}
 									required={true}
 									withLabel={true}
@@ -204,6 +209,20 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 											? ""
 											: moment(values.date_cash_advance).format("DD-MMMM-YYYY")
 									}
+									disabled={true}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<Input
+									id='id_cash_advance'
+									name='id_cash_advance'
+									placeholder='Total amount'
+									label='Total amount'
+									type='text'
+									value={formatRupiah(values.grand_tot.toString())}
 									disabled={true}
 									required={true}
 									withLabel={true}
@@ -266,16 +285,10 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 													Type
 												</th>
 												<th className='border border-black text-center'>
-													Value
-												</th>
-												<th className='border border-black text-center'>
 													Description
 												</th>
 												<th className='border border-black text-center'>
-													Actual
-												</th>
-												<th className='border border-black text-center'>
-													Balance
+													Value
 												</th>
 												<th className='border border-black text-center'></th>
 											</tr>
@@ -299,29 +312,45 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 															withLabel={false}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														>
-															<option value='Consumable' selected={ res.type_cdv === 'Consumable' ? true : false }>Consumable</option>
-															<option value='Investasi' selected={ res.type_cdv === 'Investasi' ? true : false }>Investasi</option>
-															<option value='Service' selected={ res.type_cdv === 'Service' ? true : false }>Service</option>
-															<option value='Operasional' selected={ res.type_cdv === 'Operasional' ? true : false }>Operasional</option>
-															<option value='SDM' selected={ res.type_cdv === 'SDM' ? true : false }>SDM</option>
+															<option
+																value='Consumable'
+																selected={
+																	res.type_cdv === "Consumable" ? true : false
+																}
+															>
+																Consumable
+															</option>
+															<option
+																value='Investasi'
+																selected={
+																	res.type_cdv === "Investasi" ? true : false
+																}
+															>
+																Investasi
+															</option>
+															<option
+																value='Service'
+																selected={
+																	res.type_cdv === "Service" ? true : false
+																}
+															>
+																Service
+															</option>
+															<option
+																value='Operasional'
+																selected={
+																	res.type_cdv === "Operasional" ? true : false
+																}
+															>
+																Operasional
+															</option>
+															<option
+																value='SDM'
+																selected={res.type_cdv === "SDM" ? true : false}
+															>
+																SDM
+															</option>
 														</InputSelect>
-													</td>
-													<td className='border border-black'>
-														<Input
-															id={`cdv_detail.${i}.total`}
-															name={`cdv_detail.${i}.total`}
-															placeholder='Value'
-															label='Value'
-															type='number'
-															value={res.total}
-															onChange={ (e: any) => {
-																setFieldValue(`cdv_detail.${i}.total`, e.target.value)
-															}}
-															disabled={false}
-															required={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
 													</td>
 													<td className='border border-black'>
 														<InputArea
@@ -331,8 +360,11 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 															label='Decription'
 															type='text'
 															value={res.description}
-															onChange={ (e: any) => {
-																setFieldValue(`cdv_detail.${i}.description`, e.target.value)
+															onChange={(e: any) => {
+																setFieldValue(
+																	`cdv_detail.${i}.description`,
+																	e.target.value
+																);
 															}}
 															disabled={false}
 															required={true}
@@ -350,29 +382,17 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 															type='number'
 															value={res.actual}
 															onChange={(e: any) => {
+																let balanced: any =
+																	values.grand_tot - e.target.value;
 																setFieldValue(
 																	`cdv_detail.${i}.actual`,
 																	e.target.value
 																);
 																setFieldValue(
 																	`cdv_detail.${i}.balance`,
-																	parseInt(res.total) - e.target.value
+																	balanced
 																);
 															}}
-															required={true}
-															withLabel={false}
-															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-														/>
-													</td>
-													<td className='border border-black'>
-														<Input
-															id={`cdv_detail.${i}.balance`}
-															name={`cdv_detail.${i}.balance`}
-															placeholder='Balance'
-															label='Balance'
-															type='number'
-															value={res.balance}
-															disabled={true}
 															required={true}
 															withLabel={false}
 															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
@@ -414,14 +434,12 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 											<tr>
 												<td
 													className='border border-black text-right'
-													colSpan={4}
+													colSpan={2}
 												>
 													Total Balance
 												</td>
 												<td className='border border-black pl-2'>
-													{formatRupiah(
-														totalBalances(values.cdv_detail).toString()
-													)}
+													{rupiahFormat(totalBalances(values.cdv_detail).toString())}
 												</td>
 												<td className='border border-black'></td>
 											</tr>

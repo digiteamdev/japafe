@@ -22,7 +22,7 @@ import { toast } from "react-toastify";
 import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { content } from "html2canvas/dist/types/css/property-descriptors/content";
-import { changeDivisi, formatRupiah } from "@/src/utils";
+import { changeDivisi, formatRupiah, rupiahFormat } from "@/src/utils";
 
 export const CashAdvance = () => {
 	const router = useRouter();
@@ -229,7 +229,7 @@ export const CashAdvance = () => {
 										{res.user.employee.employee_name}
 									</td>
 									<td className='whitespace-nowrap p-2 text-center'>
-										{total(res.cdv_detail)}
+										{formatRupiah(res.grand_tot.toString())}
 									</td>
 									<td className='whitespace-nowrap text-center p-2 w-[10%]'>
 										<div>

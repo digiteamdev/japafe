@@ -654,8 +654,8 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setPpn(0);
 											setPph(0);
 											setCurrency("IDR");
-											setTotal(totalCa(e.value));
-											setTotalAmount(totalCa(e.value));
+											setTotal(e.value.grand_tot);
+											setTotalAmount(e.value.grand_tot);
 											setFieldValue("account_name", "");
 											setFieldValue(
 												"pay_to",
@@ -670,7 +670,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 												e.type === "ca" ? e.value.id : null
 											);
 											setFieldValue("idPurchase", null);
-											setFieldValue("total", totalCa(e.value));
+											setFieldValue("total", e.value.grand_tot);
 											setFieldValue("status_payment", e.value.status_payment);
 											setFieldValue("journal_cashier", [
 												{
@@ -1092,7 +1092,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								})
 							}
 						/>
-						{detailCdv.length > 0 ? (
+						{/* {detailCdv.length > 0 ? (
 							<h1 className='font-semibold text-xl mt-2'>
 								Cash Advance Detail
 							</h1>
@@ -1208,7 +1208,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 									)}
 								</Section>
 							);
-						})}
+						})} */}
 						{detailPurchase?.length > 0 ? (
 							<h1 className='font-semibold text-xl mt-2'>Detail Purchase</h1>
 						) : null}

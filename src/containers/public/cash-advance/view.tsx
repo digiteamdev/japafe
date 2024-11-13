@@ -281,18 +281,26 @@ export const ViewCashAdvance = ({
 										{dataSelected.status_payment}
 									</td>
 								</tr>
-								{/* <tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Total
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{formatRupiah(dataSelected.grand_tot.toString())}
+									</td>
+								</tr>
+								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Note
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
 										{dataSelected.note}
 									</td>
-								</tr> */}
+								</tr>
 							</table>
 						</div>
 					</Section>
-					<Section className='grid grid-cols-1 gap-2 mt-2'>
+					{/* <Section className='grid grid-cols-1 gap-2 mt-2'>
 						<table className="w-full">
 							<thead>
 								<th className="border border-black text-center">Type</th>
@@ -315,7 +323,7 @@ export const ViewCashAdvance = ({
 								</tr>
 							</tbody>
 						</table>
-					</Section>
+					</Section> */}
 				</>
 			) : null}
 		</div>

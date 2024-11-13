@@ -49,7 +49,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 		detail: [
 			{
 				type: "Consumable",
-				value: "",
+				value: 0,
 				description: "",
 			},
 		],
@@ -113,9 +113,9 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			{
 				value: {
 					id: null,
-					job_no: "Internal"
+					job_no: "Internal",
 				},
-				label: "Internal"
+				label: "Internal",
 			},
 		];
 		try {
@@ -124,7 +124,7 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 				response.data.result.map((res: any) => {
 					datasWor.push({
 						value: res,
-						label: res.job_no + ' - ' + res.customerPo.quotations.Customer.name,
+						label: res.job_no + " - " + res.customerPo.quotations.Customer.name,
 					});
 				});
 				setListWor(datasWor);
@@ -137,10 +137,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 	const addCashAdvance = async (payload: any) => {
 		setIsLoading(true);
 		let detail: any = [];
-		let total: number = 0;
 		payload.detail.map((res: any) => {
 			if (res.value !== "" || res.description !== "") {
-				total = total + parseInt(res.value)
 				detail.push({
 					type_cdv: res.type,
 					total: parseInt(res.value),
@@ -158,7 +156,8 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 			note: payload.note,
 			date_cash_advance: payload.date_cash_advance,
 			cdv_detail: detail,
-			grand_tot: total
+			grand_tot: parseFloat(payload.total),
+			description: payload.description,
 		};
 		try {
 			const response = await AddCashAdvance(data);
@@ -215,37 +214,6 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 					<Form>
 						<h1 className='text-xl font-bold mt-3'>Cash Advance</h1>
 						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							{/* <div className='w-full'>
-								<Input
-									id='id_cash_advance'
-									name='id_cash_advance'
-									placeholder='id Cash Advance'
-									label='id Cash Advance'
-									type='text'
-									value={caID}
-									disabled={true}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-							</div> */}
-							{/* <div className='w-full'>
-								<InputSelectSearch
-									datas={listEmploye}
-									id='request'
-									name='request'
-									placeholder='Request By'
-									label='Request By'
-									onChange={(e: any) => {
-										setFieldValue("employeeId", e.value.id);
-										setFieldValue("id_cash_advance", caID);
-										setFieldValue("userId", userId);
-									}}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-								/>
-							</div> */}
 							<div className='w-full'>
 								<InputSelectSearch
 									datas={listWor}
@@ -277,123 +245,44 @@ export const FormCreateCashAdvance = ({ content, showModal }: props) => {
 									<option value='Transfer'>Transfer</option>
 								</InputSelect>
 							</div>
-							{/* <div className='w-full'>
-								<InputSelect
-									id='currency'
-									name='currency'
-									placeholder='Currency'
-									label='Currency'
-									onChange={handleChange}
+							<div className='w-full'>
+								<Input
+									id='total'
+									name='total'
+									placeholder='Amount'
+									label='Amount'
+									type='text'
+									pattern='\d*'
+									value={formatRupiah(values.total.toString())}
+									onChange={(e: any) => {
+										setFieldValue(
+											`total`,
+											e.target.value.replaceAll(".", "")
+										);
+									}}
 									required={true}
 									withLabel={true}
 									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								>
-									<option value='IDR'>IDR</option>
-									<option value='EUR'>EUR</option>
-									<option value='SGD'>SGD</option>
-									<option value='USD'>USD</option>
-									<option value='YEN'>YEN</option>
-								</InputSelect>
-							</div> */}
+								/>
+							</div>
+							<div className='w-full'>
+								<InputArea
+									id='note'
+									name='note'
+									placeholder='Note'
+									label='Note'
+									type='text'
+									value={values.note}
+									onChange={handleChange}
+									disabled={false}
+									required={true}
+									row={2}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+								/>
+							</div>
 						</Section>
-						<FieldArray
-							name='detail'
-							render={(arrayDetail) => (
-								<div>
-									{values.detail.map((res: any, i: number) => (
-										<Section
-											className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
-											key={i}
-										>
-											<div className='w-full'>
-												<InputSelect
-													id={`detail.${i}.type`}
-													name={`detail.${i}.type`}
-													placeholder='Type'
-													label='Type'
-													onChange={(e: any) => {
-														setFieldValue(`detail.${i}.type`, e.target.value);
-													}}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												>
-													<option value='Consumable'>Consumable</option>
-													<option value='Investasi'>Investasi</option>
-													<option value='Service'>Service</option>
-													<option value='Operasional'>Operasional</option>
-													<option value='SDM'>SDM</option>
-												</InputSelect>
-											</div>
-											<div className='w-full'>
-												<Input
-													id={`detail.${i}.value`}
-													name={`detail.${i}.value`}
-													placeholder='Amount'
-													label='Amount'
-													type='text'
-													pattern='\d*'
-													value={formatRupiah(res.value.toString())}
-													onChange={(e: any) => {
-														setFieldValue(`detail.${i}.value`, e.target.value.replaceAll(".", ""));
-													}}
-													required={true}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='w-full'>
-												<InputArea
-													id={`detail.${i}.description`}
-													name={`detail.${i}.description`}
-													placeholder='Decription'
-													label='Decription'
-													type='text'
-													value={res.description}
-													onChange={(e: any) => {
-														setFieldValue(
-															`detail.${i}.description`,
-															e.target.value
-														);
-													}}
-													disabled={false}
-													required={true}
-													row={1}
-													withLabel={true}
-													className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-												/>
-											</div>
-											<div className='flex w-full'>
-												{i + 1 === values.detail.length ? (
-													<a
-														className='flex mt-10 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
-														onClick={() =>
-															arrayDetail.push({
-																type: "Consumable",
-																value: "",
-																description: "",
-															})
-														}
-													>
-														<Plus size={23} className='mt-1' />
-														Add
-													</a>
-												) : null}
-												{i === 0 && values.detail.length === 1 ? null : (
-													<a
-														className='flex ml-4 mt-10 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
-														onClick={() => arrayDetail.remove(i)}
-													>
-														<Trash2 size={22} className='mt-1 mr-1' />
-														Remove
-													</a>
-												)}
-											</div>
-										</Section>
-									))}
-								</div>
-							)}
-						/>
+
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
