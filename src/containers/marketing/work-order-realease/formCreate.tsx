@@ -546,7 +546,7 @@ export const FormCreateWor = ({ content, showModal }: props) => {
 									name='qty'
 									placeholder='Quantity'
 									label='Quantity'
-									type='number'
+									type='text'
 									onChange={handleChange}
 									required={true}
 									withLabel={true}
