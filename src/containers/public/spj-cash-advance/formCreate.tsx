@@ -97,14 +97,17 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 		payload.cdv_detail.map((res: any) => {
 			listDetail.push({
 				id: res.id,
+				type_cdv: res.type_cdv,
 				actual: parseInt(res.actual),
+				description: res.description,
 				balance: parseInt(res.balance),
 				cdvId: res.cdvId,
 			});
 		});
 		let data = {
 			id_spj: caID,
-			grand_tot: totalBalances(payload.cdv_detail),
+			grand_tot: payload?.grand_tot,
+			balance: totalBalances(payload.cdv_detail),
 			cdv_detail: listDetail,
 		};
 		try {
@@ -181,7 +184,7 @@ export const FormCreateSPJCashAdvance = ({ content, showModal }: props) => {
 									label='Reference'
 									onChange={(e: any) => {
 										setFieldValue("id", e.value.id);
-										setFieldValue("job_no", e.value.job_no);
+										setFieldValue("job_no", e.value.wor ? e.value.wor?.job_no : e.value.job_no);
 										setFieldValue("pic", e.value.user.employee.employee_name);
 										setFieldValue("status_payment", e.value.status_payment);
 										setFieldValue("grand_tot", e.value.grand_tot);

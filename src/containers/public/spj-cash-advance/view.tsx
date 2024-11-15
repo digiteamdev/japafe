@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { Section } from "../../../components";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 import { Check, X, Printer } from "react-feather";
 import { getPosition } from "../../../configs/session";
 import { toast } from "react-toastify";
@@ -106,6 +106,9 @@ export const ViewSpjCashAdvance = ({
 			});
 		}
 	};
+
+	console.log(dataSelected)
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -153,7 +156,7 @@ export const ViewSpjCashAdvance = ({
 										Job No
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
-										{dataSelected.job_no}
+										{dataSelected.wor ? dataSelected.wor?.job_no : dataSelected.job_no}
 									</td>
 								</tr>
 								<tr>
@@ -182,6 +185,14 @@ export const ViewSpjCashAdvance = ({
 								</tr>
 								<tr>
 									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
+										Total amount
+									</td>
+									<td className='w-[50%] pl-2 border border-gray-200'>
+										{rupiahFormat(dataSelected.grand_tot)}
+									</td>
+								</tr>
+								<tr>
+									<td className='w-[50%] bg-gray-300 pl-2 border border-gray-200'>
 										Note
 									</td>
 									<td className='w-[50%] pl-2 border border-gray-200'>
@@ -196,9 +207,7 @@ export const ViewSpjCashAdvance = ({
 							<thead>
 								<th className="border border-black text-center">Type</th>
 								<th className="border border-black text-center">Description</th>
-								<th className="border border-black text-center">Value</th>
                                 <th className="border border-black text-center">Actual</th>
-								<th className="border border-black text-center">Balance</th>
 							</thead>
 							<tbody>
 								{ dataSelected.cdv_detail.map( (res: any, i: number) => {
@@ -206,15 +215,13 @@ export const ViewSpjCashAdvance = ({
 										<tr key={i}>
 											<td className="border border-black text-center">{ res.type_cdv }</td>
 											<td className="border border-black text-center">{ res.description }</td>
-											<td className="border border-black text-center">{ formatRupiah(res.total.toString()) }</td>
                                             <td className="border border-black text-center">{ formatRupiah(res.actual.toString()) }</td>
-                                            <td className="border border-black text-center">{ res.balance.toString().startsWith('-') ? `-${formatRupiah(res.balance.toString())}` : formatRupiah(res.balance.toString()) }</td>
 										</tr>
 									)
 								}) }
 								<tr>
-									<td className="border border-black text-right pr-5" colSpan={4}>Total</td>
-									<td className="border border-black text-center">{ dataSelected.grand_tot.toString().startsWith('-') ? `-${formatRupiah(dataSelected.grand_tot.toString())}` : formatRupiah(dataSelected.grand_tot.toString()) }</td>
+									<td className="border border-black text-right pr-5" colSpan={2}>Balance</td>
+									<td className="border border-black text-center">{rupiahFormat(dataSelected.balance)}</td>
 								</tr>
 							</tbody>
 						</table>
