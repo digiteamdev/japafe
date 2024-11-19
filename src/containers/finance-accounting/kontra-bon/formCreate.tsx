@@ -11,8 +11,7 @@ import { Formik, Form } from "formik";
 import { kontraBonSchema } from "../../../schema/finance-accounting/kontra-bon/kontrabonSchema";
 import { GetReceive, AddKontraBon } from "../../../services";
 import { toast } from "react-toastify";
-import moment from "moment";
-import { formatRupiah, rupiahFormat } from "@/src/utils";
+import { rupiahFormat } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -26,6 +25,7 @@ interface data {
 	account_name: string;
 	tax_prepered: any;
 	due_date: any;
+	purchase_type: string;
 	invoice: string;
 	purchaseID: string | null;
 	cdvId: string | null;
@@ -33,7 +33,7 @@ interface data {
 	grandtotal: number;
 	tax_invoice: boolean;
 	detail: any;
-}
+};
 
 export const FormCreateKontraBon = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -60,6 +60,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 		poandsoId: null,
 		id_kontrabon: "",
 		account_name: "",
+		purchase_type: "PO",
 		purchaseID: null,
 		cdvId: null,
 		tax_prepered: new Date(),
@@ -150,7 +151,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 				disc = disc + res.disc;
 				bill = bill + res.total;
 			});
-			data.supplier?.SupplierBank.map((bank: any) => {
+			data.supplier?.SupplierBank?.map((bank: any) => {
 				dataAcc.push({
 					label: `${bank.account_name} - ${bank.bank_name}`,
 					value: bank,
@@ -159,7 +160,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			if (data.taxPsrDmr === "ppn") {
 				ppn = taxAmount(
 					bill,
-					data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn
+					data.supplier ? data.supplier?.ppn : data.detailMr[0].supplier?.ppn
 				);
 				billPaid = taxAmount(
 					bill,
@@ -187,11 +188,11 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			} else if (data.taxPsrDmr === "ppn_and_pph") {
 				ppn = taxAmount(
 					bill,
-					data.supplier ? data.supplier.ppn : data.detailMr[0].supplier.ppn
+					data.supplier ? data.supplier?.ppn : data.detailMr[0].supplier?.ppn
 				);
 				pph = taxAmount(
 					bill,
-					data.supplier ? data.supplier.pph : data.detailMr[0].supplier.pph
+					data.supplier ? data.supplier?.pph : data.detailMr[0].supplier?.pph
 				);
 				billPaid = taxAmount(
 					bill,
@@ -244,15 +245,15 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 			setDisc(disc);
 			setSuplier(
 				data.supplier
-					? data.supplier.supplier_name
-					: data.detailMr[0].supplier.supplier_name
+					? data.supplier?.supplier_name
+					: data.detailMr[0]?.supplier?.supplier_name
 			);
 			setPercent(
-				data.term_of_pay_po_so ? data.term_of_pay_po_so[0].percent : 100
+				data.term_of_pay_po_so ? data.term_of_pay_po_so[0]?.percent : 100
 			);
 			setTermOfPayment(
 				data.term_of_pay_po_so
-					? `${data.term_of_pay_po_so[0].limitpay} (${data.term_of_pay_po_so[0].percent}%)`
+					? `${data.term_of_pay_po_so[0]?.limitpay} (${data.term_of_pay_po_so[0]?.percent}%)`
 					: `${data.note}`
 			);
 			setAccount(true);
@@ -440,7 +441,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 									placeholder='Invoice Number'
 									label='Invoice Number'
 									type='text'
-									required={true}
+									required={ values.purchase_type === "PO" ? true : false}
 									disabled={isLoading}
 									withLabel={true}
 									value={values.invoice}

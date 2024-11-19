@@ -215,7 +215,7 @@ export const KontraBon = () => {
 										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase ? res.purchase.note : res.cash_advance.note}
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.supplier.supplier_name : res.purchase ? res.purchase.supplier.supplier_name : "-" }
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so?.poandso?.supplier?.supplier_name : res.purchase ? res.purchase?.supplier?.supplier_name : "-" }
 									</td>
 									<td className='whitespace-nowrap p-1'>
 										{formatRupiah(res.grandtotal.toString())}

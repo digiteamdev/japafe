@@ -228,13 +228,13 @@ export const ListPO = () => {
 										{res.id_so}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0].mr.job_no}
+										{res.detailMr[0].mr?.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0].mr.no_mr}
+										{res.detailMr[0].mr?.no_mr}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.supplier.supplier_name}
+										{res.supplier?.supplier_name}
 									</td>
 									<td className='whitespace-pre-line p-1 text-center'>
 										{showMaterial(res.detailMr)}

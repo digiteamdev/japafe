@@ -249,11 +249,11 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
                 <tr>
                   <td
                     className="border border-black text-right pr-2 text-lg font-semibold"
-                    colSpan={5}
+                    colSpan={7}
                   >
                     Total
                   </td>
-                  <td className="text-center border border-black" colSpan={5}>
+                  <td className="text-center border border-black">
                     {formatRupiah(Total(dataSelected.detailMr))}
                   </td>
                 </tr>
@@ -261,11 +261,11 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
                   <tr>
                     <td
                       className="border border-black text-right pr-2 text-lg font-semibold"
-                      colSpan={5}
+                      colSpan={7}
                     >
                       PPN
                     </td>
-                    <td className="text-center border border-black" colSpan={5}>
+                    <td className="text-center border border-black">
                       {formatRupiah(Ppn(dataSelected.detailMr))}
                     </td>
                   </tr>
@@ -273,11 +273,11 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
                 <tr>
                   <td
                     className="border border-black text-right pr-2 text-lg font-semibold"
-                    colSpan={5}
+                    colSpan={7}
                   >
                     Grand Total
                   </td>
-                  <td className="text-center border border-black" colSpan={5}>
+                  <td className="text-center border border-black">
                     {formatRupiah(GrandTotal(dataSelected.detailMr).toString())}
                   </td>
                 </tr>

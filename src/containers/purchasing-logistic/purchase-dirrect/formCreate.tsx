@@ -190,6 +190,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 		let data = {
 			dateOfPurchase: new Date(date),
 			idPurchase: generateIdNum(),
+			supId: suplierId,
 			taxPsrDmr: "non_tax",
 			currency: "IDR",
 			detailMr: listDetail,
@@ -333,6 +334,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 									label='Supplier'
 									onChange={(e: any) => {
 										getDetailPurchaseMR(e.value.id);
+										setSuplierId(e.value.id)
 									}}
 									required={true}
 									withLabel={true}
