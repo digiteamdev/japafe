@@ -545,16 +545,16 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 															<td className='border border-black p-1'>
 																{res.name_material}
 															</td>
-															<td className='border border-black p-1'>
+															<td className='border border-black p-1 text-center'>
 																{res.qtyAppr}
 															</td>
-															<td className='border border-black p-1'>
+															<td className='border border-black p-1 text-center'>
 																{rupiahFormat(res.price)}
 															</td>
-															<td className='border border-black p-1'>
+															<td className='border border-black p-1 text-center'>
 																{rupiahFormat(res.disc)}
 															</td>
-															<td className='border border-black p-1'>
+															<td className='border border-black p-1 text-center'>
 																{rupiahFormat(res.total)}
 															</td>
 														</tr>
