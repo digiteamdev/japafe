@@ -61,14 +61,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 		date_cashier: new Date(),
 		note: "",
 		total: 0,
-		journal_cashier: [
-			{
-				coa_id: "",
-				coa_name: "",
-				status_transaction: "Debet",
-				grandtotal: 0,
-			},
-		],
+		journal_cashier: []
 	});
 
 	useEffect(() => {
@@ -401,11 +394,30 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													? totalPaid(e.value.term_of_pay_po_so?.poandso)
 													: totalPaid(e.value.purchase)
 											);
+
 											setTotalAmount(
 												e.value.id_kontrabon === undefined
 													? e.value.grand_tot
 													: e.value.grandtotal
 											);
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: e.value.id_kontrabon === undefined
+													? e.value.grand_tot
+													: e.value.grandtotal,
+												},
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Kredit",
+													grandtotal: e.value.id_kontrabon === undefined
+													? e.value.grand_tot
+													: e.value.grandtotal,
+												}
+											]);
 											setFieldValue(
 												"account_name",
 												e.value.id_kontrabon === undefined
@@ -527,14 +539,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 													setPph(0);
 												}
 											}
-											setFieldValue("journal_cashier", [
-												{
-													coa_id: "",
-													coa_name: "",
-													status_transaction: "Debet",
-													grandtotal: 0,
-												},
-											]);
 										} else if (e.type === "purchase") {
 											setIsDirrect(false);
 											setDetailCdv([]);
@@ -545,6 +549,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setCurrency(e.value.currency);
 											setTotal(totalPaid(e.value));
 											setTotalAmount(grandTotalPaid(e.value));
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: grandTotalPaid(e.value)
+												},
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Kredit",
+													grandtotal: grandTotalPaid(e.value)
+												}
+											]);
 											setFieldValue("account_name", "");
 											setFieldValue("bank_name", "");
 											setFieldValue("rekening", "");
@@ -656,6 +674,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setCurrency("IDR");
 											setTotal(e.value.grand_tot);
 											setTotalAmount(e.value.grand_tot);
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: e.value.grand_tot
+												},
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Kredit",
+													grandtotal: e.value.grand_tot
+												}
+											]);
 											setFieldValue("account_name", "");
 											setFieldValue(
 												"pay_to",
@@ -672,14 +704,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("idPurchase", null);
 											setFieldValue("total", e.value.grand_tot);
 											setFieldValue("status_payment", e.value.status_payment);
-											setFieldValue("journal_cashier", [
-												{
-													coa_id: "",
-													coa_name: "",
-													status_transaction: "Debet",
-													grandtotal: 0,
-												},
-											]);
 										} else {
 											setIsDirrect(false);
 											setDetailCdv(e.value.cdv_detail);
@@ -691,6 +715,20 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setCurrency("IDR");
 											setTotal(totalSpj(e.value));
 											setTotalAmount(totalSpj(e.value));
+											setFieldValue("journal_cashier", [
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Debet",
+													grandtotal: totalSpj(e.value)
+												},
+												{
+													coa_id: "",
+													coa_name: "",
+													status_transaction: "Kredit",
+													grandtotal: totalSpj(e.value)
+												}
+											]);
 											setFieldValue("account_name", "");
 											setFieldValue(
 												"pay_to",
@@ -707,14 +745,6 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 											setFieldValue("idPurchase", null);
 											setFieldValue("total", totalSpj(e.value));
 											setFieldValue("status_payment", e.value.status_payment);
-											setFieldValue("journal_cashier", [
-												{
-													coa_id: "",
-													coa_name: "",
-													status_transaction: "Debet",
-													grandtotal: 0,
-												},
-											]);
 										}
 									}}
 									required={true}
@@ -966,249 +996,134 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 								</div>
 							</Section>
 						) : null}
-						<FieldArray
-							name='journal_cashier'
-							render={(arrays) =>
-								values.journal_cashier.map((result: any, i: number) => {
-									return (
-										<div key={i}>
-											<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2 border-b-2 border-blue-500 pb-2'>
-												<div className='w-full'>
-													<InputSelectSearch
-														datas={dataCoa}
-														menuPlacement='top'
-														id={`journal_cashier.${i}.coa_id`}
-														name={`journal_cashier.${i}.coa_id`}
-														label='Coa'
-														value={result.coa}
-														onChange={(e: any) => {
-															setFieldValue(
-																`journal_cashier.${i}.coa_name`,
-																e.value.coa_name
-															);
-															setFieldValue(
-																`journal_cashier.${i}.coa_id`,
-																e.value.id
-															);
-															setFieldValue(`journal_cashier.${i}.coa`, e);
-														}}
-														required={true}
-														withLabel={false}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`journal_cashier.${i}.coa_name`}
-														name={`journal_cashier.${i}.coa_name`}
-														placeholder='Coa'
-														label='coa'
-														type='text'
-														required={true}
-														disabled={true}
-														withLabel={false}
-														value={result.coa_name}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													<InputSelect
-														id={`journal_cashier.${i}.status_transaction`}
-														name={`journal_cashier.${i}.status_transaction`}
-														label='Status'
-														type='text'
-														onChange={handleChange}
-														required={true}
-														withLabel={false}
-														value={result.status_transaction}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													>
-														<option value='Debet'>Debet</option>
-														<option value='Kredit'>Kredit</option>
-													</InputSelect>
-												</div>
-												<div className='w-full'>
-													<Input
-														id={`journal_cashier.${i}.grandtotal`}
-														name={`journal_cashier.${i}.grandtotal`}
-														placeholder='total'
-														label='total'
-														type='text'
-														pattern='\d*'
-														onChange={(e: any) => {
-															let totals: number = 0;
-															if (e.target.value !== "") {
-																totals = parseInt(
-																	e.target.value.replace(/\./g, "")
+						{values.journal_cashier.length > 0 ? (
+							<FieldArray
+								name='journal_cashier'
+								render={(arrays) =>
+									values.journal_cashier?.map((result: any, i: number) => {
+										return (
+											<div key={i}>
+												<Section className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 pt-2 border-b-2 border-blue-500 pb-2'>
+													<div className='w-full'>
+														<InputSelectSearch
+															datas={dataCoa}
+															menuPlacement='top'
+															id={`journal_cashier.${i}.coa_id`}
+															name={`journal_cashier.${i}.coa_id`}
+															label='Coa'
+															value={result.coa}
+															onChange={(e: any) => {
+																setFieldValue(
+																	`journal_cashier.${i}.coa_name`,
+																	e.value.coa_name
 																);
 																setFieldValue(
-																	`journal_cashier.${i}.grandtotal`,
-																	totals
+																	`journal_cashier.${i}.coa_id`,
+																	e.value.id
 																);
-															} else {
-																setFieldValue(
-																	`journal_cashier.${i}.grandtotal`,
-																	totals
-																);
-															}
-														}}
-														required={true}
-														withLabel={false}
-														value={rupiahFormat(result.grandtotal.toString())}
-														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-													/>
-												</div>
-												<div className='w-full'>
-													{i === values.journal_cashier.length - 1 ? (
-														<a
-															className='inline-flex text-green-500 mr-6 mt-1 cursor-pointer'
-															onClick={() => {
-																arrays.push({
-																	coa_id: "",
-																	coa_name: "",
-																	status_transaction: "Debet",
-																	grandtotal: 0,
-																});
+																setFieldValue(`journal_cashier.${i}.coa`, e);
 															}}
+															required={true}
+															withLabel={false}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`journal_cashier.${i}.coa_name`}
+															name={`journal_cashier.${i}.coa_name`}
+															placeholder='Coa'
+															label='coa'
+															type='text'
+															required={true}
+															disabled={true}
+															withLabel={false}
+															value={result.coa_name}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														<InputSelect
+															id={`journal_cashier.${i}.status_transaction`}
+															name={`journal_cashier.${i}.status_transaction`}
+															label='Status'
+															type='text'
+															onChange={handleChange}
+															required={true}
+															withLabel={false}
+															value={result.status_transaction}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 														>
-															<Plus size={18} className='mr-1 mt-1' /> Add
-														</a>
-													) : null}
-													{values.journal_cashier.length !== 1 ? (
-														<a
-															className='inline-flex text-red-500 cursor-pointer mt-1'
-															onClick={() => {
-																arrays.remove(i);
+															<option value='Debet'>Debet</option>
+															<option value='Kredit'>Kredit</option>
+														</InputSelect>
+													</div>
+													<div className='w-full'>
+														<Input
+															id={`journal_cashier.${i}.grandtotal`}
+															name={`journal_cashier.${i}.grandtotal`}
+															placeholder='total'
+															label='total'
+															type='text'
+															pattern='\d*'
+															onChange={(e: any) => {
+																let totals: number = 0;
+																if (e.target.value !== "") {
+																	totals = parseInt(
+																		e.target.value.replace(/\./g, "")
+																	);
+																	setFieldValue(
+																		`journal_cashier.${i}.grandtotal`,
+																		totals
+																	);
+																} else {
+																	setFieldValue(
+																		`journal_cashier.${i}.grandtotal`,
+																		totals
+																	);
+																}
 															}}
-														>
-															<Trash2 size={18} className='mr-1 mt-1' />
-															Remove
-														</a>
-													) : null}
-												</div>
-											</Section>
-										</div>
-									);
-								})
-							}
-						/>
-						{/* {detailCdv.length > 0 ? (
-							<h1 className='font-semibold text-xl mt-2'>
-								Cash Advance Detail
-							</h1>
-						) : null}
-						{detailCdv.map((res: any, i: number) => {
-							return (
-								<Section
-									className={`grid ${res.actual ? 'md:grid-cols-5' : 'md:grid-cols-3'} sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2 border-b-2 border-blue-500 pb-2`}
-									key={i}
-								>
-									{res.actual ? (
-										<>
-											<Input
-												id='jobno'
-												name='jobno'
-												placeholder='Job No'
-												label='Job No'
-												type='text'
-												value={jobno}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<InputArea
-												id='description'
-												name='description'
-												placeholder='description'
-												label='Description'
-												type='text'
-												required={true}
-												disabled={true}
-												withLabel={true}
-												value={res.description}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<Input
-												id='total'
-												name='total'
-												placeholder='Total'
-												label='Total'
-												type='text'
-												value={rupiahFormat(res.total)}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<Input
-												id='total'
-												name='total'
-												placeholder='Total'
-												label='Actual'
-												type='text'
-												value={rupiahFormat(res.actual)}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<Input
-												id='total'
-												name='total'
-												placeholder='Total'
-												label='Balance'
-												type='text'
-												value={rupiahFormat(res.balance)}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-										</>
-									) : (
-										<>
-											<Input
-												id='jobno'
-												name='jobno'
-												placeholder='Job No'
-												label='Job No'
-												type='text'
-												value={jobno}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<Input
-												id='total'
-												name='total'
-												placeholder='Total'
-												label='Total'
-												type='text'
-												value={rupiahFormat(res.total)}
-												required={true}
-												disabled={true}
-												withLabel={true}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-											<InputArea
-												id='description'
-												name='description'
-												placeholder='description'
-												label='Description'
-												type='text'
-												required={true}
-												disabled={true}
-												withLabel={true}
-												value={res.description}
-												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-											/>
-										</>
-									)}
-								</Section>
-							);
-						})} */}
+															required={true}
+															withLabel={false}
+															value={rupiahFormat(result.grandtotal.toString())}
+															className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+														/>
+													</div>
+													<div className='w-full'>
+														{i === values.journal_cashier.length - 1 ? (
+															<a
+																className='inline-flex text-green-500 mr-6 mt-1 cursor-pointer'
+																onClick={() => {
+																	arrays.push({
+																		coa_id: "",
+																		coa_name: "",
+																		status_transaction: "Debet",
+																		grandtotal: 0,
+																	});
+																}}
+															>
+																<Plus size={18} className='mr-1 mt-1' /> Add
+															</a>
+														) : null}
+														{values.journal_cashier.length !== 1 ? (
+															<a
+																className='inline-flex text-red-500 cursor-pointer mt-1'
+																onClick={() => {
+																	arrays.remove(i);
+																}}
+															>
+																<Trash2 size={18} className='mr-1 mt-1' />
+																Remove
+															</a>
+														) : null}
+													</div>
+												</Section>
+											</div>
+										);
+									})
+								}
+							/>
+						) : null }
 						{detailPurchase?.length > 0 ? (
 							<h1 className='font-semibold text-xl mt-2'>Detail Purchase</h1>
 						) : null}

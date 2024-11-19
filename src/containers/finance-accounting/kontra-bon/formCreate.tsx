@@ -701,85 +701,40 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 						{values.detail.length > 0 ? (
 							<h5 className='font-semibold text-lg'>Detail Purchase</h5>
 						) : null}
-						{values.detail.map((res: any, i: number) => {
-							return (
-								<Section
-									className='grid md:grid-cols-5 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'
-									key={i}
-								>
-									<div className='w-full'>
-										<InputArea
-											id='invoice'
-											name='invoice'
-											placeholder='Material'
-											label='Material'
-											type='text'
-											required={true}
-											disabled={true}
-											withLabel={true}
-											value={res?.Material_Master?.name}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='invoice'
-											name='invoice'
-											placeholder='Quantity'
-											label='Quantity'
-											type='text'
-											required={true}
-											disabled={true}
-											withLabel={true}
-											value={res?.qtyAppr}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='invoice'
-											name='invoice'
-											placeholder='Price'
-											label='Price'
-											type='text'
-											required={true}
-											disabled={true}
-											withLabel={true}
-											value={rupiahFormat(res?.price)}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='invoice'
-											name='invoice'
-											placeholder='Disc'
-											label='Disc'
-											type='text'
-											required={true}
-											disabled={true}
-											withLabel={true}
-											value={rupiahFormat(res?.disc)}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-									<div className='w-full'>
-										<Input
-											id='invoice'
-											name='invoice'
-											placeholder='Total'
-											label='Total'
-											type='text'
-											required={true}
-											disabled={true}
-											withLabel={true}
-											value={rupiahFormat(res?.total)}
-											className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-										/>
-									</div>
-								</Section>
-							);
-						})}
+						{values.detail.length > 0 ? (
+							<table className="w-full">
+								<thead>
+									<th className="border border-black text-center">Material</th>
+									<th className="border border-black text-center">Quantity</th>
+									<th className="border border-black text-center">Price</th>
+									<th className="border border-black text-center">Discount</th>
+									<th className="border border-black text-center">Total</th>
+								</thead>
+								<tbody>
+									{values.detail.map((res: any, i: number) => {
+										return (
+											<tr key={i}>
+												<td className="border border-black">
+													{ res?.Material_Master?.name }
+												</td>
+												<td className="border border-black text-center">
+													{ res?.qtyAppr }
+												</td>
+												<td className="border border-black text-center">
+													{ rupiahFormat(res?.price) }
+												</td>
+												<td className="border border-black text-center">
+													{ rupiahFormat(res?.disc) }
+												</td>
+												<td className="border border-black text-center">
+													{ rupiahFormat(res?.total) }
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+							</table>
+						) : null}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
