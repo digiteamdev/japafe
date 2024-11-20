@@ -204,7 +204,7 @@ export const Cashier = () => {
 										{res.id_cashier}
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon.id_kontrabon : res.idPurchase ? res.purchase.idPurchase : '-' }
+										{res.kontrabonId === null && res.cdvId !== null ? res.cash_advance?.id_cash_advance : res.kontrabonId !== null && res.cdvId === null ? res.kontrabon?.id_kontrabon : res.idPurchase ? res.purchase?.idPurchase : '-' }
 									</td>
 									<td className='whitespace-nowrap p-1'>
 										{res.note}

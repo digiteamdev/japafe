@@ -206,13 +206,13 @@ export const KontraBon = () => {
 										{res.id_kontrabon}
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.id_so : res.purchase ?  res.purchase.idPurchase : res.cash_advance.id_spj}
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so?.poandso?.id_so : res.purchase ?  res.purchase?.idPurchase : res.cash_advance?.id_spj}
 									</td>
 									<td className='whitespace-nowrap p-1'>
 										{moment(res.due_date).format('DD-MMM-YYYY')}
 									</td>
 									<td className='whitespace-nowrap p-1'>
-										{ res.term_of_pay_po_so ? res.term_of_pay_po_so.poandso.note : res.purchase ? res.purchase.note : res.cash_advance.note}
+										{ res.term_of_pay_po_so ? res.term_of_pay_po_so?.poandso?.note : res.purchase ? res.purchase?.note : res.cash_advance?.note}
 									</td>
 									<td className='whitespace-nowrap p-1'>
 										{ res.term_of_pay_po_so ? res.term_of_pay_po_so?.poandso?.supplier?.supplier_name : res.purchase ? res.purchase?.supplier?.supplier_name : "-" }
