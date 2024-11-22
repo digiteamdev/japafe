@@ -242,6 +242,13 @@ export const ListNav = [
 				subMenu: null,
 			},
 			{
+				id: "purchase-direct-service",
+				link: "/purchasing-logistic/purchase-dirrect-service",
+				title: "Purchase dirrect service",
+
+				subMenu: null,
+			},
+			{
 				id: "list-so",
 				link: "/purchasing-logistic/list-so",
 				title: "List SO",

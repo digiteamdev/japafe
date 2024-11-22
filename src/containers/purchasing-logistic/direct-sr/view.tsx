@@ -7,7 +7,7 @@ import {
 } from "../../../components";
 import moment from "moment";
 import { FieldArray, Form, Formik } from "formik";
-import { AddPrSr, BackToApprovalMr, BackToApprovalSr, GetAllSupplier } from "../../../services";
+import { AddDirrectSr, AddPrSr, BackToApprovalMr, BackToApprovalSr, GetAllSupplier } from "../../../services";
 import { formatRupiah } from "../../../utils";
 import { toast } from "react-toastify";
 
@@ -124,15 +124,15 @@ export const ViewDirectSR = ({ dataSelected, content, showModal }: props) => {
 			}
 		});
 		let data = {
-			dateOfPurchase: payload.dateOfPurchase,
-			idPurchase: payload.idPurchase,
-			taxPsrDmr: payload.taxPsrDmr,
-			currency: payload.currency,
+			// dateOfPurchase: payload.dateOfPurchase,
+			// idPurchase: payload.idPurchase,
+			// taxPsrDmr: payload.taxPsrDmr,
+			// currency: payload.currency,
 			srDetail: listDetail,
 		};
 		if(!isWarning){
 			try {
-				const response = await AddPrSr(data);
+				const response = await AddDirrectSr(data);
 				if (response.data) {
 					toast.success("Purchase Material Request Success", {
 						position: "top-center",

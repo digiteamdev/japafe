@@ -1,5 +1,6 @@
 import { Axios } from '../../../configs/axios/';
 
+export const AddDirrectSr = (data: any) => Axios.put(process.env.BASE_URL+'/dsrPurchase', data);
 export const AddPrSr = (data: any) => Axios.put(process.env.BASE_URL+'/srPR', data);
 export const EditPrSr = (data: any) => Axios.put(process.env.BASE_URL+'/srPsR', data);
 export const GetPurchaseSR = (page: number, perpage: number, type: string) => Axios.get(process.env.BASE_URL+`/srPR?page=${page}&limit=${perpage}&type=${type}`);
