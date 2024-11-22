@@ -8,16 +8,14 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
-	GetAllSupplier,
 	GetAllSRPo,
 	GetAllCoa,
-	AddPrSr,
+	AddDirrectSr,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
-import { ChevronDown, ChevronUp, Trash2 } from "react-feather";
-import { Disclosure } from "@headlessui/react";
+import { Trash2 } from "react-feather";
 import { formatRupiah } from "@/src/utils";
 
 interface props {
@@ -167,16 +165,16 @@ export const FormCreateDirectSr = ({ content, showModal }: props) => {
 			});
 		});
 		let data = {
-			dateOfPurchase: payload.dateOfPurchase,
-			idPurchase: payload.idPurchase,
-			note: payload.note,
-			supId: payload.supId,
-			currency: payload.currency,
-			taxPsrDmr: payload.taxPsrDmr,
+			// dateOfPurchase: payload.dateOfPurchase,
+			// idPurchase: payload.idPurchase,
+			// note: payload.note,
+			// supId: payload.supId,
+			// currency: payload.currency,
+			// taxPsrDmr: payload.taxPsrDmr,
 			srDetail: listDetail,
 		};
 		try {
-			const response = await AddPrSr(data);
+			const response = await AddDirrectSr(data);
 			if (response.data) {
 				toast.success("Purchase Service Request Success", {
 					position: "top-center",
