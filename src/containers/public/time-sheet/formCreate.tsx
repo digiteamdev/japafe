@@ -286,7 +286,7 @@ export const FormCreateTimeSheet = ({ content, showModal }: props) => {
 												});
 											});
 											setData({
-												date: e.value.date,
+												date: listDesc[0]?.actual_start,
 												userId: values.userId,
 												type_timesheet: "overtime",
 												spklId: e.value.id,

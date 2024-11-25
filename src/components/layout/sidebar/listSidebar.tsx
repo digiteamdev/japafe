@@ -351,6 +351,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "approval dirrect service",
+				link: "/director/approval-dirrect-service",
+				title: "Approval Dirrect Service",
+
+				subMenu: null,
+			},
 			// {
 			// 	id: "approval MR",
 			// 	link: "/director/approvalMr",

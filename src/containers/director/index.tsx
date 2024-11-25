@@ -7,3 +7,4 @@ export * from './approvalMR/view';
 export * from './approvalSR/view';
 export * from './approvalPo/view';
 export * from './approval-dirrect-purchase';
+export * from './approval-dirrect-service';

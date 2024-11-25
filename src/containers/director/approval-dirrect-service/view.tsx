@@ -1,8 +1,8 @@
 import { rupiahFormat } from "@/src/utils";
-import { InputArea, Section } from "../../../components";
+import { Section } from "../../../components";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { ApprovalDirrect } from "@/src/services";
+import { ApprovalDirrectService } from "@/src/services";
 import { toast } from "react-toastify";
 import { FieldArray, Form, Formik } from "formik";
 
@@ -12,7 +12,7 @@ interface props {
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const ViewApprovalDirrect = ({
+export const ViewApprovalDirrectService = ({
 	dataSelected,
 	content,
 	showModal,
@@ -40,11 +40,13 @@ export const ViewApprovalDirrect = ({
 				statusApprove: {
 					status_manager_director: payload.status_manager_director,
 				},
-				reject: payload.detailMr
+				reject: payload.SrDetail,
+                SrDetail: payload.SrDetail
 			};
-			const response = await ApprovalDirrect(dataSelected?.id, body);
+            
+			const response = await ApprovalDirrectService(dataSelected?.id, body);
 			if (response.status === 201) {
-				toast.success("Approve Purchase Dirrect Success", {
+				toast.success("Approve Dirrect Service Success", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -56,7 +58,7 @@ export const ViewApprovalDirrect = ({
 				});
 				showModal(false, content, true);
 			} else {
-				toast.error("Approve Purchase Dirrect Failed", {
+				toast.error("Approve Dirrect Service Failed", {
 					position: "top-center",
 					autoClose: 5000,
 					hideProgressBar: true,
@@ -68,7 +70,7 @@ export const ViewApprovalDirrect = ({
 				});
 			}
 		} catch (error: any) {
-			toast.error("Approve Purchase Dirrect Failed", {
+			toast.error("Approve Dirrect Service Failed", {
 				position: "top-center",
 				autoClose: 5000,
 				hideProgressBar: true,
@@ -94,7 +96,7 @@ export const ViewApprovalDirrect = ({
 				>
 					{({ handleSubmit, setFieldValue, handleChange, values }) => (
 						<Form>
-							<h1 className='font-bold text-xl'>Dirrect purchase</h1>
+							<h1 className='font-bold text-xl'>Dirrect service</h1>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full'>
 									<table className='w-full'>
@@ -119,7 +121,7 @@ export const ViewApprovalDirrect = ({
 									</table>
 								</div>
 							</Section>
-							<h1 className='font-bold text-xl'>Detail purchase</h1>
+							<h1 className='font-bold text-xl'>Detail service</h1>
 							<Section className='grid md:grid-cols-1 sm:grid-cols-1 xs:grid-cols-1 gap-2 mt-2'>
 								<div className='w-full text-xs'>
 									<table className='w-full'>
@@ -129,16 +131,13 @@ export const ViewApprovalDirrect = ({
 													Job no
 												</th>
 												<th className='p-1 border border-black text-center'>
-													No MR
+													No SR
 												</th>
 												<th className='p-1 border border-black text-center'>
-													Supplier
+													Vendor
 												</th>
 												<th className='p-1 border border-black text-center'>
-													Material
-												</th>
-												<th className='p-1 border border-black text-center'>
-													Satuan
+													Description
 												</th>
 												<th className='p-1 border border-black text-center'>
 													Qty
@@ -152,36 +151,27 @@ export const ViewApprovalDirrect = ({
 												<th className='p-1 border border-black text-center'>
 													Total
 												</th>
-												{/* <th className='p-1 border border-black text-center'>
-													Note
-												</th>
-												<th className='p-1 border border-black text-center'>
-													Reject
-												</th> */}
 											</tr>
 										</thead>
 										<tbody>
 											<FieldArray
-												name='detailMr'
+												name='SrDetail'
 												render={(arrayDetail) => (
 													<>
-														{values?.detailMr?.map((res: any, i: number) => {
+														{values?.SrDetail?.map((res: any, i: number) => {
 															return (
 																<tr key={i}>
 																	<td className='p-1 border border-black text-center'>
-																		{res.mr?.job_no}
+																		{res.sr?.job_no}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
-																		{res.mr?.no_mr}
+																		{res.sr?.no_sr}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
 																		{res.supplier?.supplier_name}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
-																		{res.Material_Master?.name}
-																	</td>
-																	<td className='p-1 border border-black text-center'>
-																		{res.Material_Master?.satuan}
+																		{res.desc}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
 																		{res.qtyAppr}
@@ -195,46 +185,6 @@ export const ViewApprovalDirrect = ({
 																	<td className='p-1 border border-black text-center'>
 																		{rupiahFormat(res.total.toString())}
 																	</td>
-																	{/* <td className='p-1 border border-black text-center'>
-																		<InputArea
-																			id={`detailMr.${i}.note_revision`}
-																			name={`detailMr.${i}.note_revision`}
-																			placeholder='Note Revisi'
-																			label='Note Revisi'
-																			onChange={(e: any) => {
-																				setFieldValue(
-																					`detailMr.${i}.note_revision`,
-																					e.target.value
-																				);
-																			}}
-																			value={res.note_revision}
-																			required={false}
-																			disabled={false}
-																			row={1}
-																			withLabel={false}
-																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																		/>
-																	</td>
-																	<td className='p-1 border border-black text-center'>
-																		{res.status_manager_director ===
-																		"reject" ? (
-																			"Rejected"
-																		) : (
-																			<button
-																				type='button'
-																				className='inline-flex justify-center rounded-lg border border-transparent bg-red-500 p-1 text-xs text-white'
-																				disabled={isLoading}
-																				onClick={() => {
-																					setFieldValue(
-																						`detailMr.${i}.status_manager_director`,
-																						"reject"
-																					);
-																				}}
-																			>
-																				reject
-																			</button>
-																		)}
-																	</td> */}
 																</tr>
 															);
 														})}
@@ -244,17 +194,15 @@ export const ViewApprovalDirrect = ({
 											<tr>
 												<td
 													className='p-1 border border-black text-right'
-													colSpan={8}
+													colSpan={7}
 												>
 													Grand total
 												</td>
 												<td className='p-1 border border-black text-center'>
 													{rupiahFormat(
-														grandTotal(dataSelected?.detailMr).toString()
+														grandTotal(dataSelected?.SrDetail).toString()
 													)}
 												</td>
-												{/* <td className='p-1 border border-black text-center'></td>
-												<td className='p-1 border border-black text-center'></td> */}
 											</tr>
 										</tbody>
 									</table>
