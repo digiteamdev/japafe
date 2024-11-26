@@ -243,7 +243,7 @@ export const ViewPurchaseDirect = ({
 						<tbody>
 							<tr>
 								<td className='pr-1 w-[30%] border border-black'>
-                                    {dataSelected?.Material_Master?.name}
+                                    {dataSelected?.name_material + " " + dataSelected.spesifikasi}
                                 </td>
 								<td className='pr-1 w-[5%] text-center border border-black'>
                                     {dataSelected?.qtyAppr}

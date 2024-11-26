@@ -172,7 +172,7 @@ export const ViewSpjPurchase = ({
 											{res.mr?.no_mr}
 										</td>
 										<td className='border border-black p-1 text-center'>
-											{res.mr?.job_no}
+											{res.name_material + " " + res.spesifikasi}
 										</td>
 										<td className='border border-black p-1 text-center'>
 											{res.supplier?.supplier_name}

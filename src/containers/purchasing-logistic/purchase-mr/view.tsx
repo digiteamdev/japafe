@@ -112,6 +112,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 				listDetail.push({
 					id: res.id,
 					name_material: res.name_material,
+					spesifikasi: res.spesifikasi,
 					supId: res.supId,
 					taxpr: res.taxpr,
 					currency: res.currency,
@@ -284,6 +285,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 											<thead>
 												<tr>
 													<th className='text-center'>Material</th>
+													<th className='text-center'>Spesification</th>
 													<th className='text-center'>Qty</th>
 													<th className='text-center'>Supplier</th>
 													<th className='text-center'>Price</th>
@@ -295,7 +297,7 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 												{values.detailMr.map((result: any, i: number) => {
 													return (
 														<tr key={i}>
-															<td className='pr-1 w-[30%]'>
+															<td className='pr-1 w-[15%]'>
 																<Input
 																	id={`detailMr.${i}.name_material`}
 																	name={`detailMr.${i}.name_material`}
@@ -305,6 +307,23 @@ export const ViewPurchaseMR = ({ dataSelected, content, showModal }: props) => {
 																	value={result.name_material}
 																	onChange={(e: any) => {
 																		setFieldValue(`detailMr.${i}.name_material`, e.target.value)
+																	}}
+																	disabled={false}
+																	required={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
+																/>
+															</td>
+															<td className='pr-1 w-[15%]'>
+																<Input
+																	id={`detailMr.${i}.spesifikasi`}
+																	name={`detailMr.${i}.spesifikasi`}
+																	placeholder='Spesifikasi'
+																	label='Spesifikasi'
+																	type='text'
+																	value={result.spesifikasi}
+																	onChange={(e: any) => {
+																		setFieldValue(`detailMr.${i}.spesifikasi`, e.target.value)
 																	}}
 																	disabled={false}
 																	required={true}

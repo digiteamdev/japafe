@@ -280,7 +280,7 @@ console.log(dataSelected)
 											return (
 												<tr key={i}>
 													<td className='border border-black text-center'>
-														{res.Material_Master.name}
+														{res.name_material + " " + res.spesifikasi}
 													</td>
 													<td className='border border-black text-center'>
 														{res.qtyAppr}
@@ -325,13 +325,13 @@ console.log(dataSelected)
 												return (
 													<tr key={i}>
 														<td className='border border-black text-center'>
-															{res.name_material}
+															{res.name_material + " " + res.spesifikasi}
 														</td>
 														<td className='border border-black text-center'>
 															{res.qtyAppr}
 														</td>
 														<td className='border border-black text-center'>
-															{res.name_material}
+															{/* {res.name_material} */}
 														</td>
 														<td className='border border-black text-center'>
 															{formatRupiah(res.price.toString())}

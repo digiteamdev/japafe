@@ -34,6 +34,7 @@ interface data {
 			bomId: string;
 			material: string;
 			name_material: string;
+			spesifikasi: string;
 			materialStockId: string;
 			satuan: string;
 			note: string;
@@ -73,6 +74,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				bomId: "",
 				material: "",
 				name_material: "",
+				spesifikasi: "",
 				satuan: "",
 				materialStockId: "",
 				note: "",
@@ -287,6 +289,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				bomIdD: res.bomId,
 				materialId: res.material,
 				name_material: res.name_material,
+				spesifikasi: res.spesifikasi,
 				qty: parseInt(res.qty),
 				note: res.note
 			});
@@ -588,7 +591,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 												values.detailMr.map((result: any, i: number) => {
 													return (
 														<div key={i}>
-															<Section className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
+															<Section className='grid md:grid-cols-6 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
 																	{result.isInput ? (
 																		<Input
@@ -671,6 +674,25 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 																		/>
 																	)}
+																</div>
+																<div className='w-full'>
+																	<Input
+																		id={`detailMr.${i}.spesifikasi`}
+																		name={`detailMr.${i}.spesifikasi`}
+																		placeholder='Spesifikasi'
+																		label='Spesifikasi'
+																		type='text'
+																		value={result.spesifikasi}
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.spesifikasi`,
+																				e.target.value
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																	/>
 																</div>
 																<div className='w-full'>
 																	<Input

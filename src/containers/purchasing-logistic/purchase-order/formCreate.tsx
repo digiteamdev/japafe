@@ -299,7 +299,6 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											},
 										];
 										listDetail.map((res: any) => {
-											console.log(res);
 											if (res.supplier.supplier_name === e.label) {
 												detail.push(res);
 											}
@@ -644,7 +643,7 @@ export const FormCreatePurchaseMr = ({ content, showModal }: props) => {
 											placeholder='Material'
 											label='Material'
 											type='text'
-											value={result.Material_Master.name}
+											value={result.name_material + " " + result.spesifikasi}
 											disabled={true}
 											required={true}
 											withLabel={true}

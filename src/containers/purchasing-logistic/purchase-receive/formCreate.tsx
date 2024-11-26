@@ -89,7 +89,6 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 		let sr: any = [];
 		const formData = new FormData();
 		payload.detailMr.map((res: any) => {
-			console.log(res)
 			mr.push({
 				id: res.id,
 				qty_receive: parseInt(res.qty_receive),
@@ -383,11 +382,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={`${res.Material_Master.name} ${
-																		res.Material_Master.spesifikasi
-																			? res.Material_Master.spesifikasi
-																			: ""
-																	}`}
+																	value={res.name_material + " " + res.spesifikasi}
 																	disabled={true}
 																	required={true}
 																	withLabel={true}
@@ -489,20 +484,6 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																/>
 															</div>
-															{/* <div className='w-full'>
-																<Input
-																	id={`srDetail.${i}.part`}
-																	name={`srDetail.${i}.part`}
-																	placeholder='Part Name'
-																	label='Part Name'
-																	type='text'
-																	value={res.part}
-																	disabled={true}
-																	required={true}
-																	withLabel={true}
-																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																/>
-															</div> */}
 															<div className='w-full'>
 																<Input
 																	id={`srDetail.${i}.description`}

@@ -476,7 +476,7 @@ export const DocumentPDFListOrder = (_props: Props) => {
                       borderLeft: "1px solid black",
                     }}
                   >
-                    <Text>{item.name_material}</Text>
+                    <Text>{item.name_material + " " + item.spesifikasi}</Text>
                     {item.note && <Text>{item.note}</Text>}
                   </View>
 

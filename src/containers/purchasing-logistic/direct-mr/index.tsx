@@ -136,9 +136,9 @@ export const DirectPurchaseMR = () => {
 		let material: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.name_material;
+				material = `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.name_material;
+				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return material;

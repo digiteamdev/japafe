@@ -135,9 +135,9 @@ export const DirectPurchase = () => {
 		let material: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.Material_Master.name_material;
+				material = `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.Material_Master.name_material;
+				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return material;
@@ -250,7 +250,7 @@ export const DirectPurchase = () => {
 										{res?.mr?.no_mr}
 									</td>
 									<td className='whitespace-pre-line p-1'>
-										{res?.Material_Master?.name}
+										{res?.name_material + " " + res?.spesifikasi}
 									</td>
                                     <td className='whitespace-nowrap p-1 text-center'>
 										{res?.supplier?.supplier_name}

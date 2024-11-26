@@ -365,11 +365,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												setFieldValue(`mr.${i}.idMr`, e.value.id);
 												setFieldValue(
 													`mr.${i}.materialName`,
-													`${res.Material_Master.name} ${
-														res.Material_Master.spesifikasi
-															? res.Material_Master.spesifikasi
-															: ""
-													}`
+													`${res.name_material + " " + res.spesifikasi}`
 												);
 												setFieldValue(`mr.${i}.job_no`, e.value.job_no);
 												setFieldValue(
@@ -379,7 +375,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
 												setFieldValue(
 													`mr.${i}.stock`,
-													res.Material_Master.jumlah_Stock
+													res.Material_Master?.jumlah_Stock
 												);
 											});
 										} else {
@@ -458,7 +454,6 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 																if (e.label === "Internal") {
 																	setFieldValue(`pb.${i}.worId`, null);
 																} else {
-																	console.log(e);
 																	setFieldValue(`pb.${i}.worId`, e.value.id);
 																}
 															}}

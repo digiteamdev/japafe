@@ -93,9 +93,9 @@ export const Journal = () => {
 		let material: string = "Recieve Material: \r\n";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = material + `- ` + res.Material_Master.name;
+				material = material + `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.Material_Master.name;
+				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return material;

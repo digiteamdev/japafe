@@ -178,6 +178,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 			listDetail.push({
 				id: res.id,
 				name_material: res.name_material,
+				name_spesifikasi: res.spesifikasi,
 				supId: res.supId,
 				taxpr: res.taxpr,
 				currency: res.currency,
@@ -378,7 +379,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 														{res?.mr?.no_mr}
 													</td>
 													<td className='pr-1 border border-black'>
-														{res?.Material_Master?.name}
+														{res?.name_material + " " + res?.spesifikasi}
 													</td>
 													<td className='pr-1 text-center border border-black'>
 														{res?.qtyAppr}
