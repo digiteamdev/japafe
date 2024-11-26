@@ -90,13 +90,13 @@ export const ViewDirrectPurchase = ({ dataSelected, content, showModal }: props)
 												{res.mr?.no_mr}
 											</td>
 											<td className='text-center border border-black'>
-												{res.name_material}
+												{res.name_material + " " + res.spesifikasi}
 											</td>
 											<td className='text-center border border-black'>
 												{res.qty}
 											</td>
 											<td className='text-center border border-black'>
-												{res.Material_Master.satuan}
+												{res.Material_Master?.satuan}
 											</td>
                                             <td className='text-center border border-black'>
 												{res.supplier.supplier_name}

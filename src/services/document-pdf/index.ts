@@ -43,6 +43,7 @@ interface DetailMR {
   price: string
   qty: number; 
   name_material: string;
+  spesifikasi: string;
   satuan: string;
   total: string;
   note: string

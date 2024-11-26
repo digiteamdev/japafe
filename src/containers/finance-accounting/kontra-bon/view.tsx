@@ -543,7 +543,7 @@ export const ViewKontraBon = ({ dataSelected, content, showModal }: props) => {
 													return (
 														<tr key={i}>
 															<td className='border border-black p-1'>
-																{res.name_material}
+																{res.name_material + " " + res.spesifikasi}
 															</td>
 															<td className='border border-black p-1 text-center'>
 																{res.qtyAppr}

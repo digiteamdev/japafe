@@ -49,22 +49,6 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                     {moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
 									</td>
 								</tr>
-                                {/* <tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Suplier
-									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										{dataSelected.supplier.supplier_name}, {dataSelected.supplier.addresses_sup}, {dataSelected.supplier.cities}
-									</td>
-								</tr>
-                                <tr>
-									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
-										Phone
-									</td>
-									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
-										+62{dataSelected.supplier.SupplierContact[0]?.phone}
-									</td>
-								</tr> */}
                                 <tr>
 									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
 										DO Id
@@ -118,7 +102,7 @@ export const ViewPurchaseReceive = ({ dataSelected, content, showModal }: props)
                                                 { res.supplier?.supplier_name }
                                             </td>
                                             <td className="border border-black p-1 text-center">
-                                                {res.Material_Master.name}{" "}{res.Material_Master.spesifikasi}
+                                                {res.name_material + " " + res.spesifikasi}
                                             </td>
                                             <td className="border border-black p-1 text-center">
                                                 { res.qtyAppr }

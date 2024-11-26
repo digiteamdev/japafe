@@ -715,7 +715,7 @@ export const FormCreateKontraBon = ({ content, showModal }: props) => {
 										return (
 											<tr key={i}>
 												<td className="border border-black">
-													{ res?.Material_Master?.name }
+													{ res.name_material + " " + res.spesifikasi }
 												</td>
 												<td className="border border-black text-center">
 													{ res?.qtyAppr }

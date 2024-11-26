@@ -226,13 +226,13 @@ export const ViewPurchase = ({ dataSelected, content, showModal }: props) => {
                         {res.mr?.no_mr}
                       </td>
                       <td className="text-center border border-black">
-                        {res.name_material}
+                        {res.name_material + " " + res.spesifikasi}
                       </td>
                       <td className="text-center border border-black">
                         {res.qtyAppr}
                       </td>
                       <td className="text-center border border-black">
-                        {res.Material_Master.satuan}
+                        {res.Material_Master?.satuan}
                       </td>
                       <td className="text-center border border-black">
                         {formatRupiah(res.price.toString())}

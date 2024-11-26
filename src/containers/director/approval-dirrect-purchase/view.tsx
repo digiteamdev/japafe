@@ -178,7 +178,7 @@ export const ViewApprovalDirrect = ({
 																		{res.supplier?.supplier_name}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
-																		{res.Material_Master?.name}
+																		{res.name_material + " " + res.spesifikasi}
 																	</td>
 																	<td className='p-1 border border-black text-center'>
 																		{res.Material_Master?.satuan}

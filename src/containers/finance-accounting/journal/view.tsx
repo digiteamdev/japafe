@@ -251,13 +251,13 @@ export const ViewPosting = ({ dataSelected, content, showModal }: props) => {
 											return (
 												<tr key={i}>
 													<td className='border border-black text-center'>
-														{res.Material_Master.name}
+														{res.name_material + " " + res.spesifikasi}
 													</td>
 													<td className='border border-black text-center'>
 														{res.qtyAppr}
 													</td>
 													<td className='border border-black text-center'>
-														{res.Material_Master.satuan}
+														{res.Material_Master?.satuan}
 													</td>
 													<td className='border border-black text-center'>
 														{formatRupiah(res.price.toString())}

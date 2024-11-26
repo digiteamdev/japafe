@@ -173,6 +173,7 @@ export const ViewApprovalPo = ({ dataSelected, content, showModal }: props) => {
 											<thead>
 												<tr>
 													<th className='text-center'>Material</th>
+													<th className='text-center'>Spesifikasi</th>
 													<th className='text-center'>Qty</th>
 													<th className='text-center'>Supplier</th>
 													<th className='text-center'>Price</th>
@@ -185,7 +186,7 @@ export const ViewApprovalPo = ({ dataSelected, content, showModal }: props) => {
 												{values.detailMr.map((result: any, i: number) => {
 													return (
 														<tr key={i}>
-															<td className='pr-1 w-[15%]'>
+															<td className='pr-1 w-[7%]'>
 																<Input
 																	id={`detailMr.${i}.name_material`}
 																	name={`detailMr.${i}.name_material`}
@@ -196,6 +197,26 @@ export const ViewApprovalPo = ({ dataSelected, content, showModal }: props) => {
 																	onChange={(e: any) => {
 																		setFieldValue(
 																			`detailMr.${i}.name_material`,
+																			e.target.value
+																		);
+																	}}
+																	disabled={false}
+																	required={true}
+																	withLabel={false}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
+																/>
+															</td>
+															<td className='pr-1 w-[8%]'>
+																<Input
+																	id={`detailMr.${i}.spesifikasi`}
+																	name={`detailMr.${i}.spesifikasi`}
+																	placeholder='Spesifikasi'
+																	label='Spesifikasi'
+																	type='text'
+																	value={result.spesifikasi}
+																	onChange={(e: any) => {
+																		setFieldValue(
+																			`detailMr.${i}.spesifikasi`,
 																			e.target.value
 																		);
 																	}}

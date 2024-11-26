@@ -93,7 +93,7 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 			});
 		}
 	};
-
+	console.log(dataSelected)
 	const showButtonValid = (data: any) => {
 		if(dataSelected.statusMr === "Request"){
 			if (position === "Supervisor") {
@@ -257,13 +257,13 @@ export const ViewMR = ({ dataSelected, content, showModal }: props) => {
 												{dataSelected.job_no}
 											</td>
 											<td className={`border border-black text-center ${res.deleted_at ? 'bg-red-500' : ''}`}>
-												{res.name_material}
+												{res.name_material} {res.spesifikasi}
 											</td>
 											<td className={`border border-black text-center ${res.deleted_at ? 'bg-red-500' : ''}`}>
 												{res.qty}
 											</td>
 											<td className={`border border-black text-center ${res.deleted_at ? 'bg-red-500' : ''}`}>
-												{ res.Material_Master.satuan }
+												{ res.Material_Master?.satuan }
 											</td>
 											<td className={`border border-black text-center ${res.deleted_at ? 'bg-red-500' : ''}`}>
 												{ res.file ? (

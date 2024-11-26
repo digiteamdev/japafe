@@ -127,14 +127,14 @@ export const ApprovalDirrectPurchase = () => {
 						? `- ` + res.mr?.job_no
 						: field === "no_mr"
 						? `- ` + res.mr?.no_mr
-						: `- ` + res.Material_Master.name;
+						: `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
 				datas =
 					field === "job_no"
 						? datas + `\r\n` + `- ` + res.mr?.job_no
 						: field === "no_mr"
 						? datas + `\r\n` + `- ` + res.mr?.no_mr
-						: datas + `\r\n` + `- ` + res.Material_Master.name;
+						: datas + `\r\n` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return datas;

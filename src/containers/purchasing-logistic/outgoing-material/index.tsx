@@ -199,7 +199,7 @@ export const OutgoingMaterial = () => {
 									}) }</td>
 									<td className='whitespace-nowrap p-1'>{ res.stock_outgoing_material.map((res:any, i:number) => {
 										return (
-											<p key={i}>{ res.Material_Master?.name }</p>
+											<p key={i}>{ res?.name_material + " " + res?.spesifikasi }</p>
 										)
 									}) }</td>
 									<td className='whitespace-nowrap text-center p-1 w-[10%]'>

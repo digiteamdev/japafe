@@ -134,9 +134,9 @@ export const ApprovalMr = () => {
 		let material: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.name_material;
+				material = `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.name_material;
+				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return material;
@@ -237,6 +237,7 @@ export const ApprovalMr = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-md'
@@ -269,24 +270,6 @@ export const ApprovalMr = () => {
 											>
 												<Eye color='white' />
 											</Button>
-											{/* <Button
-												className='mx-1 bg-orange-500 hover:bg-orange-700 text-white p-1 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "edit", false);
-												}}
-											>
-												<Edit color='white' />
-											</Button> */}
-											{/* <Button
-												className='bg-red-500 hover:bg-red-700 text-white py-2 px-2 rounded-md'
-												onClick={() => {
-													setDataSelected(res);
-													showModal(true, "delete", false);
-												}}
-											>
-												<Trash2 color='white' />
-											</Button> */}
 										</div>
 									</td>
 								</tr>

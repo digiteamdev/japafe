@@ -1139,7 +1139,7 @@ export const FormCreateCashier = ({ content, showModal }: props) => {
 										placeholder='Material'
 										label='Material'
 										type='text'
-										value={res?.Material_Master?.name}
+										value={res.name_material + " " + res.spesifikasi}
 										required={true}
 										disabled={true}
 										withLabel={true}

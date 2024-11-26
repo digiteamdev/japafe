@@ -42,9 +42,10 @@ export const ViewApprovalMR = () => {
 						id: res.id,
 						mrappr: res.mrappr,
 						supId: res.supId,
-						material: res.Material_Master.name,
+						material: res.name_material,
+						spesifikasi: res.spesifikasi,
 						qty: res.qty,
-						stock: res.Material_Master.jumlah_Stock,
+						stock: 0,
 						note: res.note,
 						qtyAppr: res.qty,
 						file: res.file,
@@ -89,6 +90,7 @@ export const ViewApprovalMR = () => {
 						id: res.id,
 						mrappr: res.mrappr,
 						name_material: res.material,
+						spesifikasi: res.spesifikasi,
 						// supId: res.supId,
 						qtyAppr: parseInt(res.qtyAppr),
 					});
@@ -244,6 +246,7 @@ export const ViewApprovalMR = () => {
 												<thead>
 													<tr>
 														<th className='text-center'>Material</th>
+														<th className='text-center'>Spesification</th>
 														<th className='text-center'>Type</th>
 														<th className='text-center'>Qty</th>
 														<th className='text-center'>Qty Approval</th>
@@ -256,7 +259,7 @@ export const ViewApprovalMR = () => {
 													{values.detailMr.map((result: any, i: number) => {
 														return (
 															<tr key={i}>
-																<td className='pr-1 w-[40%]'>
+																<td className='pr-1 w-[20%]'>
 																	<Input
 																		id={`detailMr.${i}.material`}
 																		name={`detailMr.${i}.material`}
@@ -267,6 +270,26 @@ export const ViewApprovalMR = () => {
 																		onChange={(e: any) => {
 																			setFieldValue(
 																				`detailMr.${i}.material`,
+																				e.target.value
+																			);
+																		}}
+																		disabled={false}
+																		required={true}
+																		withLabel={false}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-xs rounded-lg block w-full p-2 outline-primary-600'
+																	/>
+																</td>
+																<td className='pr-1 w-[20%]'>
+																	<Input
+																		id={`detailMr.${i}.spesifikasi`}
+																		name={`detailMr.${i}.spesifikasi`}
+																		placeholder='Spesification'
+																		label='Spesification'
+																		type='text'
+																		value={result.spesifikasi}
+																		onChange={(e: any) => {
+																			setFieldValue(
+																				`detailMr.${i}.spesifikasi`,
 																				e.target.value
 																			);
 																		}}

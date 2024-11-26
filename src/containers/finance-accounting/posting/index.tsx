@@ -93,9 +93,9 @@ export const Posting = () => {
 		let material: string = "Recieve Material: \r\n";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = material + `- ` + res.name_material;
+				material = material + `- ` + res.name_material + " " + res.spesifikasi;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.name_material;
+				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
 			}
 		});
 		return material;

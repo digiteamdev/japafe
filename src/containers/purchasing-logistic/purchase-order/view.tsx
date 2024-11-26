@@ -353,6 +353,7 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 							<thead>
 								<tr>
 									<th className='text-center border border-black'>Material</th>
+									<th className='text-center border border-black'>Spesification</th>
 									<th className='text-center border border-black'>Qty</th>
 									<th className='text-center border border-black'>Unit</th>
 									<th className='text-center border border-black'>Supplier</th>
@@ -369,10 +370,13 @@ export const ViewPoMR = ({ dataSelected, content, showModal }: props) => {
 												{res.name_material}
 											</td>
 											<td className='text-center border border-black'>
+												{res.spesifikasi}
+											</td>
+											<td className='text-center border border-black'>
 												{res.qtyAppr}
 											</td>
 											<td className='text-center border border-black'>
-												{res.Material_Master.satuan}
+												{res.Material_Master?.satuan}
 											</td>
 											<td className='text-center border border-black'>
 												{res.supplier?.supplier_name}
