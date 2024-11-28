@@ -15,7 +15,6 @@ import {
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { getIdUser } from "../../../configs/session";
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "react-feather";
 
 interface props {

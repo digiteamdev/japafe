@@ -38,6 +38,12 @@ export const ViewApprovalMR = () => {
 			if (response.data) {
 				let listDetail: any = [];
 				response.data.result.detailMr.map((res: any) => {
+					let stock: any = 0;
+					res.Material_Main?.Material_Master?.map((spek: any) => {
+						if(spek.name == res.spesifikasi){
+							stock = spek.jumlah_Stock
+						}
+					})
 					listDetail.push({
 						id: res.id,
 						mrappr: res.mrappr,
@@ -45,7 +51,7 @@ export const ViewApprovalMR = () => {
 						material: res.name_material,
 						spesifikasi: res.spesifikasi,
 						qty: res.qty,
-						stock: 0,
+						stock: stock,
 						note: res.note,
 						qtyAppr: res.qty,
 						file: res.file,
