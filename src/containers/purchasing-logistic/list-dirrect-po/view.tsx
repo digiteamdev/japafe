@@ -1,6 +1,6 @@
 import moment from "moment";
 import { Section } from "../../../components";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 
 interface props {
 	dataSelected: any;
@@ -35,7 +35,7 @@ export const ViewDirrectPurchase = ({ dataSelected, content, showModal }: props)
 			return total;
 		}
 	};
-
+console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto h-[calc(100vh-100px)]'>
 			{dataSelected ? (
@@ -58,6 +58,14 @@ export const ViewDirrectPurchase = ({ dataSelected, content, showModal }: props)
 									</td>
 									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
 										{moment(dataSelected.date_prepared).format("DD-MMMM-YYYY")}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Cash Advance
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{ dataSelected?.cash_advance ? dataSelected?.cash_advance?.id_cash_advance + " - " + rupiahFormat(dataSelected?.cash_advance?.grand_tot) : null}
 									</td>
 								</tr>
 							</table>

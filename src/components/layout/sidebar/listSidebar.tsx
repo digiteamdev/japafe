@@ -262,6 +262,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
+			{
+				id: "SPJ purchase service",
+				link: "/purchasing-logistic/spj-purchase-service",
+				title: "SPJ purchase service",
+
+				subMenu: null,
+			},
 		],
 	},
 	{

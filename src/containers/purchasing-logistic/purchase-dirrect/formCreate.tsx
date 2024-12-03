@@ -8,18 +8,16 @@ import {
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import {
-	GetAllPoMr,
-	AddPoMr,
+	GetListCashAdvance,
 	GetPurchaseDirrect,
 	GetPurchaseSupplier,
-	AddSupplierMr,
 	AddPrMr,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { getIdUser } from "../../../configs/session";
 import { Trash2, Plus } from "react-feather";
-import { formatRupiah } from "@/src/utils";
+import { formatRupiah, rupiahFormat } from "@/src/utils";
 
 interface props {
 	content: string;
@@ -30,6 +28,7 @@ interface data {
 	dateOfPO: any;
 	idPO: string;
 	ref: string;
+	cdvId: string | null;
 	note: string;
 	supplierId: string;
 	delivery_time: string;
@@ -44,6 +43,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listSupplier, setListSupplier] = useState<any>([]);
 	const [listDataSuplier, setListDataSupplier] = useState<any>([]);
+	const [listCa, setListCa] = useState<any>([]);
 	const [date, setDate] = useState<any>(new Date());
 	const [contact, setContact] = useState<string>("");
 	const [phone, setPhone] = useState<string>("");
@@ -62,6 +62,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 		dateOfPO: new Date(),
 		idPO: "",
 		ref: "",
+		cdvId: null,
 		supplierId: "",
 		delivery_time: "",
 		franco: "",
@@ -79,6 +80,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 			idPO: generateIdNum(),
 			ref: "",
 			supplierId: "",
+			cdvId: null,
 			note: "",
 			delivery_time: "",
 			franco: "",
@@ -91,7 +93,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 			setUserId(idUser);
 		}
 		setIdPR(generateIdNum());
-		// getMrPo();
+		getCa();
 		getPurchaseMR();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -141,6 +143,26 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 		setIsLoading(false);
 	};
 
+	const getCa = async () => {
+		setIsLoading(true);
+		try {
+			const response = await GetListCashAdvance();
+			if (response.data) {
+				let listCashAdvance: any = [];
+				response.data.result?.map((res: any) => {
+					listCashAdvance.push({
+						label: res.id_cash_advance + " - " + rupiahFormat(res.grand_tot),
+						value: res
+					})
+				});
+				setListCa(listCashAdvance);
+			}
+		} catch (error: any) {
+			setListCa([]);
+		}
+		setIsLoading(false);
+	};
+
 	const getDetailPurchaseMR = async (id: string) => {
 		setIsLoading(true);
 		try {
@@ -170,7 +192,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 		return id;
 	};
 
-	const AddPurchaseDirrect = async () => {
+	const AddPurchaseDirrect = async (payload: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
 		let isWarning: boolean = false;
@@ -192,6 +214,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 			dateOfPurchase: new Date(date),
 			idPurchase: generateIdNum(),
 			supId: suplierId,
+			cdvId: payload.cdvId,
 			taxPsrDmr: "non_tax",
 			currency: "IDR",
 			detailMr: listDetail,
@@ -271,6 +294,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 						idPO: data.idPO,
 						ref: "",
 						note: "",
+						cdvId: null,
 						delivery_time: "",
 						franco: "",
 						payment_method: "",
@@ -301,7 +325,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 				initialValues={{ ...data }}
 				// validationSchema={departemenSchema}
 				onSubmit={(values) => {
-					AddPurchaseDirrect();
+					AddPurchaseDirrect(values);
 				}}
 				enableReinitialize
 			>
@@ -314,7 +338,7 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 					values,
 				}) => (
 					<Form onChange={handleOnChanges}>
-						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-3 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<InputDate
 									id='datePR'
@@ -336,6 +360,21 @@ export const FormCreatePurchaseDirrect = ({ content, showModal }: props) => {
 									onChange={(e: any) => {
 										getDetailPurchaseMR(e.value.id);
 										setSuplierId(e.value.id)
+									}}
+									required={true}
+									withLabel={true}
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+								/>
+							</div>
+							<div className='w-full'>
+								<InputSelectSearch
+									datas={listCa}
+									id='cdvId'
+									name='cdvId'
+									placeholder='Cash Advance'
+									label='Cash advance'
+									onChange={(e: any) => {
+										setFieldValue("cdvId", e.value.id);
 									}}
 									required={true}
 									withLabel={true}
