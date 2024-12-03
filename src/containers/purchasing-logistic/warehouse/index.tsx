@@ -34,8 +34,6 @@ export const Warehouse = () => {
 	const headerTabel = [
 		{ name: "Material Name" },
 		{ name: "Satuan" },
-		{ name: "Stock" },
-		{ name: "Price" },
 		{ name: "Action" },
 	];
 
@@ -181,6 +179,7 @@ export const Warehouse = () => {
 						</tr>
 					) : (
 						data.map((res: any, i: number) => {
+							console.log(res)
 							return (
 								<tr
 									className='border-b transition duration-300 ease-in-out hover:bg-gray-200 text-sm'
@@ -192,12 +191,12 @@ export const Warehouse = () => {
 									<td className='whitespace-nowrap p-1 text-center'>
 										{ res.satuan }
 									</td>
-									<td className='whitespace-nowrap p-1 text-center'>
+									{/* <td className='whitespace-nowrap p-1 text-center'>
 										{ res.jumlah_Stock }
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
 										{ formatRupiah(res.harga.toString()) }
-									</td>
+									</td> */}
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
 											<Button
