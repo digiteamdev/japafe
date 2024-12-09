@@ -94,20 +94,22 @@ export const ViewApprovalSR = () => {
 						qtyAppr: parseInt(res.qtyAppr),
 					});
 				}
-				isWarning = false;
-			} else {
-				toast.warning("Purchase Type Not yet entered", {
-					position: "top-center",
-					autoClose: 5000,
-					hideProgressBar: true,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "colored",
-				});
-				isWarning = true;
 			}
+			// if (res.srappr !== null) {
+			// 	isWarning = false;
+			// } else {
+			// 	toast.warning("Purchase Type Not yet entered", {
+			// 		position: "top-center",
+			// 		autoClose: 5000,
+			// 		hideProgressBar: true,
+			// 		closeOnClick: true,
+			// 		pauseOnHover: true,
+			// 		draggable: true,
+			// 		progress: undefined,
+			// 		theme: "colored",
+			// 	});
+			// 	isWarning = true;
+			// }
 		});
 		let data = {
 			// id: payload.id,
@@ -173,7 +175,7 @@ export const ViewApprovalSR = () => {
 						Loading
 					</>
 				</div>
-			) : data && data.statusSr === "Request" ? (
+			) : data ? (
 				<>
 					<div className='grid sm:grid-cols-1 md:grid-cols-2 gap-2'>
 						<div className='flex items-center w-full'>
