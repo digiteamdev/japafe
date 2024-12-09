@@ -21,3 +21,4 @@ export * from './approvalSR/view';
 export * from './purchase-mr/viewPr';
 export * from './purchase-dirrect';
 export * from './purchase-dirrect-service';
+export * from './spj-purchase-service';

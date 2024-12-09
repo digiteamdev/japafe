@@ -6,7 +6,7 @@ import {
 	InputDate,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
-import { GetSpjPurchase, AddSpjPurchase } from "../../../services";
+import { GetSpjPurchase, AddSpjPurchase, AddSpjPurchaseService } from "../../../services";
 import { toast } from "react-toastify";
 import { getIdUser } from "../../../configs/session";
 import moment from "moment";
@@ -22,9 +22,10 @@ interface data {
 	date_spj_purchase: any;
 	userId: string;
 	detailMr: any;
+	SrDetail: any;
 }
 
-export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
+export const FormCreateSPJPurchaseService = ({ content, showModal }: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [listPurchase, setListPurchase] = useState<any>([]);
 	const [idPR, setIdPR] = useState<string>("");
@@ -33,6 +34,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 		date_spj_purchase: new Date(),
 		userId: "",
 		detailMr: [],
+		SrDetail: []
 	});
 
 	useEffect(() => {
@@ -44,7 +46,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 	const getPurchase = async () => {
 		let dataList: any = [];
 		try {
-			const response = await GetSpjPurchase(undefined, undefined, "", "DMR");
+			const response = await GetSpjPurchase(undefined, undefined, "", "DSR");
 			if (response.data) {
 				response.data.result.map((res: any) => {
 					dataList.push({
@@ -75,7 +77,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 		setIsLoading(true);
 		let mr: any = [];
         let userId: any = getIdUser()
-		payload.detailMr.map((res: any) => {
+		payload.SrDetail.map((res: any) => {
 			mr.push({
 				id: res.id,
 				disc: parseFloat(res.disc),
@@ -87,10 +89,10 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 		const body: any = {
 			date_spj_purchase: payload.date_spj_purchase,
 			userId: userId,
-            detailMr: mr
+            SrDetail: mr
 		};
 		try {
-			const response = await AddSpjPurchase(body);
+			const response = await AddSpjPurchaseService(body);
 			if (response.data) {
 				toast.success("Spj Purchase Success", {
 					position: "top-center",
@@ -170,7 +172,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 									placeholder='ID Purchase'
 									label='ID Purchase'
 									onChange={(e: any) => {
-										setFieldValue("detailMr", e.value.detailMr);
+										setFieldValue("SrDetail", e.value.SrDetail);
 									}}
 									required={true}
 									withLabel={true}
@@ -179,11 +181,11 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 							</div>
 						</Section>
 						<div className='w-full mt-4'>
-							<h5 className='font-semibold text-lg'>Detail Purchase</h5>
-							{values.detailMr.length > 0 ? (
+							<h5 className='font-semibold text-lg'>Detail Purchase Service</h5>
+							{values.SrDetail.length > 0 ? (
 								<FieldArray
-									name='detailMr'
-									render={(arrayMr) => {
+									name='SrDetail'
+									render={(arraySr) => {
 										return (
 											<div className='text-xs'>
 												<table className='w-full'>
@@ -193,13 +195,13 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																Job no
 															</th>
 															<th className='border border-black p-1 text-center'>
-																No Mr
+																No Sr
 															</th>
 															<th className='border border-black p-1 text-center'>
-																Material
+																Description
 															</th>
 															<th className='border border-black p-1 text-center'>
-																Supplier
+																Vendor
 															</th>
 															<th className='border border-black p-1 text-center'>
 																Qty Purchase
@@ -219,17 +221,17 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 														</tr>
 													</thead>
 													<tbody>
-														{values.detailMr.map((res: any, i: number) => {
+														{values.SrDetail.map((res: any, i: number) => {
 															return (
 																<tr key={i}>
 																	<td className='border border-black p-1 text-center'>
-																		{res.mr?.job_no}
+																		{res.sr?.job_no}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
-																		{res.mr?.no_mr}
+																		{res.sr?.no_sr}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
-																		{res.name_material + " " + res.spesifikasi}
+																		{res.desc}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
 																		{res.supplier?.supplier_name}
@@ -239,31 +241,6 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 																	</td>
 																	<td className='w-[10%] border border-black p-1 text-center'>
 																	{res.qty_receive}
-																		{/* <Input
-																			id='date_spj'
-																			name='date_spj'
-																			placeholder='Qty actual'
-																			label='Qty actual'
-																			type='number'
-																			value={res.qty_actual}
-																			onChange={(e: any) => {
-																				let qty: any =
-																					e.target.value.replaceAll(".", "");
-																				let total: any =
-																					res.price * qty - res.disc;
-																				setFieldValue(
-																					`detailMr.${i}.qty_actual`,
-																					qty
-																				);
-																				setFieldValue(
-																					`detailMr.${i}.total`,
-																					total
-																				);
-																			}}
-																			required={true}
-																			withLabel={false}
-																			className='bg-white border border-primary-300 text-gray-900 text-xs rounded-lg block w-full p-1 outline-primary-600'
-																		/> */}
 																	</td>
 																	<td className='border border-black p-1 text-center'>
 																		<Input
@@ -346,7 +323,7 @@ export const FormCreateSPJPurchase = ({ content, showModal }: props) => {
 								/>
 							) : null}
 						</div>
-						{values.detailMr.length === 0 ? null : (
+						{values.SrDetail.length === 0 ? null : (
 							<div className='mt-8 flex justify-end'>
 								<div className='flex gap-2 items-center'>
 									<button

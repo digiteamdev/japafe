@@ -10,8 +10,8 @@ import {
 	Pagination,
 } from "../../../components";
 import { Send, Edit, Eye, Trash2 } from "react-feather";
-import { FormCreateSPJPurchase } from "./formCreate";
-import { ViewSpjPurchase } from "./view";
+import { FormCreateSPJPurchaseService } from "./formCreate";
+import { ViewSpjPurchaseService } from "./view";
 // import { FormEditPurchaseMr } from "./formEdit";
 import {
 	GetSpjPurchase,
@@ -24,7 +24,7 @@ import { removeToken } from "../../../configs/session";
 import moment from "moment";
 import { changeDivisi } from "@/src/utils";
 
-export const SpjPurchase = () => {
+export const SpjPurchaseService = () => {
 	const router = useRouter();
 	const [isModal, setIsModal] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,26 +37,26 @@ export const SpjPurchase = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPage, setTotalPage] = useState<number>(1);
 	const headerTabel = [
-		{ name: "Id Spj Purchase" },
-		{ name: "Id Dirrect Purchase" },
+		{ name: "Id Spj Purchase Service" },
+		{ name: "Id Dirrect Purchase Service" },
 		{ name: "Job No" },
-		{ name: "No MR" },
+		{ name: "No SR" },
 		{ name: "Material" },
 		{ name: "Action" },
 	];
 
 	useEffect(() => {
-		getSpjPurchase(page, perPage, "");
+		getSpjPurchaseService(page, perPage, "");
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getSpjPurchase = async (page: number, perpage: number, search: string) => {
+	const getSpjPurchaseService = async (page: number, perpage: number, search: string) => {
 		try {
-			const response: any = await GetSpjPurchase(page, perpage, search, "DMR");
+			const response: any = await GetSpjPurchase(page, perpage, search, "DSR");
 			if (response.data) {
-				setData(response.data.result);
-				setCountData(response.data.totalData);
-				setTotalPage(Math.ceil(response.data.totalData / perpage));
+				setData(response?.data?.result);
+				setCountData(response?.data?.totalData);
+				setTotalPage(Math.ceil(response?.data?.totalData / perpage));
 			}
 		} catch (error: any) {
 			if (error.response.data.login) {
@@ -75,7 +75,7 @@ export const SpjPurchase = () => {
 		// 	setDataSelected({id: '',name: ''})
 		// }
 		if (reload) {
-			getSpjPurchase(page, perPage, "");
+			getSpjPurchaseService(page, perPage, "");
 		}
 	};
 
@@ -84,7 +84,7 @@ export const SpjPurchase = () => {
 		limit: number,
 		search: string
 	) => {
-		getSpjPurchase(page, limit, search);
+		getSpjPurchaseService(page, limit, search);
 	};
 
 	const deletePurchaseMR = async (id: string) => {
@@ -101,7 +101,7 @@ export const SpjPurchase = () => {
 					progress: undefined,
 					theme: "colored",
 				});
-				getSpjPurchase(page, perPage, "");
+				getSpjPurchaseService(page, perPage, "");
 			}
 		} catch (error) {
 			toast.error("Delete Spj Purchase Failed", {
@@ -122,9 +122,9 @@ export const SpjPurchase = () => {
 		let material: string = "";
 		data.map((res: any, i: number) => {
 			if (i === 0) {
-				material = `- ` + res.name_material + " " + res.spesifikasi;
+				material = `- ` + res.desc;
 			} else {
-				material = material + ` \r\n ` + `- ` + res.name_material + " " + res.spesifikasi;
+				material = material + ` \r\n ` + `- ` + res.desc;
 			}
 		});
 		return material;
@@ -133,12 +133,12 @@ export const SpjPurchase = () => {
 	return (
 		<div className='mt-14 lg:mt-20 md:mt-20 sm:mt-20 xs:mt-24'>
 			<SectionTitle
-				title='SPJ Purchase'
+				title='SPJ Purchase Service'
 				total={countData}
 				icon={<Send className='w-[36px] h-[36px]' />}
 			/>
 			<Content
-				title='SPJ Purchase'
+				title='SPJ Purchase Service'
 				print={true}
 				marketing={false}
 				changeDivisi={changeDivisi}
@@ -192,19 +192,19 @@ export const SpjPurchase = () => {
 									key={i}
 								>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.id_spj_purchase}
+										{res?.id_spj_purchase}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0]?.purchase?.idPurchase}
+										{res.SrDetail[0]?.purchase?.idPurchase}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0]?.mr.job_no}
+										{res.SrDetail[0]?.sr.job_no}
 									</td>
 									<td className='whitespace-nowrap p-1 text-center'>
-										{res.detailMr[0]?.mr.no_mr}
+										{res.SrDetail[0]?.sr.no_sr}
 									</td>
 									<td className='whitespace-pre p-1 text-center'>
-										{showMaterial(res.detailMr)}
+										{showMaterial(res.SrDetail)}
 									</td>
 									<td className='whitespace-nowrap p-1 w-[10%] text-center'>
 										<div>
@@ -232,7 +232,7 @@ export const SpjPurchase = () => {
 						totalCount={countData}
 						onChangePage={(value: any) => {
 							setCurrentPage(value);
-							getSpjPurchase(page, perPage, "");
+							getSpjPurchaseService(page, perPage, "");
 						}}
 					/>
 				) : null}
@@ -253,7 +253,7 @@ export const SpjPurchase = () => {
 					showModal={showModal}
 				>
 					{modalContent === "view" ? (
-						<ViewSpjPurchase dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
+						<ViewSpjPurchaseService dataSelected={dataSelected} showModal={showModal} content={modalContent}/>
 					) : 
 					// <ViewPoMR
 					// 	dataSelected={dataSelected}
@@ -261,7 +261,7 @@ export const SpjPurchase = () => {
 					// 	content={modalContent}
 					// />
 					modalContent === "add" ? (
-						<FormCreateSPJPurchase
+						<FormCreateSPJPurchaseService
 							content={modalContent}
 							showModal={showModal}
 						/>

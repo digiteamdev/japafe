@@ -103,6 +103,9 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 				id: res.id,
 				qty_receive: res.qtyAppr,
 			});
+			if(res.file_receive){
+				formData.append("file_receive", res.file_receive)
+			}
 		});
 		// let data: any = {
 		// 	id: idPurchase,
@@ -467,7 +470,7 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 												return values.srDetail.map((res: any, i: number) => {
 													return (
 														<Section
-															className='grid md:grid-cols-4 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+															className='grid md:grid-cols-5 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
 															key={i}
 														>
 															<div className='w-full'>
@@ -526,6 +529,25 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																			e.target.value
 																		);
 																	}}
+																	required={true}
+																	withLabel={true}
+																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+																/>
+															</div>
+															<div className='w-full'>
+																<Input
+																	id={`detailMr.${i}.file_receive`}
+																	name={`detailMr.${i}.file_receive`}
+																	placeholder='File'
+																	label='File'
+																	type='file'
+																	accept='image/*, .pdf'
+																	onChange={(e: any) =>
+																		setFieldValue(
+																			`detailMr.${i}.file_receive`,
+																			e.target.files[0]
+																		)
+																	}
 																	required={true}
 																	withLabel={true}
 																	className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
