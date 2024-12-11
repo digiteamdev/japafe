@@ -82,7 +82,7 @@ export const ViewSpjPurchase = ({
 			});
 		}
 	};
-	
+	console.log(dataSelected)
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -92,7 +92,7 @@ export const ViewSpjPurchase = ({
 							<h1 className='font-bold text-xl'>Spj Purchase</h1>
 						</div>
 						<div className='text-right mr-6'>
-							{ position === "Supervisor" && !dataSelected?.status || position === "Manager" && !dataSelected?.status ? (
+							{ position === "Manager" && !dataSelected?.status ? (
 								<button
 									className={`justify-center rounded-full border border-transparent bg-blue-500 hover:bg-blue-400 px-4 py-1 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 cursor-pointer mr-3`}
 									onClick={() => approve()}
@@ -131,6 +131,14 @@ export const ViewSpjPurchase = ({
 										{moment(dataSelected.date_spj_purchase).format(
 											"DD-MMMM-YYYY"
 										)}
+									</td>
+								</tr>
+								<tr>
+									<td className='sm:w-[50%] md:w-[25%] bg-gray-300 pl-2 border border-gray-200'>
+										Approved
+									</td>
+									<td className='sm:w-[50%] md:w-[75%] pl-2 border border-gray-200'>
+										{dataSelected.status ? "Approved" : "Not approved"}
 									</td>
 								</tr>
 							</table>

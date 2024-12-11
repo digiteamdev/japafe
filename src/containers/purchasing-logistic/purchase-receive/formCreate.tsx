@@ -4,6 +4,7 @@ import {
 	Input,
 	InputSelect,
 	InputSelectSearch,
+	InputDate,
 } from "../../../components";
 import { Formik, Form, FieldArray } from "formik";
 import { GetPurchase, AddPurchaseReceive } from "../../../services";
@@ -94,8 +95,8 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 				qty_receive: parseInt(res.qty_receive),
 				status_stock: res.status_stock === "" ? "non" : res.status_stock,
 			});
-			if(res.file_receive){
-				formData.append("file_receive", res.file_receive)
+			if (res.file_receive) {
+				formData.append("file_receive", res.file_receive);
 			}
 		});
 		payload.srDetail.map((res: any) => {
@@ -103,8 +104,8 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 				id: res.id,
 				qty_receive: res.qtyAppr,
 			});
-			if(res.file_receive){
-				formData.append("file_receive", res.file_receive)
+			if (res.file_receive) {
+				formData.append("file_receive", res.file_receive);
 			}
 		});
 		// let data: any = {
@@ -199,17 +200,17 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 								/>
 							</div>
 							<div className='w-full'>
-								<Input
-									id='date_receive'
-									name='date_receive'
-									placeholder='Date Of Receive'
-									label='Date Of Receive'
-									type='text'
-									value={moment(values.date_receive).format("DD-MMMM-YYYY")}
-									onChange={handleChange}
-									required={true}
+								<InputDate
+									id='date'
+									label='date'
+									dateFormat='dd/MM/yyyy'
+									value={values.date_receive}
+									onChange={(value: any) =>
+										setFieldValue("date_receive", value)
+									}
 									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 pl-11 outline-primary-600'
+									classNameIcon='absolute inset-y-0 left-0 flex items-center pl-3 z-20'
 								/>
 							</div>
 							<div className='w-full'>
@@ -385,7 +386,9 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={res.name_material + " " + res.spesifikasi}
+																	value={
+																		res.name_material + " " + res.spesifikasi
+																	}
 																	disabled={true}
 																	required={true}
 																	withLabel={true}
@@ -648,7 +651,9 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 																	placeholder='Material Name'
 																	label='Material Name'
 																	type='text'
-																	value={res.name_material + " " + res.spesifikasi}
+																	value={
+																		res.name_material + " " + res.spesifikasi
+																	}
 																	disabled={true}
 																	required={true}
 																	withLabel={true}
