@@ -28,4 +28,7 @@ export const GetAllMaterialNew = () => Axios.get(process.env.BASE_URL+`/material
 export const EditMaterialNew = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/materialMaster/${id}`, data);
 export const DeleteMaterialNew = (id: string) => Axios.delete(process.env.BASE_URL+`/materialMaster/${id}`);
 
+export const AddMaterials = (data: any) => Axios.post(process.env.BASE_URL+'/mainMaterial', data);
+export const EditMaterials = (data: any, id: string) => Axios.put(process.env.BASE_URL+`/mainMaterial/${id}`, data);
 export const GetSpesifikasi = () => Axios.get(process.env.BASE_URL+`/getSpesifikasi`);
+export const DeleteMaterials = (id: string) => Axios.delete(process.env.BASE_URL+`/mainMaterial/${id}`);
