@@ -10,6 +10,7 @@ export const token = (data: any) => {
     Cookies.set('sub_departement', data.employee?.sub_depart?.name);
     Cookies.set('id_user', data.id);
     Cookies.set('image', data.employee.photo);
+    Cookies.set('gender', data.employee?.gender);
 }
 
 export const setImage = (data: any) => {
@@ -61,6 +62,11 @@ export const getIdUser = () => {
     return id
 }
 
+export const getGender = () => {
+    let id = Cookies.get('gender');
+    return id
+}
+
 export const removeToken = () => {
     Cookies.remove('token');
     Cookies.remove('role');
@@ -70,4 +76,5 @@ export const removeToken = () => {
     Cookies.remove('position');
     Cookies.remove('departement');
     Cookies.remove('sub_departement');
+    Cookies.remove('gender');
 }
