@@ -443,13 +443,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			{
-				id: "due-payment",
-				link: "/finance-accounting/due-payment",
-				title: "Due Payment",
+			// {
+			// 	id: "due-payment",
+			// 	link: "/finance-accounting/due-payment",
+			// 	title: "Due Payment",
 
-				subMenu: null,
-			},
+			// 	subMenu: null,
+			// },
 			{
 				id: "posting",
 				link: "/finance-accounting/posting",

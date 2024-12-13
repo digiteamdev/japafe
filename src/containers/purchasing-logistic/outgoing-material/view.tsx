@@ -8,7 +8,7 @@ interface props {
 }
 
 export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props) => {
-	
+
 	return (
 		<div className='px-5 pb-2 mt-4 overflow-auto'>
 			{dataSelected ? (
@@ -48,8 +48,8 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 						<table className="w-full">
 							<thead>
 								<tr>
+									<th className="text-center border border-black">No Job</th>
 									<th className="text-center border border-black">Material Name</th>
-									{/* <th className="text-center border border-black">No Job</th> */}
 									<th className="text-center border border-black">Outgoing</th>
 									<th className="text-center border border-black">Employe</th>
 								</tr>
@@ -58,8 +58,8 @@ export const ViewOutgoingMaterial = ({ dataSelected, content, showModal }: props
 								{ dataSelected.stock_outgoing_material.map((res: any, i: number) => {
 									return(
 										<tr key={i}>
-											<td className="text-center border border-black">{res.materialStockId === null && res.mr === null ? `${res.poandso?.detailMr[0]?.Material_Master?.name} ${res.poandso?.detailMr[0]?.Material_Master?.spesifikasi ? res.poandso.detailMr[0].Material_Master?.spesifikasi : ''}` : res.mr !== null ? `${ res.mr?.detailMr[i]?.Material_Master?.name }` : `${res.Material_Master?.name} ${res.Material_Master?.spesifikasi ? res.Material_Master?.spesifikasi : ''}` }</td>
-											{/* <td className="text-center border border-black">{res.poandso.detailMr[0].mr.job_no }</td> */}
+											<td className="text-center border border-black">{res?.no_job ? res?.no_job : res?.mr?.job_no }</td>
+											<td className="text-center border border-black">{res?.name_material + " " + res?.spesifikasi}</td>
 											<td className="text-center border border-black">{res.qty_out }</td>
 											<td className="text-center border border-black">{res.request }</td>
 										</tr>

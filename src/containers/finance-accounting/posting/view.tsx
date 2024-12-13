@@ -268,7 +268,6 @@ console.log(dataSelected)
 												Material
 											</th>
 											<th className='border border-black text-center'>Qty</th>
-											<th className='border border-black text-center'>Unit</th>
 											<th className='border border-black text-center'>Price</th>
 											<th className='border border-black text-center'>
 												Total Price
@@ -284,9 +283,6 @@ console.log(dataSelected)
 													</td>
 													<td className='border border-black text-center'>
 														{res.qtyAppr}
-													</td>
-													<td className='border border-black text-center'>
-														{res.Material_Master.satuan}
 													</td>
 													<td className='border border-black text-center'>
 														{formatRupiah(res.price.toString())}
@@ -312,7 +308,6 @@ console.log(dataSelected)
 												Material
 											</th>
 											<th className='border border-black text-center'>Qty</th>
-											<th className='border border-black text-center'>Unit</th>
 											<th className='border border-black text-center'>Price</th>
 											<th className='border border-black text-center'>
 												Total Price
@@ -329,9 +324,6 @@ console.log(dataSelected)
 														</td>
 														<td className='border border-black text-center'>
 															{res.qtyAppr}
-														</td>
-														<td className='border border-black text-center'>
-															{/* {res.name_material} */}
 														</td>
 														<td className='border border-black text-center'>
 															{formatRupiah(res.price.toString())}
@@ -381,7 +373,49 @@ console.log(dataSelected)
 								</table>
 							</Section>
 						</>
-					) : null}
+					) : (
+						<>
+							<h1 className='font-bold text-lg mt-2'>Receive Material</h1>
+							<Section className='grid grid-cols-1 gap-2 mt-2 text-xs'>
+								<table className='w-full'>
+									<thead>
+										<tr>
+											<th className='border border-black text-center'>
+												Material
+											</th>
+											<th className='border border-black text-center'>Qty</th>
+											<th className='border border-black text-center'>Price</th>
+											<th className='border border-black text-center'>
+												Total Price
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{dataSelected.detailMr.map(
+											(res: any, i: number) => {
+												return (
+													<tr key={i}>
+														<td className='border border-black text-center'>
+															{res.name_material + " " + res.spesifikasi}
+														</td>
+														<td className='border border-black text-center'>
+															{res.qtyAppr}
+														</td>
+														<td className='border border-black text-center'>
+															{formatRupiah(res.price.toString())}
+														</td>
+														<td className='border border-black text-center'>
+															{formatRupiah(res.total.toString())}
+														</td>
+													</tr>
+												);
+											}
+										)}
+									</tbody>
+								</table>
+							</Section>
+						</>
+					)}
 					<h1 className='font-bold text-lg mt-2'>Journal</h1>
 					<Formik
 						initialValues={{ ...data }}
