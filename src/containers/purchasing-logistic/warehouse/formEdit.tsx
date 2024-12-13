@@ -1,71 +1,82 @@
 import { useState, useEffect } from "react";
 import { Section, Input, InputArea } from "../../../components";
-import { Formik, Form } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import { warehouseSchema } from "../../../schema/purchasing-logistic/warehouse/warehouseSchema";
-import { EditMaterialNew } from "../../../services";
+import { EditMaterials } from "../../../services";
 import { toast } from "react-toastify";
 import { formatRupiah } from "@/src/utils";
+import { Plus, Trash2 } from "react-feather";
 
 interface data {
 	name: string;
-	spesifikasi: string;
 	satuan: string;
-	jumlah_stock: number;
-	harga: number;
-	note: string;
-    date_in: any;
-    date_out: any;
+	Material_Master: [
+		{
+			id: string;
+			name: string;
+			satuan: string;
+			jumlah_Stock: number;
+		}
+	];
 }
 
 interface props {
-    dataSelected: any;
+	dataSelected: any;
 	content: string;
 	showModal: (val: boolean, content: string, reload: boolean) => void;
 }
 
-export const FormEditWarehouse = ({ dataSelected, content, showModal }: props) => {
+export const FormEditWarehouse = ({
+	dataSelected,
+	content,
+	showModal,
+}: props) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [data, setData] = useState<data>({
 		name: "",
-		spesifikasi: "",
 		satuan: "",
-		jumlah_stock: 0,
-		harga: 0,
-		note: "",
-        date_in: null,
-        date_out: null,
+		Material_Master: [
+			{
+				id: "",
+				name: "",
+				satuan: "",
+				jumlah_Stock: 0,
+			},
+		],
 	});
-    
-    useEffect(() => {
+
+	useEffect(() => {
+		let material_stock: any = [];
+		dataSelected?.Material_Master?.map((res: any) => {
+			material_stock.push({
+				id: res.id,
+				name: res.name,
+				satuan: res.satuan,
+				jumlah_Stock: res.jumlah_Stock,
+			});
+		});
 		setData({
-            name: dataSelected.name,
-            spesifikasi: dataSelected.spesifikasi,
-            satuan: dataSelected.satuan,
-            jumlah_stock: dataSelected.jumlah_Stock,
-            harga: dataSelected.harga,
-            note: dataSelected.note,
-            date_in: dataSelected.date_in,
-            date_out: dataSelected.date_out,
-        })
+			name: dataSelected?.name,
+			satuan: dataSelected?.satuan,
+			Material_Master: material_stock,
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const editMaterial = async (data: any) => {
 		setIsLoading(true);
-		let dataBody: any = {
-			name: data.name,
-			spesifikasi: data.spesifikasi,
-			satuan: data.satuan,
-			jumlah_Stock: parseInt(data.jumlah_stock.toString()
-			.replaceAll(".", "")),
-			harga: parseInt(data.harga.toString()
-			.replaceAll(".", "")),
-			note: data.note,
-			date_in: data.date_in,
-			date_out: data.date_out,
-		};
+		// let dataBody: any = {
+		// 	name: data.name,
+		// 	spesifikasi: data.spesifikasi,
+		// 	satuan: data.satuan,
+		// 	jumlah_Stock: parseInt(data.jumlah_stock.toString().replaceAll(".", "")),
+		// 	harga: parseInt(data.harga.toString().replaceAll(".", "")),
+		// 	note: data.note,
+		// 	date_in: data.date_in,
+		// 	date_out: data.date_out,
+		// };
 		try {
-			const response = await EditMaterialNew(dataBody,dataSelected.id);
+			const response = await EditMaterials(data, dataSelected.id);
 			if (response.data) {
 				toast.success("Edit Material Success", {
 					position: "top-center",
@@ -104,9 +115,16 @@ export const FormEditWarehouse = ({ dataSelected, content, showModal }: props) =
 				}}
 				enableReinitialize
 			>
-				{({ handleChange, handleSubmit, errors, touched, values }) => (
+				{({
+					handleChange,
+					handleSubmit,
+					setFieldValue,
+					errors,
+					touched,
+					values,
+				}) => (
 					<Form>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+						<Section className='grid md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
 							<div className='w-full'>
 								<Input
 									id='name'
@@ -122,25 +140,6 @@ export const FormEditWarehouse = ({ dataSelected, content, showModal }: props) =
 								/>
 								{errors.name && touched.name ? (
 									<span className='text-red-500 text-xs'>{errors.name}</span>
-								) : null}
-							</div>
-							<div className='w-full'>
-								<Input
-									id='spesifikasi'
-									name='spesifikasi'
-									placeholder='Spesifikasi'
-									label='spesifikasi'
-									type='text'
-									value={values.spesifikasi}
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-								{errors.spesifikasi && touched.spesifikasi ? (
-									<span className='text-red-500 text-xs'>
-										{errors.spesifikasi}
-									</span>
 								) : null}
 							</div>
 							<div className='w-full'>
@@ -161,64 +160,139 @@ export const FormEditWarehouse = ({ dataSelected, content, showModal }: props) =
 								) : null}
 							</div>
 						</Section>
-						<Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
-							<div className='w-full'>
-								<Input
-									id='jumlah_stock'
-									name='jumlah_stock'
-									type='text'
-									pattern='\d*'
-									placeholder='Stock'
-									label='Stock'
-									value={formatRupiah(values.jumlah_stock.toString())}
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-								{errors.jumlah_stock && touched.jumlah_stock ? (
-									<span className='text-red-500 text-xs'>
-										{errors.jumlah_stock}
-									</span>
-								) : null}
-							</div>
-							<div className='w-full'>
-								<Input
-									id='harga'
-									name='harga'
-									type='text'
-									placeholder='Price'
-									label='Price'
-									pattern='\d*'
-									value={formatRupiah(values.harga.toString())}
-									onChange={handleChange}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-								{errors.harga && touched.harga ? (
-									<span className='text-red-500 text-xs'>{errors.harga}</span>
-								) : null}
-							</div>
-							<div className='w-full'>
-								<InputArea
-									id='note'
-									name='note'
-									placeholder='Note'
-									label='Note'
-									type='text'
-									value={values.note}
-									onChange={handleChange}
-									disabled={false}
-									required={true}
-									withLabel={true}
-									className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-								/>
-								{errors.note && touched.note ? (
-									<span className='text-red-500 text-xs'>{errors.note}</span>
-								) : null}
-							</div>
-						</Section>
+						<FieldArray
+							name='Material_Master'
+							render={(arrayMaterial) =>
+								values?.Material_Master?.map((res: any, i: number) => {
+									return (
+										<Section
+											className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'
+											key={i}
+										>
+											<Input
+												id={`Material_Master.${i}.name`}
+												name={`Material_Master.${i}.name`}
+												type='text'
+												placeholder='Name spesification'
+												label='Name spesification'
+												value={res.name}
+												onChange={(e: any) => {
+													setFieldValue(
+														`Material_Master.${i}.name`,
+														e.target.value
+													);
+												}}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<Input
+												id={`Material_Master.${i}.jumlah_Stock`}
+												name={`Material_Master.${i}.jumlah_Stock`}
+												type='number'
+												placeholder='Stock'
+												label='Stock'
+												value={res.jumlah_Stock}
+												onChange={(e: any) => {
+													setFieldValue(
+														`Material_Master.${i}.jumlah_Stock`,
+														parseInt(e.target.value)
+													);
+												}}
+												required={true}
+												withLabel={true}
+												className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+											/>
+											<div className='flex w-full mt-8'>
+												{i + 1 === values.Material_Master.length ? (
+													<a
+														className='flex mt-2 text-[20px] text-blue-600 cursor-pointer hover:text-blue-400'
+														onClick={() =>
+															arrayMaterial.push({
+																name: "",
+																satuan: "",
+																jumlah_Stock: 0,
+															})
+														}
+													>
+														<Plus size={23} className='mt-1' />
+														Add
+													</a>
+												) : null}
+												{i === 0 &&
+												values.Material_Master.length === 1 ? null : (
+													<a
+														className='flex ml-4 mt-2 text-[20px] text-red-600 w-full hover:text-red-400 cursor-pointer'
+														onClick={() => arrayMaterial.remove(i)}
+													>
+														<Trash2 size={22} className='mt-1 mr-1' />
+														Remove
+													</a>
+												)}
+											</div>
+										</Section>
+									);
+								})
+							}
+						/>
+						{/* <Section className='grid md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-2'>
+												<div className='w-full'>
+													<Input
+														id='jumlah_stock'
+														name='jumlah_stock'
+														type='text'
+														pattern='\d*'
+														placeholder='Stock'
+														label='Stock'
+														value={formatRupiah(values.jumlah_stock.toString())}
+														onChange={handleChange}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+													{errors.jumlah_stock && touched.jumlah_stock ? (
+														<span className='text-red-500 text-xs'>
+															{errors.jumlah_stock}
+														</span>
+													) : null}
+												</div>
+												<div className='w-full'>
+													<Input
+														id='harga'
+														name='harga'
+														type='text'
+														placeholder='Price'
+														label='Price'
+														pattern='\d*'
+														value={formatRupiah(values.harga.toString())}
+														onChange={handleChange}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+													{errors.harga && touched.harga ? (
+														<span className='text-red-500 text-xs'>{errors.harga}</span>
+													) : null}
+												</div>
+												<div className='w-full'>
+													<InputArea
+														id='note'
+														name='note'
+														placeholder='Note'
+														label='Note'
+														type='text'
+														value={values.note}
+														onChange={handleChange}
+														disabled={false}
+														required={true}
+														withLabel={true}
+														className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
+													/>
+													{errors.note && touched.note ? (
+														<span className='text-red-500 text-xs'>{errors.note}</span>
+													) : null}
+												</div>
+											</Section> */}
 						<div className='mt-8 flex justify-end'>
 							<div className='flex gap-2 items-center'>
 								<button
