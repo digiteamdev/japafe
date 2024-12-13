@@ -90,22 +90,26 @@ export const FormCreatePurchaseReceive = ({ content, showModal }: props) => {
 		let sr: any = [];
 		const formData = new FormData();
 		payload.detailMr.map((res: any) => {
-			mr.push({
-				id: res.id,
-				qty_receive: parseInt(res.qty_receive),
-				status_stock: res.status_stock === "" ? "non" : res.status_stock,
-			});
-			if (res.file_receive) {
-				formData.append("file_receive", res.file_receive);
+			if(parseInt(res.qty_receive) > 0){
+				mr.push({
+					id: res.id,
+					qty_receive: parseInt(res.qty_receive),
+					status_stock: res.status_stock === "" ? "non" : res.status_stock,
+				});
+				if (res.file_receive) {
+					formData.append("file_receive", res.file_receive);
+				}
 			}
 		});
 		payload.srDetail.map((res: any) => {
-			sr.push({
-				id: res.id,
-				qty_receive: res.qtyAppr,
-			});
-			if (res.file_receive) {
-				formData.append("file_receive", res.file_receive);
+			if(parseInt(res.qty_receive) > 0){
+				sr.push({
+					id: res.id,
+					qty_receive: parseInt(res.qty_receive),
+				});
+				if (res.file_receive) {
+					formData.append("file_receive", res.file_receive);
+				}
 			}
 		});
 		// let data: any = {

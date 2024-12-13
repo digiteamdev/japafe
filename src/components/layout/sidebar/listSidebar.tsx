@@ -33,13 +33,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "absensi",
-			// 	link: "/public/absensi",
-			// 	title: "Absensi",
+			{
+				id: "absensi",
+				link: "/public/absensi",
+				title: "Absensi",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			{
 				id: "spj-cash-advance",
 				link: "/public/spj-cash-advance",
@@ -61,13 +61,13 @@ export const ListNav = [
 
 				subMenu: null,
 			},
-			// {
-			// 	id: "permit",
-			// 	link: "/public/permit",
-			// 	title: "Permit",
+			{
+				id: "permit",
+				link: "/public/permit",
+				title: "Permit",
 
-			// 	subMenu: null,
-			// },
+				subMenu: null,
+			},
 			// {
 			// 	id: "SPD",
 			// 	link: "/public/spd",

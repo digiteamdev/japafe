@@ -10,12 +10,13 @@ import { permitSchema } from "../../../schema/public/permit/permitSchema";
 import {
 	GetEmployeById,
 	GetPermit,
-	AddPermitEmployee
+	AddPermitEmployee,
+	GetEmployeeById
 } from "../../../services";
 import { Plus, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { getIdUser } from "../../../configs/session";
+import { getGender, getIdUser } from "../../../configs/session";
 
 interface props {
 	content: string;
@@ -48,21 +49,15 @@ export const FormCreatePermitEmployee = ({ content, showModal }: props) => {
 		try {
 			const response = await GetPermit(undefined, undefined, "");
 			if (response) {
-                let idEmployee: any = getIdUser();
-                let genderEmployee: string = "";
-                if(idEmployee){
-                    const employee = await GetEmployeById(idEmployee);
-                    if(employee){
-                        console.log(employee)
-                        // genderEmployee = employee?.data?.result?.
-                    }
-                }
+                let genderEmployee: any = getGender();
 				let dataListPermit: any = [];
 				response.data.result.map((res: any) => {
-					dataListPermit.push({
-						label: res.name_permit,
-						value: res,
-					});
+					if(res.gender === 'All' || res.gender === genderEmployee){
+						dataListPermit.push({
+							label: res.name_permit,
+							value: res,
+						});
+					}
 				});
 				setListPermit(dataListPermit);
 			}

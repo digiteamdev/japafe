@@ -15,6 +15,7 @@ import {
 	GetOutgoingMaterialAll,
 	GetAllMaterialNew,
 	GetBom,
+	GetSpesifikasi,
 } from "../../../services";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -153,11 +154,11 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 	const getMaterial = async () => {
 		try {
 			let list_material: any = [];
-			const response = await GetAllMaterialNew();
+			const response = await GetSpesifikasi();
 			if (response) {
 				response.data.result.map((res: any) => {
 					list_material.push({
-						label: `${res.name} - ${res.spesifikasi}`,
+						label: `${res.Material_Main?.name} - ${res.name}`,
 						value: res,
 					});
 				});
@@ -425,6 +426,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 								name='pb'
 								render={(arrayPb) =>
 									values.pb.map((result: any, i: number) => {
+										console.log(result)
 										return (
 											<div key={i}>
 												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>

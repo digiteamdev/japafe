@@ -46,12 +46,12 @@ export const Mr = () => {
 	];
 
 	useEffect(() => {
-		let role:any = getRole()
+		let role: any = getRole();
 		getMr(page, perPage);
-		if(role){
-			JSON.parse(role).map((res:any) => {
-				res.role?.role_name === 'PURCHASING' ? setIsShowPrint(true) : null
-			})
+		if (role) {
+			JSON.parse(role).map((res: any) => {
+				res.role?.role_name === "PURCHASING" ? setIsShowPrint(true) : null;
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [statusMr]);
@@ -207,7 +207,7 @@ export const Mr = () => {
 				showModal={showModal}
 				search={searchMaterialStock}
 			>
-				{ isShowPrint ? (
+				{isShowPrint ? (
 					<Section className='grid sm:grid-cols-1 md:grid-cols-3 gap-2 my-2'>
 						<div className='w-full'>
 							<InputDate
@@ -237,13 +237,17 @@ export const Mr = () => {
 						<div className='flex'>
 							<Button
 								className='bg-green-500 hover:bg-green-700 text-white p-1 rounded-md w-full mr-2 text-center h-[55%]'
-								onClick={ async () => window.location.href = process.env.BASE_URL+`/MRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusMr}` }
+								onClick={async () =>
+									(window.location.href =
+										process.env.BASE_URL +
+										`/MRCsv?dateStar=${dateStart}&dateEnd=${dateFinish}&statusMr=${statusMr}`)
+								}
 							>
 								<Printer color='white' className='mx-auto' />
 							</Button>
 						</div>
 					</Section>
-				) : null }
+				) : null}
 				<Table header={headerTabel}>
 					{isLoading ? (
 						<tr className='border-b transition duration-300 ease-in-out hover:bg-gray-200'>
@@ -325,18 +329,16 @@ export const Mr = () => {
 													>
 														<Edit color='white' />
 													</Button>
+													<Button
+														className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
+														onClick={() => {
+															setDataSelected(res);
+															showModal(true, "delete", false);
+														}}
+													>
+														<Trash2 color='white' />
+													</Button>
 												</>
-											) : null}
-											{res.statusMr === "Request" ? (
-												<Button
-													className='bg-red-500 hover:bg-red-700 text-white p-1 rounded-md'
-													onClick={() => {
-														setDataSelected(res);
-														showModal(true, "delete", false);
-													}}
-												>
-													<Trash2 color='white' />
-												</Button>
 											) : null}
 										</div>
 									</td>
