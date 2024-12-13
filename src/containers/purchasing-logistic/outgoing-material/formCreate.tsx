@@ -52,7 +52,10 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 				no_mr: "",
 				idMr: "",
 				materialName: "",
+				spesifikasi: "",
 				job_no: "",
+				employeeId: null,
+				request: "",
 				requestBy: "",
 				qty_out: 0,
 				stock: 0,
@@ -67,6 +70,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 				request: "",
 				qty_out: 0,
 				stock: 0,
+				name_material: "",
+				spesifikasi: "",
 			},
 		],
 	});
@@ -226,6 +231,8 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 					request: res.request,
 					no_job: res.worId ? res?.worId?.job_no : "Internal",
 					materialStockId: res.materialStockId,
+					name_material: res.name_material,
+					spesifikasi: res.spesifikasi,
 				});
 			});
 			data = {
@@ -239,6 +246,10 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 					poandsoId: res.poandsoId,
 					mrId: res.idMr,
 					qty_out: parseInt(res.qty_out),
+					employeeId: res.employeeId,
+					request: res.request,
+					name_material: res.materialName,
+					spesifikasi: res.spesifikasi,
 				});
 			});
 			data = {
@@ -366,7 +377,11 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 												setFieldValue(`mr.${i}.idMr`, e.value.id);
 												setFieldValue(
 													`mr.${i}.materialName`,
-													`${res.name_material + " " + res.spesifikasi}`
+													`${res.name_material}`
+												);
+												setFieldValue(
+													`mr.${i}.spesifikasi`,
+													`${res.spesifikasi}`
 												);
 												setFieldValue(`mr.${i}.job_no`, e.value.job_no);
 												setFieldValue(
@@ -374,10 +389,18 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 													e.value.user.employee.employee_name
 												);
 												setFieldValue(`mr.${i}.qty_out`, res.qtyAppr);
+												let total_stock: any = 0;
+												res.Material_Main?.Material_Master?.filter((stock:any) => {
+													return stock?.name === res.spesifikasi
+												}).map((result: any) => {
+													total_stock += result?.jumlah_Stock
+												});
 												setFieldValue(
 													`mr.${i}.stock`,
-													res.Material_Master?.jumlah_Stock
+													total_stock
 												);
+												setFieldValue(`mr.${i}.employeeId`, e.value.user?.employee?.id)
+												setFieldValue(`mr.${i}.request`, e.value.user?.employee?.employee_name)
 											});
 										} else {
 											setFieldValue("mr", []);
@@ -426,7 +449,6 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 								name='pb'
 								render={(arrayPb) =>
 									values.pb.map((result: any, i: number) => {
-										console.log(result)
 										return (
 											<div key={i}>
 												<Section className='grid md:grid-cols-6 sm:grid-cols-3 xs:grid-cols-1 gap-2 mt-4 border-b-[3px] border-b-red-500 pb-2'>
@@ -480,6 +502,14 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 																setFieldValue(
 																	`pb.${i}.materialStockId`,
 																	e.value.id
+																);
+																setFieldValue(
+																	`pb.${i}.name_material`,
+																	e.value.Material_Main?.name
+																);
+																setFieldValue(
+																	`pb.${i}.spesifikasi`,
+																	e.value.name
 																);
 															}}
 															required={true}
@@ -607,7 +637,7 @@ export const FormCreateOutgoingMaterial = ({ content, showModal }: props) => {
 															placeholder='Material Name'
 															label='Material Name'
 															type='text'
-															value={result?.materialName}
+															value={result?.materialName + " " + result?.spesifikasi}
 															disabled={true}
 															required={true}
 															withLabel={true}
