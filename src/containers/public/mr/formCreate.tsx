@@ -64,7 +64,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	const [listMaterial, setListMaterial] = useState<any>([]);
 	const [listDetail, setListDetail] = useState<any>([]);
 	const [listMaterialStock, setListMaterialStock] = useState<any>([]);
-	const [listItemSearch, setListItemSearch] = useState<any>([]);
+	const [listSpesification, setListSpesification] = useState<any>([]);
 	const [data, setData] = useState<data>({
 		userId: "",
 		date_mr: "",
@@ -259,7 +259,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 					name_material: res.name_material,
 					qty: parseInt(res.qty),
 					note: res.note,
-					file: res.file
+					file: res.file,
 				});
 				if (payload.detailMr.length === listDetail.length) {
 					let data = {
@@ -282,7 +282,7 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 	const createMR = async (data: any) => {
 		setIsLoading(true);
 		let listDetail: any = [];
-		let userId: any = getIdUser() || '';
+		let userId: any = getIdUser() || "";
 		let date: any = new Date();
 		data?.detailMr.map((res: any) => {
 			listDetail.push({
@@ -291,21 +291,21 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 				name_material: res.name_material,
 				spesifikasi: res.spesifikasi,
 				qty: parseInt(res.qty),
-				note: res.note
+				note: res.note,
 			});
 		});
 		const formData = new FormData();
 		formData.append("userId", userId);
 		formData.append("date_mr", date);
 		formData.append("bomIdU", bomId);
-		formData.append("worId", worID === "" ? 'null' : worID);
+		formData.append("worId", worID === "" ? "null" : worID);
 		formData.append("job_no", jobNo);
 		formData.append("detailMr", JSON.stringify(listDetail));
-		data?.detailMr.map((res:any) => {
-			if(res.file){
+		data?.detailMr.map((res: any) => {
+			if (res.file) {
 				formData.append("file", res.file);
 			}
-		})
+		});
 		try {
 			const response = await AddMr(formData);
 			if (response.data) {
@@ -584,7 +584,10 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 								</Section>
 								{isMaterial ? (
 									<div>
-										<p className="mt-4 ">Note: Jika tidak ada material yang dicari harap hubungi purchasing atau gudang</p>
+										<p className='mt-4 '>
+											Note: Jika tidak ada material yang dicari harap hubungi
+											purchasing atau gudang
+										</p>
 										<FieldArray
 											name='detailMr'
 											render={(arrayMr) =>
@@ -593,78 +596,91 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 														<div key={i}>
 															<Section className='grid md:grid-cols-6 sm:grid-cols-2 xs:grid-cols-1 gap-2 mt-4'>
 																<div className='w-full'>
+																	<InputSelectSearch
+																		datas={listMaterial}
+																		id={`detailMr.${i}.material`}
+																		name={`detailMr.${i}.material`}
+																		placeholder='Material'
+																		label='Material'
+																		value={result.detail}
+																		onChange={(e: any) => {
+																			let listSpesifications: any = [
+																				{
+																					label: "Input",
+																				},
+																			];
+																			e.value?.Material_Master?.map(
+																				(result: any) => {
+																					listSpesifications.push({
+																						label: result?.name,
+																					});
+																				}
+																			);
+																			setListSpesification(listSpesifications);
+																			setFieldValue(
+																				`detailMr.${i}.isInput`,
+																				false
+																			);
+																			setFieldValue(
+																				`detailMr.${i}.material`,
+																				e.value.id
+																			);
+																			setFieldValue(
+																				`detailMr.${i}.bomId`,
+																				e.value.bomId ? e.value.bomId : null
+																			);
+																			setFieldValue(
+																				`detailMr.${i}.satuan`,
+																				e.value.satuan
+																			);
+																			setFieldValue(`detailMr.${i}.detail`, e);
+																			setFieldValue(
+																				`detailMr.${i}.name_material`,
+																				e.label
+																			);
+																		}}
+																		required={true}
+																		withLabel={true}
+																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
+																	/>
+																</div>
+																<div className='w-full'>
 																	{result.isInput ? (
 																		<Input
-																			id={`detailMr.${i}.material`}
-																			name={`detailMr.${i}.material`}
-																			placeholder='Material'
-																			label='Material'
+																			id={`detailMr.${i}.spesifikasi`}
+																			name={`detailMr.${i}.spesifikasi`}
+																			placeholder='Spesifikasi'
+																			label='Spesifikasi'
 																			type='text'
-																			value={result.material}
+																			value={result.spesifikasi}
 																			onChange={(e: any) => {
 																				setFieldValue(
-																					`detailMr.${i}.name_material`,
-																					e.target.value
-																				);
-																				setFieldValue(
-																					`detailMr.${i}.material`,
+																					`detailMr.${i}.spesifikasi`,
 																					e.target.value
 																				);
 																			}}
-																			disabled={false}
 																			required={true}
 																			withLabel={true}
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
 																		/>
 																	) : (
 																		<InputSelectSearch
-																			datas={listMaterial}
-																			id={`detailMr.${i}.material`}
-																			name={`detailMr.${i}.material`}
-																			placeholder='Material'
-																			label='Material'
-																			value={result.detail}
+																			datas={listSpesification}
+																			id={`detailMr.${i}.spesifikasi`}
+																			name={`detailMr.${i}.spesifikasi`}
+																			placeholder='Spesifikasi'
+																			label='Spesifikasi'
+																			// value={result.detail}
 																			onChange={(e: any) => {
-																				if (e.value === null) {
+																				console.log(e);
+																				if (e.label === "Input") {
 																					setFieldValue(
 																						`detailMr.${i}.isInput`,
 																						true
 																					);
-																					setFieldValue(
-																						`detailMr.${i}.bomId`,
-																						null
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.detail`,
-																						e
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.satuan`,
-																						""
-																					);
 																				} else {
 																					setFieldValue(
-																						`detailMr.${i}.isInput`,
-																						false
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.material`,
-																						e.value.id
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.bomId`,
-																						e.value.bomId ? e.value.bomId : null
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.satuan`,
-																						e.value.satuan
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.detail`,
-																						e
-																					);
-																					setFieldValue(
-																						`detailMr.${i}.name_material`,
+																						`detailMr.${i}.spesifikasi`,
 																						e.label
 																					);
 																				}
@@ -674,25 +690,6 @@ export const FormCreateMr = ({ content, showModal }: props) => {
 																			className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full outline-primary-600'
 																		/>
 																	)}
-																</div>
-																<div className='w-full'>
-																	<Input
-																		id={`detailMr.${i}.spesifikasi`}
-																		name={`detailMr.${i}.spesifikasi`}
-																		placeholder='Spesifikasi'
-																		label='Spesifikasi'
-																		type='text'
-																		value={result.spesifikasi}
-																		onChange={(e: any) => {
-																			setFieldValue(
-																				`detailMr.${i}.spesifikasi`,
-																				e.target.value
-																			);
-																		}}
-																		required={true}
-																		withLabel={true}
-																		className='bg-white border border-primary-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5 outline-primary-600'
-																	/>
 																</div>
 																<div className='w-full'>
 																	<Input

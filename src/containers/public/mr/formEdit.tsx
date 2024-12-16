@@ -84,14 +84,16 @@ export const FormEditMr = ({ content, dataSelected, showModal }: props) => {
 	const dataSetting = () => {
 		let newDetail: any = [];
 		dataSelected.detailMr.map((res: any) => {
+			console.log(res)
 			newDetail.push({
 				bomId: res.bomIdD,
-				material: res.Material_Master.id,
+				material: res.Material_Main.id,
 				name_material: res.name_material,
-				satuan: res.Material_Master.satuan,
+				spesifikasi: res.spesifikasi,
+				satuan: res.Material_Main.satuan,
 				selectMaterial: {
-					label: `${res.Material_Master.name} ${res.Material_Master.spesifikasi ? res.Material_Master.spesifikasi : ''}`,
-					value: res.Material_Master,
+					label: res.name_material + " " + res.spesifikasi,
+					value: res.Material_Main,
 				},
 				qty: res.qty,
 				id: res.id,
